@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Privacy" href="../privacy.html" /><link rel="prev" title="Tile Language: Primitives" href="primitives.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Just In Time Compilation" href="jit_compilation.html" /><link rel="prev" title="Debugging Tile Language Programs" href="debug_tools_for_tilelang.html" />
 
     <!-- Generated with Sphinx 5.2.3 and Furo 2023.03.27 -->
-        <title>Tile Language: TileLibrary - Tile Language 0.1.0 documentation</title>
+        <title>Auto-Tuning Techniques for Performance Optimization - Tile Language 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -165,14 +165,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../get_started/overview.html">The Tile Language: A Brief Introduction</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/writing_kernels_with_tilelibrary.html">Writing High-Performance Kernels with the Tile Library</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/writint_kernels_with_thread_primitives.html">Annotating Memory Layout for Optimization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/annotate_memory_layout.html">Annotate Memory Layout</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/auto_tuning.html">Auto-Tuning Techniques for Performance Optimization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/jit_compilation.html">Just In Time Compilation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/pipelining_computations_and_data_movements.html">Pipelining Computation and Data Movement</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="writing_kernels_with_tilelibrary.html">Writing High-Performance Kernels with the Tile Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writint_kernels_with_thread_primitives.html">Annotating Memory Layout for Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annotate_memory_layout.html">Annotate Memory Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Auto-Tuning Techniques for Performance Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit_compilation.html">Just In Time Compilation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelining_computations_and_data_movements.html">Pipelining Computation and Data Movement</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">DEEP LEARNING OPERATORS</span></p>
 <ul>
@@ -186,10 +186,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../deeplearning_operators/tmac_gpu.html">TMAC: Look Up Table Based Mixed Precision Computing</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">LANGUAGE REFERENCE</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="ast.html">Tile Language AST</a></li>
-<li class="toctree-l1"><a class="reference internal" href="primitives.html">Tile Language: Primitives</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Tile Language: TileLibrary</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../language_ref/ast.html">Tile Language AST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../language_ref/primitives.html">Tile Language: Primitives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../language_ref/tilelibrary.html">Tile Language: TileLibrary</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Privacy</span></p>
 <ul>
@@ -222,88 +222,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tile-language-tilelibrary">
-<h1>Tile Language: TileLibrary<a class="headerlink" href="#tile-language-tilelibrary" title="Permalink to this heading">#</a></h1>
-<section id="t-kernel">
-<h2>T.Kernel<a class="headerlink" href="#t-kernel" title="Permalink to this heading">#</a></h2>
-<p>args: the grid size (0-3 dimension) and the num_threads.</p>
-<p>returns: the blockIdx variables</p>
-<p>launch a kernel, it must be used in a with statement. There can be
-multiple kernels launched sequentially inside a prim function.</p>
-</section>
-<section id="t-alloc-shared">
-<h2>T.alloc_shared<a class="headerlink" href="#t-alloc-shared" title="Permalink to this heading">#</a></h2>
-<p>args: shape, dtype</p>
-<p>returns: Buffer</p>
-<p>Allocate buffer on shared memory, It must be used within T.Kernel scope
-and should be allocated at the top of the scope.</p>
-<p>Dynamic shared memory is used.</p>
-</section>
-<section id="t-alloc-fragment">
-<h2>T.alloc_fragment<a class="headerlink" href="#t-alloc-fragment" title="Permalink to this heading">#</a></h2>
-<p>args: shape, dtype</p>
-<p>returns: Buffer</p>
-<p>Allocate buffer on register memory, It must be used within T.Kernel
-scope and should be allocated at the top of the scope.</p>
-<p>The shape represents the whole shape of the buffer. Each element in the
-buffer is distributed stored on each threads, this storage partition
-will be inferred by the compiler.</p>
-</section>
-<section id="t-copy">
-<h2>T.copy<a class="headerlink" href="#t-copy" title="Permalink to this heading">#</a></h2>
-<p>args: src, dst</p>
-<p>Copies data from src to dst, src and dst can be one of (Buffer,
-BufferLoad, BufferRegion). If you use BufferLoad that represents a
-single starting point, the other params should not be BufferLoad, since
-we need to know the copy region.</p>
-<p>Zero will be padded if we detect the load is out of boundary.</p>
-</section>
-<section id="t-gemm">
-<h2>T.gemm<a class="headerlink" href="#t-gemm" title="Permalink to this heading">#</a></h2>
-<p>args: A, B, C, transpose_A, transpose_B, policy</p>
-<p>Performs gemm operation on A, B and C. C must be a fragment, B must be
-on shared memory, A can be either a fragment or shared.</p>
-<p>Note that the current implementation has some shape and dtype
-constraints, for example, the length of reduction axis must be a
-multiple of 32 for fp16 multiplicand case, we will update this later.</p>
-</section>
-<section id="t-reduce-max-t-reduce-sum">
-<h2>T.reduce_max T.reduce_sum<a class="headerlink" href="#t-reduce-max-t-reduce-sum" title="Permalink to this heading">#</a></h2>
-<p>args: src, dst, dim</p>
-<p>Performs a reduce operation from src to dst on dimension dim. Currently
-we only support src and dst to be a fragment.</p>
-</section>
-<section id="t-parallel">
-<h2>T.Parallel<a class="headerlink" href="#t-parallel" title="Permalink to this heading">#</a></h2>
-<p>You can use T.Parallel to write a loop. The loop will be partitioned to
-all the threads by the compiler (The compiler will consider vectorize
-size, the fragment’s thread mapping … ). Note that this is the only way
-you can perform arbitrary operation on fragments.</p>
-</section>
-<section id="t-pipelined">
-<h2>T.Pipelined<a class="headerlink" href="#t-pipelined" title="Permalink to this heading">#</a></h2>
-<p>args: start, stop, num_stages</p>
-<p>Pipeline the loop, copy from the global memory will be converted to
-async operations and reordered to the point after it is consumed.
-num_stages is the number of buffer between producer-consumer.
-(e.g.&amp;nbsp;Double buffer when num_stages=2)</p>
-</section>
-<section id="t-clear-t-fill">
-<h2>T.clear T.fill<a class="headerlink" href="#t-clear-t-fill" title="Permalink to this heading">#</a></h2>
-<p>nothing special, they will be converted to T.Parallel</p>
-</section>
-<section id="t-use-swizzle">
-<h2>T.use_swizzle<a class="headerlink" href="#t-use-swizzle" title="Permalink to this heading">#</a></h2>
-<p>Optimization for L2 cache. The launch of blockIdx.x and blockIdx.y will
-be serpentined.</p>
-<p>You need to add it in a kernel after buffer is all allocated.</p>
-</section>
+          <section id="auto-tuning-techniques-for-performance-optimization">
+<h1>Auto-Tuning Techniques for Performance Optimization<a class="headerlink" href="#auto-tuning-techniques-for-performance-optimization" title="Permalink to this heading">#</a></h1>
 </section>
 
         </article>
@@ -311,23 +237,23 @@ be serpentined.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../privacy.html">
+          <a class="next-page" href="jit_compilation.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Privacy</div>
+                <div class="title">Just In Time Compilation</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="primitives.html">
+          <a class="prev-page" href="debug_tools_for_tilelang.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Tile Language: Primitives</div>
+                <div class="title">Debugging Tile Language Programs</div>
                 
               </div>
             </a>
@@ -349,36 +275,8 @@ be serpentined.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Tile Language: TileLibrary</a><ul>
-<li><a class="reference internal" href="#t-kernel">T.Kernel</a></li>
-<li><a class="reference internal" href="#t-alloc-shared">T.alloc_shared</a></li>
-<li><a class="reference internal" href="#t-alloc-fragment">T.alloc_fragment</a></li>
-<li><a class="reference internal" href="#t-copy">T.copy</a></li>
-<li><a class="reference internal" href="#t-gemm">T.gemm</a></li>
-<li><a class="reference internal" href="#t-reduce-max-t-reduce-sum">T.reduce_max T.reduce_sum</a></li>
-<li><a class="reference internal" href="#t-parallel">T.Parallel</a></li>
-<li><a class="reference internal" href="#t-pipelined">T.Pipelined</a></li>
-<li><a class="reference internal" href="#t-clear-t-fill">T.clear T.fill</a></li>
-<li><a class="reference internal" href="#t-use-swizzle">T.use_swizzle</a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
