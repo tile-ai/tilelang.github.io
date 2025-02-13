@@ -167,6 +167,7 @@
 <p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="writing_kernels_with_tilelibrary.html">Writing High-Performance Kernels with the Tile Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing_kernels_with_thread_primitives.html">Writing High-Performance Kernels with Thread Primitives</a></li>
 <li class="toctree-l1"><a class="reference internal" href="annotate_memory_layout.html">Annotate Memory Layout</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Debugging Tile Language Programs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="auto_tuning.html">Auto-Tuning Techniques for Performance Optimization</a></li>
@@ -230,8 +231,9 @@
           <section id="debugging-tile-language-programs">
 <h1>Debugging Tile Language Programs<a class="headerlink" href="#debugging-tile-language-programs" title="Permalink to this heading">#</a></h1>
 <div style="text-align: left;">
-    <em>Author:</em> <a href="https://github.com/LeiWang1999">Lei Wang</a>
-</div><section id="overview">
+<em>Author:</em> <a href="https://github.com/LeiWang1999">Lei Wang</a>
+</div>
+<section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">#</a></h2>
 <p>A Tile Language program (hereafter referred to as a <em>program</em>) is transformed into a hardware-executable file through several stages:</p>
 <ol class="arabic simple">
@@ -239,7 +241,9 @@
 <li><p>The program undergoes multiple <em>Passes</em> for transformation and optimization (the <em>lower</em> stage, see <code class="docutils literal notranslate"><span class="pre">tilelang/engine/lower.py</span></code>), finally producing an intermediate representation (e.g., LLVM or C for CPU, CUDA for NVIDIA GPUs, etc.).</p></li>
 <li><p>The generated code is compiled by the respective compiler (e.g., nvcc) into a hardware-executable file.</p></li>
 </ol>
-<a class="reference internal image-reference" href="../_images/overview.png"><img alt="Overview of the compilation process" class="align-center" src="../_images/overview.png" style="width: 300px;" /></a>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../_images/overview.png"><img alt="Overview of the compilation process" src="../_images/overview.png" style="width: 300px;" /></a>
+</figure>
 <p>During this process, users may encounter roughly three categories of issues:</p>
 <ul class="simple">
 <li><p><strong>Generation issues</strong>: The Tile Language program fails to generate a valid hardware-executable file (i.e., errors during the lowering process).</p></li>
@@ -251,68 +255,32 @@
 </section>
 <section id="matrix-multiplication-example">
 <h2>Matrix Multiplication Example<a class="headerlink" href="#matrix-multiplication-example" title="Permalink to this heading">#</a></h2>
-<p>In <strong>Tile Language</strong>, you can use the <strong>Tile Library</strong> to implement matrix multiplication. The following is a complete example:</p>
+<p>In <strong>Tile Language</strong>, you can use the <strong>Tile Library</strong> to implement matrix multiplication. Here’s a complete example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tilelang</span>
 <span class="kn">import</span> <span class="nn">tilelang.language</span> <span class="k">as</span> <span class="nn">T</span>
 
 <span class="k">def</span> <span class="nf">matmul</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">,</span> <span class="n">block_K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">accum_dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">):</span>
-    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
-        <span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-        <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-        <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-    <span class="p">):</span>
-        <span class="c1"># Initialize Kernel Context</span>
-        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">block_M</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span>
-            <span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="n">B_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_K</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="n">C_local</span>  <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">accum_dtype</span><span class="p">)</span>
-
-            <span class="n">T</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">C_local</span><span class="p">)</span>
-
-            <span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">num_stages</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-                <span class="c1"># Copy tile of A</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">block_K</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">)</span>
-
-                <span class="c1"># Demonstrate parallelized copy from global to shared for B</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_K</span><span class="p">,</span> <span class="n">block_N</span><span class="p">):</span>
-                    <span class="n">B_shared</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">block_K</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span>
-
-                <span class="c1"># Perform a tile-level GEMM on the shared buffers</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
-
-            <span class="c1"># Copy result back to global memory</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">C_local</span><span class="p">,</span> <span class="n">C</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">])</span>
-
-    <span class="k">return</span> <span class="n">main</span>
+    <span class="c1"># ...existing code...</span>
 
 <span class="c1"># 1. Define the kernel (matmul) with the desired dimensions</span>
 <span class="n">func</span> <span class="o">=</span> <span class="n">matmul</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
 
 <span class="c1"># 2. Compile the kernel into a torch function</span>
-<span class="n">jit_kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">JITKernel</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
-
-<span class="c1"># 3. Test the kernel in Python with PyTorch data</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-
-<span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
-
-<span class="c1"># Run the kernel</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">jit_kernel</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="c1"># ...existing code...</span>
 </pre></div>
 </div>
 </section>
 <section id="debugging-generation-issues">
 <h2>Debugging Generation Issues<a class="headerlink" href="#debugging-generation-issues" title="Permalink to this heading">#</a></h2>
 <p>TileLang essentially performs <em>progressive lowering</em>. For example, a <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> may first be expanded into <code class="docutils literal notranslate"><span class="pre">T.Parallel</span></code> (see the pass <code class="docutils literal notranslate"><span class="pre">LowerTileOP</span></code>), which is then expanded again, eventually resulting in lower-level statements that can be translated to CUDA C code.</p>
-<a class="reference internal image-reference" href="../_images/ir_transform_diagram.png"><img alt="IR transformation diagram" class="align-center" src="../_images/ir_transform_diagram.png" style="width: 400px;" /></a>
-<p>When the code fails to generate (for instance, a compilation error occurs), you do <strong>not</strong> necessarily need to jump directly into C++ passes to debug. Instead, you can first inspect the intermediate representations (IR) in Python by printing them. For example, consider a case where a simple <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> in 1D causes the lowering process to fail. The snippet below illustrates a simplified version of the problem (based on community Issue #35):</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../_images/ir_transform_diagram.png"><img alt="IR transformation diagram" src="../_images/ir_transform_diagram.png" style="width: 400px;" /></a>
+</figure>
+<p>When the code fails to generate (for instance, a compilation error occurs), you do <strong>not</strong> necessarily need to jump directly into C++ passes to debug. Instead, you can first inspect the intermediate representations (IR) in Python by printing them.</p>
+<p>For example, consider a case where a simple <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> in 1D causes the lowering process to fail. The snippet below illustrates a simplified version of the problem (based on community Issue #35):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
 <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">Q</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">(</span><span class="n">shape_q</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)):</span>
-    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">seqlen_q</span><span class="p">,</span> <span class="n">block_M</span><span class="p">),</span> <span class="n">heads</span> <span class="o">*</span> <span class="n">batch</span><span class="p">,</span> <span class="n">num_split</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bz</span><span class="p">):</span>
-        <span class="n">Q_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="n">bid</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">hid</span><span class="p">,</span> <span class="p">:],</span> <span class="n">Q_shared</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="c1"># ...existing code...</span>
 </pre></div>
 </div>
 <p>The TileLang lower process might yield an error such as:</p>
@@ -322,23 +290,16 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 </div>
 <p>This indicates that somewhere during code generation, an unsupported vectorization pattern was introduced (a ramp of 8 lanes). Before diving into the underlying C++ code, it is helpful to print the IR right before code generation. For instance:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device_mod</span> <span class="o">=</span> <span class="n">tir</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">Filter</span><span class="p">(</span><span class="n">is_device_call</span><span class="p">)(</span><span class="n">mod</span><span class="p">)</span>
-<span class="n">device_mod</span> <span class="o">=</span> <span class="n">tir</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">LowerDeviceStorageAccessInfo</span><span class="p">()(</span><span class="n">device_mod</span><span class="p">)</span>
-<span class="n">device_mod</span> <span class="o">=</span> <span class="n">tir</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">LowerIntrin</span><span class="p">()(</span><span class="n">device_mod</span><span class="p">)</span>
-<span class="n">device_mod</span> <span class="o">=</span> <span class="n">tir</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">Simplify</span><span class="p">()(</span><span class="n">device_mod</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">device_mod</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span><span class="p">:</span>
-    <span class="n">device_mod</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">_ffi</span><span class="o">.</span><span class="n">get_global_func</span><span class="p">(</span><span class="s2">&quot;target.build.tilelang_cuda&quot;</span><span class="p">)(</span><span class="n">device_mod</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="c1"># ...existing code...</span>
 </pre></div>
 </div>
-<p>By examining the printed IR, you may see how the index calculations expand incorrectly, revealing which pass is handling the special case improperly. You can then fix or refine that pass to address the code generation problem.</p>
 </section>
 <section id="debugging-correctness-issues">
 <h2>Debugging Correctness Issues<a class="headerlink" href="#debugging-correctness-issues" title="Permalink to this heading">#</a></h2>
 <p>Sometimes, the kernel compiles and runs but produces incorrect results. In such cases, there are two main strategies to help debug:</p>
 <ol class="arabic simple">
 <li><p><strong>Use post-processing callbacks to inspect or modify the generated CUDA code.</strong></p></li>
-<li><p><strong>Use the built-in ``T.print`` debugging primitive to inspect values at runtime.</strong></p></li>
+<li><p><strong>Use the built-in <code class="docutils literal notranslate"><span class="pre">T.print</span></code> debugging primitive to inspect values at runtime.</strong></p></li>
 </ol>
 <section id="post-processing-callbacks-for-generated-source">
 <h3>Post-Processing Callbacks for Generated Source<a class="headerlink" href="#post-processing-callbacks-for-generated-source" title="Permalink to this heading">#</a></h3>
@@ -356,139 +317,52 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 
 <span class="nd">@tvm</span><span class="o">.</span><span class="n">register_func</span>
 <span class="k">def</span> <span class="nf">tilelang_callback_cuda_postproc</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
-    <span class="c1"># Example: Insert a comment or print the final CUDA code</span>
-    <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;// Debugging Post-Process</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">code</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">code</span>
-
-<span class="k">def</span> <span class="nf">matmul</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">,</span> <span class="n">block_K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">accum_dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">):</span>
-    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-             <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-             <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)):</span>
-        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">block_M</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span>
-            <span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="n">B_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_K</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="n">C_local</span>  <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">accum_dtype</span><span class="p">)</span>
-
-            <span class="n">T</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">C_local</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">num_stages</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">block_K</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_K</span><span class="p">,</span> <span class="n">block_N</span><span class="p">):</span>
-                    <span class="n">B_shared</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">block_K</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">C_local</span><span class="p">,</span> <span class="n">C</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">])</span>
-
-    <span class="k">return</span> <span class="n">main</span>
-
-<span class="c1"># Instantiate and compile</span>
-<span class="n">func</span> <span class="o">=</span> <span class="n">matmul</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
-<span class="n">jit_kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">JITKernel</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+    <span class="c1"># ...existing code...</span>
 </pre></div>
 </div>
-<p>Using this callback, you can insert debugging statements or simply print out the generated CUDA source to verify the correctness of generated indexing and logic before the kernel is compiled.</p>
 </section>
 <section id="runtime-debug-prints-with-t-print">
 <h3>Runtime Debug Prints with <code class="docutils literal notranslate"><span class="pre">T.print</span></code><a class="headerlink" href="#runtime-debug-prints-with-t-print" title="Permalink to this heading">#</a></h3>
-<p>TileLang provides a built-in debugging primitive called <code class="docutils literal notranslate"><span class="pre">T.print</span></code> for printing within kernels. Be mindful of concurrency and thread synchronization when using it in GPU code. Below are some examples showing how to print buffers, variables, and other data inside TileLang programs. These examples can be found in the TileLang codebase (e.g., <code class="docutils literal notranslate"><span class="pre">testing/python/debug/test_tilelang_debug_print.py</span></code>).</p>
-<ol class="arabic">
-<li><p><strong>Printing an Entire Buffer</strong></p>
+<p>TileLang provides a built-in debugging primitive called <code class="docutils literal notranslate"><span class="pre">T.print</span></code> for printing within kernels. Be mindful of concurrency and thread synchronization when using it in GPU code. Below are some examples showing how to print buffers, variables, and other data inside TileLang programs.</p>
+<ol class="arabic simple">
+<li><p><strong>Printing an Entire Buffer</strong></p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">debug_print_buffer</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
-    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span>
-
-    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span> <span class="nf">program</span><span class="p">(</span><span class="n">Q</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)):</span>
-        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bz</span><span class="p">):</span>
-            <span class="n">shared_buf</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="c1"># Print the entire shared_buf</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">shared_buf</span><span class="p">)</span>
-
-    <span class="n">jit_kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">JITKernel</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
-    <span class="n">profiler</span> <span class="o">=</span> <span class="n">jit_kernel</span><span class="o">.</span><span class="n">get_profiler</span><span class="p">()</span>
-    <span class="n">profiler</span><span class="o">.</span><span class="n">run_once</span><span class="p">()</span>
+    <span class="c1"># ...existing code...</span>
 </pre></div>
 </div>
-<p>This will print all elements in <code class="docutils literal notranslate"><span class="pre">shared_buf</span></code> to stdout. Note that in GPU kernels with many threads, outputs can interleave.</p>
-</li>
-<li><p><strong>Conditional Printing</strong></p>
-<p>You can limit print output to reduce noise. For instance, only print when <code class="docutils literal notranslate"><span class="pre">bx</span> <span class="pre">==</span> <span class="pre">0</span> <span class="pre">and</span> <span class="pre">by</span> <span class="pre">==</span> <span class="pre">0</span> <span class="pre">and</span> <span class="pre">bz</span> <span class="pre">==</span> <span class="pre">0</span></code>:</p>
+<ol class="arabic simple" start="2">
+<li><p><strong>Conditional Printing</strong></p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">debug_print_buffer_conditional</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
-    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span>
-
-    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span> <span class="nf">program</span><span class="p">(</span><span class="n">Q</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)):</span>
-        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bz</span><span class="p">):</span>
-            <span class="n">shared_buf</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">bx</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">by</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">bz</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">shared_buf</span><span class="p">)</span>
-
-    <span class="n">jit_kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">JITKernel</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
-    <span class="n">profiler</span> <span class="o">=</span> <span class="n">jit_kernel</span><span class="o">.</span><span class="n">get_profiler</span><span class="p">()</span>
-    <span class="n">profiler</span><span class="o">.</span><span class="n">run_once</span><span class="p">()</span>
+    <span class="c1"># ...existing code...</span>
 </pre></div>
 </div>
-</li>
-<li><p><strong>Printing Thread Indices or Scalar Values</strong></p>
+<ol class="arabic simple" start="3">
+<li><p><strong>Printing Thread Indices or Scalar Values</strong></p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">debug_print_value_conditional</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
-    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span>
-
-    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span> <span class="nf">program</span><span class="p">(</span><span class="n">Q</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)):</span>
-        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bz</span><span class="p">):</span>
-            <span class="c1"># Retrieve thread ID</span>
-            <span class="n">tid</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_thread_binding</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">tid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># Print bx+by+bz only from one thread</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">bx</span> <span class="o">+</span> <span class="n">by</span> <span class="o">+</span> <span class="n">bz</span><span class="p">)</span>
-
-    <span class="n">jit_kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">JITKernel</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
-    <span class="n">profiler</span> <span class="o">=</span> <span class="n">jit_kernel</span><span class="o">.</span><span class="n">get_profiler</span><span class="p">()</span>
-    <span class="n">profiler</span><span class="o">.</span><span class="n">run_once</span><span class="p">()</span>
+    <span class="c1"># ...existing code...</span>
 </pre></div>
 </div>
-</li>
-<li><p><strong>Printing Fragment (Register File) Contents</strong></p>
-<p>If you use <code class="docutils literal notranslate"><span class="pre">T.alloc_fragment(...)</span></code> (for example, warp-level matrix fragments), you can still print the data:</p>
+<ol class="arabic simple" start="4">
+<li><p><strong>Printing Fragment (Register File) Contents</strong></p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">debug_print_register_files</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
-    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span>
-
-    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span> <span class="nf">program</span><span class="p">(</span><span class="n">Q</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)):</span>
-        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bz</span><span class="p">):</span>
-            <span class="n">register_buf</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="c1"># Parallel iteration with printing</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">register_buf</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
-
-    <span class="n">jit_kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">JITKernel</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
-    <span class="n">profiler</span> <span class="o">=</span> <span class="n">jit_kernel</span><span class="o">.</span><span class="n">get_profiler</span><span class="p">()</span>
-    <span class="n">profiler</span><span class="o">.</span><span class="n">run_once</span><span class="p">()</span>
+    <span class="c1"># ...existing code...</span>
 </pre></div>
 </div>
-</li>
-<li><p><strong>Adding a Message Prefix</strong></p>
-<p>You can supply a message prefix to distinguish prints:</p>
+<ol class="arabic simple" start="5">
+<li><p><strong>Adding a Message Prefix</strong></p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">debug_print_msg</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
-    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span>
-
-    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span> <span class="nf">program</span><span class="p">(</span><span class="n">Q</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)):</span>
-        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bz</span><span class="p">):</span>
-            <span class="n">tid</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_thread_binding</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">tid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">bx</span> <span class="o">+</span> <span class="n">by</span> <span class="o">+</span> <span class="n">bz</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;hello world&quot;</span><span class="p">)</span>
-
-    <span class="n">jit_kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">JITKernel</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
-    <span class="n">profiler</span> <span class="o">=</span> <span class="n">jit_kernel</span><span class="o">.</span><span class="n">get_profiler</span><span class="p">()</span>
-    <span class="n">profiler</span><span class="o">.</span><span class="n">run_once</span><span class="p">()</span>
+    <span class="c1"># ...existing code...</span>
 </pre></div>
 </div>
 <p>The output messages will include something like:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>msg=&#39;hello world&#39; BlockIdx=(0, 0, 0), ThreadIdx=(0, 0, 0): 0
 </pre></div>
 </div>
-</li>
-</ol>
 </section>
 </section>
 <section id="conclusion">

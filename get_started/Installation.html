@@ -167,6 +167,7 @@
 <p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/writing_kernels_with_tilelibrary.html">Writing High-Performance Kernels with the Tile Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/writing_kernels_with_thread_primitives.html">Writing High-Performance Kernels with Thread Primitives</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/annotate_memory_layout.html">Annotate Memory Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/auto_tuning.html">Auto-Tuning Techniques for Performance Optimization</a></li>
@@ -228,7 +229,7 @@
         </div>
         <article role="main">
           <section id="installation-guide">
-<h1>Installation Guide<a class="headerlink" href="#installation-guide" title="Permalink to this heading">#</a></h1>
+<span id="install"></span><h1>Installation Guide<a class="headerlink" href="#installation-guide" title="Permalink to this heading">#</a></h1>
 <section id="installing-with-pip">
 <h2>Installing with pip<a class="headerlink" href="#installing-with-pip" title="Permalink to this heading">#</a></h2>
 <p><strong>Prerequisites for installation via wheel or PyPI:</strong></p>
@@ -283,22 +284,24 @@ pip<span class="w"> </span>install<span class="w"> </span>.<span class="w">  </s
 </div>
 <p>We currently provide three methods to install <strong>TileLang</strong>:</p>
 <ol class="arabic simple">
-<li><p><a class="reference external" href="#method-1-install-from-source-using-your-own-tvm-installation">Install from Source (using your own TVM installation)</a></p></li>
-<li><p><a class="reference external" href="#method-2-install-from-source-using-the-bundled-tvm-submodule">Install from Source (using the bundled TVM submodule)</a></p></li>
-<li><p><a class="reference external" href="#method-3-install-using-the-provided-script">Install Using the Provided Script</a></p></li>
+<li><p><a class="reference internal" href="#install-method-1">Install from Source (using your own TVM installation)</a></p></li>
+<li><p><a class="reference internal" href="#install-method-2">Install from Source (using the bundled TVM submodule)</a></p></li>
+<li><p><a class="reference internal" href="#install-method-3">Install Using the Provided Script</a></p></li>
 </ol>
 <section id="method-1-install-from-source-using-your-own-tvm-installation">
-<h3>Method 1: Install from Source (Using Your Own TVM Installation)<a class="headerlink" href="#method-1-install-from-source-using-your-own-tvm-installation" title="Permalink to this heading">#</a></h3>
+<span id="install-method-1"></span><h3>Method 1: Install from Source (Using Your Own TVM Installation)<a class="headerlink" href="#method-1-install-from-source-using-your-own-tvm-installation" title="Permalink to this heading">#</a></h3>
 <p>If you already have a compatible TVM installation, follow these steps:</p>
-<ol class="arabic">
-<li><p><strong>Clone the Repository</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Clone the Repository</strong>:</p></li>
+</ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang
 <span class="nb">cd</span><span class="w"> </span>tilelang
 </pre></div>
 </div>
-<p><strong>Note</strong>: Use the <cite>–recursive</cite> flag to include necessary submodules.</p>
-</li>
-<li><p><strong>Configure Build Options</strong>:</p>
+<p><strong>Note</strong>: Use the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> flag to include necessary submodules.</p>
+<ol class="arabic simple" start="2">
+<li><p><strong>Configure Build Options</strong>:</p></li>
+</ol>
 <p>Create a build directory and specify your existing TVM path:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>build
 <span class="nb">cd</span><span class="w"> </span>build
@@ -306,67 +309,67 @@ cmake<span class="w"> </span>..<span class="w"> </span>-DTVM_PREBUILD_PATH<span 
 make<span class="w"> </span>-j<span class="w"> </span><span class="m">16</span>
 </pre></div>
 </div>
-</li>
-<li><p><strong>Set Environment Variables</strong>:</p>
-<p>Update <cite>PYTHONPATH</cite> to include the <cite>tile-lang</cite> Python module:</p>
+<ol class="arabic simple" start="3">
+<li><p><strong>Set Environment Variables</strong>:</p></li>
+</ol>
+<p>Update <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> to include the <code class="docutils literal notranslate"><span class="pre">tile-lang</span></code> Python module:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span>/your/path/to/tilelang/:<span class="nv">$PYTHONPATH</span>
 <span class="c1"># TVM_IMPORT_PYTHON_PATH is used by 3rd-party frameworks to import TVM</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">TVM_IMPORT_PYTHON_PATH</span><span class="o">=</span>/your/path/to/tvm/python
 </pre></div>
 </div>
-</li>
-</ol>
 </section>
 <section id="method-2-install-from-source-using-the-bundled-tvm-submodule">
-<h3>Method 2: Install from Source (Using the Bundled TVM Submodule)<a class="headerlink" href="#method-2-install-from-source-using-the-bundled-tvm-submodule" title="Permalink to this heading">#</a></h3>
+<span id="install-method-2"></span><h3>Method 2: Install from Source (Using the Bundled TVM Submodule)<a class="headerlink" href="#method-2-install-from-source-using-the-bundled-tvm-submodule" title="Permalink to this heading">#</a></h3>
 <p>If you prefer to use the built-in TVM version, follow these instructions:</p>
-<ol class="arabic">
-<li><p><strong>Clone the Repository</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Clone the Repository</strong>:</p></li>
+</ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang
 <span class="nb">cd</span><span class="w"> </span>tilelang
 </pre></div>
 </div>
-<p><strong>Note</strong>: Ensure the <cite>–recursive</cite> flag is included to fetch submodules.</p>
-</li>
-<li><p><strong>Configure Build Options</strong>:</p>
+<p><strong>Note</strong>: Ensure the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> flag is included to fetch submodules.</p>
+<ol class="arabic simple" start="2">
+<li><p><strong>Configure Build Options</strong>:</p></li>
+</ol>
 <p>Copy the configuration file and enable the desired backends (e.g., LLVM and CUDA):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>build
 cp<span class="w"> </span>3rdparty/tvm/cmake/config.cmake<span class="w"> </span>build
 <span class="nb">cd</span><span class="w"> </span>build
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set(USE_LLVM ON)&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>config.cmake
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set(USE_CUDA ON)&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>config.cmake
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set(USE_CUDA ON)&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>config.cmake<span class="w"> </span>
 <span class="c1"># or echo &quot;set(USE_ROCM ON)&quot; &gt;&gt; config.cmake to enable ROCm runtime</span>
 cmake<span class="w"> </span>..
 make<span class="w"> </span>-j<span class="w"> </span><span class="m">16</span>
 </pre></div>
 </div>
-<p>The build outputs (e.g., <cite>libtilelang.so</cite>, <cite>libtvm.so</cite>, <cite>libtvm_runtime.so</cite>) will be generated in the <cite>build</cite> directory.</p>
-</li>
-<li><p><strong>Set Environment Variables</strong>:</p>
-<p>Ensure the <cite>tile-lang</cite> Python package is in your <cite>PYTHONPATH</cite>:</p>
+<p>The build outputs (e.g., <code class="docutils literal notranslate"><span class="pre">libtilelang.so</span></code>, <code class="docutils literal notranslate"><span class="pre">libtvm.so</span></code>, <code class="docutils literal notranslate"><span class="pre">libtvm_runtime.so</span></code>) will be generated in the <code class="docutils literal notranslate"><span class="pre">build</span></code> directory.</p>
+<ol class="arabic simple" start="3">
+<li><p><strong>Set Environment Variables</strong>:</p></li>
+</ol>
+<p>Ensure the <code class="docutils literal notranslate"><span class="pre">tile-lang</span></code> Python package is in your <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span>/your/path/to/tilelang/:<span class="nv">$PYTHONPATH</span>
 </pre></div>
 </div>
-</li>
-</ol>
 </section>
 <section id="method-3-install-using-the-provided-script">
-<h3>Method 3: Install Using the Provided Script<a class="headerlink" href="#method-3-install-using-the-provided-script" title="Permalink to this heading">#</a></h3>
+<span id="install-method-3"></span><h3>Method 3: Install Using the Provided Script<a class="headerlink" href="#method-3-install-using-the-provided-script" title="Permalink to this heading">#</a></h3>
 <p>For a simplified installation, use the provided script:</p>
-<ol class="arabic">
-<li><p><strong>Clone the Repository</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Clone the Repository</strong>:</p></li>
+</ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang
 <span class="nb">cd</span><span class="w"> </span>tilelang
 </pre></div>
 </div>
-</li>
-<li><p><strong>Run the Installation Script</strong>:</p>
+<ol class="arabic simple" start="2">
+<li><p><strong>Run the Installation Script</strong>:</p></li>
+</ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>install_cuda.sh
 <span class="c1"># or bash `install_amd.sh` if you want to enable ROCm runtime</span>
 </pre></div>
 </div>
-</li>
-</ol>
 </section>
 </section>
 </section>

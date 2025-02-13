@@ -167,6 +167,7 @@
 <p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/writing_kernels_with_tilelibrary.html">Writing High-Performance Kernels with the Tile Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/writing_kernels_with_thread_primitives.html">Writing High-Performance Kernels with Thread Primitives</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/annotate_memory_layout.html">Annotate Memory Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/auto_tuning.html">Auto-Tuning Techniques for Performance Optimization</a></li>
@@ -231,9 +232,10 @@
 <h1>General Matrix-Matrix Multiplication with Tile Library<a class="headerlink" href="#general-matrix-matrix-multiplication-with-tile-library" title="Permalink to this heading">#</a></h1>
 <div style="text-align: left;">
     <em>Author:</em> <a href="https://github.com/LeiWang1999">Lei Wang</a>
-</div><div class="admonition warning">
+</div>
+<div class="myclass1 myclass2 admonition warning" id="a-tip-reference">
 <p class="admonition-title">Warning</p>
-<p>This document is still <strong>experimental</strong> and may be incomplete.
+<p>This document is still <strong>experimental</strong> and may be incomplete.<br />
 Suggestions and improvements are highly encouraged—please submit a PR!</p>
 </div>
 <p>TileLang is a domain-specific language (DSL) designed for writing high-performance GPU kernels. It provides three main levels of abstraction:</p>
@@ -243,9 +245,9 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <li><p><strong>Level 3:</strong> A user takes full control of thread-level primitives and can write code that is almost as explicit as a hand-written CUDA/HIP kernel. This is useful for performance experts who need to manage every detail, such as PTX inline assembly, explicit thread behavior, etc.</p></li>
 </ul>
 <figure class="align-center" id="id1">
-<span id="fig-overview"></span><a class="reference internal image-reference" href="../_images/overview.png"><img alt="Overview" src="../_images/overview.png" style="width: 50%;" /></a>
+<a class="reference internal image-reference" href="../_images/overview.png"><img alt="Overview" src="../_images/overview.png" style="width: 50%;" /></a>
 <figcaption>
-<p><span class="caption-text">High-level overview of the TileLang compilation flow.</span><a class="headerlink" href="#id1" title="Permalink to this image">#</a></p>
+<p><span class="caption-text">Figure 1: High-level overview of the TileLang compilation flow.</span><a class="headerlink" href="#id1" title="Permalink to this image">#</a></p>
 </figcaption>
 </figure>
 <p>In this tutorial, we introduce Level 2 with a matrix multiplication example in TileLang. We will walk through how to allocate shared memory, set up thread blocks, perform parallel copying, pipeline the computation, and invoke the tile-level GEMM intrinsic. We will then show how to compile and run the kernel in Python, comparing results and measuring performance.</p>
@@ -255,13 +257,12 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <ol class="arabic simple">
 <li><p>Balances high-level expressiveness (like TVM or Triton) with enough flexibility to control finer details when needed.</p></li>
 <li><p>Supports efficient code generation and scheduling for diverse hardware backends (NVIDIA GPUs, AMD GPUs, CPU, etc.).</p></li>
-<li><p>Simplifies scheduling and memory pipelines with built-in primitives (such as <cite>T.Pipelined</cite>, <cite>T.Parallel</cite>, <cite>T.gemm</cite>), yet retains options for expert-level tuning.</p></li>
+<li><p>Simplifies scheduling and memory pipelines with built-in primitives (such as <code class="docutils literal notranslate"><span class="pre">T.Pipelined</span></code>, <code class="docutils literal notranslate"><span class="pre">T.Parallel</span></code>, <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code>), yet retains options for expert-level tuning.</p></li>
 </ol>
 <p>While Level 1 in TileLang can be very comfortable for general users—since it requires no scheduling or hardware-specific knowledge—it can incur longer auto-tuning times and may not handle some complex kernel fusion patterns (e.g., Flash Attention) as easily. Level 3 gives you full control but demands more effort, similar to writing raw CUDA/HIP kernels. Level 2 thus strikes a balance for users who want to write portable and reasonably concise code while expressing important architectural hints.</p>
 </section>
 <section id="matrix-multiplication-example">
 <h2>Matrix Multiplication Example<a class="headerlink" href="#matrix-multiplication-example" title="Permalink to this heading">#</a></h2>
-<p>In this section, we demonstrate how to write a 2D-tiled matrix multiplication kernel at Level 2 in TileLang.</p>
 <figure class="align-center">
 <img alt="Matmul Example" src="../_images/MatmulExample.png" />
 </figure>
@@ -269,12 +270,12 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <h3>Basic Structure<a class="headerlink" href="#basic-structure" title="Permalink to this heading">#</a></h3>
 <p>Below is a simplified code snippet for a 1024 x 1024 x 1024 matrix multiplication. It uses:</p>
 <ul class="simple">
-<li><p><strong>`T.Kernel(…)`</strong> to initialize the thread block configuration (grid dimensions, block size, etc.).</p></li>
-<li><p><strong>`T.alloc_shared(…)`</strong> to allocate GPU shared memory.</p></li>
-<li><p><strong>`T.alloc_fragment(…)`</strong> to allocate a register fragment for accumulation.</p></li>
-<li><p><strong>`T.Pipelined(…)`</strong> to express software pipelining across the K dimension.</p></li>
-<li><p><strong>`T.Parallel(…)`</strong> to parallelize data copy loops.</p></li>
-<li><p><strong>`T.gemm(…)`</strong> to perform tile-level GEMM operations (which map to the appropriate backends, such as MMA instructions on NVIDIA GPUs).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">T.Kernel(...)</span></code></strong> to initialize the thread block configuration (grid dimensions, block size, etc.).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">T.alloc_shared(...)</span></code></strong> to allocate GPU shared memory.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">T.alloc_fragment(...)</span></code></strong> to allocate a register fragment for accumulation.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">T.Pipelined(...)</span></code></strong> to express software pipelining across the K dimension.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">T.Parallel(...)</span></code></strong> to parallelize data copy loops.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">T.gemm(...)</span></code></strong> to perform tile-level GEMM operations (which map to the appropriate backends, such as MMA instructions on NVIDIA GPUs).</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tilelang</span>
 <span class="kn">import</span> <span class="nn">tilelang.language</span> <span class="k">as</span> <span class="nn">T</span>
@@ -354,57 +355,60 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 </section>
 <section id="key-concepts">
 <h3>Key Concepts<a class="headerlink" href="#key-concepts" title="Permalink to this heading">#</a></h3>
-<ol class="arabic">
-<li><p><strong>Kernel Context</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Kernel Context</strong>:</p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">block_M</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span>
     <span class="o">...</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>This sets up the block grid dimensions based on <span class="math notranslate nohighlight">\(\lceil N / block\_N \rceil\)</span> and <span class="math notranslate nohighlight">\(\lceil M / block\_M \rceil\)</span>.</p></li>
-<li><p><cite>threads=128</cite> specifies that each thread block uses 128 threads. The compiler will infer how loops map to these threads.</p></li>
+<li><p>This sets up the block grid dimensions based on N/block_N and M/block_M.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">threads=128</span></code> specifies that each thread block uses 128 threads. The compiler will infer how loops map to these threads.</p></li>
 </ul>
 <figure class="align-center">
 <img alt="Parallel" src="../_images/Parallel.png" />
 </figure>
-</li>
-<li><p><strong>Shared &amp; Fragment Memory</strong>:</p>
+<ol class="arabic simple" start="2">
+<li><p><strong>Shared &amp; Fragment Memory</strong>:</p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
 <span class="n">B_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_K</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
 <span class="n">C_local</span>  <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">accum_dtype</span><span class="p">)</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><cite>T.alloc_shared</cite> allocates shared memory across the entire thread block.</p></li>
-<li><p><cite>T.alloc_fragment</cite> allocates register space for local accumulation. Though it is written as <cite>(block_M, block_N)</cite>, the compiler’s layout inference assigns slices of this space to each thread.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_shared</span></code> allocates shared memory across the entire thread block.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_fragment</span></code> allocates register space for local accumulation. Though it is written as <code class="docutils literal notranslate"><span class="pre">(block_M,</span> <span class="pre">block_N)</span></code>, the compiler’s layout inference assigns slices of this space to each thread.</p></li>
 </ul>
-</li>
-<li><p><strong>Software Pipelining</strong>:</p>
+<ol class="arabic simple" start="3">
+<li><p><strong>Software Pipelining</strong>:</p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">num_stages</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
     <span class="o">...</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><cite>T.Pipelined</cite> automatically arranges asynchronous copy and compute instructions to overlap memory operations with arithmetic.</p></li>
-<li><p>The argument <cite>num_stages=3</cite> indicates the pipeline depth.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T.Pipelined</span></code> automatically arranges asynchronous copy and compute instructions to overlap memory operations with arithmetic.</p></li>
+<li><p>The argument <code class="docutils literal notranslate"><span class="pre">num_stages=3</span></code> indicates the pipeline depth.</p></li>
 </ul>
-</li>
-</ol>
 <figure class="align-center">
 <img alt="Software Pipeline Inference" src="../_images/software_pipeline_inference.png" />
 </figure>
-<ol class="arabic" start="4">
-<li><p><strong>Parallel Copy</strong>:</p>
+<ol class="arabic simple" start="4">
+<li><p><strong>Parallel Copy</strong>:</p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_K</span><span class="p">,</span> <span class="n">block_N</span><span class="p">):</span>
     <span class="n">B_shared</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">block_K</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><cite>T.Parallel</cite> marks the loop for thread-level parallelization.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T.Parallel</span></code> marks the loop for thread-level parallelization.</p></li>
 <li><p>The compiler will map these loops to the available threads in the block.</p></li>
 </ul>
-</li>
-<li><p><strong>Tile-Level GEMM</strong>:</p>
+<ol class="arabic simple" start="5">
+<li><p><strong>Tile-Level GEMM</strong>:</p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -412,24 +416,23 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <li><p>A single call that performs a tile-level matrix multiplication using the specified buffers.</p></li>
 <li><p>Under the hood, for NVIDIA targets, it can use CUTLASS/Cute or WMMA instructions. On AMD GPUs, TileLang uses a separate HIP or composable kernel approach.</p></li>
 </ul>
-</li>
-<li><p><strong>Copying Back Results</strong>:</p>
+<ol class="arabic simple" start="6">
+<li><p><strong>Copying Back Results</strong>:</p></li>
+</ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">C_local</span><span class="p">,</span> <span class="n">C</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">])</span>
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>After computation, data in the local register fragment is written back to global memory.</p></li>
 </ul>
-</li>
-</ol>
 </section>
 </section>
 <section id="comparison-with-other-dsls">
 <h2>Comparison with Other DSLs<a class="headerlink" href="#comparison-with-other-dsls" title="Permalink to this heading">#</a></h2>
 <p>TileLang Level 2 is conceptually similar to Triton in that the user can control tiling and parallelization, while letting the compiler handle many low-level details. However, TileLang also:</p>
 <ul class="simple">
-<li><p>Allows explicit memory layout annotations (e.g. <cite>make_mma_swizzle_layout</cite>).</p></li>
-<li><p>Supports a flexible pipeline pass (<cite>T.Pipelined</cite>) that can be automatically inferred or manually defined.</p></li>
+<li><p>Allows explicit memory layout annotations (e.g. <code class="docutils literal notranslate"><span class="pre">make_mma_swizzle_layout</span></code>).</p></li>
+<li><p>Supports a flexible pipeline pass (<code class="docutils literal notranslate"><span class="pre">T.Pipelined</span></code>) that can be automatically inferred or manually defined.</p></li>
 <li><p>Enables mixing different levels in a single program—for example, you can write some parts of your kernel in Level 3 (thread primitives) for fine-grained PTX/inline-assembly and keep the rest in Level 2.</p></li>
 </ul>
 </section>
@@ -455,10 +458,10 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <li><p>We allocated shared memory and register fragments.</p></li>
 <li><p>We pipelined the loading and computation along the K dimension.</p></li>
 <li><p>We used parallel copying to efficiently load tiles from global memory.</p></li>
-<li><p>We invoked <cite>T.gemm</cite> to dispatch a tile-level matrix multiply.</p></li>
+<li><p>We invoked <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code> to dispatch a tile-level matrix multiply.</p></li>
 <li><p>We verified correctness against PyTorch and examined performance.</p></li>
 </ol>
-<p>By balancing high-level abstractions (like <cite>T.copy</cite>, <cite>T.Pipelined</cite>, <cite>T.gemm</cite>) with the ability to annotate layouts or drop to thread primitives (Level 3) when needed, TileLang can be both user-friendly and highly tunable. We encourage you to experiment with tile sizes, pipeline depths, or explicit scheduling to see how performance scales across different GPUs.</p>
+<p>By balancing high-level abstractions (like <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.Pipelined</span></code>, <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code>) with the ability to annotate layouts or drop to thread primitives (Level 3) when needed, TileLang can be both user-friendly and highly tunable. We encourage you to experiment with tile sizes, pipeline depths, or explicit scheduling to see how performance scales across different GPUs.</p>
 <p>For more advanced usage—including partial lowering, explicitly controlling thread primitives, or using inline assembly—you can explore Level 3. Meanwhile, for purely functional expressions and high-level scheduling auto-tuning, consider Level 1.</p>
 </section>
 <section id="further-resources">
@@ -557,6 +560,5 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
