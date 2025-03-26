@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -222,7 +222,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -230,6 +230,156 @@
         <article role="main">
           <section id="auto-tuning-techniques-for-performance-optimization">
 <h1>Auto-Tuning Techniques for Performance Optimization<a class="headerlink" href="#auto-tuning-techniques-for-performance-optimization" title="Permalink to this heading">#</a></h1>
+<div style="text-align: left;">
+<em>Author:</em> <a href="https://github.com/yyttt6">yyttt6</a>
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">#</a></h2>
+<p>Auto-tuning a Tile Language program involves three main steps:</p>
+<ol class="arabic simple">
+<li><p>Implement the target program using Tile Language with reserved optimization parameters</p></li>
+<li><p>​Provide candidate configurations through manual search or <a class="reference internal" href="#using-carver-to-auto-generate-candidate-configurations"><span class="xref myst">auto-generation using Carver</span></a></p></li>
+<li><p>Parallel compile and benchmark candidate configurations to identify the best performance</p></li>
+</ol>
+</section>
+<section id="matrix-multiplication-example">
+<h2>Matrix Multiplication Example<a class="headerlink" href="#matrix-multiplication-example" title="Permalink to this heading">#</a></h2>
+<p>The following example demonstrates auto-tuning matrix multiplication. Code has been simplified for readability - see <code class="docutils literal notranslate"><span class="pre">examples/gemm/example_gemm.py</span></code> for complete implementation.</p>
+<section id="step-1-implement-with-reserved-parameters">
+<h3>Step 1: Implement with Reserved Parameters<a class="headerlink" href="#step-1-implement-with-reserved-parameters" title="Permalink to this heading">#</a></h3>
+<p>Users can implement matrix multiplication in Tile Language while reserving parameters for optimization:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reserved parameters for optimization</span>
+<span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span>
+    <span class="n">block_M</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">block_N</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">block_K</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_stages</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">thread_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">enable_rasteration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span>
+    <span class="n">accum_dtype</span> <span class="o">=</span> <span class="s2">&quot;float&quot;</span>
+
+    <span class="c1"># Matrix multiplication implementation</span>
+    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+            <span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
+            <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
+            <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="c1"># ...existing code...</span>
+
+    <span class="k">return</span> <span class="n">main</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-generate-candidate-configurations">
+<h3>Step 2: Generate Candidate Configurations<a class="headerlink" href="#step-2-generate-candidate-configurations" title="Permalink to this heading">#</a></h3>
+<p>Manually define configurations or use combinatorial generation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">configs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;block_M&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="s2">&quot;block_N&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="s2">&quot;block_K&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;thread_num&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="s2">&quot;enable_rasteration&quot;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">},</span>
+        <span class="p">{</span>
+        <span class="s2">&quot;block_M&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;block_N&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;block_K&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;thread_num&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;enable_rasteration&quot;</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">},</span>
+    <span class="c1"># ...additional configurations...</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>It can also be given by combinatorial traversal of different parameters</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="n">block_M</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
+<span class="n">block_N</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
+<span class="n">block_K</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">]</span>
+<span class="n">num_stages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">thread_num</span> <span class="o">=</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
+<span class="n">enable_rasterization</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span>
+<span class="n">_configs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+    <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span>
+        <span class="n">block_M</span><span class="p">,</span>
+        <span class="n">block_N</span><span class="p">,</span>
+        <span class="n">block_K</span><span class="p">,</span>
+        <span class="n">num_stages</span><span class="p">,</span>
+        <span class="n">thread_num</span><span class="p">,</span>
+        <span class="n">enable_rasterization</span><span class="p">,</span>
+    <span class="p">))</span>
+
+<span class="n">configs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;block_M&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;block_N&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="s2">&quot;block_K&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="s2">&quot;thread_num&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+        <span class="s2">&quot;enable_rasteration&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="p">}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">_configs</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="step-3-compile-and-benchmark">
+<h3>Step 3: Compile and Benchmark<a class="headerlink" href="#step-3-compile-and-benchmark" title="Permalink to this heading">#</a></h3>
+<p>Configure JIT compilation and benchmarking settings:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">autotuner</span> <span class="o">=</span> <span class="n">AutoTuner</span><span class="o">.</span><span class="n">from_kernel</span><span class="p">(</span>
+    <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">get_configs</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">with_roller</span><span class="p">))</span><span class="o">.</span><span class="n">set_compile_args</span><span class="p">(</span>
+        <span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">supply_type</span><span class="o">=</span><span class="n">tl</span><span class="o">.</span><span class="n">TensorSupplyType</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+        <span class="n">ref_prog</span><span class="o">=</span><span class="n">ref_program</span><span class="p">,</span>
+        <span class="n">skip_check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">target</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">autotuner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">warmup</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">rep</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">out_c</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The result object contains optimized kernel implementation which can be used by users directly</p>
+</section>
+</section>
+<section id="using-carver-to-auto-generate-candidate-configurations">
+<h2>Using Carver to Auto-Generate Candidate Configurations<a class="headerlink" href="#using-carver-to-auto-generate-candidate-configurations" title="Permalink to this heading">#</a></h2>
+<p>Carver is a lightweight framework for generating and ranking tile configurations (also known as tiling strategies, blocking schemes, or scheduling hints) for common GPU, CPU, and accelerator backends. It helps you explore efficient mappings of loops for operations such as matrix multiplication, elementwise transforms, and other reduction-oriented kernels.</p>
+<p>or common operators, Carver provides pre-built templates (e.g., <code class="docutils literal notranslate"><span class="pre">MatmulTemplate</span></code>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Configure Matmul template</span>
+<span class="n">arch</span> <span class="o">=</span> <span class="n">CUDA</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+<span class="n">carve_template</span> <span class="o">=</span> <span class="n">MatmulTemplate</span><span class="p">(</span>
+    <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span>
+    <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span>
+    <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span>
+    <span class="n">in_dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span>
+    <span class="n">out_dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span>
+    <span class="n">accum_dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">with_arch</span><span class="p">(</span><span class="n">arch</span><span class="p">)</span>
+
+<span class="c1"># Generate top-k optimization hints (topk=10 recommended)</span>
+<span class="n">roller_hints</span> <span class="o">=</span> <span class="n">carve_template</span><span class="o">.</span><span class="n">recommend_hints</span><span class="p">(</span><span class="n">topk</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Configure candidate parameters</span>
+<span class="k">for</span> <span class="n">hint</span> <span class="ow">in</span> <span class="n">roller_hints</span><span class="p">:</span>
+
+    <span class="c1"># ...existing code...</span>
+
+    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;block_M&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block_m</span>
+    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;block_N&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block_n</span>
+    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;block_K&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">rstep</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;num_stages&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">pipeline_stage</span>
+    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;thread_num&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block_rows</span> <span class="o">*</span> <span class="n">block_cols</span> <span class="o">*</span> <span class="mi">32</span>
+    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;enable_rasteration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">rasterization_plan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoRasterization</span>
+
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -275,8 +425,34 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Auto-Tuning Techniques for Performance Optimization</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#matrix-multiplication-example">Matrix Multiplication Example</a><ul>
+<li><a class="reference internal" href="#step-1-implement-with-reserved-parameters">Step 1: Implement with Reserved Parameters</a></li>
+<li><a class="reference internal" href="#step-2-generate-candidate-configurations">Step 2: Generate Candidate Configurations</a></li>
+<li><a class="reference internal" href="#step-3-compile-and-benchmark">Step 3: Compile and Benchmark</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-carver-to-auto-generate-candidate-configurations">Using Carver to Auto-Generate Candidate Configurations</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
