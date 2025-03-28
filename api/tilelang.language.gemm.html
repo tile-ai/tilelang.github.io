@@ -403,9 +403,31 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.gemm.gemm">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm.</span></span><span class="sig-name descname"><span class="pre">gemm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Buffer</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Buffer</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Buffer</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.primitives.gemm.base.html#tilelang.primitives.gemm.base.GemmWarpPolicy" title="tilelang.primitives.gemm.base.GemmWarpPolicy"><span class="pre">GemmWarpPolicy</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">GemmWarpPolicy.Square</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_pack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wg_wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.gemm.gemm" title="Permalink to this definition">#</a></dt>
-<dd><dl class="simple">
-<dt>k_pack: int</dt><dd><p>The number of k dimension that is packed into a single warp.
-please ref to mfma macro generator for the detail information.</p>
+<dd><p>Perform a General Matrix Multiplication (GEMM) operation.</p>
+<p>This function computes C = A &#64; B where A and B can optionally be transposed.
+The operation supports various warp policies and accumulation modes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>Union</em><em>[</em><em>tir.Buffer</em><em>, </em><em>tir.Var</em><em>]</em>) – First input matrix</p></li>
+<li><p><strong>B</strong> (<em>Union</em><em>[</em><em>tir.Buffer</em><em>, </em><em>tir.Var</em><em>]</em>) – Second input matrix</p></li>
+<li><p><strong>C</strong> (<em>Union</em><em>[</em><em>tir.Buffer</em><em>, </em><em>tir.Var</em><em>]</em>) – Output matrix for results</p></li>
+<li><p><strong>transpose_A</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to transpose matrix A. Defaults to False.</p></li>
+<li><p><strong>transpose_B</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to transpose matrix B. Defaults to False.</p></li>
+<li><p><strong>policy</strong> (<a class="reference internal" href="tilelang.primitives.gemm.base.html#tilelang.primitives.gemm.base.GemmWarpPolicy" title="tilelang.primitives.gemm.base.GemmWarpPolicy"><em>GemmWarpPolicy</em></a><em>, </em><em>optional</em>) – Warp execution policy. Defaults to GemmWarpPolicy.Square.</p></li>
+<li><p><strong>clear_accum</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to clear accumulator before computation. Defaults to False.</p></li>
+<li><p><strong>k_pack</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of k dimensions packed into a single warp. Defaults to 1.</p></li>
+<li><p><strong>wg_wait</strong> (<em>int</em><em>, </em><em>optional</em>) – Warp group wait count. Defaults to 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the GEMM operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If the K dimensions of matrices A and B don’t match</p>
 </dd>
 </dl>
 </dd></dl>
