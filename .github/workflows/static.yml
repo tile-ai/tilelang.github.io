@@ -41,3 +41,30 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy-on-ali:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/server_key.pem
+        chmod 600 ~/.ssh/server_key.pem
+        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+    - name: Deploy via rsync
+      run: |
+        rsync -avz --delete \
+          -e "ssh -i ~/.ssh/server_key.pem -o StrictHostKeyChecking=no" \
+          ./ \ 
+          ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:/var/www/html/
+
+    - name: Reload web server
+      run: |
+        ssh -i ~/.ssh/server_key.pem \
+          ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }} \
+          "systemctl reload nginx"
