@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -178,13 +178,6 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="elementwise.html">ElementWise Operators</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">General Matrix-Vector Multiplication (GEMV)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#triton-implementation">Triton implementation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#naive-implementation-in-tilelang">Naive Implementation in TileLang</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#more-concurrency">More concurrency</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#vectorized-reads">Vectorized Reads</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#tvm-thread-allreduce-instead-of-atomicadd"><code class="docutils literal notranslate"><span class="pre">tvm_thread_allreduce</span></code> Instead of <code class="docutils literal notranslate"><span class="pre">atomicAdd</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#autotune">Autotune</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#conclusion">Conclusion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="matmul.html">General Matrix-Matrix Multiplication with Tile Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="matmul_dequant.html">General Matrix-Matrix Multiplication with Dequantization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="flash_attention.html">Flash Attention</a></li>
@@ -398,7 +391,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -406,6 +399,7 @@
         <article role="main">
           <section id="general-matrix-vector-multiplication-gemv">
 <h1>General Matrix-Vector Multiplication (GEMV)<a class="headerlink" href="#general-matrix-vector-multiplication-gemv" title="Permalink to this heading">#</a></h1>
+<p>===========================================</p>
 <div style="text-align: left;">
     <em>Contributor: </em> <a href="https://github.com/botbw">@botbw</a>
 </div>
@@ -419,9 +413,8 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <p>Example code can be found at <code class="docutils literal notranslate"><span class="pre">examples/gemv/example_gemv.py</span></code>.</p>
 </div>
 <p>General matrix-vector multiplication (GEMV) can be viewed as a specialized case of general matrix-matrix multiplication (GEMM). It plays a critical role in deep learning, especially during the inference phase of large language models. In this tutorial, we will optimize GEMV from a thread-level perspective step by step using <code class="docutils literal notranslate"><span class="pre">TileLang</span></code>.</p>
-</section>
 <section id="triton-implementation">
-<h1>Triton implementation<a class="headerlink" href="#triton-implementation" title="Permalink to this heading">#</a></h1>
+<h2>Triton Implementation<a class="headerlink" href="#triton-implementation" title="Permalink to this heading">#</a></h2>
 <p>When implementing a GEMV kernel, you might start with a high-level approach using a tool like <code class="docutils literal notranslate"><span class="pre">Triton</span></code>.</p>
 <p>A simple Triton kernel for GEMV might look like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@triton</span><span class="o">.</span><span class="n">jit</span>
@@ -443,7 +436,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <p><code class="docutils literal notranslate"><span class="pre">Triton</span></code> is straightforward to use, as it operates at the block level. However, this approach may not allow for fine-grained thread-level optimization. In this tutorial, we will demonstrate how to write an optimized GEMV kernel in <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> that exposes more low-level control.</p>
 </section>
 <section id="naive-implementation-in-tilelang">
-<h1>Naive Implementation in TileLang<a class="headerlink" href="#naive-implementation-in-tilelang" title="Permalink to this heading">#</a></h1>
+<h2>Naive Implementation in TileLang<a class="headerlink" href="#naive-implementation-in-tilelang" title="Permalink to this heading">#</a></h2>
 <p>If you have a basic understanding of CUDA C, it is natural to start with a naive GEMV kernel by adapting a GEMM tiling strategy. You can think of GEMV as a <code class="docutils literal notranslate"><span class="pre">(1,</span> <span class="pre">k)</span> <span class="pre">*</span> <span class="pre">(k,</span> <span class="pre">n)</span></code> GEMM. Below is a simple example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">naive_gemv</span><span class="p">(</span>
     <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -520,7 +513,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <p>At this level, we only gain very little computation power from our GPU with around <strong>~0.17 ms</strong> compared to torch/cuBLAS’s <strong>~0.008 ms</strong>, which is around 20x slower.</p>
 </section>
 <section id="more-concurrency">
-<h1>More concurrency<a class="headerlink" href="#more-concurrency" title="Permalink to this heading">#</a></h1>
+<h2>More Concurrency<a class="headerlink" href="#more-concurrency" title="Permalink to this heading">#</a></h2>
 <p>To further increase the concurrency of our kernel, we can exploit finer thread-level parallelism. Instead of assigning each thread to compute a single output element in C, you can introduce parallelism along the K dimension. Each thread computes a partial accumulation, and you then combine these partial results. This approach requires primitives like <code class="docutils literal notranslate"><span class="pre">atomicAdd</span></code> in CUDA.</p>
 <p>Here’s a simplified version:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">naive_splitk_gemv</span><span class="p">(</span>
@@ -560,7 +553,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 </div>
 <p>By introducing parallelism along K dimension, our kernel now achieves <strong>~0.024 ms</strong>, an improvement, but still not on par with torch/cuBLAS.</p>
 <section id="customizing-parallelism-in-k-dimension">
-<h2>Customizing Parallelism in K Dimension<a class="headerlink" href="#customizing-parallelism-in-k-dimension" title="Permalink to this heading">#</a></h2>
+<h3>Customizing Parallelism in K Dimension<a class="headerlink" href="#customizing-parallelism-in-k-dimension" title="Permalink to this heading">#</a></h3>
 <p>If your K dimension is large, you can further customize how many elements each thread processes by introducing a <code class="docutils literal notranslate"><span class="pre">reduce_threads</span></code> parameter. This way, each thread handles multiple elements per iteration:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">splitk_gemv</span><span class="p">(</span>
     <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -604,8 +597,8 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 </section>
 </section>
 <section id="vectorized-reads">
-<h1>Vectorized Reads<a class="headerlink" href="#vectorized-reads" title="Permalink to this heading">#</a></h1>
-<p>GEMV is less computation intensive than GEMM as the computation intensity and memory throuput will be the optimization bottleneck. One effective strategy is to use vectorized load/store operations (e.g., <code class="docutils literal notranslate"><span class="pre">float2</span></code>, <code class="docutils literal notranslate"><span class="pre">float4</span></code>). In <code class="docutils literal notranslate"><span class="pre">TileLang</span></code>, you can specify vectorized operations via <code class="docutils literal notranslate"><span class="pre">T.vectorized</span></code>:</p>
+<h2>Vectorized Reads<a class="headerlink" href="#vectorized-reads" title="Permalink to this heading">#</a></h2>
+<p>GEMV is less computation intensive than GEMM as the computation intensity and memory throughput will be the optimization bottleneck. One effective strategy is to use vectorized load/store operations (e.g., <code class="docutils literal notranslate"><span class="pre">float2</span></code>, <code class="docutils literal notranslate"><span class="pre">float4</span></code>). In <code class="docutils literal notranslate"><span class="pre">TileLang</span></code>, you can specify vectorized operations via <code class="docutils literal notranslate"><span class="pre">T.vectorized</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">splitk_gemv_vectorized</span><span class="p">(</span>
     <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">K</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -649,7 +642,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <p>With vectorized read, now the kernel finishs in <strong>~0.0084 ms</strong>, which is getting close to cuBLAS performance.</p>
 </section>
 <section id="tvm-thread-allreduce-instead-of-atomicadd">
-<h1><code class="docutils literal notranslate"><span class="pre">tvm_thread_allreduce</span></code> Instead of <code class="docutils literal notranslate"><span class="pre">atomicAdd</span></code><a class="headerlink" href="#tvm-thread-allreduce-instead-of-atomicadd" title="Permalink to this heading">#</a></h1>
+<h2><code class="docutils literal notranslate"><span class="pre">tvm_thread_allreduce</span></code> Instead of <code class="docutils literal notranslate"><span class="pre">atomicAdd</span></code><a class="headerlink" href="#tvm-thread-allreduce-instead-of-atomicadd" title="Permalink to this heading">#</a></h2>
 <p><a class="reference external" href="https://tvm.apache.org/docs/reference/api/python/tir/tir.html#tvm.tir.tvm_thread_allreduce"><code class="docutils literal notranslate"><span class="pre">tvm_thread_allreduce</span></code></a> has implemented optimization when making an all-reduce across a number of threads, which should outperfrom out plain smem + <code class="docutils literal notranslate"><span class="pre">atomidAdd</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">splitk_gemv_vectorized_tvm</span><span class="p">(</span>
     <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -707,7 +700,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <p>With this optimization, the kernel latency now reduces from <strong>~0.0084 ms</strong> to <strong>~0.0069 ms</strong>, which is faster than torch/cuBLAS!</p>
 </section>
 <section id="autotune">
-<h1>Autotune<a class="headerlink" href="#autotune" title="Permalink to this heading">#</a></h1>
+<h2>Autotune<a class="headerlink" href="#autotune" title="Permalink to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">BLOCK_N</span></code>, <code class="docutils literal notranslate"><span class="pre">BLOCK_K</span></code>, <code class="docutils literal notranslate"><span class="pre">reduce_threads</span></code> are hyperparameters in our kernel, which can be tuned to improve performance. We can use the <code class="docutils literal notranslate"><span class="pre">tilelang.autotune</span></code> feature to automatically search for optimal configurations:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_best_config</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">):</span>
 
@@ -838,9 +831,9 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <p>This corresponds closely to our <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> program, with necessary synchronization and low-level optimizations inserted automatically.</p>
 </section>
 <section id="conclusion">
-<h1>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this heading">#</a></h1>
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this heading">#</a></h2>
 <section id="benchmark-table-on-hopper-gpu">
-<h2>Benchmark Table on Hopper GPU<a class="headerlink" href="#benchmark-table-on-hopper-gpu" title="Permalink to this heading">#</a></h2>
+<h3>Benchmark Table on Hopper GPU<a class="headerlink" href="#benchmark-table-on-hopper-gpu" title="Permalink to this heading">#</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -872,6 +865,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 </div>
 <p>Triton Time: 0.0077344514429569244
 In this tutorial, we implemented a simple GEMV kernel and learn that <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> exposes low level control to user such as thread-level programming and CUDA primitives.</p>
+</section>
 </section>
 </section>
 
@@ -918,8 +912,39 @@ In this tutorial, we implemented a simple GEMV kernel and learn that <code class
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">General Matrix-Vector Multiplication (GEMV)</a><ul>
+<li><a class="reference internal" href="#triton-implementation">Triton Implementation</a></li>
+<li><a class="reference internal" href="#naive-implementation-in-tilelang">Naive Implementation in TileLang</a></li>
+<li><a class="reference internal" href="#more-concurrency">More Concurrency</a><ul>
+<li><a class="reference internal" href="#customizing-parallelism-in-k-dimension">Customizing Parallelism in K Dimension</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vectorized-reads">Vectorized Reads</a></li>
+<li><a class="reference internal" href="#tvm-thread-allreduce-instead-of-atomicadd"><code class="docutils literal notranslate"><span class="pre">tvm_thread_allreduce</span></code> Instead of <code class="docutils literal notranslate"><span class="pre">atomicAdd</span></code></a></li>
+<li><a class="reference internal" href="#autotune">Autotune</a></li>
+<li><a class="reference internal" href="#conclusion">Conclusion</a><ul>
+<li><a class="reference internal" href="#benchmark-table-on-hopper-gpu">Benchmark Table on Hopper GPU</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
