@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -391,14 +391,236 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-jit-adapter-wrapper-module">
-<h1>tilelang.jit.adapter.wrapper module<a class="headerlink" href="#tilelang-jit-adapter-wrapper-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.jit.adapter.wrapper">
+<span id="tilelang-jit-adapter-wrapper-module"></span><h1>tilelang.jit.adapter.wrapper module<a class="headerlink" href="#module-tilelang.jit.adapter.wrapper" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.BaseWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">BaseWrapper</span></span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.BaseWrapper" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.BaseWrapper.wrap">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.BaseWrapper.wrap" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">TLCPUSourceWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scheduled_ir_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IRModule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.CALL_PREFIX">
+<span class="sig-name descname"><span class="pre">CALL_PREFIX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\n#ifdef</span> <span class="pre">__cplusplus\nextern</span> <span class="pre">&quot;C&quot;\n#endif\nint32_t</span> <span class="pre">call({})</span> <span class="pre">{{\n</span>&#160; <span class="pre">return</span> <span class="pre">{};\n}}\n'</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.CALL_PREFIX" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.INIT_FUNC">
+<span class="sig-name descname"><span class="pre">INIT_FUNC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\n#ifdef</span> <span class="pre">__cplusplus\nextern</span> <span class="pre">&quot;C&quot;\n#endif\nint32_t</span> <span class="pre">init()</span> <span class="pre">{\n</span>&#160;&#160;&#160; <span class="pre">return</span> <span class="pre">0;\n}\n'</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.INIT_FUNC" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.backend">
+<span class="sig-name descname"><span class="pre">backend</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tl'</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.backend" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.create_call_func">
+<span class="sig-name descname"><span class="pre">create_call_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_informations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.create_call_func" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.device_mod">
+<span class="sig-name descname"><span class="pre">device_mod</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.device_mod" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.get_cpu_init_func">
+<span class="sig-name descname"><span class="pre">get_cpu_init_func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.get_cpu_init_func" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.get_dynamic_symbolic_set">
+<span class="sig-name descname"><span class="pre">get_dynamic_symbolic_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim_func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.get_dynamic_symbolic_set" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.host_mod">
+<span class="sig-name descname"><span class="pre">host_mod</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.host_mod" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.parse_source_information">
+<span class="sig-name descname"><span class="pre">parse_source_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.parse_source_information" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.pass_configs">
+<span class="sig-name descname"><span class="pre">pass_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.pass_configs" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.prim_func">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prim_func</span></span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.prim_func" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.update_lib_code">
+<span class="sig-name descname"><span class="pre">update_lib_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.update_lib_code" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">TLCUDASourceWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scheduled_ir_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IRModule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.backend">
+<span class="sig-name descname"><span class="pre">backend</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tl'</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.backend" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.create_dispatch_func">
+<span class="sig-name descname"><span class="pre">create_dispatch_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_informations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.create_dispatch_func" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.device_mod">
+<span class="sig-name descname"><span class="pre">device_mod</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.device_mod" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.generate_tma_descriptor_args">
+<span class="sig-name descname"><span class="pre">generate_tma_descriptor_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">desc_name_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.generate_tma_descriptor_args" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.get_dynamic_symbolic_set">
+<span class="sig-name descname"><span class="pre">get_dynamic_symbolic_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim_func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.get_dynamic_symbolic_set" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.get_init_func">
+<span class="sig-name descname"><span class="pre">get_init_func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.get_init_func" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.get_stream_type">
+<span class="sig-name descname"><span class="pre">get_stream_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.get_stream_type" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.host_mod">
+<span class="sig-name descname"><span class="pre">host_mod</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.host_mod" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.is_tma_descriptor_arg">
+<span class="sig-name descname"><span class="pre">is_tma_descriptor_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.is_tma_descriptor_arg" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.parse_source_information">
+<span class="sig-name descname"><span class="pre">parse_source_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.parse_source_information" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.pass_configs">
+<span class="sig-name descname"><span class="pre">pass_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.pass_configs" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.prim_func">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prim_func</span></span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.prim_func" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.update_lib_code">
+<span class="sig-name descname"><span class="pre">update_lib_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.update_lib_code" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLHIPSourceWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">TLHIPSourceWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scheduled_ir_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IRModule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLHIPSourceWrapper" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper" title="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">TLCUDASourceWrapper</span></code></a></p>
+<p>A wrapper class for the TileLang HIP backend.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLHIPSourceWrapper.get_init_func">
+<span class="sig-name descname"><span class="pre">get_init_func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLHIPSourceWrapper.get_init_func" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLHIPSourceWrapper.get_stream_type">
+<span class="sig-name descname"><span class="pre">get_stream_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLHIPSourceWrapper.get_stream_type" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">TLWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tilelang.jit.adapter.wrapper.BaseWrapper" title="tilelang.jit.adapter.wrapper.BaseWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a></p>
+<p>A wrapper class for the TileLang backend.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper.assign_device_module">
+<span class="sig-name descname"><span class="pre">assign_device_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IRModule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper.assign_device_module" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper.assign_host_module">
+<span class="sig-name descname"><span class="pre">assign_host_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IRModule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper.assign_host_module" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper.assign_optimized_module">
+<span class="sig-name descname"><span class="pre">assign_optimized_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scheduled_ir_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IRModule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper.assign_optimized_module" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper.assign_pass_configs">
+<span class="sig-name descname"><span class="pre">assign_pass_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper.assign_pass_configs" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper.device_mod">
+<span class="sig-name descname"><span class="pre">device_mod</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper.device_mod" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper.host_mod">
+<span class="sig-name descname"><span class="pre">host_mod</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper.host_mod" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper.lib">
+<span class="sig-name descname"><span class="pre">lib</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper.lib" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper.pass_configs">
+<span class="sig-name descname"><span class="pre">pass_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper.pass_configs" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper.target">
+<span class="sig-name descname"><span class="pre">target</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Target</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper.target" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLWrapper.wrap">
+<span class="sig-name descname"><span class="pre">wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLWrapper.wrap" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -444,8 +666,79 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.jit.adapter.wrapper module</a><ul>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.BaseWrapper"><code class="docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.BaseWrapper.wrap"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.wrap()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.CALL_PREFIX"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.CALL_PREFIX</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.INIT_FUNC"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.INIT_FUNC</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.backend"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.backend</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.create_call_func"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.create_call_func()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.device_mod"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.device_mod</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.get_cpu_init_func"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.get_cpu_init_func()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.get_dynamic_symbolic_set"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.get_dynamic_symbolic_set()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.host_mod"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.host_mod</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.parse_source_information"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.parse_source_information()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.pass_configs"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.pass_configs</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.prim_func"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.prim_func</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.update_lib_code"><code class="docutils literal notranslate"><span class="pre">TLCPUSourceWrapper.update_lib_code()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.backend"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.backend</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.create_dispatch_func"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.create_dispatch_func()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.device_mod"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.device_mod</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.generate_tma_descriptor_args"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.generate_tma_descriptor_args()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.get_dynamic_symbolic_set"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.get_dynamic_symbolic_set()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.get_init_func"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.get_init_func()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.get_stream_type"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.get_stream_type()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.host_mod"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.host_mod</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.is_tma_descriptor_arg"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.is_tma_descriptor_arg()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.parse_source_information"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.parse_source_information()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.pass_configs"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.pass_configs</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.prim_func"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.prim_func</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.update_lib_code"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.update_lib_code()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLHIPSourceWrapper"><code class="docutils literal notranslate"><span class="pre">TLHIPSourceWrapper</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLHIPSourceWrapper.get_init_func"><code class="docutils literal notranslate"><span class="pre">TLHIPSourceWrapper.get_init_func()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLHIPSourceWrapper.get_stream_type"><code class="docutils literal notranslate"><span class="pre">TLHIPSourceWrapper.get_stream_type()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper"><code class="docutils literal notranslate"><span class="pre">TLWrapper</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper.assign_device_module"><code class="docutils literal notranslate"><span class="pre">TLWrapper.assign_device_module()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper.assign_host_module"><code class="docutils literal notranslate"><span class="pre">TLWrapper.assign_host_module()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper.assign_optimized_module"><code class="docutils literal notranslate"><span class="pre">TLWrapper.assign_optimized_module()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper.assign_pass_configs"><code class="docutils literal notranslate"><span class="pre">TLWrapper.assign_pass_configs()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper.device_mod"><code class="docutils literal notranslate"><span class="pre">TLWrapper.device_mod</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper.host_mod"><code class="docutils literal notranslate"><span class="pre">TLWrapper.host_mod</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper.lib"><code class="docutils literal notranslate"><span class="pre">TLWrapper.lib</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper.pass_configs"><code class="docutils literal notranslate"><span class="pre">TLWrapper.pass_configs</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper.target"><code class="docutils literal notranslate"><span class="pre">TLWrapper.target</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLWrapper.wrap"><code class="docutils literal notranslate"><span class="pre">TLWrapper.wrap()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

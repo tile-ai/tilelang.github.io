@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -391,14 +391,55 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-utils-target-module">
-<h1>tilelang.utils.target module<a class="headerlink" href="#tilelang-utils-target-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.utils.target">
+<span id="tilelang-utils-target-module"></span><h1>tilelang.utils.target module<a class="headerlink" href="#module-tilelang.utils.target" title="Permalink to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.check_cuda_availability">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">check_cuda_availability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.utils.target.check_cuda_availability" title="Permalink to this definition">#</a></dt>
+<dd><p>Check if CUDA is available on the system by locating the CUDA path.
+:returns: True if CUDA is available, False otherwise.
+:rtype: bool</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.check_hip_availability">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">check_hip_availability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.utils.target.check_hip_availability" title="Permalink to this definition">#</a></dt>
+<dd><p>Check if HIP (ROCm) is available on the system by locating the ROCm path.
+:returns: True if HIP is available, False otherwise.
+:rtype: bool</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.determine_target">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">determine_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Target</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'auto'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Target</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.utils.target.determine_target" title="Permalink to this definition">#</a></dt>
+<dd><p>Determine the appropriate target for compilation (CUDA, HIP, or manual selection).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Target</em><em>, </em><em>Literal</em><em>[</em><em>&quot;auto&quot;</em><em>]</em><em>]</em>) – User-specified target.
+- If “auto”, the system will automatically detect whether CUDA or HIP is available.
+- If a string or Target, it is directly validated.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The selected target (“cuda”, “hip”, or a valid Target object).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Union[str, Target]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If no CUDA or HIP is available and the target is “auto”.</p></li>
+<li><p><strong>AssertionError</strong> – If the target is invalid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -444,8 +485,29 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.utils.target module</a><ul>
+<li><a class="reference internal" href="#tilelang.utils.target.check_cuda_availability"><code class="docutils literal notranslate"><span class="pre">check_cuda_availability()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.check_hip_availability"><code class="docutils literal notranslate"><span class="pre">check_hip_availability()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.determine_target"><code class="docutils literal notranslate"><span class="pre">determine_target()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

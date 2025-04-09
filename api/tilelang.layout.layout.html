@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -391,14 +391,108 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-layout-layout-module">
-<h1>tilelang.layout.layout module<a class="headerlink" href="#tilelang-layout-layout-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.layout.layout">
+<span id="tilelang-layout-layout-module"></span><h1>tilelang.layout.layout module<a class="headerlink" href="#module-tilelang.layout.layout" title="Permalink to this heading">#</a></h1>
+<p>Wrapping Layouts.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.layout.layout.Layout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.layout.layout.</span></span><span class="sig-name descname"><span class="pre">Layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward_fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.layout.Layout" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.layout.Layout.get_forward_vars">
+<span class="sig-name descname"><span class="pre">get_forward_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.layout.Layout.get_forward_vars" title="Permalink to this definition">#</a></dt>
+<dd><p>Retrieve the iteration variables associated with the layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of iteration variables that define the layout transformation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[IterVar]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.layout.Layout.get_input_shape">
+<span class="sig-name descname"><span class="pre">get_input_shape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.layout.Layout.get_input_shape" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the input shape of the layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The shape of the input layout.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.layout.Layout.get_output_shape">
+<span class="sig-name descname"><span class="pre">get_output_shape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.layout.Layout.get_output_shape" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the output shape of the layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The shape of the output layout.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.layout.layout.Layout.index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">index</span></span><a class="headerlink" href="#tilelang.layout.layout.Layout.index" title="Permalink to this definition">#</a></dt>
+<dd><p>Property to retrieve the forward index of the layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The computed forward index expression(s).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>PrimExpr or List[PrimExpr]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.layout.Layout.inverse">
+<span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.layout.layout.Layout" title="tilelang.layout.layout.Layout"><span class="pre">Layout</span></a></span></span><a class="headerlink" href="#tilelang.layout.layout.Layout.inverse" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the inverse of the current layout transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new Layout object representing the inverse transformation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.layout.Layout" title="tilelang.layout.layout.Layout">Layout</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.layout.Layout.map_forward_index">
+<span class="sig-name descname"><span class="pre">map_forward_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimExpr</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PrimExpr</span></span></span><a class="headerlink" href="#tilelang.layout.layout.Layout.map_forward_index" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the forward index mapping for a given set of input indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>indices</strong> (<em>list</em><em> of </em><em>PrimExpr</em>) – The input indices to be mapped to their corresponding output indices.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mapped index expression for the provided input indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -444,8 +538,35 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.layout.layout module</a><ul>
+<li><a class="reference internal" href="#tilelang.layout.layout.Layout"><code class="docutils literal notranslate"><span class="pre">Layout</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.layout.layout.Layout.get_forward_vars"><code class="docutils literal notranslate"><span class="pre">Layout.get_forward_vars()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.layout.Layout.get_input_shape"><code class="docutils literal notranslate"><span class="pre">Layout.get_input_shape()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.layout.Layout.get_output_shape"><code class="docutils literal notranslate"><span class="pre">Layout.get_output_shape()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.layout.Layout.index"><code class="docutils literal notranslate"><span class="pre">Layout.index</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.layout.Layout.inverse"><code class="docutils literal notranslate"><span class="pre">Layout.inverse()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.layout.Layout.map_forward_index"><code class="docutils literal notranslate"><span class="pre">Layout.map_forward_index()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

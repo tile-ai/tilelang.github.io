@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -391,14 +391,148 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-jit-adapter-cython-adapter-module">
-<h1>tilelang.jit.adapter.cython.adapter module<a class="headerlink" href="#tilelang-jit-adapter-cython-adapter-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.jit.adapter.cython.adapter">
+<span id="tilelang-jit-adapter-cython-adapter-module"></span><h1>tilelang.jit.adapter.cython.adapter module<a class="headerlink" href="#module-tilelang.jit.adapter.cython.adapter" title="Permalink to this heading">#</a></h1>
+<p>The profiler and convert to torch utils</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.cython.adapter.</span></span><span class="sig-name descname"><span class="pre">CythonKernelAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tilelang.engine.param.html#tilelang.engine.param.KernelParam" title="tilelang.engine.param.KernelParam"><span class="pre">KernelParam</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Target</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_or_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimFunc</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_global_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="tilelang.jit.adapter.base.html#tilelang.jit.adapter.base.BaseKernelAdapter" title="tilelang.jit.adapter.base.BaseKernelAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseKernelAdapter</span></code></a></p>
+<p>Adapter class that converts TVM/TIR functions to callable CUDA kernels using ctypes.</p>
+<p>This adapter handles:
+1. Converting TIR functions to compiled CUDA libraries
+2. Managing dynamic shapes in tensor operations
+3. Wrapping C++ kernels for Python/PyTorch usage</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.buffer_device_map">
+<span class="sig-name descname"><span class="pre">buffer_device_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Var</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.device</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.buffer_device_map" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.buffer_dtype_map">
+<span class="sig-name descname"><span class="pre">buffer_dtype_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Var</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.buffer_dtype_map" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.dynamic_symbolic_map">
+<span class="sig-name descname"><span class="pre">dynamic_symbolic_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Var</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.dynamic_symbolic_map" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.from_database">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">TensorType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_or_mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimFunc</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_global_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_lib_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.from_database" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.get_kernel_source">
+<span class="sig-name descname"><span class="pre">get_kernel_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.get_kernel_source" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the source code of the compiled kernel.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.ir_module">
+<span class="sig-name descname"><span class="pre">ir_module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">IRModule</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.ir_module" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.is_dynamic">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_dynamic</span></span><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.is_dynamic" title="Permalink to this definition">#</a></dt>
+<dd><p>Indicates whether the kernel handles dynamic shapes.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.kernel_global_source">
+<span class="sig-name descname"><span class="pre">kernel_global_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.kernel_global_source" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.lib">
+<span class="sig-name descname"><span class="pre">lib</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">CDLL</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.lib" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.lib_code">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lib_code</span></span><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.lib_code" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the code of the compiled library.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.libpath">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">libpath</span></span><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.libpath" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the path to the compiled library.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.pass_configs">
+<span class="sig-name descname"><span class="pre">pass_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.pass_configs" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.prim_func">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prim_func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">PrimFunc</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.prim_func" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the primary TIR function from the IR module.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.ptr_map">
+<span class="sig-name descname"><span class="pre">ptr_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.ptr_map" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.srcpath">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">srcpath</span></span><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.srcpath" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the source path of the compiled library.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.static_shape_map">
+<span class="sig-name descname"><span class="pre">static_shape_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Var</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.static_shape_map" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.target">
+<span class="sig-name descname"><span class="pre">target</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Target</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cuda'</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.target" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.wrapped_source">
+<span class="sig-name descname"><span class="pre">wrapped_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.wrapped_source" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.get_cache_dir">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.cython.adapter.</span></span><span class="sig-name descname"><span class="pre">get_cache_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.get_cache_dir" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the cache directory for the current Python version.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.get_cached_lib">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.cython.adapter.</span></span><span class="sig-name descname"><span class="pre">get_cached_lib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">CDLL</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.get_cached_lib" title="Permalink to this definition">#</a></dt>
+<dd><p>Try to load cached library or return None if not found.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cython.adapter.get_cython_compiler">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.cython.adapter.</span></span><span class="sig-name descname"><span class="pre">get_cython_compiler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.jit.adapter.cython.adapter.get_cython_compiler" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the path to the Cython compiler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>out</strong> – The path to the Cython compiler, or None if none was found.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -444,8 +578,50 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.jit.adapter.cython.adapter module</a><ul>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.buffer_device_map"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.buffer_device_map</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.buffer_dtype_map"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.buffer_dtype_map</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.dynamic_symbolic_map"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.dynamic_symbolic_map</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.from_database"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.from_database()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.get_kernel_source"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.get_kernel_source()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.ir_module"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.ir_module</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.is_dynamic"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.is_dynamic</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.kernel_global_source"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.kernel_global_source</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.lib"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.lib</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.lib_code"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.lib_code</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.libpath"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.libpath</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.pass_configs"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.pass_configs</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.prim_func"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.prim_func</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.ptr_map"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.ptr_map</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.srcpath"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.srcpath</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.static_shape_map"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.static_shape_map</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.target"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.target</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.CythonKernelAdapter.wrapped_source"><code class="docutils literal notranslate"><span class="pre">CythonKernelAdapter.wrapped_source</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.get_cache_dir"><code class="docutils literal notranslate"><span class="pre">get_cache_dir()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.get_cached_lib"><code class="docutils literal notranslate"><span class="pre">get_cached_lib()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cython.adapter.get_cython_compiler"><code class="docutils literal notranslate"><span class="pre">get_cython_compiler()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

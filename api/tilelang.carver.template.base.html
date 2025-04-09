@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -391,14 +391,223 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-carver-template-base-module">
-<h1>tilelang.carver.template.base module<a class="headerlink" href="#tilelang-carver-template-base-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.carver.template.base">
+<span id="tilelang-carver-template-base-module"></span><h1>tilelang.carver.template.base module<a class="headerlink" href="#module-tilelang.carver.template.base" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.carver.template.base.</span></span><span class="sig-name descname"><span class="pre">BaseTemplate</span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class template for hardware-aware configurations.
+This serves as an abstract base class (ABC) that defines the structure
+for subclasses implementing hardware-specific optimizations.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.arch">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">arch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="tilelang.carver.arch.arch_base.html#tilelang.carver.arch.arch_base.TileDevice" title="tilelang.carver.arch.arch_base.TileDevice"><span class="pre">TileDevice</span></a></em><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.arch" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the current architecture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The architecture of this template.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="tilelang.carver.arch.arch_base.html#tilelang.carver.arch.arch_base.TileDevice" title="tilelang.carver.arch.arch_base.TileDevice">TileDevice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.equivalent_function">
+<span class="sig-name descname"><span class="pre">equivalent_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PrimFunc</span></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.equivalent_function" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the function associated with this template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The stored function.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>PrimFunc</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.get_hardware_aware_configs">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_hardware_aware_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tilelang.carver.arch.arch_base.html#tilelang.carver.arch.arch_base.TileDevice" title="tilelang.carver.arch.arch_base.TileDevice"><span class="pre">TileDevice</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topk</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.Hint" title="tilelang.carver.roller.hint.Hint"><span class="pre">Hint</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.get_hardware_aware_configs" title="Permalink to this definition">#</a></dt>
+<dd><p>Abstract method that must be implemented by subclasses.
+It should return a list of hardware-aware configurations (hints)
+based on the specified architecture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arch</strong> (<a class="reference internal" href="tilelang.carver.arch.arch_base.html#tilelang.carver.arch.arch_base.TileDevice" title="tilelang.carver.arch.arch_base.TileDevice"><em>TileDevice</em></a><em>, </em><em>optional</em>) – The target architecture. Defaults to None.</p></li>
+<li><p><strong>topk</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of top configurations to return. Defaults to 10.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of recommended hardware-aware configurations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.Hint" title="tilelang.carver.roller.hint.Hint">Hint</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.has_arch">
+<span class="sig-name descname"><span class="pre">has_arch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.has_arch" title="Permalink to this definition">#</a></dt>
+<dd><p>Checks whether the architecture is set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the architecture is set, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.initialize_function">
+<span class="sig-name descname"><span class="pre">initialize_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.initialize_function" title="Permalink to this definition">#</a></dt>
+<dd><p>Placeholder method that should be implemented by subclasses.
+This method is responsible for initializing the function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – If not implemented in the subclass.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.is_ampere_arch">
+<span class="sig-name descname"><span class="pre">is_ampere_arch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.is_ampere_arch" title="Permalink to this definition">#</a></dt>
+<dd><p>Checks if the current architecture is an Ampere architecture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the architecture is Ampere, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.is_cdna_arch">
+<span class="sig-name descname"><span class="pre">is_cdna_arch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.is_cdna_arch" title="Permalink to this definition">#</a></dt>
+<dd><p>Checks if the current architecture is a CDNA architecture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the architecture is CDNA, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.is_volta_arch">
+<span class="sig-name descname"><span class="pre">is_volta_arch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.is_volta_arch" title="Permalink to this definition">#</a></dt>
+<dd><p>Checks if the current architecture is a Volta architecture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the architecture is Volta, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.output_nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tilelang.carver.roller.node.html#tilelang.carver.roller.node.OutputNode" title="tilelang.carver.roller.node.OutputNode"><span class="pre">OutputNode</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.output_nodes" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the output nodes associated with this template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The output nodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="tilelang.carver.roller.node.html#tilelang.carver.roller.node.OutputNode" title="tilelang.carver.roller.node.OutputNode">OutputNode</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.recommend_hints">
+<span class="sig-name descname"><span class="pre">recommend_hints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topk</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.Hint" title="tilelang.carver.roller.hint.Hint"><span class="pre">Hint</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.recommend_hints" title="Permalink to this definition">#</a></dt>
+<dd><p>Provides a list of recommended hardware-aware configurations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>topk</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of top configurations to return. Defaults to 10.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of recommended configurations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.Hint" title="tilelang.carver.roller.hint.Hint">Hint</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.set_function">
+<span class="sig-name descname"><span class="pre">set_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PrimFunc</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate" title="tilelang.carver.template.base.BaseTemplate"><span class="pre">BaseTemplate</span></a></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.set_function" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the function for this template and returns itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>PrimFunc</em>) – The function to associate with this template.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The instance with the updated function.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate" title="tilelang.carver.template.base.BaseTemplate">BaseTemplate</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.set_output_nodes">
+<span class="sig-name descname"><span class="pre">set_output_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tilelang.carver.roller.node.html#tilelang.carver.roller.node.OutputNode" title="tilelang.carver.roller.node.OutputNode"><span class="pre">OutputNode</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate" title="tilelang.carver.template.base.BaseTemplate"><span class="pre">BaseTemplate</span></a></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.set_output_nodes" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the output nodes for this template and returns itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_nodes</strong> (<em>List</em><em>[</em><a class="reference internal" href="tilelang.carver.roller.node.html#tilelang.carver.roller.node.OutputNode" title="tilelang.carver.roller.node.OutputNode"><em>OutputNode</em></a><em>]</em>) – The output nodes to associate with this template.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The instance with the updated output nodes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate" title="tilelang.carver.template.base.BaseTemplate">BaseTemplate</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.base.BaseTemplate.with_arch">
+<span class="sig-name descname"><span class="pre">with_arch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.carver.arch.arch_base.html#tilelang.carver.arch.arch_base.TileDevice" title="tilelang.carver.arch.arch_base.TileDevice"><span class="pre">TileDevice</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate" title="tilelang.carver.template.base.BaseTemplate"><span class="pre">BaseTemplate</span></a></span></span><a class="headerlink" href="#tilelang.carver.template.base.BaseTemplate.with_arch" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the architecture for this template and returns itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arch</strong> (<a class="reference internal" href="tilelang.carver.arch.arch_base.html#tilelang.carver.arch.arch_base.TileDevice" title="tilelang.carver.arch.arch_base.TileDevice"><em>TileDevice</em></a>) – The architecture to set.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The instance with the updated architecture.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate" title="tilelang.carver.template.base.BaseTemplate">BaseTemplate</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -444,8 +653,42 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.carver.template.base module</a><ul>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate"><code class="docutils literal notranslate"><span class="pre">BaseTemplate</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.arch"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.arch</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.equivalent_function"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.equivalent_function()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.get_hardware_aware_configs"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.get_hardware_aware_configs()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.has_arch"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.has_arch()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.initialize_function"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.initialize_function()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.is_ampere_arch"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.is_ampere_arch()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.is_cdna_arch"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.is_cdna_arch()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.is_volta_arch"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.is_volta_arch()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.output_nodes"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.output_nodes</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.recommend_hints"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.recommend_hints()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.set_function"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.set_function()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.set_output_nodes"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.set_output_nodes()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.base.BaseTemplate.with_arch"><code class="docutils literal notranslate"><span class="pre">BaseTemplate.with_arch()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

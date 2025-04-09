@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -391,14 +391,293 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-carver-template-conv-module">
-<h1>tilelang.carver.template.conv module<a class="headerlink" href="#tilelang-carver-template-conv-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.carver.template.conv">
+<span id="tilelang-carver-template-conv-module"></span><h1>tilelang.carver.template.conv module<a class="headerlink" href="#module-tilelang.carver.template.conv" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.carver.template.conv.</span></span><span class="sig-name descname"><span class="pre">ConvTemplate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="tilelang.carver.template.base.html#tilelang.carver.template.base.BaseTemplate" title="tilelang.carver.template.base.BaseTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTemplate</span></code></a></p>
+<p>A template for convolution (Conv).</p>
+<p>This class defines the computation for a matrix-matrix convolution
+with configurable parameters such as transposition, data types, and bias addition.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.N">
+<span class="sig-name descname"><span class="pre">N</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.N" title="Permalink to this definition">#</a></dt>
+<dd><p>The number of input samples processed simultaneously in a batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.C">
+<span class="sig-name descname"><span class="pre">C</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.C" title="Permalink to this definition">#</a></dt>
+<dd><p>The number of input feature maps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.H">
+<span class="sig-name descname"><span class="pre">H</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.H" title="Permalink to this definition">#</a></dt>
+<dd><p>The height of the input feature maps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.W">
+<span class="sig-name descname"><span class="pre">W</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.W" title="Permalink to this definition">#</a></dt>
+<dd><p>The width of the input feature maps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.F">
+<span class="sig-name descname"><span class="pre">F</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.F" title="Permalink to this definition">#</a></dt>
+<dd><p>The number of filters (kernels) applied, determining output depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.K">
+<span class="sig-name descname"><span class="pre">K</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.K" title="Permalink to this definition">#</a></dt>
+<dd><p>The spatial dimensions of each convolutional filter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.S">
+<span class="sig-name descname"><span class="pre">S</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.S" title="Permalink to this definition">#</a></dt>
+<dd><p>The step size by which the kernel slides across the input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.D">
+<span class="sig-name descname"><span class="pre">D</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.D" title="Permalink to this definition">#</a></dt>
+<dd><p>The spacing between kernel elements, controlling receptive field expansion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.P">
+<span class="sig-name descname"><span class="pre">P</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.P" title="Permalink to this definition">#</a></dt>
+<dd><p>The number of pixels added to input borders to control output spatial dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.in_dtype">
+<span class="sig-name descname"><span class="pre">in_dtype</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.in_dtype" title="Permalink to this definition">#</a></dt>
+<dd><p>Data type of input matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.out_dtype">
+<span class="sig-name descname"><span class="pre">out_dtype</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.out_dtype" title="Permalink to this definition">#</a></dt>
+<dd><p>Data type of output matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.accum_dtype">
+<span class="sig-name descname"><span class="pre">accum_dtype</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.accum_dtype" title="Permalink to this definition">#</a></dt>
+<dd><p>Data type used for accumulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.with_bias">
+<span class="sig-name descname"><span class="pre">with_bias</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.with_bias" title="Permalink to this definition">#</a></dt>
+<dd><p>Whether to add a bias term.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">C</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">D</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id1" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">F</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id2" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">H</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id3" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">K</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id4" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">N</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id5" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">P</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id6" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">S</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id7" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">W</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id8" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">accum_dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'float16'</span></em><a class="headerlink" href="#id9" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.class_attributes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">class_attributes</span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.class_attributes" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the class attributes in dictionary form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary of class attributes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.get_hardware_aware_configs">
+<span class="sig-name descname"><span class="pre">get_hardware_aware_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.Hint" title="tilelang.carver.roller.hint.Hint"><span class="pre">Hint</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.get_hardware_aware_configs" title="Permalink to this definition">#</a></dt>
+<dd><p>Retrieves optimized hardware-aware configurations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arch</strong> (<a class="reference internal" href="tilelang.carver.arch.arch_base.html#tilelang.carver.arch.arch_base.TileDevice" title="tilelang.carver.arch.arch_base.TileDevice"><em>TileDevice</em></a><em>, </em><em>optional</em>) – The target hardware architecture.</p></li>
+<li><p><strong>topk</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of top configurations to consider.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of optimization hints for hardware acceleration.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.Hint" title="tilelang.carver.roller.hint.Hint">Hint</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">in_dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'float16'</span></em><a class="headerlink" href="#id10" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.initialize_function">
+<span class="sig-name descname"><span class="pre">initialize_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.initialize_function" title="Permalink to this definition">#</a></dt>
+<dd><p>Defines and initializes the convolution computation.</p>
+<p>This method sets up placeholders for input matrices, computes
+the convolution using TVM’s compute API,
+and optionally applies bias and type casting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>AssertionError</strong> – If N, C, H, W, F, K, S, D, P are not positive integers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">out_dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'float16'</span></em><a class="headerlink" href="#id11" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.template.conv.ConvTemplate.params_as_dict">
+<span class="sig-name descname"><span class="pre">params_as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.template.conv.ConvTemplate.params_as_dict" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the template parameters as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing template parameter values.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">with_bias</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id12" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -444,8 +723,59 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.carver.template.conv module</a><ul>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate"><code class="docutils literal notranslate"><span class="pre">ConvTemplate</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.N"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.N</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.C"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.C</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.H"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.H</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.W"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.W</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.F"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.F</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.K"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.K</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.S"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.S</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.D"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.D</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.P"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.P</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.in_dtype"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.in_dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.out_dtype"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.out_dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.accum_dtype"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.accum_dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.with_bias"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.with_bias</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.C</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.D</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.F</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.H</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.K</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.N</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.P</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.S</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.W</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.accum_dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.class_attributes"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.class_attributes</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.get_hardware_aware_configs"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.get_hardware_aware_configs()</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.in_dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.initialize_function"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.initialize_function()</span></code></a></li>
+<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.out_dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.template.conv.ConvTemplate.params_as_dict"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.params_as_dict()</span></code></a></li>
+<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">ConvTemplate.with_bias</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
