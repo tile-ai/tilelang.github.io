@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -391,180 +391,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-tilelang.language.kernel">
-<span id="tilelang-language-kernel-module"></span><h1>tilelang.language.kernel module<a class="headerlink" href="#module-tilelang.language.kernel" title="Permalink to this heading">#</a></h1>
-<p>The language interface for tl programs.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="tilelang.language.kernel.FrameStack">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">FrameStack</span></span><a class="headerlink" href="#tilelang.language.kernel.FrameStack" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A simple stack-like wrapper around a deque that provides
-push, pop, and top methods for convenience.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.FrameStack.pop">
-<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.kernel.FrameStack.pop" title="Permalink to this definition">#</a></dt>
-<dd><p>Pops and returns the top of the stack, or returns None
-if the stack is empty.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.FrameStack.push">
-<span class="sig-name descname"><span class="pre">push</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.kernel.FrameStack.push" title="Permalink to this definition">#</a></dt>
-<dd><p>Pushes an item onto the top of the stack.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.FrameStack.size">
-<span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.kernel.FrameStack.size" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the number of items in the stack.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.FrameStack.top">
-<span class="sig-name descname"><span class="pre">top</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.kernel.FrameStack.top" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the item on the top of the stack without removing it,
-or None if the stack is empty.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.kernel.Kernel">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">Kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimExpr</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_cpu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prelude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.kernel.Kernel" title="Permalink to this definition">#</a></dt>
-<dd><p>Tools to quickly construct a GPU kernel launch frame.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>blocks</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – A list of extent, can be 1-3 dimension, representing gridDim.(x|y|z)</p></li>
-<li><p><strong>threads</strong> (<em>int</em>) – A integer representing blockDim.x
-Or a list of integers representing blockDim.(x|y|z)
-if the value is -1, we skip the threadIdx.x binding.</p></li>
-<li><p><strong>is_cpu</strong> (<em>bool</em>) – Whether the kernel is running on CPU.
-Thus we will not bind threadIdx.x, threadIdx.y, threadIdx.z.
-and blockIdx.x, blockIdx.y, blockIdx.z.</p></li>
-<li><p><strong>prelude</strong> (<em>str</em>) – The import c code of the kernel,
-will be injected before the generated kernel code.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>res</strong> – The result LaunchThreadFrame.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[frame.LaunchThreadFrame]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">KernelLaunchFrame</span></span><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TIRFrame</span></code></p>
-<p>KernelLaunchFrame is a custom TIRFrame that manages block/thread indices
-and handles the entry and exit of the kernel launch scope.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.Current">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Current</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame" title="tilelang.language.kernel.KernelLaunchFrame"><span class="pre">KernelLaunchFrame</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.Current" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the topmost (current) KernelLaunchFrame from the stack if it exists,
-or None if the stack is empty.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.blocks">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blocks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.blocks" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the block indices from the topmost frame.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.get_block_binding">
-<span class="sig-name descname"><span class="pre">get_block_binding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Var</span></span></span><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.get_block_binding" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the block binding for the given dimension.
-dim=0 corresponds to blockIdx.x, dim=1 to blockIdx.y, and dim=2 to blockIdx.z.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.get_block_bindings">
-<span class="sig-name descname"><span class="pre">get_block_bindings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.get_block_bindings" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns all three block bindings.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.get_block_extent">
-<span class="sig-name descname"><span class="pre">get_block_extent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.get_block_extent" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the block extent for the given dimension.
-dim=0 corresponds to blockIdx.x, dim=1 to blockIdx.y, and dim=2 to blockIdx.z.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.get_num_threads">
-<span class="sig-name descname"><span class="pre">get_num_threads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.get_num_threads" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the thread indices from the topmost frame.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.get_thread_binding">
-<span class="sig-name descname"><span class="pre">get_thread_binding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Var</span></span></span><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.get_thread_binding" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the thread binding for the given dimension.
-dim=0 corresponds to threadIdx.x, dim=1 to threadIdx.y, and dim=2 to threadIdx.z.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.get_thread_bindings">
-<span class="sig-name descname"><span class="pre">get_thread_bindings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.get_thread_bindings" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the thread binding for the given dimension.
-dim=0 corresponds to threadIdx.x, dim=1 to threadIdx.y, and dim=2 to threadIdx.z.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.get_thread_extent">
-<span class="sig-name descname"><span class="pre">get_thread_extent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.get_thread_extent" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the thread extent for the given dimension.
-dim=0 corresponds to threadIdx.x, dim=1 to threadIdx.y, and dim=2 to threadIdx.z.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.num_threads">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_threads</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.num_threads" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the total number of threads.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="tilelang.language.kernel.KernelLaunchFrame.threads">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">threads</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.kernel.KernelLaunchFrame.threads" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the thread indices from the topmost frame.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.kernel.get_block_binding">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">get_block_binding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Var</span></span></span><a class="headerlink" href="#tilelang.language.kernel.get_block_binding" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the block binding for the given dimension.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.kernel.get_block_bindings">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">get_block_bindings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.language.kernel.get_block_bindings" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns all three block bindings.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.kernel.get_thread_binding">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">get_thread_binding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Var</span></span></span><a class="headerlink" href="#tilelang.language.kernel.get_thread_binding" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the thread binding for the given dimension.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.kernel.get_thread_bindings">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">get_thread_bindings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.language.kernel.get_thread_bindings" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns all three thread bindings.</p>
-</dd></dl>
-
+          <section id="tilelang-language-kernel-module">
+<h1>tilelang.language.kernel module<a class="headerlink" href="#tilelang-language-kernel-module" title="Permalink to this heading">#</a></h1>
 </section>
 
         </article>
@@ -610,52 +444,8 @@ dim=0 corresponds to threadIdx.x, dim=1 to threadIdx.y, and dim=2 to threadIdx.z
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">tilelang.language.kernel module</a><ul>
-<li><a class="reference internal" href="#tilelang.language.kernel.FrameStack"><code class="docutils literal notranslate"><span class="pre">FrameStack</span></code></a><ul>
-<li><a class="reference internal" href="#tilelang.language.kernel.FrameStack.pop"><code class="docutils literal notranslate"><span class="pre">FrameStack.pop()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.FrameStack.push"><code class="docutils literal notranslate"><span class="pre">FrameStack.push()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.FrameStack.size"><code class="docutils literal notranslate"><span class="pre">FrameStack.size()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.FrameStack.top"><code class="docutils literal notranslate"><span class="pre">FrameStack.top()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#tilelang.language.kernel.Kernel"><code class="docutils literal notranslate"><span class="pre">Kernel()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame</span></code></a><ul>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.Current"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.Current()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.blocks"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.blocks</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.get_block_binding"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.get_block_binding()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.get_block_bindings"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.get_block_bindings()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.get_block_extent"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.get_block_extent()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.get_num_threads"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.get_num_threads()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.get_thread_binding"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.get_thread_binding()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.get_thread_bindings"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.get_thread_bindings()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.get_thread_extent"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.get_thread_extent()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.num_threads"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.num_threads</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.KernelLaunchFrame.threads"><code class="docutils literal notranslate"><span class="pre">KernelLaunchFrame.threads</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#tilelang.language.kernel.get_block_binding"><code class="docutils literal notranslate"><span class="pre">get_block_binding()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.get_block_bindings"><code class="docutils literal notranslate"><span class="pre">get_block_bindings()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.get_thread_binding"><code class="docutils literal notranslate"><span class="pre">get_thread_binding()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.kernel.get_thread_bindings"><code class="docutils literal notranslate"><span class="pre">get_thread_bindings()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
