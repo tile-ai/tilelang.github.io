@@ -1,0 +1,642 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
+
+    <!-- Generated with Sphinx 5.2.3 and Furo 2023.03.27 -->
+        <title>🚀 Write High Performance FlashMLA with TileLang on Hopper - Tile Language 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Tile Language <br> 0.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/img/logo-row.svg" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/img/logo-row.svg" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Tile Language <br> 0.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">GET STARTED</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/Installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/overview.html">The Tile Language: A Brief Introduction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/writing_kernels_with_tilelibrary.html">Writing High-Performance Kernels with the Tile Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/writing_kernels_with_thread_primitives.html">Writing High-Performance Kernels with Thread Primitives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/annotate_memory_layout.html">Annotate Memory Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/auto_tuning.html">Auto-Tuning Techniques for Performance Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/jit_compilation.html">Just In Time Compilation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/pipelining_computations_and_data_movements.html">Pipelining Computation and Data Movement</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">DEEP LEARNING OPERATORS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="elementwise.html">ElementWise Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gemv.html">General Matrix-Vector Multiplication (GEMV)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matmul.html">General Matrix-Matrix Multiplication with Tile Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matmul_dequant.html">General Matrix-Matrix Multiplication with Dequantization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flash_attention.html">Flash Attention</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flash_linear_attention.html">Flash Linear Attention</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convolution.html">Convolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tmac_gpu.html">TMAC: Look Up Table Based Mixed Precision Computing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">LANGUAGE REFERENCE</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../language_ref/ast.html">Tile Language AST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../language_ref/primitives.html">Tile Language: Primitives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../language_ref/tilelibrary.html">Tile Language: TileLibrary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/modules.html">Python API</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../api/tilelang.html">tilelang package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/tilelang.autotuner.html">tilelang.autotuner package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.cache.html">tilelang.cache package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.cache.kernel_cache.html">tilelang.cache.kernel_cache module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.carver.html">tilelang.carver package</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.carver.arch.html">tilelang.carver.arch package</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.carver.arch.driver.html">tilelang.carver.arch.driver package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.arch.driver.cuda_driver.html">tilelang.carver.arch.driver.cuda_driver module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.arch.arch_base.html">tilelang.carver.arch.arch_base module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.arch.cdna.html">tilelang.carver.arch.cdna module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.arch.cpu.html">tilelang.carver.arch.cpu module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.arch.cuda.html">tilelang.carver.arch.cuda module</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.carver.roller.html">tilelang.carver.roller package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.carver.roller.policy.html">tilelang.carver.roller.policy package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.roller.policy.common.html">tilelang.carver.roller.policy.common module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.roller.policy.default.html">tilelang.carver.roller.policy.default module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.roller.policy.tensorcore.html">tilelang.carver.roller.policy.tensorcore module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.carver.roller.shape_inference.html">tilelang.carver.roller.shape_inference package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.roller.shape_inference.common.html">tilelang.carver.roller.shape_inference.common module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.roller.shape_inference.tir.html">tilelang.carver.roller.shape_inference.tir module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.roller.bestfit.html">tilelang.carver.roller.bestfit module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.roller.hint.html">tilelang.carver.roller.hint module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.roller.node.html">tilelang.carver.roller.node module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.roller.rasterization.html">tilelang.carver.roller.rasterization module</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.carver.template.html">tilelang.carver.template package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.base.html">tilelang.carver.template.base module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.conv.html">tilelang.carver.template.conv module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.elementwise.html">tilelang.carver.template.elementwise module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.flashattention.html">tilelang.carver.template.flashattention module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.gemv.html">tilelang.carver.template.gemv module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.general_reduce.html">tilelang.carver.template.general_reduce module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.matmul.html">tilelang.carver.template.matmul module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.carver.analysis.html">tilelang.carver.analysis module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.carver.common_schedules.html">tilelang.carver.common_schedules module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.carver.matmul_analysis.html">tilelang.carver.matmul_analysis module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.carver.utils.html">tilelang.carver.utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.common.html">tilelang.common package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.common.transform_kind.html">tilelang.common.transform_kind module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.contrib.html">tilelang.contrib package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.cc.html">tilelang.contrib.cc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.dlpack.html">tilelang.contrib.dlpack module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.hipcc.html">tilelang.contrib.hipcc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.nvcc.html">tilelang.contrib.nvcc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.rocm.html">tilelang.contrib.rocm module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.engine.html">tilelang.engine package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.engine.callback.html">tilelang.engine.callback module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.engine.lower.html">tilelang.engine.lower module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.engine.param.html">tilelang.engine.param module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.engine.phase.html">tilelang.engine.phase module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.intrinsics.html">tilelang.intrinsics package</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.intrinsics.mfma_layout.html">tilelang.intrinsics.mfma_layout module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.intrinsics.mfma_macro_generator.html">tilelang.intrinsics.mfma_macro_generator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.intrinsics.mma_layout.html">tilelang.intrinsics.mma_layout module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.intrinsics.mma_macro_generator.html">tilelang.intrinsics.mma_macro_generator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.intrinsics.utils.html">tilelang.intrinsics.utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.jit.html">tilelang.jit package</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.jit.adapter.html">tilelang.jit.adapter package</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.jit.adapter.ctypes.html">tilelang.jit.adapter.ctypes package</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.jit.adapter.ctypes.adapter.html">tilelang.jit.adapter.ctypes.adapter module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.jit.adapter.cython.html">tilelang.jit.adapter.cython package</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.jit.adapter.cython.adapter.html">tilelang.jit.adapter.cython.adapter module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.jit.adapter.cython.cython_wrapper.html">tilelang.jit.adapter.cython.cython_wrapper module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.jit.adapter.base.html">tilelang.jit.adapter.base module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.jit.adapter.dlpack.html">tilelang.jit.adapter.dlpack module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.jit.adapter.libgen.html">tilelang.jit.adapter.libgen module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.jit.adapter.utils.html">tilelang.jit.adapter.utils module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.jit.adapter.wrapper.html">tilelang.jit.adapter.wrapper module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.jit.env.html">tilelang.jit.env module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.jit.kernel.html">tilelang.jit.kernel module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.language.html">tilelang.language package</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.language.tir.html">tilelang.language.tir package</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.language.tir.entry.html">tilelang.language.tir.entry module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.language.tir.ir.html">tilelang.language.tir.ir module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.language.tir.op.html">tilelang.language.tir.op module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.allocate.html">tilelang.language.allocate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.builtin.html">tilelang.language.builtin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.copy.html">tilelang.language.copy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.customize.html">tilelang.language.customize module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.fill.html">tilelang.language.fill module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.frame.html">tilelang.language.frame module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.gemm.html">tilelang.language.gemm module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.kernel.html">tilelang.language.kernel module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.logical.html">tilelang.language.logical module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.memscope.html">tilelang.language.memscope module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.parallel.html">tilelang.language.parallel module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.pipeline.html">tilelang.language.pipeline module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.print.html">tilelang.language.print module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.proxy.html">tilelang.language.proxy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.reduce.html">tilelang.language.reduce module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.layout.html">tilelang.layout package</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.layout.fragment.html">tilelang.layout.fragment module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.layout.layout.html">tilelang.layout.layout module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.layout.swizzle.html">tilelang.layout.swizzle module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/tilelang.math.html">tilelang.math package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.primitives.html">tilelang.primitives package</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.primitives.gemm.html">tilelang.primitives.gemm package</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.primitives.gemm.base.html">tilelang.primitives.gemm.base module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.primitives.gemm.gemm_mma.html">tilelang.primitives.gemm.gemm_mma module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.profiler.html">tilelang.profiler package</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.profiler.bench.html">tilelang.profiler.bench module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/tilelang.testing.html">tilelang.testing package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.tools.html">tilelang.tools package</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.tools.Analyzer.html">tilelang.tools.Analyzer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.tools.plot_layout.html">tilelang.tools.plot_layout module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.transform.html">tilelang.transform package</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.transform.simplify.html">tilelang.transform.simplify module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.utils.html">tilelang.utils package</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.utils.deprecated.html">tilelang.utils.deprecated module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.utils.language.html">tilelang.utils.language module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.utils.target.html">tilelang.utils.target module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.utils.tensor.html">tilelang.utils.tensor module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/tilelang.env.html">tilelang.env module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Privacy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../privacy.html">Privacy</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="write-high-performance-flashmla-with-tilelang-on-hopper">
+<h1>🚀 Write High Performance FlashMLA with TileLang on Hopper<a class="headerlink" href="#write-high-performance-flashmla-with-tilelang-on-hopper" title="Permalink to this heading">#</a></h1>
+<div style="text-align: left;">
+    <em>Author:</em> <a href="https://github.com/chengyupku">Yu Cheng</a> 
+    <em>Author:</em> <a href="https://github.com/LeiWang1999">Lei Wang</a>
+</div>
+<p>TileLang is a user-friendly AI programming language that significantly lowers the barrier to kernel programming, helping users quickly build customized operators. However, users still need to master certain programming techniques to better leverage TileLang’s powerful capabilities. Here, we’ll use MLA as an example to demonstrate how to write high-performance kernels with TileLang.</p>
+<section id="introduction-to-mla">
+<h2>Introduction to MLA<a class="headerlink" href="#introduction-to-mla" title="Permalink to this heading">#</a></h2>
+<p>DeepSeek’s MLA (Multi-Head Latent Attention) is a novel attention mechanism known for its hardware efficiency and significant improvements in model inference speed. Several deep learning compilers (such as <a class="reference external" href="https://github.com/triton-lang/triton">Triton</a>) and libraries (such as <a class="reference external" href="https://github.com/flashinfer-ai/flashinfer">FlashInfer</a>) have developed their own implementations of MLA. In February 2025, <a class="reference external" href="https://github.com/deepseek-ai/FlashMLA">FlashMLA</a> was open-sourced on GitHub. FlashMLA utilizes <a class="reference external" href="https://github.com/NVIDIA/cutlass">CUTLASS</a> templates and incorporates optimization techniques from <a class="reference external" href="https://github.com/Dao-AILab/flash-attention">FlashAttention</a>, achieving impressive performance.</p>
+</section>
+<section id="benchmark-results">
+<h2>Benchmark Results<a class="headerlink" href="#benchmark-results" title="Permalink to this heading">#</a></h2>
+<p>We benchmarked the performance of FlashMLA, TileLang, Torch, Triton, and FlashInfer under batch sizes of 64 and 128, with float16 data type, as shown in the figures below.</p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="../_images/bs64_float16.png"><img alt="Overview" src="../_images/bs64_float16.png" style="width: 50%;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 1: Performance under batch size=64</span><a class="headerlink" href="#id1" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="../_images/bs128_float16.png"><img alt="Overview" src="../_images/bs128_float16.png" style="width: 50%;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 2: Performance under batch size=128</span><a class="headerlink" href="#id2" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>As shown in the results, TileLang achieves performance comparable to FlashMLA in most cases, significantly outperforming both FlashInfer and Triton.
+Notably, <strong>TileLang accomplishes this with just around 80 lines of Python code</strong>, demonstrating its exceptional ease of use and efficiency. Let’s dive in and see how TileLang achieves this.</p>
+</section>
+<section id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading">#</a></h2>
+<p>First, let’s review the core computation logic of traditional FlashAttention:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># acc_s: [block_M, block_N]</span>
+<span class="c1"># scores_max: [block_M]</span>
+<span class="c1"># scores_scale: [block_M]</span>
+<span class="c1"># acc_o: [block_M, dim]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">loop_range</span><span class="p">):</span>
+    <span class="n">acc_s</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">@</span> <span class="n">K</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">scores_max_prev</span> <span class="o">=</span> <span class="n">scores_max</span>
+    <span class="n">scores_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">acc_s</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">scores_scale</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">scores_max_prev</span> <span class="o">-</span> <span class="n">scores_max</span><span class="p">)</span>
+    <span class="n">acc_o</span> <span class="o">*=</span> <span class="n">scores_scale</span>
+    <span class="n">acc_s</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">acc_s</span> <span class="o">-</span> <span class="n">scores_max</span><span class="p">)</span>
+    <span class="n">acc_o</span> <span class="o">=</span> <span class="n">acc_s</span> <span class="o">@</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">acc_s</span></code> represents the <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">&#64;</span> <span class="pre">K</span></code> result in each iteration with dimensions <code class="docutils literal notranslate"><span class="pre">[block_M,</span> <span class="pre">block_N]</span></code>, while <code class="docutils literal notranslate"><span class="pre">acc_o</span></code> represents the current iteration’s output with dimensions <code class="docutils literal notranslate"><span class="pre">[block_M,</span> <span class="pre">dim]</span></code>. Both <code class="docutils literal notranslate"><span class="pre">acc_s</span></code> and <code class="docutils literal notranslate"><span class="pre">acc_o</span></code> need to be stored in registers to reduce latency.</p>
+<p>Compared to traditional attention operators like MHA (Multi-Headed Attention) or GQA (Grouped Query Attention), a major challenge in optimizing MLA is its large head dimensions - <code class="docutils literal notranslate"><span class="pre">query</span></code> and <code class="docutils literal notranslate"><span class="pre">key</span></code> have head dimensions of 576 (512 + 64), while <code class="docutils literal notranslate"><span class="pre">value</span></code> has a head dimension of 512. This raises a significant issue: <code class="docutils literal notranslate"><span class="pre">acc_o</span></code> becomes too large, and with insufficient threads (e.g., 128 threads), register spilling occurs, severely impacting performance.</p>
+<p>This raises the question of how to partition the matrix multiplication operation. On the Hopper architecture, most computation kernels use <a class="reference external" href="https://docs.nvidia.com/cuda/parallel-thread-execution/#asynchronous-warpgroup-level-matrix-instructions"><code class="docutils literal notranslate"><span class="pre">wgmma.mma_async</span></code></a> instructions for optimal performance. The <code class="docutils literal notranslate"><span class="pre">wgmma.mma_async</span></code> instruction organizes 4 warps (128 threads) into a warpgroup for collective MMA operations. However, <code class="docutils literal notranslate"><span class="pre">wgmma.mma_async</span></code> instructions require a minimum M dimension of 64. This means each warpgroup’s minimum M dimension can only be reduced to 64, but a tile size of 64*512 is too large for a single warpgroup, leading to register spilling.</p>
+<p>Therefore, our only option is to partition <code class="docutils literal notranslate"><span class="pre">acc_o</span></code> along the <code class="docutils literal notranslate"><span class="pre">dim</span></code> dimension, with two warpgroups computing the left and right part of <code class="docutils literal notranslate"><span class="pre">acc_o</span></code> respectively. However, this introduces another challenge: both warpgroups require the complete <code class="docutils literal notranslate"><span class="pre">acc_s</span></code> result as input.</p>
+<p>Our solution is to have each warpgroup compute half of <code class="docutils literal notranslate"><span class="pre">acc_s</span></code> during <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">&#64;</span> <span class="pre">K</span></code> computation, then obtain the other half computed by the other warpgroup through shared memory.</p>
+<section id="layout-inference">
+<h3>Layout Inference<a class="headerlink" href="#layout-inference" title="Permalink to this heading">#</a></h3>
+<p>While the above process may seem complex, but don’t worry - TileLang will handle all these intricacies for you.</p>
+<p>Figure 3 and Figure 4 illustrate the frontend TileLang script and its corresponding execution plan for MLA. Here, <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code> represents matrix multiplication operations, <code class="docutils literal notranslate"><span class="pre">transpose_B=True</span></code> indicates transposition of matrix B, and <code class="docutils literal notranslate"><span class="pre">policy=FullCol</span></code> specifies that each warpgroup computes one column (e.g., split the result matrix in vertical dimension). <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> represents buffer-to-buffer copying operations.</p>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="../_images/qk_layout.jpg"><img alt="Overview" src="../_images/qk_layout.jpg" style="width: 50%;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 3: Buffer shapes in Q &#64; K</span><a class="headerlink" href="#id3" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="../_images/pv_layout.jpg"><img alt="Overview" src="../_images/pv_layout.jpg" style="width: 50%;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 4: Buffer shapes in acc_s &#64; V</span><a class="headerlink" href="#id4" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>The mapping from TileLang frontend code to execution plan is accomplished through Layout Inference. Layout inference is a core optimization technique in TileLang. It automatically deduces the required buffer shapes and optimal layouts based on Tile-Operators (like <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code>, <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>, etc.), then generates the corresponding code. Here, we demonstrate a concrete example of buffer shape inference in MLA.</p>
+<p>For instance, when computing <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">&#64;</span> <span class="pre">K</span></code>, TileLang infers that each warpgroup’s <code class="docutils literal notranslate"><span class="pre">acc_s_0</span></code> shape should be <code class="docutils literal notranslate"><span class="pre">[blockM,</span> <span class="pre">blockN</span> <span class="pre">/</span> <span class="pre">2]</span></code> based on the <code class="docutils literal notranslate"><span class="pre">policy=FullCol</span></code> annotation in <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code>. Since this is followed by an <code class="docutils literal notranslate"><span class="pre">acc_s</span> <span class="pre">&#64;</span> <span class="pre">V</span></code> operation with <code class="docutils literal notranslate"><span class="pre">policy=FullCol</span></code>, which requires each warpgroup to have the complete <code class="docutils literal notranslate"><span class="pre">acc_s</span></code> result, TileLang deduces that <code class="docutils literal notranslate"><span class="pre">acc_s</span></code>’s shape at this point should be <code class="docutils literal notranslate"><span class="pre">[blockM,</span> <span class="pre">blockN]</span></code>. Consequently, TileLang can continue the inference process forward, determining that both <code class="docutils literal notranslate"><span class="pre">S_shared</span></code> and <code class="docutils literal notranslate"><span class="pre">acc_s</span></code> in <code class="docutils literal notranslate"><span class="pre">T.copy(S_shared,</span> <span class="pre">acc_s)</span></code> should have shapes of <code class="docutils literal notranslate"><span class="pre">[blockM,</span> <span class="pre">blockN]</span></code>.</p>
+<p>It’s worth noting that our scheduling approach differs from FlashMLA’s implementation strategy. In FlashMLA, <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">&#64;</span> <span class="pre">K</span></code> is assigned to a single warpgroup, while the <code class="docutils literal notranslate"><span class="pre">acc_o</span></code> partitioning scheme remains consistent with ours. Nevertheless, our scheduling approach still achieves comparable performance.</p>
+</section>
+<section id="threadblock-swizzling">
+<h3>Threadblock Swizzling<a class="headerlink" href="#threadblock-swizzling" title="Permalink to this heading">#</a></h3>
+<p>Threadblock swizzling is a common performance optimization technique in GPU kernel optimization. In GPU architecture, the L2 cache is a high-speed cache shared among multiple SMs (Streaming Multiprocessors). Threadblock swizzling optimizes data access patterns by remapping the scheduling order of threadblocks, thereby improving L2 cache hit rates. Traditional scheduling typically executes threadblocks in the natural order of the grid, which can lead to non-contiguous data access patterns between adjacent threadblocks, resulting in inefficient utilization of cached data. The swizzle technique employs mathematical mapping methods (such as diagonal or interleaved mapping) to adjust the execution order of threadblocks, ensuring that consecutively scheduled threadblocks access adjacent or overlapping data regions.</p>
+<p>In TileLang, threadblock swizzling optimization can be implemented with just a single line of Python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">use_swizzle</span><span class="p">(</span><span class="n">panel_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;row&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">panel_size</span></code> specifies the width of the swizzled threadblock group, and <code class="docutils literal notranslate"><span class="pre">order</span></code> determines the swizzling pattern, which can be either “row” or “col”.</p>
+</section>
+<section id="shared-memory-swizzling">
+<h3>Shared Memory Swizzling<a class="headerlink" href="#shared-memory-swizzling" title="Permalink to this heading">#</a></h3>
+<p>In CUDA programming, shared memory is divided into multiple memory banks, with each bank capable of servicing one thread request per clock cycle in parallel. Bank conflicts occur when multiple threads simultaneously access different addresses mapped to the same bank, forcing these accesses to be serialized and degrading performance.</p>
+<p>One common strategy to address bank conflicts is shared memory swizzling. This technique rearranges how data is stored in shared memory by remapping addresses that would originally fall into the same bank to different banks, thereby reducing conflicts. For example, XOR operations or other bit manipulations can be incorporated into address calculations to alter the data layout, resulting in more evenly distributed memory accesses across consecutive threads. This approach is particularly crucial for implementing high-performance computing tasks like matrix multiplication and convolution, as it can significantly improve memory access parallelism and overall execution efficiency.</p>
+<p>Similarly, TileLang also supports shared memory swizzling. Users only need to add a single line of Python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">annotate_layout</span><span class="p">({</span>
+    <span class="n">S_shared</span><span class="p">:</span> <span class="n">TileLang</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">make_swizzled_layout</span><span class="p">(</span><span class="n">S_shared</span><span class="p">),</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">T.annotate_layout</span></code> allows users to specify any desired layout for a buffer. For convenience, TileLang provides the <code class="docutils literal notranslate"><span class="pre">make_swizzled_layout</span></code> primitive to automatically generate a swizzled layout.</p>
+</section>
+<section id="warp-specialization">
+<h3>Warp-Specialization<a class="headerlink" href="#warp-specialization" title="Permalink to this heading">#</a></h3>
+<p>The Hopper architecture commonly employs warp specialization for performance optimization. A typical approach is to designate one warpgroup as a producer that handles data movement using TMA (Tensor Memory Accelerator), while the remaining warpgroups serve as consumers performing computations. However, this programming pattern is complex, requiring developers to manually manage the execution logic for producers and consumers, including synchronization through the <code class="docutils literal notranslate"><span class="pre">mbarrier</span></code> objects.</p>
+<p>In TileLang, users are completely shielded from these implementation details. The frontend script is automatically transformed into a warp-specialized form, where TileLang handles all producer-consumer synchronization automatically, enabling efficient computation.</p>
+</section>
+<section id="pipeline">
+<h3>Pipeline<a class="headerlink" href="#pipeline" title="Permalink to this heading">#</a></h3>
+<p>Pipeline is a technique used to improve memory access efficiency by overlapping memory access and computation. In TileLang, pipeline can be implemented through the <code class="docutils literal notranslate"><span class="pre">T.pipelined</span></code> annotation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">pipelined</span><span class="p">(</span><span class="nb">range</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">range</span></code> specifies the range of the pipeline, and <code class="docutils literal notranslate"><span class="pre">stage</span></code> specifies the stage of the pipeline. Multi-stage pipelining enables overlapping of computation and memory access, which can significantly improve performance for memory-intensive operators. However, setting a higher number of stages consumes more shared memory resources, so the optimal configuration needs to be determined based on specific use cases.</p>
+</section>
+<section id="split-kv">
+<h3>Split-KV<a class="headerlink" href="#split-kv" title="Permalink to this heading">#</a></h3>
+<p>We have also implemented Split-KV optimization similar to <a class="reference external" href="https://pytorch.org/blog/flash-decoding/">FlashDecoding</a>. Specifically, when the batch size is small, parallel SM resources cannot be fully utilized due to low parallelism. In such cases, we can split the kv_ctx dimension across multiple SMs for parallel computation and then merge the results.</p>
+<p>In our implementation, we have developed both split and combine kernels, allowing users to control the split size through a <code class="docutils literal notranslate"><span class="pre">num_split</span></code> parameter.</p>
+</section>
+</section>
+<section id="on-amd-mi300x-accelerators">
+<h2>🚀 On AMD MI300X Accelerators<a class="headerlink" href="#on-amd-mi300x-accelerators" title="Permalink to this heading">#</a></h2>
+<p>Following our previous demonstration of <a class="reference external" href="https://github.com/tile-ai/tilelang/blob/main/examples/deepseek_mla/README.md">high-performance FlashMLA implementation on NVIDIA Hopper architectures using TileLang</a>, this work presents an optimized implementation for AMD MI300X accelerators. We examine architectural differences and corresponding optimization strategies between these platforms.</p>
+<section id="architectural-considerations-and-optimization-strategies">
+<h3>Architectural Considerations and Optimization Strategies<a class="headerlink" href="#architectural-considerations-and-optimization-strategies" title="Permalink to this heading">#</a></h3>
+<p>Key implementation differences between Hopper and MI300X architectures include:</p>
+<ol class="arabic">
+<li><p><strong>Instruction Set Variations</strong>: The MI300X architecture eliminates the need for explicit Tensor Memory Access (TMA) instructions and warp specialization, which are automatically handled by the compiler on Hopper architectures, resulting in identical source code manifestations.</p></li>
+<li><p><strong>Shared Memory Constraints</strong>: With 64KB of shared memory compared to Hopper’s 228KB, MI300X implementations require careful memory management. Our optimization strategy includes:</p>
+<ul class="simple">
+<li><p>Reducing software pipeline stages</p></li>
+<li><p>Register-based caching of Q matrices instead of shared memory utilization:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Original shared memory allocation</span>
+<span class="n">Q_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_H</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+<span class="n">Q_pe_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_H</span><span class="p">,</span> <span class="n">pe_dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+
+<span class="c1"># Optimized register allocation</span>
+<span class="n">Q_local</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_H</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+<span class="n">Q_pe_local</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_H</span><span class="p">,</span> <span class="n">pe_dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Tile Size Flexibility</strong>: The absence of WGMMA instructions on MI300X permits more flexible tile size selection, removing the requirement for block_m to be multiples of 64.</p></li>
+<li><p><strong>Memory Bank Conflict Swizzling</strong>: MI300x has different memory bank conflict rules compared to NVIDIA, so we need to use different swizzling strategies. This is also automatically handled by TileLang, resulting in no visible differences in the code.</p></li>
+</ol>
+</section>
+<section id="performance-evaluation">
+<h3>Performance Evaluation<a class="headerlink" href="#performance-evaluation" title="Permalink to this heading">#</a></h3>
+<p>We conducted comparative performance analysis across multiple frameworks using float16 precision with batch sizes 64 and 128. The experimental results demonstrate:</p>
+<figure style="text-align: center">
+  <a href="../figures/flashmla-amd.png">
+    <img src="../figures/flashmla-amd.png" alt="AMD FlashMLA Performance Comparison">
+   </a>
+  <figcaption style="text-align: center;">Figure 1: Computational throughput comparison across frameworks (Batch sizes 64 and 128)</figcaption>
+</figure>
+<p>Notably, TileLang achieves performance parity with hand-optimized assembly kernels (aiter-asm) in most test cases, while significantly outperforming both Triton (1.98×) and PyTorch (3.76×) implementations. This performance is achieved through a concise 80-line Python implementation, demonstrating TileLang’s efficiency and programmability advantages.</p>
+</section>
+<section id="future-optimization-opportunities">
+<h3>Future Optimization Opportunities<a class="headerlink" href="#future-optimization-opportunities" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Memory Bank Conflict Mitigation</strong>: Current implementations primarily address bank conflicts in NT layouts through TileLang’s automatic optimization. Further investigation of swizzling techniques for alternative memory layouts remains an open research direction.</p></li>
+<li><p><strong>Dimension Parallelization</strong>: For large MLA dimensions (e.g., 576 elements), we propose investigating head dimension partitioning strategies to:</p>
+<ul class="simple">
+<li><p>Reduce shared memory pressure</p></li>
+<li><p>Improve compute-to-memory access ratios</p></li>
+<li><p>Enhance parallelism through dimension-wise task distribution</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025-2025, Tile Lang Contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">🚀 Write High Performance FlashMLA with TileLang on Hopper</a><ul>
+<li><a class="reference internal" href="#introduction-to-mla">Introduction to MLA</a></li>
+<li><a class="reference internal" href="#benchmark-results">Benchmark Results</a></li>
+<li><a class="reference internal" href="#implementation">Implementation</a><ul>
+<li><a class="reference internal" href="#layout-inference">Layout Inference</a></li>
+<li><a class="reference internal" href="#threadblock-swizzling">Threadblock Swizzling</a></li>
+<li><a class="reference internal" href="#shared-memory-swizzling">Shared Memory Swizzling</a></li>
+<li><a class="reference internal" href="#warp-specialization">Warp-Specialization</a></li>
+<li><a class="reference internal" href="#pipeline">Pipeline</a></li>
+<li><a class="reference internal" href="#split-kv">Split-KV</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#on-amd-mi300x-accelerators">🚀 On AMD MI300X Accelerators</a><ul>
+<li><a class="reference internal" href="#architectural-considerations-and-optimization-strategies">Architectural Considerations and Optimization Strategies</a></li>
+<li><a class="reference internal" href="#performance-evaluation">Performance Evaluation</a></li>
+<li><a class="reference internal" href="#future-optimization-opportunities">Future Optimization Opportunities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    </body>
+</html>
