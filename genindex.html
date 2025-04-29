@@ -344,6 +344,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/tilelang.transform.html">tilelang.transform package</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/tilelang.transform.pass_config.html">tilelang.transform.pass_config module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/tilelang.transform.simplify.html">tilelang.transform.simplify module</a></li>
 </ul>
 </li>
@@ -454,6 +455,8 @@
         <li><a href="api/tilelang.language.allocate.html#tilelang.language.allocate.alloc_var">alloc_var() (in module tilelang.language.allocate)</a>
 </li>
         <li><a href="api/tilelang.engine.phase.html#tilelang.engine.phase.allow_tma_and_warp_specialized">allow_tma_and_warp_specialized() (in module tilelang.engine.phase)</a>
+</li>
+        <li><a href="api/tilelang.engine.phase.html#tilelang.engine.phase.allow_vectorize">allow_vectorize() (in module tilelang.engine.phase)</a>
 </li>
         <li><a href="api/tilelang.tools.Analyzer.html#tilelang.tools.Analyzer.Analyzer.analysis">analysis() (tilelang.tools.Analyzer.Analyzer class method)</a>
 </li>
@@ -824,6 +827,8 @@
         <li><a href="api/tilelang.jit.adapter.ctypes.adapter.html#tilelang.jit.adapter.ctypes.adapter.CtypesKernelAdapter">CtypesKernelAdapter (class in tilelang.jit.adapter.ctypes.adapter)</a>
 </li>
         <li><a href="api/tilelang.carver.arch.cuda.html#tilelang.carver.arch.cuda.CUDA">CUDA (class in tilelang.carver.arch.cuda)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.CUDA_KERNELS_OUTPUT_DIR">CUDA_KERNELS_OUTPUT_DIR (tilelang.transform.pass_config.PassConfigKey attribute)</a>
 </li>
         <li><a href="api/tilelang.carver.arch.driver.cuda_driver.html#tilelang.carver.arch.driver.cuda_driver.cudaDeviceProp">cudaDeviceProp (class in tilelang.carver.arch.driver.cuda_driver)</a>
 </li>
@@ -2331,6 +2336,8 @@
 </li>
           <li><a href="api/tilelang.transform.html#module-tilelang.transform">tilelang.transform</a>
 </li>
+          <li><a href="api/tilelang.transform.pass_config.html#module-tilelang.transform.pass_config">tilelang.transform.pass_config</a>
+</li>
           <li><a href="api/tilelang.transform.simplify.html#module-tilelang.transform.simplify">tilelang.transform.simplify</a>
 </li>
           <li><a href="api/tilelang.utils.html#module-tilelang.utils">tilelang.utils</a>
@@ -2518,6 +2525,8 @@
           <li><a href="api/tilelang.jit.adapter.wrapper.html#tilelang.jit.adapter.wrapper.TLWrapper.pass_configs">(tilelang.jit.adapter.wrapper.TLWrapper attribute)</a>
 </li>
         </ul></li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey">PassConfigKey (class in tilelang.transform.pass_config)</a>
+</li>
         <li><a href="api/tilelang.carver.arch.driver.cuda_driver.html#tilelang.carver.arch.driver.cuda_driver.cudaDeviceProp.pciBusID">pciBusID (tilelang.carver.arch.driver.cuda_driver.cudaDeviceProp attribute)</a>
 </li>
         <li><a href="api/tilelang.carver.arch.driver.cuda_driver.html#tilelang.carver.arch.driver.cuda_driver.cudaDeviceProp.pciDeviceID">pciDeviceID (tilelang.carver.arch.driver.cuda_driver.cudaDeviceProp attribute)</a>
@@ -2540,10 +2549,10 @@
           <li><a href="api/tilelang.carver.roller.policy.tensorcore.html#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.plan_rasterization">(tilelang.carver.roller.policy.tensorcore.TensorCorePolicy method)</a>
 </li>
         </ul></li>
-        <li><a href="api/tilelang.tools.plot_layout.html#tilelang.tools.plot_layout.plot_layout">plot_layout() (in module tilelang.tools.plot_layout)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/tilelang.tools.plot_layout.html#tilelang.tools.plot_layout.plot_layout">plot_layout() (in module tilelang.tools.plot_layout)</a>
+</li>
         <li><a href="api/tilelang.primitives.gemm.base.html#tilelang.primitives.gemm.base.GemmBaseParams.policy">policy (tilelang.primitives.gemm.base.GemmBaseParams attribute)</a>
 </li>
         <li><a href="api/tilelang.language.frame.html#tilelang.language.frame.FrameStack.pop">pop() (tilelang.language.frame.FrameStack method)</a>
@@ -3481,8 +3490,6 @@
           <li><a href="api/tilelang.jit.adapter.cython.adapter.html#module-tilelang.jit.adapter.cython.adapter">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     tilelang.jit.adapter.cython.cython_wrapper
 
@@ -3511,6 +3518,8 @@
           <li><a href="api/tilelang.jit.adapter.utils.html#module-tilelang.jit.adapter.utils">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     tilelang.jit.adapter.wrapper
 
@@ -3785,6 +3794,13 @@
 </li>
         </ul></li>
         <li>
+    tilelang.transform.pass_config
+
+        <ul>
+          <li><a href="api/tilelang.transform.pass_config.html#module-tilelang.transform.pass_config">module</a>
+</li>
+        </ul></li>
+        <li>
     tilelang.transform.simplify
 
         <ul>
@@ -3826,6 +3842,38 @@
           <li><a href="api/tilelang.utils.tensor.html#module-tilelang.utils.tensor">module</a>
 </li>
         </ul></li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TIR_ADD_LOWER_PASS">TIR_ADD_LOWER_PASS (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_CSE">TIR_DISABLE_CSE (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_STORAGE_REWRITE">TIR_DISABLE_STORAGE_REWRITE (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_VECTORIZE">TIR_DISABLE_VECTORIZE (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TIR_ENABLE_DEBUG">TIR_ENABLE_DEBUG (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TIR_ENABLE_EQUIV_TERMS_IN_CSE">TIR_ENABLE_EQUIV_TERMS_IN_CSE (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TIR_MERGE_STATIC_SMEM">TIR_MERGE_STATIC_SMEM (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TIR_NOALIAS">TIR_NOALIAS (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TIR_SIMPLIFY">TIR_SIMPLIFY (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TIR_USE_ASYNC_COPY">TIR_USE_ASYNC_COPY (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TL_CONFIG_INDEX_BITWIDTH">TL_CONFIG_INDEX_BITWIDTH (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_DYNAMIC_TAIL_SPLIT">TL_DISABLE_DYNAMIC_TAIL_SPLIT (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_TMA_LOWER">TL_DISABLE_TMA_LOWER (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED">TL_DISABLE_WARP_SPECIALIZED (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TL_DYNAMIC_ALIGNMENT">TL_DYNAMIC_ALIGNMENT (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
+        <li><a href="api/tilelang.transform.pass_config.html#tilelang.transform.pass_config.PassConfigKey.TL_SIMPLIFY">TL_SIMPLIFY (tilelang.transform.pass_config.PassConfigKey attribute)</a>
+</li>
         <li><a href="api/tilelang.jit.adapter.wrapper.html#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper">TLCPUSourceWrapper (class in tilelang.jit.adapter.wrapper)</a>
 </li>
         <li><a href="api/tilelang.jit.adapter.wrapper.html#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper">TLCUDASourceWrapper (class in tilelang.jit.adapter.wrapper)</a>
