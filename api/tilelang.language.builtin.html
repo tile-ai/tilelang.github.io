@@ -406,19 +406,27 @@
 <p>The language interface for tl programs.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.create_list_of_mbarrier">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">create_list_of_mbarrier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.create_list_of_mbarrier" title="Permalink to this definition">#</a></dt>
-<dd><p>Create a list of memory barrier operations.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">create_list_of_mbarrier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Call</span></span></span><a class="headerlink" href="#tilelang.language.builtin.create_list_of_mbarrier" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a list of memory barrier handles.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> – Variable arguments passed to the memory barrier creation operation</p>
+<dd class="field-odd"><p><strong>*args</strong> (<em>list</em><em> or </em><em>Any</em>) – Either a single list of arguments, or multiple arguments directly.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A handle to the created list of memory barriers</p>
+<dd class="field-even"><p>Handle to the created list of memory barriers.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dd class="field-odd"><p>tvm.tir.Call</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the input is not a list or variadic arguments.</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_list_of_mbarrier</span><span class="p">([</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">create_list_of_mbarrier</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -474,7 +482,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.mbarrier_arrive">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">mbarrier_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.mbarrier_arrive" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">mbarrier_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.mbarrier_arrive" title="Permalink to this definition">#</a></dt>
 <dd><p>Arrive at memory barrier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -503,7 +511,7 @@ The memory barrier to arrive at</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.mbarrier_wait_parity">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">mbarrier_wait_parity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.mbarrier_wait_parity" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">mbarrier_wait_parity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.mbarrier_wait_parity" title="Permalink to this definition">#</a></dt>
 <dd><p>Wait for memory barrier parity condition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
