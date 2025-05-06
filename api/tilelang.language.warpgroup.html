@@ -406,7 +406,7 @@
 <p>The language interface for tl programs.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.warpgroup.WarpSpecialize">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.warpgroup.</span></span><span class="sig-name descname"><span class="pre">WarpSpecialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">warp_group_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.warpgroup.WarpSpecialize" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.warpgroup.</span></span><span class="sig-name descname"><span class="pre">WarpSpecialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">warp_group_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.warpgroup.WarpSpecialize" title="Permalink to this definition">#</a></dt>
 <dd><p>Tools to construct a warp group frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -415,10 +415,13 @@ Or a list of integers representing blockDim.(x|y|z)
 if the value is -1, we skip the threadIdx.x binding.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>res</strong> – The result LaunchThreadFrame.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[frame.LaunchThreadFrame]</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>res</strong> (<em>Tuple[frame.LaunchThreadFrame]</em>) – The result LaunchThreadFrame.</p></li>
+<li><p><em>Examples</em> – &gt;&gt;&gt; T.ws(0) -&gt; if tx &lt; 128
+&gt;&gt;&gt; T.ws(1) -&gt; if tx &gt;= 128 and tx &lt; 256
+&gt;&gt;&gt; T.ws(0, 1) -&gt; if tx &lt; 128 or (tx &gt;= 128 and tx &lt; 256)</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -433,7 +436,7 @@ and handles the entry and exit of the kernel launch scope.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.warpgroup.ws">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.warpgroup.</span></span><span class="sig-name descname"><span class="pre">ws</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">warp_group_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.warpgroup.ws" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.warpgroup.</span></span><span class="sig-name descname"><span class="pre">ws</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">warp_group_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.warpgroup.ws" title="Permalink to this definition">#</a></dt>
 <dd><p>Tools to construct a warp group frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -442,10 +445,13 @@ Or a list of integers representing blockDim.(x|y|z)
 if the value is -1, we skip the threadIdx.x binding.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>res</strong> – The result LaunchThreadFrame.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[frame.LaunchThreadFrame]</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>res</strong> (<em>Tuple[frame.LaunchThreadFrame]</em>) – The result LaunchThreadFrame.</p></li>
+<li><p><em>Examples</em> – &gt;&gt;&gt; T.ws(0) -&gt; if tx &lt; 128
+&gt;&gt;&gt; T.ws(1) -&gt; if tx &gt;= 128 and tx &lt; 256
+&gt;&gt;&gt; T.ws(0, 1) -&gt; if tx &lt; 128 or (tx &gt;= 128 and tx &lt; 256)</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
