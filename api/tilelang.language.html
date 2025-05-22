@@ -766,8 +766,87 @@
 <p>The language interface for tl programs.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.annotate_layout">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.</span></span><span class="sig-name descname"><span class="pre">annotate_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotate_layout" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.</span></span><span class="sig-name descname"><span class="pre">annotate_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotate_layout" title="Permalink to this definition">#</a></dt>
+<dd><p>Annotate the layout of the buffer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>layout_map</strong> (<em>Dict</em>) – a dictionary of buffer to layout</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a block attribute</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>block_attr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>&#64;T.prim_func
+def main(</p>
+<blockquote>
+<div><p>A: T.Tensor((M, N), dtype),
+B: T.Tensor((M, N), dtype),</p>
+</div></blockquote>
+<dl>
+<dt>):</dt><dd><p># Initialize Kernel Context
+with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):</p>
+<blockquote>
+<div><p>A_shared = T.alloc_shared((block_M, block_N), dtype)</p>
+<p>T.annotate_layout({A_shared: layout})
+for i, j in T.Parallel(block_M, block_N):</p>
+<blockquote>
+<div><p>A_shared[i, j] = A[by * block_M + i, bx * block_N + j]</p>
+</div></blockquote>
+<dl class="simple">
+<dt>for i, j in T.Parallel(block_M, block_N):</dt><dd><p>B[by * block_M + i, bx * block_N + j] = A_shared[i, j]</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+<p>return main</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.annotate_padding">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.</span></span><span class="sig-name descname"><span class="pre">annotate_padding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">padding_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotate_padding" title="Permalink to this definition">#</a></dt>
+<dd><p>Annotate the padding of the buffer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>padding_map</strong> (<em>dict</em>) – a dictionary of buffer to padding value</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a block attribute</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>block_attr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>&#64;T.prim_func
+def main(</p>
+<blockquote>
+<div><p>A: T.Tensor((M, N), dtype),
+B: T.Tensor((M, N), dtype),</p>
+</div></blockquote>
+<dl>
+<dt>):</dt><dd><p># Initialize Kernel Context
+with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):</p>
+<blockquote>
+<div><p>A_shared = T.alloc_shared((block_M, block_N), dtype)</p>
+<p>T.annotate_padding({A_shared: pad_value})
+for i, j in T.Parallel(block_M, block_N):</p>
+<blockquote>
+<div><p>A_shared[i, j] = A[by * block_M + i - 10, bx * block_N + j]</p>
+</div></blockquote>
+<dl class="simple">
+<dt>for i, j in T.Parallel(block_M, block_N):</dt><dd><p>B[by * block_M + i, bx * block_N + j] = A_shared[i, j]</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+<p>return main</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.import_source">
@@ -847,6 +926,7 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-tilelang.language">Module contents</a><ul>
 <li><a class="reference internal" href="#tilelang.language.annotate_layout"><code class="docutils literal notranslate"><span class="pre">annotate_layout()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.annotate_padding"><code class="docutils literal notranslate"><span class="pre">annotate_padding()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.import_source"><code class="docutils literal notranslate"><span class="pre">import_source()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.symbolic"><code class="docutils literal notranslate"><span class="pre">symbolic()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.use_swizzle"><code class="docutils literal notranslate"><span class="pre">use_swizzle()</span></code></a></li>
