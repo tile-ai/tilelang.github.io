@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -401,116 +401,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-tilelang.layout.fragment">
-<span id="tilelang-layout-fragment-module"></span><h1>tilelang.layout.fragment module<a class="headerlink" href="#module-tilelang.layout.fragment" title="Permalink to this heading">#</a></h1>
-<p>Wrapping Layouts.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="tilelang.layout.fragment.Fragment">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.layout.fragment.</span></span><span class="sig-name descname"><span class="pre">Fragment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward_thread_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replicate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward_index_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.fragment.Fragment" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="tilelang.layout.layout.html#tilelang.layout.layout.Layout" title="tilelang.layout.layout.Layout"><code class="xref py py-class docutils literal notranslate"><span class="pre">Layout</span></code></a></p>
-<p>A Fragment layout object that encapsulates iteration variables (forward_vars),
-thread iteration variables (forward_thread), and index transformations
-(forward_index). This class supports replication (thread_replicate) and
-index mapping for fine-grained control over multi-dimensional data layouts.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.layout.fragment.Fragment.condense_rep_var">
-<span class="sig-name descname"><span class="pre">condense_rep_var</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment"><span class="pre">Fragment</span></a></span></span><a class="headerlink" href="#tilelang.layout.fragment.Fragment.condense_rep_var" title="Permalink to this definition">#</a></dt>
-<dd><p>Condense or fold the replicate variable into the existing iteration space.
-This operation may be used to reduce dimensionality if the replicate variable
-is no longer needed as a separate dimension.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A new Fragment where the replicate variable is condensed.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment">Fragment</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.layout.fragment.Fragment.get_thread_size">
-<span class="sig-name descname"><span class="pre">get_thread_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.fragment.Fragment.get_thread_size" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the extent (range size) of the thread dimension.
-If the Fragment was replicated over threads, this will reflect
-the number of threads.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.layout.fragment.Fragment.map_forward_thread">
-<span class="sig-name descname"><span class="pre">map_forward_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimExpr</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PrimExpr</span></span></span><a class="headerlink" href="#tilelang.layout.fragment.Fragment.map_forward_thread" title="Permalink to this definition">#</a></dt>
-<dd><p>Get the thread mapping expression for a given set of argument indices.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>indices</strong> (<em>list</em><em> of </em><em>PrimExpr</em>) – Indices for which to compute the thread mapping.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The computed thread expression for the provided indices.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>PrimExpr</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.layout.fragment.Fragment.repeat">
-<span class="sig-name descname"><span class="pre">repeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repeats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat_on_thread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_dim_first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment"><span class="pre">Fragment</span></a></span></span><a class="headerlink" href="#tilelang.layout.fragment.Fragment.repeat" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns a new Fragment that repeats the iteration space a given number of times.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>repeats</strong> (<em>int</em>) – Number of times to repeat.</p></li>
-<li><p><strong>repeat_on_thread</strong> (<em>bool</em><em>, </em><em>optional</em>) – If set, the repeat will happen on the thread dimension.</p></li>
-<li><p><strong>lower_dim_first</strong> (<em>bool</em><em>, </em><em>optional</em>) – If set to True, repeat on lower dimensions first.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new Fragment with the repeated iteration space.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment">Fragment</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.layout.fragment.Fragment.replicate">
-<span class="sig-name descname"><span class="pre">replicate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">replicate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment"><span class="pre">Fragment</span></a></span></span><a class="headerlink" href="#tilelang.layout.fragment.Fragment.replicate" title="Permalink to this definition">#</a></dt>
-<dd><p>Replicate the Fragment across a new thread dimension.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>replicate</strong> (<em>int</em>) – The replication factor or number of threads.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new Fragment with an additional replicate dimension.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment">Fragment</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="tilelang.layout.fragment.Fragment.thread">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">thread</span></span><a class="headerlink" href="#tilelang.layout.fragment.Fragment.thread" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the forward_thread (IterVar) of the Fragment, representing
-the thread dimension or mapping.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.layout.fragment.make_swizzled_layout">
-<span class="sig-prename descclassname"><span class="pre">tilelang.layout.fragment.</span></span><span class="sig-name descname"><span class="pre">make_swizzled_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.fragment.make_swizzled_layout" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
+          <section id="tilelang-layout-fragment-module">
+<h1>tilelang.layout.fragment module<a class="headerlink" href="#tilelang-layout-fragment-module" title="Permalink to this heading">#</a></h1>
 </section>
 
         </article>
@@ -556,36 +454,8 @@ the thread dimension or mapping.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">tilelang.layout.fragment module</a><ul>
-<li><a class="reference internal" href="#tilelang.layout.fragment.Fragment"><code class="docutils literal notranslate"><span class="pre">Fragment</span></code></a><ul>
-<li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.condense_rep_var"><code class="docutils literal notranslate"><span class="pre">Fragment.condense_rep_var()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.get_thread_size"><code class="docutils literal notranslate"><span class="pre">Fragment.get_thread_size()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.map_forward_thread"><code class="docutils literal notranslate"><span class="pre">Fragment.map_forward_thread()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.repeat"><code class="docutils literal notranslate"><span class="pre">Fragment.repeat()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.replicate"><code class="docutils literal notranslate"><span class="pre">Fragment.replicate()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.thread"><code class="docutils literal notranslate"><span class="pre">Fragment.thread</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#tilelang.layout.fragment.make_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_swizzled_layout()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

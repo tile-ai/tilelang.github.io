@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -401,185 +401,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-tilelang.language.reduce">
-<span id="tilelang-language-reduce-module"></span><h1>tilelang.language.reduce module<a class="headerlink" href="#module-tilelang.language.reduce" title="Permalink to this heading">#</a></h1>
-<p>The language interface for tl programs.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.reduce.cumsum">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">cumsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Buffer</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.cumsum" title="Permalink to this definition">#</a></dt>
-<dd><p>Perform cumulative sum on input buffer, store the result to output buffer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tir.Buffer</em>) – The input buffer</p></li>
-<li><p><strong>dst</strong> (<em>tir.Buffer</em><em>, </em><em>optional</em>) – The output buffer. Defaults to None.</p></li>
-<li><p><strong>dim</strong> (<em>int</em><em>, </em><em>optional</em>) – The dimension to perform cumulative sum on. Defaults to 0.</p></li>
-<li><p><strong>reverse</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to perform reverse cumulative sum. Defaults to False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the cumulative sum operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.reduce.reduce">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.reduce" title="Permalink to this definition">#</a></dt>
-<dd><p>Perform a reduction operation on a buffer along a specified dimension.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer</strong> (<em>tir.Buffer</em>) – Input buffer to reduce</p></li>
-<li><p><strong>out</strong> (<em>tir.Buffer</em>) – Output buffer to store results</p></li>
-<li><p><strong>reduce_type</strong> (<em>str</em>) – Type of reduction (‘max’, ‘min’, ‘sum’, ‘abssum’)</p></li>
-<li><p><strong>dim</strong> (<em>int</em>) – Dimension along which to perform reduction</p></li>
-<li><p><strong>clear</strong> (<em>bool</em>) – Whether to initialize the output buffer before reduction</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the reduction operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.reduce.reduce_absmax">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">reduce_absmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.reduce_absmax" title="Permalink to this definition">#</a></dt>
-<dd><p>Perform reduce absolute max on input buffer, store the result to output buffer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer</strong> (<em>tir.Buffer</em>) – The input buffer</p></li>
-<li><p><strong>out</strong> (<em>tir.Buffer</em>) – The output buffer</p></li>
-<li><p><strong>dim</strong> (<em>int</em>) – The dimension to perform reduce on</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the reduction operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.reduce.reduce_abssum">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">reduce_abssum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.reduce_abssum" title="Permalink to this definition">#</a></dt>
-<dd><p>Perform reduce absolute sum on input buffer, store the result to output buffer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer</strong> (<em>tir.Buffer</em>) – The input buffer</p></li>
-<li><p><strong>out</strong> (<em>tir.Buffer</em>) – The output buffer</p></li>
-<li><p><strong>dim</strong> (<em>int</em>) – The dimension to perform reduce on</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the reduction operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.reduce.reduce_max">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">reduce_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.reduce_max" title="Permalink to this definition">#</a></dt>
-<dd><p>Perform reduce max on input buffer, store the result to output buffer</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer</strong> (<em>Buffer</em>) – The input buffer.</p></li>
-<li><p><strong>out</strong> (<em>Buffer</em>) – The output buffer.</p></li>
-<li><p><strong>dim</strong> (<em>int</em>) – The dimension to perform reduce on</p></li>
-<li><p><strong>clear</strong> (<em>bool</em>) – If set to True, the output buffer will first be initialized to -inf.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>handle</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>PrimExpr</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.reduce.reduce_min">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">reduce_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.reduce_min" title="Permalink to this definition">#</a></dt>
-<dd><p>Perform reduce min on input buffer, store the result to output buffer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer</strong> (<em>tir.Buffer</em>) – The input buffer</p></li>
-<li><p><strong>out</strong> (<em>tir.Buffer</em>) – The output buffer</p></li>
-<li><p><strong>dim</strong> (<em>int</em>) – The dimension to perform reduce on</p></li>
-<li><p><strong>clear</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, output buffer will be initialized to inf. Defaults to True.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the reduction operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.reduce.reduce_sum">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">reduce_sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.reduce_sum" title="Permalink to this definition">#</a></dt>
-<dd><p>Perform reduce sum on input buffer, store the result to output buffer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer</strong> (<em>tir.Buffer</em>) – The input buffer</p></li>
-<li><p><strong>out</strong> (<em>tir.Buffer</em>) – The output buffer</p></li>
-<li><p><strong>dim</strong> (<em>int</em>) – The dimension to perform reduce on</p></li>
-<li><p><strong>clear</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, output buffer will be cleared before reduction.
-If False, results will be accumulated on existing values.
-Defaults to True.</p></li>
-</ul>
-</dd>
-</dl>
-<dl>
-<dt>Note: When clear=True, reduce_sum will not compute directly on the output buffer. This is because</dt><dd><blockquote>
-<div><p>during warp reduction, the same value would be accumulated multiple times (number of threads
-in the warp). Therefore, the implementation with clear=True follows these steps:</p>
-</div></blockquote>
-<ol class="arabic simple">
-<li><p>create a temp buffer with same shape and dtype as out</p></li>
-<li><p>copy out to temp buffer</p></li>
-<li><p>call reduce_sum with temp buffer and out</p></li>
-<li><p>Add temp buffer to out</p></li>
-</ol>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Handle to the reduction operation</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tir.Call</p>
-</dd>
-</dl>
-</dd></dl>
-
+          <section id="tilelang-language-reduce-module">
+<h1>tilelang.language.reduce module<a class="headerlink" href="#tilelang-language-reduce-module" title="Permalink to this heading">#</a></h1>
 </section>
 
         </article>
@@ -625,33 +454,8 @@ in the warp). Therefore, the implementation with clear=True follows these steps:
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">tilelang.language.reduce module</a><ul>
-<li><a class="reference internal" href="#tilelang.language.reduce.cumsum"><code class="docutils literal notranslate"><span class="pre">cumsum()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.reduce.reduce"><code class="docutils literal notranslate"><span class="pre">reduce()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.reduce.reduce_absmax"><code class="docutils literal notranslate"><span class="pre">reduce_absmax()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.reduce.reduce_abssum"><code class="docutils literal notranslate"><span class="pre">reduce_abssum()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.reduce.reduce_max"><code class="docutils literal notranslate"><span class="pre">reduce_max()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.reduce.reduce_min"><code class="docutils literal notranslate"><span class="pre">reduce_min()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.reduce.reduce_sum"><code class="docutils literal notranslate"><span class="pre">reduce_sum()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
