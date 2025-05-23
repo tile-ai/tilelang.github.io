@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -401,14 +401,147 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-language-copy-module">
-<h1>tilelang.language.copy module<a class="headerlink" href="#tilelang-language-copy-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.language.copy">
+<span id="tilelang-language-copy-module"></span><h1>tilelang.language.copy module<a class="headerlink" href="#module-tilelang.language.copy" title="Permalink to this heading">#</a></h1>
+<p>The language interface for tl programs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy.buffer_load_to_tile_region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy.</span></span><span class="sig-name descname"><span class="pre">buffer_load_to_tile_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BufferLoad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimExpr</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy.buffer_load_to_tile_region" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert a buffer load operation to a tile region descriptor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load</strong> (<em>tir.BufferLoad</em>) – The buffer load operation</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – Type of access - ‘r’ for read, ‘w’ for write, ‘rw’ for read-write</p></li>
+<li><p><strong>extents</strong> (<em>List</em><em>[</em><em>tir.PrimExpr</em><em>]</em>) – List of expressions defining the region size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A region descriptor for the loaded area</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy.buffer_region_to_tile_region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy.</span></span><span class="sig-name descname"><span class="pre">buffer_region_to_tile_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BufferRegion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimExpr</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy.buffer_region_to_tile_region" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert a buffer region to a tile region descriptor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer_region</strong> (<em>tir.BufferRegion</em>) – The buffer region to convert</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – Type of access - ‘r’ for read, ‘w’ for write, ‘rw’ for read-write</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A region descriptor for the specified buffer region</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy.buffer_to_tile_region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy.</span></span><span class="sig-name descname"><span class="pre">buffer_to_tile_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy.buffer_to_tile_region" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert a TVM buffer to a tile region descriptor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tir.Buffer</em>) – The buffer to convert</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – Type of access - ‘r’ for read, ‘w’ for write, ‘rw’ for read-write</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A region descriptor covering the entire buffer</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy.c2d_im2col">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy.</span></span><span class="sig-name descname"><span class="pre">c2d_im2col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nhw_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PrimExpr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PrimExpr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dilation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy.c2d_im2col" title="Permalink to this definition">#</a></dt>
+<dd><p>Perform im2col transformation for 2D convolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>tir.Buffer</em>) – Input image buffer</p></li>
+<li><p><strong>col</strong> (<em>tir.Buffer</em>) – Output column buffer</p></li>
+<li><p><strong>nhw_step</strong> (<em>tir.PrimExpr</em>) – Step size for batch and spatial dimensions</p></li>
+<li><p><strong>c_step</strong> (<em>tir.PrimExpr</em>) – Step size for channel dimension</p></li>
+<li><p><strong>kernel</strong> (<em>int</em>) – Kernel size</p></li>
+<li><p><strong>stride</strong> (<em>int</em>) – Stride of the convolution</p></li>
+<li><p><strong>dilation</strong> (<em>int</em>) – Dilation rate</p></li>
+<li><p><strong>pad</strong> (<em>int</em>) – Padding size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the im2col operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy.copy">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy.</span></span><span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Buffer</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">BufferLoad</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">BufferRegion</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Buffer</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">BufferLoad</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy.copy" title="Permalink to this definition">#</a></dt>
+<dd><p>Copy data between memory regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>Union</em><em>[</em><em>tir.Buffer</em><em>, </em><em>tir.BufferLoad</em><em>, </em><em>tir.BufferRegion</em><em>]</em>) – Source memory region</p></li>
+<li><p><strong>dst</strong> (<em>Union</em><em>[</em><em>tir.Buffer</em><em>, </em><em>tir.BufferLoad</em><em>]</em>) – Destination memory region</p></li>
+<li><p><strong>coalesced_width</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Width for coalesced memory access. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If copy extents cannot be deduced from arguments</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A handle to the copy operation</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy.region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy.</span></span><span class="sig-name descname"><span class="pre">region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BufferLoad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PrimExpr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy.region" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a memory region descriptor for tile operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tir.BufferLoad</em>) – The buffer to create a region for</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – Type of access - ‘r’ for read, ‘w’ for write, ‘rw’ for read-write</p></li>
+<li><p><strong>*args</strong> (<em>tir.PrimExpr</em>) – Extent expressions defining the region size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A region descriptor for tile operations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -454,8 +587,32 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.language.copy module</a><ul>
+<li><a class="reference internal" href="#tilelang.language.copy.buffer_load_to_tile_region"><code class="docutils literal notranslate"><span class="pre">buffer_load_to_tile_region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.copy.buffer_region_to_tile_region"><code class="docutils literal notranslate"><span class="pre">buffer_region_to_tile_region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.copy.buffer_to_tile_region"><code class="docutils literal notranslate"><span class="pre">buffer_to_tile_region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.copy.c2d_im2col"><code class="docutils literal notranslate"><span class="pre">c2d_im2col()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.copy.copy"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.copy.region"><code class="docutils literal notranslate"><span class="pre">region()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

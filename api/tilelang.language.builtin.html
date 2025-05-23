@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -401,14 +401,388 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-language-builtin-module">
-<h1>tilelang.language.builtin module<a class="headerlink" href="#tilelang-language-builtin-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.language.builtin">
+<span id="tilelang-language-builtin-module"></span><h1>tilelang.language.builtin module<a class="headerlink" href="#module-tilelang.language.builtin" title="Permalink to this heading">#</a></h1>
+<p>The language interface for tl programs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.barrier_arrive">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">barrier_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barrier_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.barrier_arrive" title="Permalink to this definition">#</a></dt>
+<dd><p>Arrive at a memory barrier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>barrier_id</strong> – Optional[int, PrimExpr]
+The memory barrier to arrive at</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.barrier_wait">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">barrier_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barrier_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.barrier_wait" title="Permalink to this definition">#</a></dt>
+<dd><p>Wait for a memory barrier to complete.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>barrier_id</strong> – Optional[int, PrimExpr]
+The memory barrier to wait on</p></li>
+<li><p><strong>parity</strong> – Optional[int, Var]
+The parity value to wait for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the barrier wait operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+<p>Current implementation is a sugar syntax for mbarrier_wait_parity, as we only support parity 0 and 1.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.create_list_of_mbarrier">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">create_list_of_mbarrier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Call</span></span></span><a class="headerlink" href="#tilelang.language.builtin.create_list_of_mbarrier" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a list of memory barrier handles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> (<em>list</em><em> or </em><em>Any</em>) – Either a single list of arguments, or multiple arguments directly.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Handle to the created list of memory barriers.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tir.Call</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the input is not a list or variadic arguments.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_list_of_mbarrier</span><span class="p">([</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">create_list_of_mbarrier</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.create_tma_descriptor">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">create_tma_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.create_tma_descriptor" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a Tensor Memory Access (TMA) descriptor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments defining the TMA descriptor configuration</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the created TMA descriptor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.dec_max_nreg">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">dec_max_nreg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reg_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.dec_max_nreg" title="Permalink to this definition">#</a></dt>
+<dd><p>Decrement the maximum number of registers to use.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.fence_proxy_async">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">fence_proxy_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.fence_proxy_async" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a fence for asynchronous proxy operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments for fence configuration</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the fence operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.get_mbarrier">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">get_mbarrier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.get_mbarrier" title="Permalink to this definition">#</a></dt>
+<dd><p>Retrieve a memory barrier operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments to specify which memory barrier to retrieve</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the requested memory barrier</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.inc_max_nreg">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">inc_max_nreg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reg_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.inc_max_nreg" title="Permalink to this definition">#</a></dt>
+<dd><p>Increment the maximum number of registers to use.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.mbarrier_arrive">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">mbarrier_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.mbarrier_arrive" title="Permalink to this definition">#</a></dt>
+<dd><p>Arrive at memory barrier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mbarrier</strong> – Optional[int, PrimExpr]
+The memory barrier to arrive at</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.mbarrier_expect_tx">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">mbarrier_expect_tx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.mbarrier_expect_tx" title="Permalink to this definition">#</a></dt>
+<dd><p>Set expected transaction count for memory barrier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments specifying the expected transaction count</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the barrier expectation operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.mbarrier_wait_parity">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">mbarrier_wait_parity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Var</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.mbarrier_wait_parity" title="Permalink to this definition">#</a></dt>
+<dd><p>Wait for memory barrier parity condition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mbarrier</strong> – Optional[int, PrimExpr]
+The memory barrier to wait on</p></li>
+<li><p><strong>parity</strong> – Optional[int, Var]
+The parity value to wait for</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Wait for parity 0 on barrier 0</span>
+<span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Wait for parity value in variable ko on barrier 1</span>
+<span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ko</span><span class="p">)</span>
+
+<span class="c1"># Wait using barrier handle</span>
+<span class="n">barrier</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_mbarrier</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="n">barrier</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Common usage in pipelined kernels:</span>
+<span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_stages</span><span class="p">):</span>
+    <span class="c1"># Producer waits for consumer to finish previous iteration</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ko</span> <span class="o">^</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Producer copies data</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A_global</span><span class="p">,</span> <span class="n">A_shared</span><span class="p">)</span>
+    <span class="c1"># Producer signals data ready</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Consumer waits for producer data</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ko</span><span class="p">)</span>
+    <span class="c1"># Consumer computes</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
+    <span class="c1"># Consumer signals completion</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A handle to the barrier wait operation</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.no_set_max_nreg">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">no_set_max_nreg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.no_set_max_nreg" title="Permalink to this definition">#</a></dt>
+<dd><p>Disable the maximum register limit setting.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.set_max_nreg">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">set_max_nreg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reg_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_inc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.set_max_nreg" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the maximum number of registers to use.
+Detailed Documentation:
+<a class="reference external" href="https://docs.nvidia.com/cuda/parallel-thread-execution/#miscellaneous-instructions-setmaxnreg">https://docs.nvidia.com/cuda/parallel-thread-execution/#miscellaneous-instructions-setmaxnreg</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg_count</strong> – int
+The number of registers to allocate</p></li>
+<li><p><strong>is_inc</strong> – int
+Whether to increment or decrement the register count
+0 if decrement, 1 if increment</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the register setting operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.shfl_down">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_down" title="Permalink to this definition">#</a></dt>
+<dd><p>Perform a shuffle operation with down offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Optional[int, PrimExpr]
+The value to shuffle</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.shfl_up">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_up" title="Permalink to this definition">#</a></dt>
+<dd><p>Perform a shuffle operation with up offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Optional[int, PrimExpr]
+The value to shuffle</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.shfl_xor">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_xor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_xor" title="Permalink to this definition">#</a></dt>
+<dd><p>Perform a shuffle operation with XOR offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – Optional[int, PrimExpr]
+The value to shuffle</p></li>
+<li><p><strong>offset</strong> – Optional[int, PrimExpr]
+The offset for the shuffle operation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the shuffle operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.sync_thread_partial">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">sync_thread_partial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barrier_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Call</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.sync_thread_partial" title="Permalink to this definition">#</a></dt>
+<dd><p>Synchronize threads within a warp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>barrier_id</strong> – Optional[int, PrimExpr]
+The memory barrier to synchronize</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the synchronization operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.sync_threads">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">sync_threads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.sync_threads" title="Permalink to this definition">#</a></dt>
+<dd><p>Synchronize all threads in a warp.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.tma_load">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_load" title="Permalink to this definition">#</a></dt>
+<dd><p>Perform a Tensor Memory Access (TMA) load operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments specifying the TMA load parameters</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the TMA load operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.tma_store_arrive">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_store_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_store_arrive" title="Permalink to this definition">#</a></dt>
+<dd><p>Signal the arrival of a TMA store operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments for the store arrival operation</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the store arrive operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.tma_store_wait">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_store_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_store_wait" title="Permalink to this definition">#</a></dt>
+<dd><p>Wait for completion of TMA store operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments specifying which store operations to wait for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the store wait operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.wait_wgmma">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">wait_wgmma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.wait_wgmma" title="Permalink to this definition">#</a></dt>
+<dd><p>Wait for WGMMA (Warp Group Matrix Multiply-Accumulate) operations to complete.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments specifying which operations to wait for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the WGMMA wait operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -454,8 +828,48 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.language.builtin module</a><ul>
+<li><a class="reference internal" href="#tilelang.language.builtin.barrier_arrive"><code class="docutils literal notranslate"><span class="pre">barrier_arrive()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.barrier_wait"><code class="docutils literal notranslate"><span class="pre">barrier_wait()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.create_list_of_mbarrier"><code class="docutils literal notranslate"><span class="pre">create_list_of_mbarrier()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.create_tma_descriptor"><code class="docutils literal notranslate"><span class="pre">create_tma_descriptor()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.dec_max_nreg"><code class="docutils literal notranslate"><span class="pre">dec_max_nreg()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.fence_proxy_async"><code class="docutils literal notranslate"><span class="pre">fence_proxy_async()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.get_mbarrier"><code class="docutils literal notranslate"><span class="pre">get_mbarrier()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.inc_max_nreg"><code class="docutils literal notranslate"><span class="pre">inc_max_nreg()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.mbarrier_arrive"><code class="docutils literal notranslate"><span class="pre">mbarrier_arrive()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.mbarrier_expect_tx"><code class="docutils literal notranslate"><span class="pre">mbarrier_expect_tx()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.mbarrier_wait_parity"><code class="docutils literal notranslate"><span class="pre">mbarrier_wait_parity()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.no_set_max_nreg"><code class="docutils literal notranslate"><span class="pre">no_set_max_nreg()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.set_max_nreg"><code class="docutils literal notranslate"><span class="pre">set_max_nreg()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.shfl_down"><code class="docutils literal notranslate"><span class="pre">shfl_down()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.shfl_up"><code class="docutils literal notranslate"><span class="pre">shfl_up()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.shfl_xor"><code class="docutils literal notranslate"><span class="pre">shfl_xor()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.sync_thread_partial"><code class="docutils literal notranslate"><span class="pre">sync_thread_partial()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.sync_threads"><code class="docutils literal notranslate"><span class="pre">sync_threads()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.tma_load"><code class="docutils literal notranslate"><span class="pre">tma_load()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.tma_store_arrive"><code class="docutils literal notranslate"><span class="pre">tma_store_arrive()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.tma_store_wait"><code class="docutils literal notranslate"><span class="pre">tma_store_wait()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.wait_wgmma"><code class="docutils literal notranslate"><span class="pre">wait_wgmma()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

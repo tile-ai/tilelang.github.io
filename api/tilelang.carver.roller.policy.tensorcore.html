@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -401,14 +401,125 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-carver-roller-policy-tensorcore-module">
-<h1>tilelang.carver.roller.policy.tensorcore module<a class="headerlink" href="#tilelang-carver-roller-policy-tensorcore-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.carver.roller.policy.tensorcore">
+<span id="tilelang-carver-roller-policy-tensorcore-module"></span><h1>tilelang.carver.roller.policy.tensorcore module<a class="headerlink" href="#module-tilelang.carver.roller.policy.tensorcore" title="Permalink to this heading">#</a></h1>
+<p>Policy for tensorcore schedule</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.carver.roller.policy.tensorcore.</span></span><span class="sig-name descname"><span class="pre">TensorCorePolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.carver.arch.arch_base.html#tilelang.carver.arch.arch_base.TileDevice" title="tilelang.carver.arch.arch_base.TileDevice"><span class="pre">TileDevice</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="tilelang.carver.roller.policy.default.html#tilelang.carver.roller.policy.default.DefaultPolicy" title="tilelang.carver.roller.policy.default.DefaultPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultPolicy</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.block_reduction_depth">
+<span class="sig-name descname"><span class="pre">block_reduction_depth</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.block_reduction_depth" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.check_tile_shape_isvalid">
+<span class="sig-name descname"><span class="pre">check_tile_shape_isvalid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">td</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><span class="pre">TileDict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.check_tile_shape_isvalid" title="Permalink to this definition">#</a></dt>
+<dd><p>Checks if the tile shapes in the TileDict are valid for the nodes in this context.</p>
+<p>Parameters:
+- td (TileDict): The TileDict object containing tile shapes and other configurations.</p>
+<p>Returns:
+- bool: True if all tile shapes are valid, False otherwise.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.compute_node_stride_map">
+<span class="sig-name descname"><span class="pre">compute_node_stride_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.carver.roller.node.html#tilelang.carver.roller.node.PrimFuncNode" title="tilelang.carver.roller.node.PrimFuncNode"><span class="pre">PrimFuncNode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">td</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><span class="pre">TileDict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.compute_node_stride_map" title="Permalink to this definition">#</a></dt>
+<dd><p>Computes the stride map for a given node based on the TileDict configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node</strong> (<a class="reference internal" href="tilelang.carver.roller.node.html#tilelang.carver.roller.node.PrimFuncNode" title="tilelang.carver.roller.node.PrimFuncNode"><em>PrimFuncNode</em></a>) – The node for which to compute the stride map.</p></li>
+<li><p><strong>td</strong> (<a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><em>TileDict</em></a>) – The TileDict object containing the tile configuration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of dictionaries containing the output strides and tensor strides.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[Dict, Dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.get_node_reduce_step_candidates">
+<span class="sig-name descname"><span class="pre">get_node_reduce_step_candidates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.get_node_reduce_step_candidates" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculates reduction step candidates for each reduction axis in a PrimFuncNode. General idea : use factor first, since it does not require extra boundary check. for large prime number, which is rare case, use power of 2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<a class="reference internal" href="tilelang.carver.roller.node.html#tilelang.carver.roller.node.PrimFuncNode" title="tilelang.carver.roller.node.PrimFuncNode"><em>PrimFuncNode</em></a>) – The node for which to calculate reduction step candidates. It contains reduction axes (raxis)
+with their domains (dom.extent).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary mapping axis variable names to lists of step candidates. For each axis in the node,
+this function calculates possible step sizes. For axes with a large prime domain, it uses powers of 2
+as step candidates; for others, it uses all factors of the domain.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, List[int]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.infer_node_smem_usage">
+<span class="sig-name descname"><span class="pre">infer_node_smem_usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">td</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><span class="pre">TileDict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.carver.roller.node.html#tilelang.carver.roller.node.PrimFuncNode" title="tilelang.carver.roller.node.PrimFuncNode"><span class="pre">PrimFuncNode</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.infer_node_smem_usage" title="Permalink to this definition">#</a></dt>
+<dd><p>Infers the shared memory usage of a node given a TileDict configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>td</strong> (<a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><em>TileDict</em></a>) – The TileDict object containing the tile configuration.</p></li>
+<li><p><strong>node</strong> (<a class="reference internal" href="tilelang.carver.roller.node.html#tilelang.carver.roller.node.PrimFuncNode" title="tilelang.carver.roller.node.PrimFuncNode"><em>PrimFuncNode</em></a>) – The node for which to infer the shared memory usage.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The estimated amount of shared memory used by the node.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.pipeline_stage">
+<span class="sig-name descname"><span class="pre">pipeline_stage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.pipeline_stage" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.plan_rasterization">
+<span class="sig-name descname"><span class="pre">plan_rasterization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">td</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><span class="pre">TileDict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.plan_rasterization" title="Permalink to this definition">#</a></dt>
+<dd><p>Plans the rasterization for the given TileDict. This function is not implemented yet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>td</strong> (<a class="reference internal" href="tilelang.carver.roller.hint.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><em>TileDict</em></a>) – The TileDict object to plan rasterization for.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RasterRationPlan</strong> – This function is not implemented yet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.use_async_copy">
+<span class="sig-name descname"><span class="pre">use_async_copy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.use_async_copy" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.wmma_k">
+<span class="sig-name descname"><span class="pre">wmma_k</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.wmma_k" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -454,8 +565,38 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.carver.roller.policy.tensorcore module</a><ul>
+<li><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy"><code class="docutils literal notranslate"><span class="pre">TensorCorePolicy</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.block_reduction_depth"><code class="docutils literal notranslate"><span class="pre">TensorCorePolicy.block_reduction_depth</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.check_tile_shape_isvalid"><code class="docutils literal notranslate"><span class="pre">TensorCorePolicy.check_tile_shape_isvalid()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.compute_node_stride_map"><code class="docutils literal notranslate"><span class="pre">TensorCorePolicy.compute_node_stride_map()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.get_node_reduce_step_candidates"><code class="docutils literal notranslate"><span class="pre">TensorCorePolicy.get_node_reduce_step_candidates()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.infer_node_smem_usage"><code class="docutils literal notranslate"><span class="pre">TensorCorePolicy.infer_node_smem_usage()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.pipeline_stage"><code class="docutils literal notranslate"><span class="pre">TensorCorePolicy.pipeline_stage</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.plan_rasterization"><code class="docutils literal notranslate"><span class="pre">TensorCorePolicy.plan_rasterization()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.use_async_copy"><code class="docutils literal notranslate"><span class="pre">TensorCorePolicy.use_async_copy</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.wmma_k"><code class="docutils literal notranslate"><span class="pre">TensorCorePolicy.wmma_k</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
