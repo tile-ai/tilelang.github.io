@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -401,65 +401,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-tilelang.intrinsics.utils">
-<span id="tilelang-intrinsics-utils-module"></span><h1>tilelang.intrinsics.utils module<a class="headerlink" href="#module-tilelang.intrinsics.utils" title="Permalink to this heading">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.utils.get_ldmatrix_offset">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.utils.</span></span><span class="sig-name descname"><span class="pre">get_ldmatrix_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'A'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'B'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'float16'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'int8'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.utils.get_ldmatrix_offset" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.utils.get_mma_micro_size">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.utils.</span></span><span class="sig-name descname"><span class="pre">get_mma_micro_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'float16'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'int8'</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.utils.get_mma_micro_size" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.utils.index_to_coordinates">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.utils.</span></span><span class="sig-name descname"><span class="pre">index_to_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.utils.index_to_coordinates" title="Permalink to this definition">#</a></dt>
-<dd><dl class="simple">
-<dt>General Implementation of:</dt><dd><p>vjj = index % (micro_size_k // num_elems_per_byte)
-coordinates[-1] = index % shape[-1];
-vii = index // (micro_size_k // num_elems_per_byte) % micro_size_y
-index = index // shape[-1]; coordinates[-2] = index % shape[-2];
-vj = index // (micro_size_k // num_elems_per_byte * micro_size_y) % block_K // (micro_size_k // num_elems_per_byte)
-index = index // shape[-2]; coordinates[-3] = index % shape[-3];
-vi = index // (micro_size_k // num_elems_per_byte * micro_size_y * (block_K // (micro_size_k // num_elems_per_byte))) % block_N // micro_size_y
-index = index // shape[-3]; coordinates[-4] = index % shape[-4];</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.utils.mfma_store_index_map">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.utils.</span></span><span class="sig-name descname"><span class="pre">mfma_store_index_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.utils.mfma_store_index_map" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.utils.mma_store_index_map">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.utils.</span></span><span class="sig-name descname"><span class="pre">mma_store_index_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.utils.mma_store_index_map" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.utils.shared_16x16_to_mma_32x8_layout">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.utils.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_mma_32x8_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.utils.shared_16x16_to_mma_32x8_layout" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.utils.shared_16x32_to_mma_32x16_layout">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.utils.</span></span><span class="sig-name descname"><span class="pre">shared_16x32_to_mma_32x16_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.utils.shared_16x32_to_mma_32x16_layout" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.utils.shared_32x16_to_mma_32x16_layout">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.utils.</span></span><span class="sig-name descname"><span class="pre">shared_32x16_to_mma_32x16_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.utils.shared_32x16_to_mma_32x16_layout" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
+          <section id="tilelang-intrinsics-utils-module">
+<h1>tilelang.intrinsics.utils module<a class="headerlink" href="#tilelang-intrinsics-utils-module" title="Permalink to this heading">#</a></h1>
 </section>
 
         </article>
@@ -505,34 +454,8 @@ index = index // shape[-3]; coordinates[-4] = index % shape[-4];</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">tilelang.intrinsics.utils module</a><ul>
-<li><a class="reference internal" href="#tilelang.intrinsics.utils.get_ldmatrix_offset"><code class="docutils literal notranslate"><span class="pre">get_ldmatrix_offset()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.utils.get_mma_micro_size"><code class="docutils literal notranslate"><span class="pre">get_mma_micro_size()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.utils.index_to_coordinates"><code class="docutils literal notranslate"><span class="pre">index_to_coordinates()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.utils.mfma_store_index_map"><code class="docutils literal notranslate"><span class="pre">mfma_store_index_map()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.utils.mma_store_index_map"><code class="docutils literal notranslate"><span class="pre">mma_store_index_map()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.utils.shared_16x16_to_mma_32x8_layout"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_mma_32x8_layout()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.utils.shared_16x32_to_mma_32x16_layout"><code class="docutils literal notranslate"><span class="pre">shared_16x32_to_mma_32x16_layout()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.utils.shared_32x16_to_mma_32x16_layout"><code class="docutils literal notranslate"><span class="pre">shared_32x16_to_mma_32x16_layout()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
