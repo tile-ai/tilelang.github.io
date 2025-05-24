@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -401,14 +401,215 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-carver-matmul-analysis-module">
-<h1>tilelang.carver.matmul_analysis module<a class="headerlink" href="#tilelang-carver-matmul-analysis-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.carver.matmul_analysis">
+<span id="tilelang-carver-matmul-analysis-module"></span><h1>tilelang.carver.matmul_analysis module<a class="headerlink" href="#module-tilelang.carver.matmul_analysis" title="Permalink to this heading">#</a></h1>
+<p>A GEMM schedule rule for GPU operators.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.IterKind">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">IterKind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.IterKind" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Iter kinds for GEMM-liked programs.
+We can simplify the computation to C[S, I, J] += A[S, I, K] * B[S, J, K],
+where <cite>I, J, K</cite> are fundamental axes for gemm and <cite>S</cite> represents all
+other spatial axes (e.g. batches)
+kIter_S: spatial axes
+kIter_I: I axes
+kIter_J: J axes
+kIter_K: K axes
+kIter_T: trivial axes (i.e. with extent 1)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.IterKind.kIter_I">
+<span class="sig-name descname"><span class="pre">kIter_I</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.carver.matmul_analysis.IterKind.kIter_I" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.IterKind.kIter_J">
+<span class="sig-name descname"><span class="pre">kIter_J</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#tilelang.carver.matmul_analysis.IterKind.kIter_J" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.IterKind.kIter_K">
+<span class="sig-name descname"><span class="pre">kIter_K</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#tilelang.carver.matmul_analysis.IterKind.kIter_K" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.IterKind.kIter_S">
+<span class="sig-name descname"><span class="pre">kIter_S</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#tilelang.carver.matmul_analysis.IterKind.kIter_S" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.IterKind.kIter_T">
+<span class="sig-name descname"><span class="pre">kIter_T</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#tilelang.carver.matmul_analysis.IterKind.kIter_T" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.IterTrait">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">IterTrait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterKind" title="tilelang.carver.matmul_analysis.IterKind"><span class="pre">tilelang.carver.matmul_analysis.IterKind</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tvm.ir.expr.PrimExpr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.IterTrait" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.IterTrait.extent">
+<span class="sig-name descname"><span class="pre">extent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">PrimExpr</span></em><a class="headerlink" href="#tilelang.carver.matmul_analysis.IterTrait.extent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.IterTrait.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterKind" title="tilelang.carver.matmul_analysis.IterKind"><span class="pre">IterKind</span></a></em><a class="headerlink" href="#tilelang.carver.matmul_analysis.IterTrait.kind" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.auto_inline_consumer_chain">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">auto_inline_consumer_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Schedule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlockRV</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.auto_inline_consumer_chain" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.auto_inline_consumers">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">auto_inline_consumers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Schedule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlockRV</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.auto_inline_consumers" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.auto_inline_producers">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">auto_inline_producers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Schedule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlockRV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">BlockRV</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.auto_inline_producers" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.collect_vars_from_expr">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">collect_vars_from_expr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim_expr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.collect_vars_from_expr" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.detect_iter_traits">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">detect_iter_traits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Block</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterTrait" title="tilelang.carver.matmul_analysis.IterTrait"><span class="pre">IterTrait</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.detect_iter_traits" title="Permalink to this definition">#</a></dt>
+<dd><p>Detect iter traits based on the pattern C[S, I, J] += A[S, I, K] * B[S, J, K]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>block</strong> (<em>tir.Block</em>) – The block to be analyzed</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>traits</strong> – The detected iter traits for axes in A, B and C. None if the block
+does not match the pattern.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[Tuple[List[<a class="reference internal" href="#tilelang.carver.matmul_analysis.IterTrait" title="tilelang.carver.matmul_analysis.IterTrait">IterTrait</a>]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.find_arg_idx_from_buffer_chain">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">find_arg_idx_from_buffer_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Schedule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlockRV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.find_arg_idx_from_buffer_chain" title="Permalink to this definition">#</a></dt>
+<dd><p>traverse to find the arg index from the buffer</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.find_first_similar_buffer">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">find_first_similar_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">BufferRegion</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.find_first_similar_buffer" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.find_first_similar_region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">find_first_similar_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">BufferRegion</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.find_first_similar_region" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.find_last_producer_from_buffer">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">find_last_producer_from_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">BlockRV</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.find_last_producer_from_buffer" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.get_dequantize_block">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">get_dequantize_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocks</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">BlockRV</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.get_dequantize_block" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.get_in_out_dtypes">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">get_in_out_dtypes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Block</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.get_in_out_dtypes" title="Permalink to this definition">#</a></dt>
+<dd><p>Detect In/Out data types for the given block based on the analysis if read/write buffers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.get_index_map">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">get_index_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">IndexMap</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.get_index_map" title="Permalink to this definition">#</a></dt>
+<dd><p>Get index maps for the block</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>block</strong> (<em>tir.Block</em>) – The block to be analyzed</p></li>
+<li><p><strong>layout</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – the target layout index map to be used.
+‘n’ for [i, k] layout
+‘t’ for [k, j] layout
+‘a’ for auto inference based on whether the last axis is reduction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>index_maps</strong> – The index maps for the block, or None if the block is not a gemm-liked kernel</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[Tuple[tir.IndexMap]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.get_ladder_stage3_map">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">get_ladder_stage3_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'int32'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.get_ladder_stage3_map" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.get_propagate_map">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">get_propagate_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'int32'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.get_propagate_map" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.get_tensorized_func_and_tags">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">get_tensorized_func_and_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PrimFunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_normalize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_gemv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimFunc</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.get_tensorized_func_and_tags" title="Permalink to this definition">#</a></dt>
+<dd><p>transform function to matmul if necessary (e.g. transform conv2d with im2col)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.inline_transpose_block">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">inline_transpose_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Schedule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">BlockRV</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.inline_transpose_block" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.is_identity_block">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">is_identity_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_stmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Block</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.is_identity_block" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.is_identity_or_transpose_block">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">is_identity_or_transpose_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_stmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Block</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.is_identity_or_transpose_block" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.is_transpose_block">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">is_transpose_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_stmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Block</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.is_transpose_block" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.layout_propagate_chain">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">layout_propagate_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Schedule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlockRV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlockRV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IndexMap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.matmul_analysis.layout_propagate_chain" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.make_iter_fusion_index_map">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">make_iter_fusion_index_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">traits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterTrait" title="tilelang.carver.matmul_analysis.IterTrait"><span class="pre">IterTrait</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterKind" title="tilelang.carver.matmul_analysis.IterKind"><span class="pre">IterKind</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">IndexMap</span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.make_iter_fusion_index_map" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.carver.matmul_analysis.normalize_to_matmul">
+<span class="sig-prename descclassname"><span class="pre">tilelang.carver.matmul_analysis.</span></span><span class="sig-name descname"><span class="pre">normalize_to_matmul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Schedule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BlockRV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Schedule</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.carver.matmul_analysis.normalize_to_matmul" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 </section>
 
         </article>
@@ -454,8 +655,61 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.carver.matmul_analysis module</a><ul>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterKind"><code class="docutils literal notranslate"><span class="pre">IterKind</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterKind.kIter_I"><code class="docutils literal notranslate"><span class="pre">IterKind.kIter_I</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterKind.kIter_J"><code class="docutils literal notranslate"><span class="pre">IterKind.kIter_J</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterKind.kIter_K"><code class="docutils literal notranslate"><span class="pre">IterKind.kIter_K</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterKind.kIter_S"><code class="docutils literal notranslate"><span class="pre">IterKind.kIter_S</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterKind.kIter_T"><code class="docutils literal notranslate"><span class="pre">IterKind.kIter_T</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterTrait"><code class="docutils literal notranslate"><span class="pre">IterTrait</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterTrait.extent"><code class="docutils literal notranslate"><span class="pre">IterTrait.extent</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.IterTrait.kind"><code class="docutils literal notranslate"><span class="pre">IterTrait.kind</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.auto_inline_consumer_chain"><code class="docutils literal notranslate"><span class="pre">auto_inline_consumer_chain()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.auto_inline_consumers"><code class="docutils literal notranslate"><span class="pre">auto_inline_consumers()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.auto_inline_producers"><code class="docutils literal notranslate"><span class="pre">auto_inline_producers()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.collect_vars_from_expr"><code class="docutils literal notranslate"><span class="pre">collect_vars_from_expr()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.detect_iter_traits"><code class="docutils literal notranslate"><span class="pre">detect_iter_traits()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.find_arg_idx_from_buffer_chain"><code class="docutils literal notranslate"><span class="pre">find_arg_idx_from_buffer_chain()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.find_first_similar_buffer"><code class="docutils literal notranslate"><span class="pre">find_first_similar_buffer()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.find_first_similar_region"><code class="docutils literal notranslate"><span class="pre">find_first_similar_region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.find_last_producer_from_buffer"><code class="docutils literal notranslate"><span class="pre">find_last_producer_from_buffer()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.get_dequantize_block"><code class="docutils literal notranslate"><span class="pre">get_dequantize_block()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.get_in_out_dtypes"><code class="docutils literal notranslate"><span class="pre">get_in_out_dtypes()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.get_index_map"><code class="docutils literal notranslate"><span class="pre">get_index_map()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.get_ladder_stage3_map"><code class="docutils literal notranslate"><span class="pre">get_ladder_stage3_map()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.get_propagate_map"><code class="docutils literal notranslate"><span class="pre">get_propagate_map()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.get_tensorized_func_and_tags"><code class="docutils literal notranslate"><span class="pre">get_tensorized_func_and_tags()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.inline_transpose_block"><code class="docutils literal notranslate"><span class="pre">inline_transpose_block()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.is_identity_block"><code class="docutils literal notranslate"><span class="pre">is_identity_block()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.is_identity_or_transpose_block"><code class="docutils literal notranslate"><span class="pre">is_identity_or_transpose_block()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.is_transpose_block"><code class="docutils literal notranslate"><span class="pre">is_transpose_block()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.layout_propagate_chain"><code class="docutils literal notranslate"><span class="pre">layout_propagate_chain()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.make_iter_fusion_index_map"><code class="docutils literal notranslate"><span class="pre">make_iter_fusion_index_map()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.carver.matmul_analysis.normalize_to_matmul"><code class="docutils literal notranslate"><span class="pre">normalize_to_matmul()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

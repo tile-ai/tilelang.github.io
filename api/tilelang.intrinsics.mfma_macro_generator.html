@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -401,14 +401,84 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-intrinsics-mfma-macro-generator-module">
-<h1>tilelang.intrinsics.mfma_macro_generator module<a class="headerlink" href="#tilelang-intrinsics-mfma-macro-generator-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.intrinsics.mfma_macro_generator">
+<span id="tilelang-intrinsics-mfma-macro-generator-module"></span><h1>tilelang.intrinsics.mfma_macro_generator module<a class="headerlink" href="#module-tilelang.intrinsics.mfma_macro_generator" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.mfma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">MatrixCoreIntrinEmitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_transposed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_transposed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_row_warps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_col_warps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_row_tiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_col_tiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_elems_per_byte</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_pack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_m_first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>To eliminate Python syntax within TIR Macro.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.M_DIM">
+<span class="sig-name descname"><span class="pre">M_DIM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.M_DIM" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.N_DIM">
+<span class="sig-name descname"><span class="pre">N_DIM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.N_DIM" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.WARP_SIZE">
+<span class="sig-name descname"><span class="pre">WARP_SIZE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">64</span></em><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.WARP_SIZE" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.dtype_abbrv">
+<span class="sig-name descname"><span class="pre">dtype_abbrv</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'bfloat16':</span> <span class="pre">'bf16',</span> <span class="pre">'e4m3_float8':</span> <span class="pre">'e4m3',</span> <span class="pre">'e5m2_float8':</span> <span class="pre">'e5m2',</span> <span class="pre">'float16':</span> <span class="pre">'fp16',</span> <span class="pre">'float32':</span> <span class="pre">'fp32',</span> <span class="pre">'int32':</span> <span class="pre">'int32',</span> <span class="pre">'int8':</span> <span class="pre">'int8'}</span></em><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.dtype_abbrv" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.extract_thread_binding">
+<span class="sig-name descname"><span class="pre">extract_thread_binding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_m_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PrimExpr</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.extract_thread_binding" title="Permalink to this definition">#</a></dt>
+<dd><p>is_m_first: True if the thread binding is in the form of (tx, warp_n, warp_m)
+which represents [warp_size, block_row_warps (split n), block_col_warps (split m)]
+Otherwise, it is in the form of [warp_size, block_col_warps (split m), block_row_warps (split n)]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.get_ldmatrix_index_map">
+<span class="sig-name descname"><span class="pre">get_ldmatrix_index_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.get_ldmatrix_index_map" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.is_m_first">
+<span class="sig-name descname"><span class="pre">is_m_first</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.is_m_first" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.k_pack">
+<span class="sig-name descname"><span class="pre">k_pack</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.k_pack" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.ldmatrix_a">
+<span class="sig-name descname"><span class="pre">ldmatrix_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_shared_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.ldmatrix_a" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.ldmatrix_b">
+<span class="sig-name descname"><span class="pre">ldmatrix_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_shared_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.ldmatrix_b" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.mfma">
+<span class="sig-name descname"><span class="pre">mfma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_local_buf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.mfma" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.stmatrix">
+<span class="sig-name descname"><span class="pre">stmatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.stmatrix" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -454,8 +524,41 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.intrinsics.mfma_macro_generator module</a><ul>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.M_DIM"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.M_DIM</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.N_DIM"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.N_DIM</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.WARP_SIZE"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.WARP_SIZE</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.dtype_abbrv"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.dtype_abbrv</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.extract_thread_binding"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.extract_thread_binding()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.get_ldmatrix_index_map"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.get_ldmatrix_index_map()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.is_m_first"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.is_m_first</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.k_pack"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.k_pack</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.ldmatrix_a"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.ldmatrix_a()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.ldmatrix_b"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.ldmatrix_b()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.mfma"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.mfma()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.mfma_macro_generator.MatrixCoreIntrinEmitter.stmatrix"><code class="docutils literal notranslate"><span class="pre">MatrixCoreIntrinEmitter.stmatrix()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

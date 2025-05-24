@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -401,14 +401,103 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-contrib-rocm-module">
-<h1>tilelang.contrib.rocm module<a class="headerlink" href="#tilelang-contrib-rocm-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.contrib.rocm">
+<span id="tilelang-contrib-rocm-module"></span><h1>tilelang.contrib.rocm module<a class="headerlink" href="#module-tilelang.contrib.rocm" title="Permalink to this heading">#</a></h1>
+<p>Utility for ROCm backend</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.rocm.find_lld">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.rocm.</span></span><span class="sig-name descname"><span class="pre">find_lld</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.rocm.find_lld" title="Permalink to this definition">#</a></dt>
+<dd><p>Find ld.lld in system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>required</strong> (<em>bool</em>) – Whether it is required,
+runtime error will be raised if the compiler is required.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>valid_list</strong> – List of possible paths.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will first search ld.lld that
+matches the major llvm version that built with tvm</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.rocm.find_rocm_path">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.rocm.</span></span><span class="sig-name descname"><span class="pre">find_rocm_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.rocm.find_rocm_path" title="Permalink to this definition">#</a></dt>
+<dd><p>Utility function to find ROCm path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – Path to ROCm root.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.rocm.have_matrixcore">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.rocm.</span></span><span class="sig-name descname"><span class="pre">have_matrixcore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.rocm.have_matrixcore" title="Permalink to this definition">#</a></dt>
+<dd><p>Either MatrixCore support is provided in the compute capability or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>compute_version</strong> (<em>str</em><em>, </em><em>optional</em>) – compute capability of a GPU (e.g. “7.0”).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>have_matrixcore</strong> – True if MatrixCore support is provided, False otherwise</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.rocm.parse_compute_version">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.rocm.</span></span><span class="sig-name descname"><span class="pre">parse_compute_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute_version</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.rocm.parse_compute_version" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse compute capability string to divide major and minor version</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>compute_version</strong> (<em>str</em>) – compute capability of a GPU (e.g. “6.0”)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>major</strong> (<em>int</em>) – major version number</p></li>
+<li><p><strong>minor</strong> (<em>int</em>) – minor version number</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.rocm.rocm_link">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.rocm.</span></span><span class="sig-name descname"><span class="pre">rocm_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lld</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.rocm.rocm_link" title="Permalink to this definition">#</a></dt>
+<dd><p>Link relocatable ELF object to shared ELF object using lld</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_file</strong> (<em>str</em>) – Input file name (relocatable ELF object file)</p></li>
+<li><p><strong>out_file</strong> (<em>str</em>) – Output file name (shared ELF object file)</p></li>
+<li><p><strong>lld</strong> (<em>str</em><em>, </em><em>optional</em>) – The lld linker, if not specified,
+we will try to guess the matched clang version.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -454,8 +543,31 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.contrib.rocm module</a><ul>
+<li><a class="reference internal" href="#tilelang.contrib.rocm.find_lld"><code class="docutils literal notranslate"><span class="pre">find_lld()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.rocm.find_rocm_path"><code class="docutils literal notranslate"><span class="pre">find_rocm_path()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.rocm.have_matrixcore"><code class="docutils literal notranslate"><span class="pre">have_matrixcore()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.rocm.parse_compute_version"><code class="docutils literal notranslate"><span class="pre">parse_compute_version()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.rocm.rocm_link"><code class="docutils literal notranslate"><span class="pre">rocm_link()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
