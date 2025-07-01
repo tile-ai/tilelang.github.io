@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -412,186 +412,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-tilelang.language.frame">
-<span id="tilelang-language-frame-module"></span><h1>tilelang.language.frame module<a class="headerlink" href="#module-tilelang.language.frame" title="Permalink to this heading">#</a></h1>
-<p>Override the LetFrame to print a message when entering the frame.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="tilelang.language.frame.FrameStack">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.frame.</span></span><span class="sig-name descname"><span class="pre">FrameStack</span></span><a class="headerlink" href="#tilelang.language.frame.FrameStack" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A stack-like container for managing TIR frame objects and their variable bindings.</p>
-<p>This class implements a stack data structure using a deque and maintains a mapping
-of variables to their values. It provides methods for stack operations and variable
-value lookups.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.frame.FrameStack.get_value">
-<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.FrameStack.get_value" title="Permalink to this definition">#</a></dt>
-<dd><p>Retrieve the value associated with a variable.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>var</strong> – The variable to look up</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The value associated with the variable, or None if not found</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.frame.FrameStack.has_value">
-<span class="sig-name descname"><span class="pre">has_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.FrameStack.has_value" title="Permalink to this definition">#</a></dt>
-<dd><p>Check if a variable has an associated value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>var</strong> – The variable to check</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if the variable has an associated value, False otherwise</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.frame.FrameStack.pop">
-<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.FrameStack.pop" title="Permalink to this definition">#</a></dt>
-<dd><p>Remove and return the top item from the stack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The top frame object from the stack</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>IndexError</strong> – If the stack is empty</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.frame.FrameStack.push">
-<span class="sig-name descname"><span class="pre">push</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.FrameStack.push" title="Permalink to this definition">#</a></dt>
-<dd><p>Push an item onto the stack and update variable mapping if applicable.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>item</strong> – The frame object to push onto the stack</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.frame.FrameStack.top">
-<span class="sig-name descname"><span class="pre">top</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.FrameStack.top" title="Permalink to this definition">#</a></dt>
-<dd><p>Return the top item of the stack without removing it.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The top frame object from the stack</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>IndexError</strong> – If the stack is empty</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="tilelang.language.frame.LetFrame">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.frame.</span></span><span class="sig-name descname"><span class="pre">LetFrame</span></span><a class="headerlink" href="#tilelang.language.frame.LetFrame" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TIRFrame</span></code></p>
-<p>A TIR frame for let bindings that manages variable scope and value tracking.</p>
-<p>This frame type extends TIRFrame to provide variable binding functionality and
-maintains a global stack of active bindings.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.frame.LetFrame.Current">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Current</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.language.frame.LetFrame" title="tilelang.language.frame.LetFrame"><span class="pre">LetFrame</span></a></span></span><a class="headerlink" href="#tilelang.language.frame.LetFrame.Current" title="Permalink to this definition">#</a></dt>
-<dd><p>Get the current (topmost) let frame.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The current let frame</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#tilelang.language.frame.LetFrame" title="tilelang.language.frame.LetFrame">LetFrame</a></p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>IndexError</strong> – If there are no active let frames</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.frame.LetFrame.get_value">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.LetFrame.get_value" title="Permalink to this definition">#</a></dt>
-<dd><p>Get the value bound to a variable in any active frame.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>var</strong> (<em>Var</em>) – The variable to look up</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The value bound to the variable, or None if not found</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.frame.LetFrame.has_value">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Var</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.language.frame.LetFrame.has_value" title="Permalink to this definition">#</a></dt>
-<dd><p>Check if a variable has a binding in any active frame.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>var</strong> (<em>Var</em>) – The variable to check</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if the variable has a binding, False otherwise</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.frame.get_let_value">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.frame.</span></span><span class="sig-name descname"><span class="pre">get_let_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Var</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimExpr</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.language.frame.get_let_value" title="Permalink to this definition">#</a></dt>
-<dd><p>Get the value bound to a variable in the current let frame stack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>var</strong> (<em>Var</em>) – The variable to look up</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The bound value if found, None otherwise</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional[PrimExpr]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.frame.has_let_value">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.frame.</span></span><span class="sig-name descname"><span class="pre">has_let_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Var</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#tilelang.language.frame.has_let_value" title="Permalink to this definition">#</a></dt>
-<dd><p>Check if a variable has a binding in the current let frame stack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>var</strong> (<em>Var</em>) – The variable to check</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if the variable has a binding, False otherwise</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
+          <section id="tilelang-language-frame-module">
+<h1>tilelang.language.frame module<a class="headerlink" href="#tilelang-language-frame-module" title="Permalink to this heading">#</a></h1>
 </section>
 
         </article>
@@ -637,42 +465,8 @@ maintains a global stack of active bindings.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">tilelang.language.frame module</a><ul>
-<li><a class="reference internal" href="#tilelang.language.frame.FrameStack"><code class="docutils literal notranslate"><span class="pre">FrameStack</span></code></a><ul>
-<li><a class="reference internal" href="#tilelang.language.frame.FrameStack.get_value"><code class="docutils literal notranslate"><span class="pre">FrameStack.get_value()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.frame.FrameStack.has_value"><code class="docutils literal notranslate"><span class="pre">FrameStack.has_value()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.frame.FrameStack.pop"><code class="docutils literal notranslate"><span class="pre">FrameStack.pop()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.frame.FrameStack.push"><code class="docutils literal notranslate"><span class="pre">FrameStack.push()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.frame.FrameStack.top"><code class="docutils literal notranslate"><span class="pre">FrameStack.top()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#tilelang.language.frame.LetFrame"><code class="docutils literal notranslate"><span class="pre">LetFrame</span></code></a><ul>
-<li><a class="reference internal" href="#tilelang.language.frame.LetFrame.Current"><code class="docutils literal notranslate"><span class="pre">LetFrame.Current()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.frame.LetFrame.get_value"><code class="docutils literal notranslate"><span class="pre">LetFrame.get_value()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.frame.LetFrame.has_value"><code class="docutils literal notranslate"><span class="pre">LetFrame.has_value()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#tilelang.language.frame.get_let_value"><code class="docutils literal notranslate"><span class="pre">get_let_value()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.frame.has_let_value"><code class="docutils literal notranslate"><span class="pre">has_let_value()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
