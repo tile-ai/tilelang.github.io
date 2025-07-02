@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -412,14 +412,105 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-primitives-gemm-gemm-mma-module">
-<h1>tilelang.primitives.gemm.gemm_mma module<a class="headerlink" href="#tilelang-primitives-gemm-gemm-mma-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.primitives.gemm.gemm_mma">
+<span id="tilelang-primitives-gemm-gemm-mma-module"></span><h1>tilelang.primitives.gemm.gemm_mma module<a class="headerlink" href="#module-tilelang.primitives.gemm.gemm_mma" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.primitives.gemm.gemm_mma.</span></span><span class="sig-name descname"><span class="pre">GemmPrimitiveMMA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A:</span> <span class="pre">~tvm.tir.buffer.Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B:</span> <span class="pre">~tvm.tir.buffer.Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C:</span> <span class="pre">~tvm.tir.buffer.Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_B:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_row_warps:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_col_warps:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_row_tiles:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_col_tiles:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk:</span> <span class="pre">~typing.Optional[int]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy:</span> <span class="pre">~tilelang.primitives.gemm.base.GemmWarpPolicy</span> <span class="pre">=</span> <span class="pre">(&lt;GemmWarpPolicy.Square:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_pack:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="tilelang.primitives.gemm.base.html#tilelang.primitives.gemm.base.GemmBaseParams" title="tilelang.primitives.gemm.base.GemmBaseParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemmBaseParams</span></code></a></p>
+<p>A GEMM (General Matrix Multiply) primitive that uses Tensor Core MMA (Matrix
+Multiply and Accumulate) instructions. Inherits from GemmBaseParams which
+provides basic parameters such as A, B, C buffers and transposition flags.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.accum_dtype">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">accum_dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.accum_dtype" title="Permalink to this definition">#</a></dt>
+<dd><p>returns: The accumulation data type for C.
+:rtype: str</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_rrr">
+<span class="sig-name descname"><span class="pre">gemm_rrr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mma_emitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.intrinsics.mma_macro_generator.html#tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter" title="tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter"><span class="pre">TensorCoreIntrinEmitter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PrimExpr</span></span></span><a class="headerlink" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_rrr" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_rsr">
+<span class="sig-name descname"><span class="pre">gemm_rsr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mma_emitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.intrinsics.mma_macro_generator.html#tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter" title="tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter"><span class="pre">TensorCoreIntrinEmitter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PrimExpr</span></span></span><a class="headerlink" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_rsr" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_srr">
+<span class="sig-name descname"><span class="pre">gemm_srr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mma_emitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.intrinsics.mma_macro_generator.html#tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter" title="tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter"><span class="pre">TensorCoreIntrinEmitter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PrimExpr</span></span></span><a class="headerlink" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_srr" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_ssr">
+<span class="sig-name descname"><span class="pre">gemm_ssr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mma_emitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tilelang.intrinsics.mma_macro_generator.html#tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter" title="tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter"><span class="pre">TensorCoreIntrinEmitter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PrimExpr</span></span></span><a class="headerlink" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_ssr" title="Permalink to this definition">#</a></dt>
+<dd><p>Perform a single-step reduction (SSR) GEMM using Tensor Core MMA
+primitives. Loads fragments of A and B from shared memory, multiplies
+them, and accumulates into C.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>tir.Buffer</em>) – The buffer for matrix A (in shared memory).</p></li>
+<li><p><strong>B</strong> (<em>tir.Buffer</em>) – The buffer for matrix B (in shared memory).</p></li>
+<li><p><strong>C</strong> (<em>tir.Buffer</em>) – The buffer for the accumulation results.</p></li>
+<li><p><strong>mma_emitter</strong> (<a class="reference internal" href="tilelang.intrinsics.mma_macro_generator.html#tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter" title="tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter"><em>TensorCoreIntrinEmitter</em></a>) – A helper object responsible for generating Tensor Core MMA
+instructions (ldmatrix, mma, etc.).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated IR expression (macro) representing the GEMM loop.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.in_dtype">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">in_dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.in_dtype" title="Permalink to this definition">#</a></dt>
+<dd><p>returns: The input data type for A and B. Assumes both have the same dtype.
+:rtype: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>AssertionError</strong> – If A and B do not share the same dtype.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.invoke">
+<span class="sig-name descname"><span class="pre">invoke</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PrimExpr</span></span></span><a class="headerlink" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.invoke" title="Permalink to this definition">#</a></dt>
+<dd><p>Entry point to generate a GEMM SSR (single-step reduction) with Tensor
+Core instructions. Performs the following steps:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Infers block partition parameters if necessary.</p></li>
+<li><p>Creates a <cite>TensorCoreIntrinEmitter</cite> with the correct data types
+and dimensions.</p></li>
+<li><p>Invokes the GEMM SSR function to generate the final IR expression.</p></li>
+</ol>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The generated GEMM IR expression.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -465,8 +556,36 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.primitives.gemm.gemm_mma module</a><ul>
+<li><a class="reference internal" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA"><code class="docutils literal notranslate"><span class="pre">GemmPrimitiveMMA</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.accum_dtype"><code class="docutils literal notranslate"><span class="pre">GemmPrimitiveMMA.accum_dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_rrr"><code class="docutils literal notranslate"><span class="pre">GemmPrimitiveMMA.gemm_rrr()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_rsr"><code class="docutils literal notranslate"><span class="pre">GemmPrimitiveMMA.gemm_rsr()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_srr"><code class="docutils literal notranslate"><span class="pre">GemmPrimitiveMMA.gemm_srr()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.gemm_ssr"><code class="docutils literal notranslate"><span class="pre">GemmPrimitiveMMA.gemm_ssr()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.in_dtype"><code class="docutils literal notranslate"><span class="pre">GemmPrimitiveMMA.in_dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.primitives.gemm.gemm_mma.GemmPrimitiveMMA.invoke"><code class="docutils literal notranslate"><span class="pre">GemmPrimitiveMMA.invoke()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

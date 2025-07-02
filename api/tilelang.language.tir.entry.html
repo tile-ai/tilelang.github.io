@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -412,14 +412,70 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-language-tir-entry-module">
-<h1>tilelang.language.tir.entry module<a class="headerlink" href="#tilelang-language-tir-entry-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.language.tir.entry">
+<span id="tilelang-language-tir-entry-module"></span><h1>tilelang.language.tir.entry module<a class="headerlink" href="#module-tilelang.language.tir.entry" title="Permalink to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.tir.entry.macro">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.entry.</span></span><span class="sig-name descname"><span class="pre">macro</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hygienic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="headerlink" href="#tilelang.language.tir.entry.macro" title="Permalink to this definition">#</a></dt>
+<dd><p>Decorator for macro definitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hygienic</strong> – <p>Specifies whether the macro is hygienic or not.
+A macro is hygienic if all symbols used in the macro’s body are resolved
+to values from the location of the macro definition. A non-hygienic macro
+will have its symbols resolved to values at the time of the macro’s use.</p>
+<p>Example:
+<a href="#id1"><span class="problematic" id="id2">``</span></a>`
+import tvm
+from tvm.script import tir as T</p>
+<p>x_value = 128</p>
+<p>&#64;T.macro(hygienic=True)
+def static_capture(A, B):</p>
+<blockquote>
+<div><p>B[()] = A[x_value]          ### x_value binds to 128</p>
+</div></blockquote>
+<p>&#64;T.macro(hygienic=False)
+def dynamic_capture(A, B):</p>
+<blockquote>
+<div><p>B[()] = A[x_value]          ### x_value will bind at the time of use</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.tir.entry.prim_func">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.entry.</span></span><span class="sig-name descname"><span class="pre">prim_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">private</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_well_formed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">PrimFunc</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.language.tir.entry.prim_func" title="Permalink to this definition">#</a></dt>
+<dd><p>The parsing method for tir prim func, by using <cite>&#64;prim_func</cite> as decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>Callable</em>) – The function to be parsed as prim func.
+(Listed as optional to allow the decorator to be used
+without arguments, like <cite>&#64;prim_func</cite>,
+or with an argument, <cite>&#64;prim_func(private=True)</cite>)</p></li>
+<li><p><strong>private</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the function should be treated as private.
+A private function has no global symbol attribute;
+if the function is not private, it will have a global symbol
+matching the function name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>res</strong> – The parsed tir prim func.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Union[PrimFunc, Callable]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -465,8 +521,28 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.language.tir.entry module</a><ul>
+<li><a class="reference internal" href="#tilelang.language.tir.entry.macro"><code class="docutils literal notranslate"><span class="pre">macro()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.tir.entry.prim_func"><code class="docutils literal notranslate"><span class="pre">prim_func()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

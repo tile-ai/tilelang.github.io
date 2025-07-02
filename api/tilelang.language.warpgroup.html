@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -412,14 +412,67 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-language-warpgroup-module">
-<h1>tilelang.language.warpgroup module<a class="headerlink" href="#tilelang-language-warpgroup-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.language.warpgroup">
+<span id="tilelang-language-warpgroup-module"></span><h1>tilelang.language.warpgroup module<a class="headerlink" href="#module-tilelang.language.warpgroup" title="Permalink to this heading">#</a></h1>
+<p>The language interface for tl programs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.warpgroup.WarpSpecialize">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.warpgroup.</span></span><span class="sig-name descname"><span class="pre">WarpSpecialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">warp_group_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.warpgroup.WarpSpecialize" title="Permalink to this definition">#</a></dt>
+<dd><p>Tools to construct a warp group frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>warp_group_idx</strong> (<em>int</em>) – A integer representing warp group index
+Or a list of integers representing blockDim.(x|y|z)
+if the value is -1, we skip the threadIdx.x binding.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>res</strong> (<em>Tuple[frame.LaunchThreadFrame]</em>) – The result LaunchThreadFrame.</p></li>
+<li><p><em>Examples</em> – &gt;&gt;&gt; T.ws(0) -&gt; if tx &lt; 128
+&gt;&gt;&gt; T.ws(1) -&gt; if tx &gt;= 128 and tx &lt; 256
+&gt;&gt;&gt; T.ws(0, 1) -&gt; if tx &lt; 128 or (tx &gt;= 128 and tx &lt; 256)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.warpgroup.WarpSpecializeFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.warpgroup.</span></span><span class="sig-name descname"><span class="pre">WarpSpecializeFrame</span></span><a class="headerlink" href="#tilelang.language.warpgroup.WarpSpecializeFrame" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TIRFrame</span></code></p>
+<p>WarpSpecializeFrame is a custom TIRFrame that manages warp group indices
+and handles the entry and exit of the kernel launch scope.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.warpgroup.ws">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.warpgroup.</span></span><span class="sig-name descname"><span class="pre">ws</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">warp_group_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.warpgroup.ws" title="Permalink to this definition">#</a></dt>
+<dd><p>Tools to construct a warp group frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>warp_group_idx</strong> (<em>int</em>) – A integer representing warp group index
+Or a list of integers representing blockDim.(x|y|z)
+if the value is -1, we skip the threadIdx.x binding.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>res</strong> (<em>Tuple[frame.LaunchThreadFrame]</em>) – The result LaunchThreadFrame.</p></li>
+<li><p><em>Examples</em> – &gt;&gt;&gt; T.ws(0) -&gt; if tx &lt; 128
+&gt;&gt;&gt; T.ws(1) -&gt; if tx &gt;= 128 and tx &lt; 256
+&gt;&gt;&gt; T.ws(0, 1) -&gt; if tx &lt; 128 or (tx &gt;= 128 and tx &lt; 256)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -465,8 +518,29 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.language.warpgroup module</a><ul>
+<li><a class="reference internal" href="#tilelang.language.warpgroup.WarpSpecialize"><code class="docutils literal notranslate"><span class="pre">WarpSpecialize()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.warpgroup.WarpSpecializeFrame"><code class="docutils literal notranslate"><span class="pre">WarpSpecializeFrame</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.warpgroup.ws"><code class="docutils literal notranslate"><span class="pre">ws()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -412,14 +412,160 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="tilelang-language-proxy-module">
-<h1>tilelang.language.proxy module<a class="headerlink" href="#tilelang-language-proxy-module" title="Permalink to this heading">#</a></h1>
+          <section id="module-tilelang.language.proxy">
+<span id="tilelang-language-proxy-module"></span><h1>tilelang.language.proxy module<a class="headerlink" href="#module-tilelang.language.proxy" title="Permalink to this heading">#</a></h1>
+<p>The language interface for tl programs.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.proxy.BaseTensorProxy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.proxy.</span></span><span class="sig-name descname"><span class="pre">BaseTensorProxy</span></span><a class="headerlink" href="#tilelang.language.proxy.BaseTensorProxy" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base proxy class for tensor types with configurable defaults.</p>
+<p>This class serves as a foundation for different tensor proxy types, providing
+customizable default values for scope, alignment, and offset factors. It implements
+the core functionality for creating TIR buffers with specific memory configurations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.proxy.BaseTensorProxy.default_align">
+<span class="sig-name descname"><span class="pre">default_align</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#tilelang.language.proxy.BaseTensorProxy.default_align" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.proxy.BaseTensorProxy.default_offset_factor">
+<span class="sig-name descname"><span class="pre">default_offset_factor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#tilelang.language.proxy.BaseTensorProxy.default_offset_factor" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.proxy.BaseTensorProxy.default_scope">
+<span class="sig-name descname"><span class="pre">default_scope</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'global'</span></em><a class="headerlink" href="#tilelang.language.proxy.BaseTensorProxy.default_scope" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.proxy.BaseTensorProxy.from_ptr">
+<span class="sig-name descname"><span class="pre">from_ptr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pointer_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.ir.expr.PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'float32'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Buffer</span></span></span><a class="headerlink" href="#tilelang.language.proxy.BaseTensorProxy.from_ptr" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a buffer from a pointer, shape, and data type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pointer_var</strong> – The pointer variable</p></li>
+<li><p><strong>shape</strong> – The shape of the buffer</p></li>
+<li><p><strong>dtype</strong> – The data type of the buffer (default: float32)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A buffer created from the given parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.proxy.BufferProxy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.proxy.</span></span><span class="sig-name descname"><span class="pre">BufferProxy</span></span><a class="headerlink" href="#tilelang.language.proxy.BufferProxy" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Buffer proxy class for constructing tir buffer.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.proxy.BufferProxy.from_ptr">
+<span class="sig-name descname"><span class="pre">from_ptr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pointer_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.ir.expr.PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'float32'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">&lt;tilelang.language.proxy.BufferProxy</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f0f0a772a10&gt;</span></span></span><a class="headerlink" href="#tilelang.language.proxy.BufferProxy.from_ptr" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a buffer from a pointer, shape, and data type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pointer_var</strong> – The pointer variable</p></li>
+<li><p><strong>shape</strong> – The shape of the buffer</p></li>
+<li><p><strong>dtype</strong> – The data type of the buffer (default: float32)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A buffer created from the given parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.proxy.FragmentBufferProxy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.proxy.</span></span><span class="sig-name descname"><span class="pre">FragmentBufferProxy</span></span><a class="headerlink" href="#tilelang.language.proxy.FragmentBufferProxy" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tilelang.language.proxy.BaseTensorProxy" title="tilelang.language.proxy.BaseTensorProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTensorProxy</span></code></a></p>
+<p>Proxy class for fragment memory buffers.</p>
+<p>This class represents tensor proxies specifically for local fragment memory,
+typically used in GPU tensor core operations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.proxy.FragmentBufferProxy.default_scope">
+<span class="sig-name descname"><span class="pre">default_scope</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'local.fragment'</span></em><a class="headerlink" href="#tilelang.language.proxy.FragmentBufferProxy.default_scope" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.proxy.LocalBufferProxy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.proxy.</span></span><span class="sig-name descname"><span class="pre">LocalBufferProxy</span></span><a class="headerlink" href="#tilelang.language.proxy.LocalBufferProxy" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tilelang.language.proxy.BaseTensorProxy" title="tilelang.language.proxy.BaseTensorProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTensorProxy</span></code></a></p>
+<p>Proxy class for local memory buffers.</p>
+<p>This class represents tensor proxies for local memory scope,
+typically used for temporary computations in GPU kernels.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.proxy.LocalBufferProxy.default_scope">
+<span class="sig-name descname"><span class="pre">default_scope</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'local'</span></em><a class="headerlink" href="#tilelang.language.proxy.LocalBufferProxy.default_scope" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.proxy.SharedBufferProxy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.proxy.</span></span><span class="sig-name descname"><span class="pre">SharedBufferProxy</span></span><a class="headerlink" href="#tilelang.language.proxy.SharedBufferProxy" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tilelang.language.proxy.BaseTensorProxy" title="tilelang.language.proxy.BaseTensorProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTensorProxy</span></code></a></p>
+<p>Proxy class for shared memory buffers.</p>
+<p>This class represents tensor proxies for dynamic shared memory,
+commonly used in GPU shared memory operations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.proxy.SharedBufferProxy.default_scope">
+<span class="sig-name descname"><span class="pre">default_scope</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'shared.dyn'</span></em><a class="headerlink" href="#tilelang.language.proxy.SharedBufferProxy.default_scope" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.proxy.TensorProxy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.proxy.</span></span><span class="sig-name descname"><span class="pre">TensorProxy</span></span><a class="headerlink" href="#tilelang.language.proxy.TensorProxy" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tilelang.language.proxy.BaseTensorProxy" title="tilelang.language.proxy.BaseTensorProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTensorProxy</span></code></a></p>
+<p>Main tensor proxy class for global scope buffers.</p>
+<p>This class implements the default tensor proxy with global memory scope,
+inheriting all functionality from BaseTensorProxy without modifications.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.proxy.make_tensor">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.proxy.</span></span><span class="sig-name descname"><span class="pre">make_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.ir.expr.PrimExpr</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'float32'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Buffer</span></span></span><a class="headerlink" href="#tilelang.language.proxy.make_tensor" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.proxy.ptr">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.proxy.</span></span><span class="sig-name descname"><span class="pre">ptr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'global'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_size_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Var</span></span></span><a class="headerlink" href="#tilelang.language.proxy.ptr" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a TIR var that represents a pointer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dtype</strong> (<em>str</em>) – The data type of the pointer.</p></li>
+<li><p><strong>storage_scope</strong> (<em>str</em>) – The storage scope of the pointer.</p></li>
+<li><p><strong>is_size_var</strong> (<em>bool</em>) – Whether or not to return a SizeVar instead of Var.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>res</strong> – The new tir.Var with type handle or casted expression with type handle.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -465,8 +611,52 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.language.proxy module</a><ul>
+<li><a class="reference internal" href="#tilelang.language.proxy.BaseTensorProxy"><code class="docutils literal notranslate"><span class="pre">BaseTensorProxy</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.proxy.BaseTensorProxy.default_align"><code class="docutils literal notranslate"><span class="pre">BaseTensorProxy.default_align</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.proxy.BaseTensorProxy.default_offset_factor"><code class="docutils literal notranslate"><span class="pre">BaseTensorProxy.default_offset_factor</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.proxy.BaseTensorProxy.default_scope"><code class="docutils literal notranslate"><span class="pre">BaseTensorProxy.default_scope</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.proxy.BaseTensorProxy.from_ptr"><code class="docutils literal notranslate"><span class="pre">BaseTensorProxy.from_ptr()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.language.proxy.BufferProxy"><code class="docutils literal notranslate"><span class="pre">BufferProxy</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.proxy.BufferProxy.from_ptr"><code class="docutils literal notranslate"><span class="pre">BufferProxy.from_ptr()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.language.proxy.FragmentBufferProxy"><code class="docutils literal notranslate"><span class="pre">FragmentBufferProxy</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.proxy.FragmentBufferProxy.default_scope"><code class="docutils literal notranslate"><span class="pre">FragmentBufferProxy.default_scope</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.language.proxy.LocalBufferProxy"><code class="docutils literal notranslate"><span class="pre">LocalBufferProxy</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.proxy.LocalBufferProxy.default_scope"><code class="docutils literal notranslate"><span class="pre">LocalBufferProxy.default_scope</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.language.proxy.SharedBufferProxy"><code class="docutils literal notranslate"><span class="pre">SharedBufferProxy</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.proxy.SharedBufferProxy.default_scope"><code class="docutils literal notranslate"><span class="pre">SharedBufferProxy.default_scope</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.language.proxy.TensorProxy"><code class="docutils literal notranslate"><span class="pre">TensorProxy</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.proxy.make_tensor"><code class="docutils literal notranslate"><span class="pre">make_tensor()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.proxy.ptr"><code class="docutils literal notranslate"><span class="pre">ptr()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
