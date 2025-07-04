@@ -480,7 +480,6 @@
     <span class="n">seq_len_kv</span><span class="p">,</span>
     <span class="n">heads</span><span class="p">,</span>
     <span class="n">dim</span><span class="p">,</span>
-    <span class="n">tail_dim</span><span class="p">,</span>
     <span class="n">sm_scale</span><span class="p">,</span>
     <span class="n">is_causal</span><span class="p">,</span>
     <span class="n">block_M</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
@@ -488,10 +487,10 @@
     <span class="n">num_stages</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">threads</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="n">sm_scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">dim</span> <span class="o">+</span> <span class="n">tail_dim</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">1.44269504</span>
+    <span class="n">sm_scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">dim</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">1.44269504</span>
 
-    <span class="n">q_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">dim</span> <span class="o">+</span> <span class="n">tail_dim</span><span class="p">]</span>
-    <span class="n">k_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len_kv</span><span class="p">,</span> <span class="n">dim</span> <span class="o">+</span> <span class="n">tail_dim</span><span class="p">]</span>
+    <span class="n">q_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">dim</span><span class="p">]</span>
+    <span class="n">k_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len_kv</span><span class="p">,</span> <span class="n">dim</span><span class="p">]</span>
     <span class="n">v_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len_kv</span><span class="p">,</span> <span class="n">dim</span><span class="p">]</span>
     <span class="n">o_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">dim</span><span class="p">]</span>
     <span class="n">lse_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">]</span>
@@ -510,9 +509,7 @@
         <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">seq_len</span><span class="p">,</span> <span class="n">block_M</span><span class="p">),</span> <span class="n">heads</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bz</span><span class="p">):</span>
             <span class="c1"># Memory allocations</span>
             <span class="n">Q_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="n">Q_tail_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">tail_dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
             <span class="n">K_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_N</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="n">K_tail_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_N</span><span class="p">,</span> <span class="n">tail_dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
             <span class="n">V_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_N</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
             <span class="n">O_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
             <span class="n">acc_s</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">],</span> <span class="n">accum_dtype</span><span class="p">)</span>
@@ -526,8 +523,6 @@
 
             <span class="c1"># Load Q tile</span>
             <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="n">bz</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">:(</span><span class="n">bx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="p">:</span><span class="n">dim</span><span class="p">],</span> <span class="n">Q_shared</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">tail_dim</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="n">bz</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">:(</span><span class="n">bx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">:],</span> <span class="n">Q_tail_shared</span><span class="p">)</span>
             <span class="n">T</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">acc_o</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">T</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">logsum</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">T</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">scores_max</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">)</span>
@@ -542,9 +537,7 @@
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span><span class="n">loop_range</span><span class="p">,</span> <span class="n">num_stages</span><span class="o">=</span><span class="n">num_stages</span><span class="p">):</span>
                 <span class="c1"># Load K tile</span>
                 <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">K</span><span class="p">[</span><span class="n">bz</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">:(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">,</span> <span class="p">:</span><span class="n">dim</span><span class="p">],</span> <span class="n">K_shared</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">tail_dim</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">K</span><span class="p">[</span><span class="n">bz</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">:(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">,</span> <span class="n">dim</span><span class="p">:],</span> <span class="n">K_tail_shared</span><span class="p">)</span>
-                
+
                 <span class="c1"># Initialize scores with causal masking</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">):</span>
                     <span class="n">q_idx</span> <span class="o">=</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_M</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="n">q_start_id</span>
@@ -553,9 +546,7 @@
                 
                 <span class="c1"># Compute attention scores</span>
                 <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">Q_shared</span><span class="p">,</span> <span class="n">K_shared</span><span class="p">,</span> <span class="n">acc_s</span><span class="p">,</span> <span class="n">transpose_B</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">GemmWarpPolicy</span><span class="o">.</span><span class="n">FullRow</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">tail_dim</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">Q_tail_shared</span><span class="p">,</span> <span class="n">K_tail_shared</span><span class="p">,</span> <span class="n">acc_s</span><span class="p">,</span> <span class="n">transpose_B</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">GemmWarpPolicy</span><span class="o">.</span><span class="n">FullRow</span><span class="p">)</span>
-                
+
                 <span class="c1"># Softmax preparation</span>
                 <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">scores_max</span><span class="p">,</span> <span class="n">scores_max_prev</span><span class="p">)</span>
                 <span class="n">T</span><span class="o">.</span><span class="n">reduce_max</span><span class="p">(</span><span class="n">acc_s</span><span class="p">,</span> <span class="n">scores_max</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -611,12 +602,11 @@
 
 <section id="parameters">
 <h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">#</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sm_scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">dim</span> <span class="o">+</span> <span class="n">tail_dim</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">1.44269504</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sm_scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">dim</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">1.44269504</span>
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>Precomputed Scaling: Combines normalization factor (√dk) and log₂(e) constant for softmax</p></li>
-<li><p>Split-KV Design: <code class="docutils literal notranslate"><span class="pre">tail_dim</span></code> separates main dimensions from auxiliary KV dimensions</p></li>
 </ul>
 </section>
 
@@ -628,7 +618,6 @@
 </div>
 <ul class="simple">
 <li><p>Tiled Loading: Copies blocks of Q/K/V into shared memory</p></li>
-<li><p>Split Storage: Separates main dimensions from tail dimensions for efficient access</p></li>
 </ul>
 </section>
 
@@ -646,14 +635,8 @@
 <section id="attention-computation">
 <h4>Attention Computation<a class="headerlink" href="#attention-computation" title="Permalink to this heading">#</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">Q_shared</span><span class="p">,</span> <span class="n">K_shared</span><span class="p">,</span> <span class="n">acc_s</span><span class="p">,</span> <span class="n">transpose_B</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">tail_dim</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">Q_tail_shared</span><span class="p">,</span> <span class="n">K_tail_shared</span><span class="p">,</span> <span class="n">acc_s</span><span class="p">,</span> <span class="n">transpose_B</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<ul class="simple">
-<li><p>Two-Part GEMM: Computes main and tail contributions separately</p></li>
-<li><p>Fused Operations: Combines results into single score matrix</p></li>
-</ul>
 </section>
 
 <section id="numerically-stable-softmax">
