@@ -387,6 +387,36 @@
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Privacy</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../privacy.html">Privacy</a></li>
@@ -425,7 +455,267 @@
         </div>
         <article role="main">
           <section id="flash-attention">
-<h1>Flash Attention<a class="headerlink" href="#flash-attention" title="Permalink to this heading">#</a></h1>
+<h1>TileLang FlashAttention Tutorial<a class="headerlink" href="#flash-attention" title="Permalink to this heading">#</a></h1>
+
+<section id="part-1-forward-pass">
+<h2>Part 1: Forward Pass<a class="headerlink" href="#part-1-forward-pass" title="Permalink to this heading">#</a></h2>
+
+<section id="overview">
+<h3>1. Overview<a class="headerlink" href="#overview" title="Permalink to this heading">#</a></h3>
+<p>This tutorial explains the <strong>forward pass</strong> implementation of FlashAttention in TileLang, a parallel programming language for high-performance GPU computing. The kernel achieves <strong>&gt;1.3x speedup</strong> over FlashAttention 2, reaching <strong>630 TFLOPS/s</strong> for 4K sequence lengths on NVIDIA H100 GPUs. Key optimizations include:</p>
+<ul class="simple">
+<li><p><strong>Tiled computation</strong> with configurable block sizes</p></li>
+<li><p><strong>Pipelined memory operations</strong> to hide latency</p></li>
+<li><p><strong>Numerically stable softmax</strong> using base-2 exponentials</p></li>
+<li><p><strong>Split-KV attention</strong> for efficient memory usage</p></li>
+<li><p><strong>Autotuning support</strong> for optimal performance</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is Part 1 of the complete FlashAttention tutorial, focusing on the forward pass implementation. Part 2 will cover the backward pass and gradient computation.</p>
+</div>
+</section>
+
+<section id="forward-pass-kernel-code">
+<h3>2. Forward Pass Kernel Code<a class="headerlink" href="#forward-pass-kernel-code" title="Permalink to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@autotune</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">get_configs</span><span class="p">())</span>
+<span class="nd">@jit</span><span class="p">(</span><span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">mha_fwd</span><span class="p">(</span>
+    <span class="n">batch</span><span class="p">,</span>
+    <span class="n">seq_len</span><span class="p">,</span>
+    <span class="n">seq_len_kv</span><span class="p">,</span>
+    <span class="n">heads</span><span class="p">,</span>
+    <span class="n">dim</span><span class="p">,</span>
+    <span class="n">sm_scale</span><span class="p">,</span>
+    <span class="n">is_causal</span><span class="p">,</span>
+    <span class="n">block_M</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+    <span class="n">block_N</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+    <span class="n">num_stages</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threads</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">sm_scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">dim</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">1.44269504</span>
+
+    <span class="n">q_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">dim</span><span class="p">]</span>
+    <span class="n">k_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len_kv</span><span class="p">,</span> <span class="n">dim</span><span class="p">]</span>
+    <span class="n">v_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len_kv</span><span class="p">,</span> <span class="n">dim</span><span class="p">]</span>
+    <span class="n">o_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">dim</span><span class="p">]</span>
+    <span class="n">lse_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">]</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;bfloat16&quot;</span>
+    <span class="n">accum_dtype</span> <span class="o">=</span> <span class="s2">&quot;float&quot;</span>
+    <span class="n">q_start_id</span> <span class="o">=</span> <span class="n">seq_len_kv</span> <span class="o">-</span> <span class="n">seq_len</span>
+
+    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+        <span class="n">Q</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">q_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>
+        <span class="n">K</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">k_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>
+        <span class="n">V</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">v_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>
+        <span class="n">Output</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">o_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>
+        <span class="n">Lse</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">lse_shape</span><span class="p">,</span> <span class="n">accum_dtype</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">seq_len</span><span class="p">,</span> <span class="n">block_M</span><span class="p">),</span> <span class="n">heads</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bz</span><span class="p">):</span>
+            <span class="c1"># Memory allocations</span>
+            <span class="n">Q_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">K_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_N</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">V_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_N</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">O_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">acc_s</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">],</span> <span class="n">accum_dtype</span><span class="p">)</span>
+            <span class="n">acc_s_cast</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">acc_o</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">accum_dtype</span><span class="p">)</span>
+            <span class="n">scores_max</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_M</span><span class="p">],</span> <span class="n">accum_dtype</span><span class="p">)</span>
+            <span class="n">scores_max_prev</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_M</span><span class="p">],</span> <span class="n">accum_dtype</span><span class="p">)</span>
+            <span class="n">scores_scale</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_M</span><span class="p">],</span> <span class="n">accum_dtype</span><span class="p">)</span>
+            <span class="n">scores_sum</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_M</span><span class="p">],</span> <span class="n">accum_dtype</span><span class="p">)</span>
+            <span class="n">logsum</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">([</span><span class="n">block_M</span><span class="p">],</span> <span class="n">accum_dtype</span><span class="p">)</span>
+
+            <span class="c1"># Load Q tile</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="n">bz</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">:(</span><span class="n">bx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="p">:</span><span class="n">dim</span><span class="p">],</span> <span class="n">Q_shared</span><span class="p">)</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">acc_o</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">logsum</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">scores_max</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">)</span>
+
+            <span class="c1"># Determine loop range with causal masking</span>
+            <span class="n">loop_range</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">seq_len_kv</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">seq_len_kv</span> <span class="o">-</span> <span class="n">seq_len</span> <span class="o">+</span> <span class="p">(</span><span class="n">bx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">is_causal</span> <span class="k">else</span> <span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">seq_len_kv</span><span class="p">,</span> <span class="n">block_N</span><span class="p">))</span>
+
+            <span class="c1"># Main attention loop</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span><span class="n">loop_range</span><span class="p">,</span> <span class="n">num_stages</span><span class="o">=</span><span class="n">num_stages</span><span class="p">):</span>
+                <span class="c1"># Load K tile</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">K</span><span class="p">[</span><span class="n">bz</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">:(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">,</span> <span class="p">:</span><span class="n">dim</span><span class="p">],</span> <span class="n">K_shared</span><span class="p">)</span>
+
+                <span class="c1"># Initialize scores with causal masking</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">):</span>
+                    <span class="n">q_idx</span> <span class="o">=</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_M</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="n">q_start_id</span>
+                    <span class="n">k_idx</span> <span class="o">=</span> <span class="n">k</span> <span class="o">*</span> <span class="n">block_N</span> <span class="o">+</span> <span class="n">j</span>
+                    <span class="n">acc_s</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">if_then_else</span><span class="p">(</span><span class="n">q_idx</span> <span class="o">&gt;=</span> <span class="n">k_idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">T</span><span class="o">.</span><span class="n">infinity</span><span class="p">(</span><span class="n">acc_s</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+                
+                <span class="c1"># Compute attention scores</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">Q_shared</span><span class="p">,</span> <span class="n">K_shared</span><span class="p">,</span> <span class="n">acc_s</span><span class="p">,</span> <span class="n">transpose_B</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">GemmWarpPolicy</span><span class="o">.</span><span class="n">FullRow</span><span class="p">)</span>
+
+                <span class="c1"># Softmax preparation</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">scores_max</span><span class="p">,</span> <span class="n">scores_max_prev</span><span class="p">)</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">reduce_max</span><span class="p">(</span><span class="n">acc_s</span><span class="p">,</span> <span class="n">scores_max</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_M</span><span class="p">):</span>
+                    <span class="n">scores_scale</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">exp2</span><span class="p">(</span><span class="n">scores_max_prev</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sm_scale</span> <span class="o">-</span> <span class="n">scores_max</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sm_scale</span><span class="p">)</span>
+                
+                <span class="c1"># Compute exp scores</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">):</span>
+                    <span class="n">acc_s</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">exp2</span><span class="p">(</span><span class="n">acc_s</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">sm_scale</span> <span class="o">-</span> <span class="n">scores_max</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sm_scale</span><span class="p">)</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">acc_s</span><span class="p">,</span> <span class="n">scores_sum</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                
+                <span class="c1"># Update running statistics</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_M</span><span class="p">):</span>
+                    <span class="n">logsum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">logsum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">scores_scale</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">scores_sum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">acc_s</span><span class="p">,</span> <span class="n">acc_s_cast</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+                    <span class="n">acc_o</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*=</span> <span class="n">scores_scale</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                
+                <span class="c1"># Accumulate output</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">bz</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">:(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">,</span> <span class="p">:],</span> <span class="n">V_shared</span><span class="p">)</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">acc_s_cast</span><span class="p">,</span> <span class="n">V_shared</span><span class="p">,</span> <span class="n">acc_o</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">GemmWarpPolicy</span><span class="o">.</span><span class="n">FullRow</span><span class="p">)</span>
+            
+            <span class="c1"># Final normalization</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+                <span class="n">acc_o</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">/=</span> <span class="n">logsum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">acc_o</span><span class="p">,</span> <span class="n">O_shared</span><span class="p">)</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">O_shared</span><span class="p">,</span> <span class="n">Output</span><span class="p">[</span><span class="n">bz</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">:(</span><span class="n">bx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="p">:])</span>
+            
+            <span class="c1"># Save logsumexp</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_M</span><span class="p">):</span>
+                <span class="n">logsum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">logsum</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">scores_max</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">sm_scale</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">logsum</span><span class="p">,</span> <span class="n">Lse</span><span class="p">[</span><span class="n">bz</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">:(</span><span class="n">bx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">main</span>
+</pre></div>
+</div>
+</section>
+
+<section id="forward-pass-components-explained">
+<h3>3. Forward Pass Components Explained<a class="headerlink" href="#forward-pass-components-explained" title="Permalink to this heading">#</a></h3>
+
+<section id="kernel-configuration">
+<h4>Kernel Configuration<a class="headerlink" href="#kernel-configuration" title="Permalink to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@autotune</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">get_configs</span><span class="p">())</span>
+<span class="nd">@jit</span><span class="p">(</span><span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Autotuning: Dynamically selects optimal tile sizes (<code class="docutils literal notranslate"><span class="pre">block_M</span></code>, <code class="docutils literal notranslate"><span class="pre">block_N</span></code>) and thread configuration</p></li>
+<li><p>Output Indexing: <code class="docutils literal notranslate"><span class="pre">out_idx=[-2,-1]</span></code> specifies tensor contraction dimensions</p></li>
+</ul>
+</section>
+
+<section id="parameters">
+<h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sm_scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">dim</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">1.44269504</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Precomputed Scaling: Combines normalization factor (√dk) and log₂(e) constant for softmax</p></li>
+</ul>
+</section>
+
+<section id="memory-management">
+<h4>Memory Management<a class="headerlink" href="#memory-management" title="Permalink to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Q_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+<span class="n">K_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">([</span><span class="n">block_N</span><span class="p">,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">dtype</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Tiled Loading: Copies blocks of Q/K/V into shared memory</p></li>
+</ul>
+</section>
+
+<section id="causal-masking">
+<h4>Causal Masking<a class="headerlink" href="#causal-masking" title="Permalink to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">acc_s</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">if_then_else</span><span class="p">(</span><span class="n">q_idx</span> <span class="o">&gt;=</span> <span class="n">k_idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">T</span><span class="o">.</span><span class="n">infinity</span><span class="p">(</span><span class="n">acc_s</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Block-Level Masking: Computes valid attention ranges per tile</p></li>
+<li><p>Position Tracking: Uses <code class="docutils literal notranslate"><span class="pre">q_start_id</span></code> to align sequences in encoder-decoder setups</p></li>
+</ul>
+</section>
+
+<section id="attention-computation">
+<h4>Attention Computation<a class="headerlink" href="#attention-computation" title="Permalink to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">Q_shared</span><span class="p">,</span> <span class="n">K_shared</span><span class="p">,</span> <span class="n">acc_s</span><span class="p">,</span> <span class="n">transpose_B</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+
+<section id="numerically-stable-softmax">
+<h4>Numerically Stable Softmax<a class="headerlink" href="#numerically-stable-softmax" title="Permalink to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute max per row</span>
+<span class="n">T</span><span class="o">.</span><span class="n">reduce_max</span><span class="p">(</span><span class="n">acc_s</span><span class="p">,</span> <span class="n">scores_max</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Rescale previous statistics</span>
+<span class="n">scores_scale</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">exp2</span><span class="p">(</span><span class="n">scores_max_prev</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sm_scale</span> <span class="o">-</span> <span class="n">scores_max</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sm_scale</span><span class="p">)</span>
+
+<span class="c1"># Compute exp scores</span>
+<span class="n">acc_s</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">exp2</span><span class="p">(</span><span class="n">acc_s</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">sm_scale</span> <span class="o">-</span> <span class="n">scores_max</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sm_scale</span><span class="p">)</span>
+
+<span class="c1"># Update running sum</span>
+<span class="n">logsum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">logsum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">scores_scale</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">scores_sum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Base-2 Exponentiation: Leverages hardware-optimized <code class="docutils literal notranslate"><span class="pre">exp2</span></code> instructions</p></li>
+<li><p>Online Rescaling: Maintains numerical stability across blocks</p></li>
+<li><p>Incremental Updates: Modifies output accumulation during softmax</p></li>
+</ul>
+</section>
+
+<section id="output-accumulation">
+<h4>Output Accumulation<a class="headerlink" href="#output-accumulation" title="Permalink to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">acc_s_cast</span><span class="p">,</span> <span class="n">V_shared</span><span class="p">,</span> <span class="n">acc_o</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_M</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+    <span class="n">acc_o</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">/=</span> <span class="n">logsum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Fused GEMM: Multiplies softmax output with value matrix</p></li>
+<li><p>Delayed Normalization: Applies softmax scaling after full accumulation</p></li>
+</ul>
+</section>
+
+<section id="pipelining">
+<h4>Pipelining<a class="headerlink" href="#pipelining" title="Permalink to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span><span class="n">loop_range</span><span class="p">,</span> <span class="n">num_stages</span><span class="o">=</span><span class="n">num_stages</span><span class="p">):</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Overlapped Execution: Hides memory latency by processing multiple blocks concurrently</p></li>
+<li><p>Configurable Stages: <code class="docutils literal notranslate"><span class="pre">num_stages</span></code> controls pipeline depth for different hardware</p></li>
+</ul>
+</section>
+
+<section id="log-sum-exp-output">
+<h4>Log-Sum-Exp Output<a class="headerlink" href="#log-sum-exp-output" title="Permalink to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">logsum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">logsum</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="n">scores_max</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sm_scale</span>
+<span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">logsum</span><span class="p">,</span> <span class="n">Lse</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Final Logarithm: Converts running sum to log-space</p></li>
+<li><p>Gradient Preparation: Stores values needed for backward pass</p></li>
+</ul>
+</section>
+
+</section>
+
+<section id="performance-notes">
+<h3>4. Performance Notes<a class="headerlink" href="#performance-notes" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Block Sizing</strong>: Optimal <code class="docutils literal notranslate"><span class="pre">block_M</span></code>/<code class="docutils literal notranslate"><span class="pre">block_N</span></code> vary with sequence length (128 works well for 4K)</p></li>
+<li><p><strong>Thread Count</strong>: 256 threads balance occupancy and resource usage</p></li>
+<li><p><strong>Mixed Precision</strong>: <code class="docutils literal notranslate"><span class="pre">bfloat16</span></code> for storage with <code class="docutils literal notranslate"><span class="pre">float</span></code> accumulation maintains precision</p></li>
+<li><p><strong>Causal Adaptation</strong>: Loop range adjustment minimizes unnecessary computation</p></li>
+</ol>
+</section>
+
+</section>
 </section>
 
         </article>
@@ -457,7 +747,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2025-2025, Tile Lang Contributors
+                Copyright &#169; 2025-2025, Tile Lang Contributor Nathan Chen
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
