@@ -1,0 +1,149 @@
+tilelang.jit.adapter.libgen
+===========================
+
+.. py:module:: tilelang.jit.adapter.libgen
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.libgen.logger
+   tilelang.jit.adapter.libgen.is_nvrtc_available
+   tilelang.jit.adapter.libgen.NVRTC_UNAVAILABLE_WARNING
+   tilelang.jit.adapter.libgen.is_nvrtc_available
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.libgen.LibraryGenerator
+   tilelang.jit.adapter.libgen.PyLibraryGenerator
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: is_nvrtc_available
+   :value: False
+
+
+.. py:data:: NVRTC_UNAVAILABLE_WARNING
+   :value: 'cuda-python is not available, nvrtc backend cannot be used. Please install cuda-python via `pip...
+
+
+.. py:data:: is_nvrtc_available
+   :value: True
+
+
+.. py:class:: LibraryGenerator(target)
+
+   Bases: :py:obj:`object`
+
+
+   .. py:attribute:: srcpath
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: libpath
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: lib_code
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: pass_configs
+      :type:  Optional[Dict[str, Any]]
+      :value: None
+
+
+
+   .. py:attribute:: compile_flags
+      :type:  Optional[List[str]]
+      :value: None
+
+
+
+   .. py:attribute:: target
+
+
+   .. py:method:: assign_pass_configs(pass_configs = None)
+
+
+   .. py:method:: assign_compile_flags(compile_flags = None)
+
+
+   .. py:method:: update_lib_code(lib_code)
+
+
+   .. py:method:: load_lib(lib_path = None)
+
+
+   .. py:method:: compile_lib(timeout = None)
+
+
+   .. py:method:: remove_lib()
+
+
+   .. py:method:: get_source_path()
+
+
+   .. py:method:: get_lib_path()
+
+
+   .. py:method:: set_lib_path(libpath)
+
+
+   .. py:method:: set_src_path(srcpath)
+
+
+.. py:class:: PyLibraryGenerator(target)
+
+   Bases: :py:obj:`LibraryGenerator`
+
+
+   .. py:attribute:: host_func
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: culib
+      :value: None
+
+
+
+   .. py:attribute:: pymodule
+      :value: None
+
+
+
+   .. py:method:: import_from_file(module_name, file_path)
+      :staticmethod:
+
+
+
+   .. py:method:: update_host_func(host_func)
+
+
+   .. py:method:: load_lib(lib_path = None)
+
+
+   .. py:method:: compile_lib(timeout = None)
+
+
+   .. py:method:: __del__()
+
+

@@ -1,0 +1,1911 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="tilelang.quantize.quantization" href="../quantization/index.html" /><link rel="prev" title="tilelang.quantize" href="../index.html" />
+        <link rel="prefetch" href="../../../../_static/img/logo-row.svg" as="image" />
+        <link rel="prefetch" href="../../../../_static/img/logo-row.svg" as="image" />
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
+        <title>tilelang.quantize.lop3 - Tile Language 0.1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../index.html"><div class="brand">Tile Language <br> 0.1.5 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../../../_static/img/logo-row.svg" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../../../../_static/img/logo-row.svg" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Tile Language <br> 0.1.5 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">GET STARTED</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../get_started/Installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../get_started/overview.html">The Tile Language: A Brief Introduction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/auto_tuning.html">Auto-Tuning Techniques for Performance Optimization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">DEEP LEARNING OPERATORS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../deeplearning_operators/elementwise.html">ElementWise Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../deeplearning_operators/gemv.html">General Matrix-Vector Multiplication (GEMV)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../deeplearning_operators/matmul.html">General Matrix-Matrix Multiplication with Tile Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../deeplearning_operators/deepseek_mla.html">🚀 Write High Performance FlashMLA with TileLang on Hopper</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../index.html">tilelang</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of tilelang</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../autotuner/index.html">tilelang.autotuner</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of tilelang.autotuner</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../autotuner/capture/index.html">tilelang.autotuner.capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../autotuner/param/index.html">tilelang.autotuner.param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../autotuner/tuner/index.html">tilelang.autotuner.tuner</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../cache/index.html">tilelang.cache</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of tilelang.cache</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../cache/kernel_cache/index.html">tilelang.cache.kernel_cache</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../carver/index.html">tilelang.carver</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of tilelang.carver</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../carver/analysis/index.html">tilelang.carver.analysis</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../carver/arch/index.html">tilelang.carver.arch</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of tilelang.carver.arch</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/arch/arch_base/index.html">tilelang.carver.arch.arch_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/arch/cdna/index.html">tilelang.carver.arch.cdna</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/arch/cpu/index.html">tilelang.carver.arch.cpu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/arch/cuda/index.html">tilelang.carver.arch.cuda</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../carver/arch/driver/index.html">tilelang.carver.arch.driver</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tilelang.carver.arch.driver</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../carver/arch/driver/cuda_driver/index.html">tilelang.carver.arch.driver.cuda_driver</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../carver/common_schedules/index.html">tilelang.carver.common_schedules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../carver/matmul_analysis/index.html">tilelang.carver.matmul_analysis</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../carver/roller/index.html">tilelang.carver.roller</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of tilelang.carver.roller</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/roller/bestfit/index.html">tilelang.carver.roller.bestfit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/roller/hint/index.html">tilelang.carver.roller.hint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/roller/node/index.html">tilelang.carver.roller.node</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../carver/roller/policy/index.html">tilelang.carver.roller.policy</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of tilelang.carver.roller.policy</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../carver/roller/policy/common/index.html">tilelang.carver.roller.policy.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../carver/roller/policy/default/index.html">tilelang.carver.roller.policy.default</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../carver/roller/policy/tensorcore/index.html">tilelang.carver.roller.policy.tensorcore</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/roller/rasterization/index.html">tilelang.carver.roller.rasterization</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../carver/roller/shape_inference/index.html">tilelang.carver.roller.shape_inference</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of tilelang.carver.roller.shape_inference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../carver/roller/shape_inference/common/index.html">tilelang.carver.roller.shape_inference.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../carver/roller/shape_inference/tir/index.html">tilelang.carver.roller.shape_inference.tir</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../carver/template/index.html">tilelang.carver.template</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of tilelang.carver.template</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/template/base/index.html">tilelang.carver.template.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/template/conv/index.html">tilelang.carver.template.conv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/template/elementwise/index.html">tilelang.carver.template.elementwise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/template/flashattention/index.html">tilelang.carver.template.flashattention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/template/gemv/index.html">tilelang.carver.template.gemv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/template/general_reduce/index.html">tilelang.carver.template.general_reduce</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/template/matmul/index.html">tilelang.carver.template.matmul</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../carver/utils/index.html">tilelang.carver.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../common/index.html">tilelang.common</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of tilelang.common</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../common/transform_kind/index.html">tilelang.common.transform_kind</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../contrib/index.html">tilelang.contrib</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of tilelang.contrib</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../contrib/cc/index.html">tilelang.contrib.cc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contrib/dlpack/index.html">tilelang.contrib.dlpack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contrib/hipcc/index.html">tilelang.contrib.hipcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contrib/nvcc/index.html">tilelang.contrib.nvcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contrib/nvrtc/index.html">tilelang.contrib.nvrtc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contrib/rocm/index.html">tilelang.contrib.rocm</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../engine/index.html">tilelang.engine</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of tilelang.engine</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../engine/callback/index.html">tilelang.engine.callback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../engine/lower/index.html">tilelang.engine.lower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../engine/param/index.html">tilelang.engine.param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../engine/phase/index.html">tilelang.engine.phase</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../env/index.html">tilelang.env</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../intrinsics/index.html">tilelang.intrinsics</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of tilelang.intrinsics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mfma_layout/index.html">tilelang.intrinsics.mfma_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mfma_macro_generator/index.html">tilelang.intrinsics.mfma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../jit/index.html">tilelang.jit</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of tilelang.jit</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../jit/adapter/index.html">tilelang.jit.adapter</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of tilelang.jit.adapter</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../jit/adapter/base/index.html">tilelang.jit.adapter.base</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../jit/adapter/ctypes/index.html">tilelang.jit.adapter.ctypes</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of tilelang.jit.adapter.ctypes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../jit/adapter/ctypes/adapter/index.html">tilelang.jit.adapter.ctypes.adapter</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../jit/adapter/cython/index.html">tilelang.jit.adapter.cython</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of tilelang.jit.adapter.cython</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../jit/adapter/cython/adapter/index.html">tilelang.jit.adapter.cython.adapter</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../jit/adapter/dlpack/index.html">tilelang.jit.adapter.dlpack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../jit/adapter/libgen/index.html">tilelang.jit.adapter.libgen</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../jit/adapter/nvrtc/index.html">tilelang.jit.adapter.nvrtc</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of tilelang.jit.adapter.nvrtc</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../jit/adapter/nvrtc/adapter/index.html">tilelang.jit.adapter.nvrtc.adapter</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../jit/adapter/utils/index.html">tilelang.jit.adapter.utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../jit/adapter/wrapper/index.html">tilelang.jit.adapter.wrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../jit/env/index.html">tilelang.jit.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../jit/kernel/index.html">tilelang.jit.kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../jit/param/index.html">tilelang.jit.param</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../language/index.html">tilelang.language</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of tilelang.language</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../language/allocate/index.html">tilelang.language.allocate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/builtin/index.html">tilelang.language.builtin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/copy/index.html">tilelang.language.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/customize/index.html">tilelang.language.customize</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../language/experimental/index.html">tilelang.language.experimental</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of tilelang.language.experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../language/experimental/gemm_sp/index.html">tilelang.language.experimental.gemm_sp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/fill/index.html">tilelang.language.fill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/frame/index.html">tilelang.language.frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/gemm/index.html">tilelang.language.gemm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/kernel/index.html">tilelang.language.kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/logical/index.html">tilelang.language.logical</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/memscope/index.html">tilelang.language.memscope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/parallel/index.html">tilelang.language.parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/persistent/index.html">tilelang.language.persistent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/pipeline/index.html">tilelang.language.pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/print/index.html">tilelang.language.print</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/proxy/index.html">tilelang.language.proxy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/reduce/index.html">tilelang.language.reduce</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../language/tir/index.html">tilelang.language.tir</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of tilelang.language.tir</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../language/tir/entry/index.html">tilelang.language.tir.entry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../language/tir/ir/index.html">tilelang.language.tir.ir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../language/tir/op/index.html">tilelang.language.tir.op</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/warpgroup/index.html">tilelang.language.warpgroup</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../layout/index.html">tilelang.layout</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of tilelang.layout</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../layout/fragment/index.html">tilelang.layout.fragment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../layout/gemm_sp/index.html">tilelang.layout.gemm_sp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../layout/layout/index.html">tilelang.layout.layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../layout/swizzle/index.html">tilelang.layout.swizzle</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../math/index.html">tilelang.math</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../primitives/index.html">tilelang.primitives</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of tilelang.primitives</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../primitives/gemm/index.html">tilelang.primitives.gemm</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of tilelang.primitives.gemm</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../primitives/gemm/base/index.html">tilelang.primitives.gemm.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../primitives/gemm/gemm_mma/index.html">tilelang.primitives.gemm.gemm_mma</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../profiler/index.html">tilelang.profiler</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of tilelang.profiler</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../profiler/bench/index.html">tilelang.profiler.bench</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">tilelang.quantize</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of tilelang.quantize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">tilelang.quantize.lop3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../quantization/index.html">tilelang.quantize.quantization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/index.html">tilelang.quantize.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/index.html">tilelang.testing</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../tools/index.html">tilelang.tools</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of tilelang.tools</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/Analyzer/index.html">tilelang.tools.Analyzer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/plot_layout/index.html">tilelang.tools.plot_layout</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../transform/index.html">tilelang.transform</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of tilelang.transform</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../transform/pass_config/index.html">tilelang.transform.pass_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transform/simplify/index.html">tilelang.transform.simplify</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../utils/index.html">tilelang.utils</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of tilelang.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/deprecated/index.html">tilelang.utils.deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/language/index.html">tilelang.utils.language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/sparse/index.html">tilelang.utils.sparse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/target/index.html">tilelang.utils.target</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/tensor/index.html">tilelang.utils.tensor</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Privacy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../privacy.html">Privacy</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../../../_sources/autoapi/tilelang/quantize/lop3/index.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-tilelang.quantize.lop3">
+<span id="tilelang-quantize-lop3"></span><h1>tilelang.quantize.lop3<a class="headerlink" href="#module-tilelang.quantize.lop3" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16" title="tilelang.quantize.lop3.decode_i4_to_f16"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i4_to_f16</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale" title="tilelang.quantize.lop3.decode_i4_to_f16_scale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_offset" title="tilelang.quantize.lop3.decode_i4_to_f16_scale_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_offset</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_original" title="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_original"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_original</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_original_offset" title="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_original_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_original_offset</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_rescale" title="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_rescale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_rescale</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_rescale_offset" title="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_rescale_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_rescale_offset</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_quantized" title="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_quantized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_quantized</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_quantized_offset" title="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_quantized_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_quantized_offset</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16" title="tilelang.quantize.lop3.decode_i2_to_f16"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i2_to_f16</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale" title="tilelang.quantize.lop3.decode_i2_to_f16_scale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i2_to_f16_scale</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_original_offset" title="tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_original_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i2_to_f16_scale_zeros_original_offset</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_original" title="tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_original"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i2_to_f16_scale_zeros_original</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_rescale" title="tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_rescale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i2_to_f16_scale_zeros_rescale</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_quantized" title="tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_quantized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i2_to_f16_scale_zeros_quantized</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i1_to_f16" title="tilelang.quantize.lop3.decode_i1_to_f16"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i1_to_f16</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i1_to_f16_scale" title="tilelang.quantize.lop3.decode_i1_to_f16_scale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i1_to_f16_scale</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i1_to_f16_scale_zeros_original" title="tilelang.quantize.lop3.decode_i1_to_f16_scale_zeros_original"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i1_to_f16_scale_zeros_original</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i1_to_f16_scale_zeros_rescale" title="tilelang.quantize.lop3.decode_i1_to_f16_scale_zeros_rescale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i1_to_f16_scale_zeros_rescale</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i1s_to_i8s" title="tilelang.quantize.lop3.decode_i1s_to_i8s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i1s_to_i8s</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2s_to_i8s" title="tilelang.quantize.lop3.decode_i2s_to_i8s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i2s_to_i8s</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4s_to_i8s" title="tilelang.quantize.lop3.decode_i4s_to_i8s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i4s_to_i8s</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2s_to_i4s" title="tilelang.quantize.lop3.decode_i2s_to_i4s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_i2s_to_i4s</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.lop3.get_lop3_intrin_group" title="tilelang.quantize.lop3.get_lop3_intrin_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_lop3_intrin_group</span></code></a>(out_dtype[, source_format, ...])</p></td>
+<td><p>This function is used to get the intrinsic group of the LOP3 operation to avoid the overhead of fast decoding.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i4_to_f16">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i4_to_f16</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i4_to_f16" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i4b_to_f16(T1 *_i4s, T2 *B_local_decode, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x000f000f;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64086408 : 0x64006400;</span>
+<span class="sd">    uint const i4s = *reinterpret_cast&lt;uint *&gt;(_i4s);</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4s &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i4s_to_f16(T1 *_i4s, T2 *B_local_decode, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16&lt;T1, T2, true&gt;(_i4s, B_local_decode, N);</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i4u_to_f16(T1 *_i4u, T2 *B_local_decode, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16&lt;T1, T2, false&gt;(_i4u, B_local_decode, N);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i4_to_f16_scale">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i4_to_f16_scale</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, bool isSigned = false, bool withScaling = false&gt;</span>
+<span class="sd">__device__ void decode_i4b_to_f16_scale(T1 *_i4s, T2 *B_local_decode, const int N = 8, const T3 *scale = nullptr)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x000f000f;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    // Minus 7 to scale the value to signed</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64086408 : 0x64006400;</span>
+<span class="sd">    uint const i4s = *reinterpret_cast&lt;uint *&gt;(_i4s);</span>
+<span class="sd">    T3 const scale_r = *scale;</span>
+<span class="sd">    uint const packed_scales = __pack_half2(scale_r, scale_r);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4s &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i4s_to_f16_scale(T1 *_i4s, T2 *B_local_decode, T3 *scale = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16_scale&lt;T1, T2, T3, true, true&gt;(_i4s, B_local_decode, N, scale);</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i4u_to_f16_scale(T1 *_i4u, T2 *B_local_decode, T3 *scale = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16_scale&lt;T1, T2, T3, false, true&gt;(_i4u, B_local_decode, N, scale);</span>
+<span class="sd">}</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i4_to_f16_scale_offset">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i4_to_f16_scale_offset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_offset" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, bool isSigned = false, bool withScaling = false&gt;</span>
+<span class="sd">__device__ void decode_i4b_to_f16_scale_offset(T1 *_i4s, T2 *B_local_decode, const int N = 8, const T3 *scale = nullptr, const int offset = 0)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x000f000f;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    // Minus 7 to scale the value to signed</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64086408 : 0x64006400;</span>
+<span class="sd">    uint const i4s = *reinterpret_cast&lt;uint *&gt;(_i4s);</span>
+<span class="sd">    T3 const scale_l = *scale;</span>
+<span class="sd">    T3 const scale_r = *(scale + offset);</span>
+<span class="sd">    uint const packed_scales_l = __pack_half2(scale_l, scale_l);</span>
+<span class="sd">    uint const packed_scales_r = __pack_half2(scale_r, scale_r);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4s &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">    }</span>
+<span class="sd">    #pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 4); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales_l), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = (N / 4); i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales_r), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i4s_to_f16_scale_offset(T1 *_i4s, T2 *B_local_decode, T3 *scale = nullptr, const int offset = 0, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16_scale_offset&lt;T1, T2, T3, true, true&gt;(_i4s, B_local_decode, N, scale, offset);</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i4u_to_f16_scale_offset(T1 *_i4u, T2 *B_local_decode, T3 *scale = nullptr, const int offset = 0, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16_scale_offset&lt;T1, T2, T3, false, true&gt;(_i4u, B_local_decode, N, scale, offset);</span>
+<span class="sd">}</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_original">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i4_to_f16_scale_zeros_original</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_original" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i4b_to_f16_zeros_original(T1 *_i4s, T2 *B_local_decode, const int N = 8, const T3 *scale = nullptr, const T4 *zeros = nullptr)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x000f000f;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    // Minus 7 to scale the value to signed</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64086408 : 0x64006400;</span>
+<span class="sd">    uint const i4s = *reinterpret_cast&lt;uint *&gt;(_i4s);</span>
+<span class="sd">    T3 const scale_r = *scale;</span>
+<span class="sd">    uint const packed_scales = __pack_half2(scale_r, scale_r);</span>
+<span class="sd">    // input zeros maybe int32(qzeros) or half format</span>
+<span class="sd">    T4 const zero_r = *zeros;</span>
+<span class="sd">    uint const packed_zeros = __pack_half2(zero_r, zero_r);</span>
+
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4s &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_zeros));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4&gt;</span>
+<span class="sd">__device__ void decode_i4u_to_f16_scale_zeros_original(T1 *_i4u, T2 *B_local_decode, T3 *scale = nullptr, T4 *zeros = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16_zeros_original&lt;T1, T2, T3, T4, false&gt;(_i4u, B_local_decode, N, scale, zeros);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_original_offset">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i4_to_f16_scale_zeros_original_offset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_original_offset" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i4b_to_f16_zeros_original_offset(T1 *_i4s, T2 *B_local_decode, const int N = 8, const T3 *scale = nullptr, const T4 *zeros = nullptr, const int offset = 0)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x000f000f;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    // Minus 7 to scale the value to signed</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64086408 : 0x64006400;</span>
+<span class="sd">    uint const i4s = *reinterpret_cast&lt;uint *&gt;(_i4s);</span>
+<span class="sd">    T3 const scale_l = *scale;</span>
+<span class="sd">    T3 const scale_r = *(scale + offset);</span>
+<span class="sd">    uint const packed_scales_l = __pack_half2(scale_l, scale_l);</span>
+<span class="sd">    uint const packed_scales_r = __pack_half2(scale_r, scale_r);</span>
+<span class="sd">    // input zeros maybe int32(qzeros) or half format</span>
+<span class="sd">    T3 const zeros_l = *zeros;</span>
+<span class="sd">    T3 const zeros_r = *(zeros + offset);</span>
+<span class="sd">    uint const packed_zeros_l = __pack_half2(zeros_l, zeros_l);</span>
+<span class="sd">    uint const packed_zeros_r = __pack_half2(zeros_r, zeros_r);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4s &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">    }</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 4); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_zeros_l));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales_l), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = (N / 4); i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_zeros_r));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales_r), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4&gt;</span>
+<span class="sd">__device__ void decode_i4u_to_f16_scale_zeros_original_offset(T1 *_i4u, T2 *B_local_decode, T3 *scale = nullptr, T4 *zeros = nullptr, const int offset = 0, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16_zeros_original_offset&lt;T1, T2, T3, T4, false&gt;(_i4u, B_local_decode, N, scale, zeros, offset);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_rescale">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i4_to_f16_scale_zeros_rescale</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_rescale" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i4b_to_f16_scale_zeros_rescale(T1 *_i4s, T2 *B_local_decode, const int N = 8, const T3 *scale = nullptr, const T4 *zeros = nullptr)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x000f000f;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    // Minus 7 to scale the value to signed</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64086408 : 0x64006400;</span>
+<span class="sd">    uint const i4s = *reinterpret_cast&lt;uint *&gt;(_i4s);</span>
+<span class="sd">    T3 const scale_r = *scale;</span>
+<span class="sd">    uint const packed_scales = __pack_half2(scale_r, scale_r);</span>
+<span class="sd">    T4 const zero_r = *zeros;</span>
+<span class="sd">    uint const packed_zeros = 0x80008000 | __pack_half2(zero_r, zero_r);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4s &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales), &quot;r&quot;(packed_zeros));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4&gt;</span>
+<span class="sd">__device__ void decode_i4u_to_f16_scale_zeros_rescale(T1 *_i4u, T2 *B_local_decode, T3 *scale = nullptr, T4 *zeros = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16_scale_zeros_rescale&lt;T1, T2, T3, T4, false&gt;(_i4u, B_local_decode, N, scale, zeros);</span>
+<span class="sd">}</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_rescale_offset">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i4_to_f16_scale_zeros_rescale_offset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_rescale_offset" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i4b_to_f16_scale_zeros_rescale_offset(T1 *_i4s, T2 *B_local_decode, const int N = 8, const T3 *scale = nullptr, const T4 *zeros = nullptr, const int offset = 0)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x000f000f;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    // Minus 7 to scale the value to signed</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64086408 : 0x64006400;</span>
+<span class="sd">    uint const i4s = *reinterpret_cast&lt;uint *&gt;(_i4s);</span>
+<span class="sd">    T3 const scale_l = *scale;</span>
+<span class="sd">    T3 const scale_r = *(scale + offset);</span>
+<span class="sd">    uint const packed_scales_l = __pack_half2(scale_l, scale_l);</span>
+<span class="sd">    uint const packed_scales_r = __pack_half2(scale_r, scale_r);</span>
+<span class="sd">    // input zeros maybe int32(qzeros) or half format</span>
+<span class="sd">    T3 const zeros_l = *zeros;</span>
+<span class="sd">    T3 const zeros_r = *(zeros + offset);</span>
+<span class="sd">    uint const packed_zeros_l = 0x80008000 | __pack_half2(zeros_l, zeros_l);</span>
+<span class="sd">    uint const packed_zeros_r = 0x80008000 | __pack_half2(zeros_r, zeros_r);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4s &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">    }</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 4); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales_l), &quot;r&quot;(packed_zeros_l));</span>
+<span class="sd">    }</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = (N / 4); i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales_r), &quot;r&quot;(packed_zeros_r));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4&gt;</span>
+<span class="sd">__device__ void decode_i4u_to_f16_scale_zeros_rescale_offset(T1 *_i4u, T2 *B_local_decode, T3 *scale = nullptr, T4 *zeros = nullptr, const int offset = 0, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16_scale_zeros_rescale_offset&lt;T1, T2, T3, T4, false&gt;(_i4u, B_local_decode, N, scale, zeros, offset);</span>
+<span class="sd">}</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_quantized">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i4_to_f16_scale_zeros_quantized</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_quantized" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i4b_to_f16_scale_zeros_quantized(T1 *_i4s, T2 *B_local_decode, const int N = 8, const T3 *scale = nullptr, const T4 *zeros = nullptr)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x000f000f;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    // Minus 7 to scale the value to signed</span>
+<span class="sd">    uint const i4s = *reinterpret_cast&lt;uint *&gt;(_i4s);</span>
+<span class="sd">    T3 const scale_r = *scale;</span>
+<span class="sd">    uint const packed_scales = __pack_half2(scale_r, scale_r);</span>
+<span class="sd">    // input zeros maybe int32(qzeros) or half format</span>
+<span class="sd">    int16_t const zero_r = *((int16_t*)zeros);</span>
+<span class="sd">    uint median_num = ((0xe400 | zero_r) &lt;&lt; 16) | (0xe400 | zero_r);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4s &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+
+<span class="sd">        asm volatile(&quot;add.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(median_num));</span>
+
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename storage_dtype, typename target_dtype, typename scale_dtype, typename zero_dtype&gt;</span>
+<span class="sd">__device__ void decode_i4u_to_f16_scale_zeros_quantized(storage_dtype *_i4u, target_dtype *B_local_decode, scale_dtype *scale = nullptr, zero_dtype *zeros = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16_scale_zeros_quantized&lt;storage_dtype, target_dtype, scale_dtype, zero_dtype, false&gt;(_i4u, B_local_decode, N, scale, zeros);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_quantized_offset">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i4_to_f16_scale_zeros_quantized_offset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_quantized_offset" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i4b_to_f16_scale_zeros_quantized_offset(T1 *_i4s, T2 *B_local_decode, const int N = 8, const T3 *scale = nullptr, const T1 *qzeros = nullptr, const int scale_offset = 0, const int qzeros_offset = 0, const int group_offset = 0)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x000f000f;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    // Minus 7 to scale the value to signed</span>
+<span class="sd">    uint const i4s = *reinterpret_cast&lt;uint *&gt;(_i4s);</span>
+
+<span class="sd">    T3 const scale_l = *scale;</span>
+<span class="sd">    T3 const scale_r = *(scale + scale_offset);</span>
+<span class="sd">    uint const packed_scales_l = __pack_half2(scale_l, scale_l);</span>
+<span class="sd">    uint const packed_scales_r = __pack_half2(scale_r, scale_r);</span>
+
+<span class="sd">    const int num_elems_per_storage_dtype = sizeof(T1) * 8 / 4;</span>
+
+<span class="sd">    T1 const qzeros_l = *qzeros;</span>
+<span class="sd">    T1 const qzeros_r = *(qzeros + qzeros_offset);</span>
+<span class="sd">    int16_t const zero_l = (qzeros_l &gt;&gt; (group_offset * 4) &amp; 0xf);</span>
+<span class="sd">    int16_t const zero_r = (qzeros_r &gt;&gt; (group_offset * 4) &amp; 0xf);</span>
+
+<span class="sd">    uint median_num_l = ((0xe400 | zero_l) &lt;&lt; 16) | (0xe400 | zero_l);</span>
+<span class="sd">    uint median_num_r = ((0xe400 | zero_r) &lt;&lt; 16) | (0xe400 | zero_r);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4s &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">    }</span>
+<span class="sd">    #pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 4); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;add.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(median_num_l));</span>
+
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales_l), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = (N / 4); i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;add.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(median_num_r));</span>
+
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales_r), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename storage_dtype, typename target_dtype, typename scale_dtype&gt;</span>
+<span class="sd">__device__ void decode_i4u_to_f16_scale_zeros_quantized_offset(storage_dtype *_i4u, target_dtype *B_local_decode, scale_dtype *scale = nullptr, storage_dtype *qzeros = nullptr, const int scale_offset = 0, const int zero_offset = 0, const int group_offset = 0, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i4b_to_f16_scale_zeros_quantized_offset&lt;storage_dtype, target_dtype, scale_dtype, false&gt;(_i4u, B_local_decode, N, scale, qzeros, scale_offset, zero_offset, group_offset);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i2_to_f16">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i2_to_f16</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i2_to_f16" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i2b_to_f16(T1 *_i2s, T2 *B_local_decode, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00030003;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64026402 : 0x64006400;</span>
+<span class="sd">    int16_t const i2s_i16 = *reinterpret_cast&lt;int16_t *&gt;(_i2s);</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    // interleave {e15,e13,e11,e9,e7,e5,e3,e1,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode for {x,x,x,x,e7,e5,e3,e1,x,x,x,x,e6,e4,e2,e0}</span>
+<span class="sd">    // otherwise the pointer of _i2s should be moved to</span>
+<span class="sd">    int i2s = (i2s_i16 &amp; 0x00ff);</span>
+<span class="sd">    i2s |= ((i2s_i16 &amp; 0xff00) &lt;&lt; 8);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i2s &gt;&gt; (2 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i2s_to_f16(T1 *_i2s, T2 *B_local_decode, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i2b_to_f16&lt;T1, T2, true&gt;(_i2s, B_local_decode, N);</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i2u_to_f16(T1 *_i2u, T2 *B_local_decode, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i2b_to_f16&lt;T1, T2, false&gt;(_i2u, B_local_decode, N);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i2_to_f16_scale">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i2_to_f16_scale</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i2b_to_f16_scale(T1 *_i2s, T2 *B_local_decode, T3 *scale = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00030003;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64026402 : 0x64006400;</span>
+<span class="sd">    int16_t const i2s_i16 = *reinterpret_cast&lt;int16_t *&gt;(_i2s);</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    // interleave {e15,e13,e11,e9,e7,e5,e3,e1,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode for {x,x,x,x,e7,e5,e3,e1,x,x,x,x,e6,e4,e2,e0}</span>
+<span class="sd">    // otherwise the pointer of _i2s should be moved to</span>
+<span class="sd">    int i2s = (i2s_i16 &amp; 0x00ff);</span>
+<span class="sd">    i2s |= ((i2s_i16 &amp; 0xff00) &lt;&lt; 8);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i2s &gt;&gt; (2 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(__pack_half2(*scale, *scale)), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i2s_to_f16_scale(T1 *_i2s, T2 *B_local_decode, T3 *scale, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i2b_to_f16_scale&lt;T1, T2, T3, true&gt;(_i2s, B_local_decode, scale, N);</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i2u_to_f16_scale(T1 *_i2u, T2 *B_local_decode,  T3 *scale, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i2b_to_f16_scale&lt;T1, T2, T3, false&gt;(_i2u, B_local_decode, scale, N);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_original_offset">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i2_to_f16_scale_zeros_original_offset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_original_offset" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i2b_to_f16_scale_zeros_original_offset(T1 *_i2s, T2 *B_local_decode, T3 *scale = nullptr, T3 *zeros = nullptr, const int offset = 0, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00030003;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64026402 : 0x64006400;</span>
+<span class="sd">    int16_t const i2s_i16 = *reinterpret_cast&lt;int16_t *&gt;(_i2s);</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    // interleave {e15,e13,e11,e9,e7,e5,e3,e1,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode for {x,x,x,x,e7,e5,e3,e1,x,x,x,x,e6,e4,e2,e0}</span>
+<span class="sd">    // otherwise the pointer of _i2s should be moved to</span>
+<span class="sd">    int i2s = (i2s_i16 &amp; 0x00ff);</span>
+<span class="sd">    i2s |= ((i2s_i16 &amp; 0xff00) &lt;&lt; 8);</span>
+
+<span class="sd">    T3 const zeros_l = *zeros;</span>
+<span class="sd">    T3 const zeros_r = *(zeros + offset);</span>
+<span class="sd">    uint const packed_zeros_l = __pack_half2(zeros_l, zeros_l);</span>
+<span class="sd">    uint const packed_zeros_r = __pack_half2(zeros_r, zeros_r);</span>
+
+<span class="sd">    T3 const scale_l = *scale;</span>
+<span class="sd">    T3 const scale_r = *(scale + offset);</span>
+<span class="sd">    uint const packed_scales_l = __pack_half2(scale_l, scale_l);</span>
+<span class="sd">    uint const packed_scales_r = __pack_half2(scale_r, scale_r);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i2s &gt;&gt; (2 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">    }</span>
+<span class="sd">    #pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 4); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_zeros_l));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales_l), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = (N / 4); i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_zeros_r));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales_r), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i2u_to_f16_scale_zeros_original_offset(T1 *_i2u, T2 *B_local_decode,  T3 *scale, T3 *zeros, const int offset = 0, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i2b_to_f16_scale_zeros_original&lt;T1, T2, T3, false&gt;(_i2u, B_local_decode, scale, zeros, offset, N);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_original">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i2_to_f16_scale_zeros_original</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_original" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i2b_to_f16_scale_zeros_original(T1 *_i2s, T2 *B_local_decode, T3 *scale = nullptr, T3 *zeros = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00030003;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64026402 : 0x64006400;</span>
+<span class="sd">    int16_t const i2s_i16 = *reinterpret_cast&lt;int16_t *&gt;(_i2s);</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    // interleave {e15,e13,e11,e9,e7,e5,e3,e1,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode for {x,x,x,x,e7,e5,e3,e1,x,x,x,x,e6,e4,e2,e0}</span>
+<span class="sd">    // otherwise the pointer of _i2s should be moved to</span>
+<span class="sd">    int i2s = (i2s_i16 &amp; 0x00ff);</span>
+<span class="sd">    i2s |= ((i2s_i16 &amp; 0xff00) &lt;&lt; 8);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i2s &gt;&gt; (2 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(__pack_half2(*zeros, *zeros)));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(__pack_half2(*scale, *scale)), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i2u_to_f16_scale_zeros_original(T1 *_i2u, T2 *B_local_decode,  T3 *scale, T3 *zeros, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i2b_to_f16_scale_zeros_original&lt;T1, T2, T3, false&gt;(_i2u, B_local_decode, scale, zeros, N);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_rescale">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i2_to_f16_scale_zeros_rescale</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_rescale" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i2b_to_f16_scale_zeros_rescale(T1 *_i2s, T2 *B_local_decode, T3 *scale = nullptr, T3 *zeros = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00030003;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64026402 : 0x64006400;</span>
+<span class="sd">    int16_t const i2s_i16 = *reinterpret_cast&lt;int16_t *&gt;(_i2s);</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    // interleave {e15,e13,e11,e9,e7,e5,e3,e1,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode for {x,x,x,x,e7,e5,e3,e1,x,x,x,x,e6,e4,e2,e0}</span>
+<span class="sd">    // otherwise the pointer of _i2s should be moved to</span>
+<span class="sd">    int i2s = (i2s_i16 &amp; 0x00ff);</span>
+<span class="sd">    i2s |= ((i2s_i16 &amp; 0xff00) &lt;&lt; 8);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i2s &gt;&gt; (2 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(__pack_half2(*scale, *scale)), &quot;r&quot;(0));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(__pack_half2(*zeros, *zeros)));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i2u_to_f16_scale_zeros_rescale(T1 *_i2u, T2 *B_local_decode,  T3 *scale, T3 *zeros, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i2b_to_f16_scale_zeros_rescale&lt;T1, T2, T3, false&gt;(_i2u, B_local_decode, scale, zeros, N);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_quantized">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i2_to_f16_scale_zeros_quantized</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_quantized" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i2b_to_f16_scale_zeros_quantized(T1 *_i2s, T2 *B_local_decode, const int N = 8, T3 *scale = nullptr, T4 *zeros = nullptr)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00030003;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64016401 : 0x64006400;</span>
+<span class="sd">    int16_t const i2s_i16 = *reinterpret_cast&lt;int16_t *&gt;(_i2s);</span>
+<span class="sd">    T3 const scale_r = *scale;</span>
+<span class="sd">    uint const packed_scales = __pack_half2(scale_r, scale_r);</span>
+<span class="sd">    int16_t const zero_r = *((int16_t*)zeros);</span>
+<span class="sd">    uint median_num = ((0xe400 | zero_r) &lt;&lt; 16) | (0xe400 | zero_r);</span>
+
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    // interleave {e15,e13,e11,e9,e7,e5,e3,e1,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode for {x,x,x,x,e7,e5,e3,e1,x,x,x,x,e6,e4,e2,e0}</span>
+<span class="sd">    // otherwise the pointer of _i2s should be moved to</span>
+<span class="sd">    int i2s = (i2s_i16 &amp; 0x00ff);</span>
+<span class="sd">    i2s |= ((i2s_i16 &amp; 0xff00) &lt;&lt; 8);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i2s &gt;&gt; (2 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;add.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(median_num));</span>
+
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4&gt;</span>
+<span class="sd">__device__ void decode_i2u_to_f16_scale_zeros_quantized(T1 *_i2u, T2 *B_local_decode, T3 *scale = nullptr, T4 *zeros = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i2b_to_f16_scale_zeros_quantized&lt;T1, T2, T3, T4, false&gt;(_i2u, B_local_decode, N, scale, zeros);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i1_to_f16">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i1_to_f16</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i1_to_f16" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">/*</span>
+<span class="sd">Kind 0: original</span>
+<span class="sd">Kind 1: rescale</span>
+<span class="sd">Kind 2: quantized</span>
+<span class="sd"># documents for zeros_mode:</span>
+<span class="sd"># original: target = (dequantize_weight - zero_point) * scale</span>
+<span class="sd"># rescale: target = dequantize_weight * scale - zero_point</span>
+<span class="sd"># quantized: target = (dequantize_weight - dequantize_zeros) * scale</span>
+<span class="sd"># Notice: only support &quot;original&quot; and &quot;rescale&quot; now</span>
+<span class="sd">zeros_mode: Literal[&quot;original&quot;, &quot;rescale&quot;, &quot;quantized&quot;] = &quot;original&quot;</span>
+<span class="sd">*/</span>
+<span class="sd">template &lt;typename T1, typename T2, bool isSigned = false, bool withScaling = false, bool withZeros = false, int ZerosKind = 1&gt;</span>
+<span class="sd">__device__ void decode_i1b_to_f16(T1 *_i1s, T2 *B_local_decode, const int N = 8, half *scale = nullptr, half *zeros = nullptr)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00010001;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x64006400 : 0x64006400;</span>
+<span class="sd">    static constexpr uint TRANSFORM_SUBTRACT = 0xbc00bc00; // for signed int 2x - 1</span>
+<span class="sd">    // interleave {e31,e29,e27,e25,e23,e21,e19,e17,e15,e13,e11,e9,e7,e5,e3,e1,e30,e28,e26,e24,e22,e20,e18,e16,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode e7,e5,e3,e1,e8,e6,e4,e2,e0</span>
+<span class="sd">    int8_t const i1s_i16 = *reinterpret_cast&lt;int8_t *&gt;(_i1s);</span>
+<span class="sd">    int i1s = (i1s_i16 &amp; 0x0f);</span>
+<span class="sd">    i1s |= ((i1s_i16 &amp; 0xf0) &lt;&lt; 12);</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i1s &gt;&gt; (1 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">        if constexpr (isSigned)</span>
+<span class="sd">        {</span>
+<span class="sd">            asm volatile(&quot;add.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(h[i]));</span>
+<span class="sd">            asm volatile(&quot;add.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(TRANSFORM_SUBTRACT));</span>
+<span class="sd">        }</span>
+<span class="sd">        if constexpr (withZeros &amp;&amp; ZerosKind == 0)</span>
+<span class="sd">        {</span>
+<span class="sd">            asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(__pack_half2(*zeros, *zeros)));</span>
+<span class="sd">        }</span>
+<span class="sd">        if constexpr (withScaling)</span>
+<span class="sd">        {</span>
+<span class="sd">            asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(__pack_half2(*scale, *scale)), &quot;r&quot;(0));</span>
+<span class="sd">        }</span>
+<span class="sd">        if constexpr (withZeros &amp;&amp; ZerosKind == 1)</span>
+<span class="sd">        {</span>
+<span class="sd">            asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(__pack_half2(*zeros, *zeros)));</span>
+<span class="sd">        }</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i1s_to_f16(T1 *_i1s, T2 *B_local_decode, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i1b_to_f16&lt;T1, T2, true&gt;(_i1s, B_local_decode, N);</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i1u_to_f16(T1 *_i1u, T2 *B_local_decode, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i1b_to_f16&lt;T1, T2, false&gt;(_i1u, B_local_decode, N);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i1_to_f16_scale">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i1_to_f16_scale</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i1_to_f16_scale" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i1u_to_f16_scale(T1 *_i1s, T2 *B_local_decode, T3 *scale = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00010001;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = 0x64006400;</span>
+<span class="sd">    // interleave {e31,e29,e27,e25,e23,e21,e19,e17,e15,e13,e11,e9,e7,e5,e3,e1,e30,e28,e26,e24,e22,e20,e18,e16,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode e7,e5,e3,e1,e8,e6,e4,e2,e0</span>
+<span class="sd">    int8_t const i1s_i16 = *reinterpret_cast&lt;int8_t *&gt;(_i1s);</span>
+<span class="sd">    int i1s = (i1s_i16 &amp; 0x0f);</span>
+<span class="sd">    i1s |= ((i1s_i16 &amp; 0xf0) &lt;&lt; 12);</span>
+<span class="sd">    T3 const scale_r = *scale;</span>
+<span class="sd">    uint const packed_scales = __pack_half2(scale_r, scale_r);</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i1s &gt;&gt; (1 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3&gt;</span>
+<span class="sd">__device__ void decode_i1s_to_f16_scale(T1 *_i1s, T2 *B_local_decode, T3 *scale = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00010001;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint TRANSFORM_SUBTRACT = 0xbc00bc00; // for signed int 2x - 1</span>
+<span class="sd">    // interleave {e31,e29,e27,e25,e23,e21,e19,e17,e15,e13,e11,e9,e7,e5,e3,e1,e30,e28,e26,e24,e22,e20,e18,e16,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode e7,e5,e3,e1,e8,e6,e4,e2,e0</span>
+
+<span class="sd">    int8_t const i1s_i16 = *reinterpret_cast&lt;int8_t *&gt;(_i1s);</span>
+<span class="sd">    int i1s = (i1s_i16 &amp; 0x0f);</span>
+<span class="sd">    i1s |= ((i1s_i16 &amp; 0xf0) &lt;&lt; 12);</span>
+<span class="sd">    T3 const scale_r = *scale;</span>
+<span class="sd">    uint const packed_scales = __pack_half2(scale_r, scale_r);</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i1s &gt;&gt; (1 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">        asm volatile(&quot;add.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(h[i]));</span>
+<span class="sd">        asm volatile(&quot;add.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(TRANSFORM_SUBTRACT));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i1_to_f16_scale_zeros_original">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i1_to_f16_scale_zeros_original</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i1_to_f16_scale_zeros_original" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i1b_to_f16_zeros_original(T1 *_i1s, T2 *B_local_decode, const int N = 8, T3 *scale = nullptr, T4 *zeros = nullptr)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00010001;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = 0x64006400;</span>
+<span class="sd">    // interleave {e31,e29,e27,e25,e23,e21,e19,e17,e15,e13,e11,e9,e7,e5,e3,e1,e30,e28,e26,e24,e22,e20,e18,e16,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode e7,e5,e3,e1,e8,e6,e4,e2,e0</span>
+<span class="sd">    int8_t const i1s_i16 = *reinterpret_cast&lt;int8_t *&gt;(_i1s);</span>
+<span class="sd">    int i1s = (i1s_i16 &amp; 0x0f);</span>
+<span class="sd">    i1s |= ((i1s_i16 &amp; 0xf0) &lt;&lt; 12);</span>
+<span class="sd">    T3 const scale_r = *scale;</span>
+<span class="sd">    uint const packed_scales = __pack_half2(scale_r, scale_r);</span>
+<span class="sd">    // input zeros maybe int32(qzeros) or half format</span>
+<span class="sd">    T4 const zero_r = *zeros;</span>
+<span class="sd">    uint const packed_zeros = __pack_half2(zero_r, zero_r);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i1s &gt;&gt; (1 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_zeros));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales), &quot;r&quot;(0));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4&gt;</span>
+<span class="sd">__device__ void decode_i1u_to_f16_scale_zeros_original(T1 *_i1u, T2 *B_local_decode, T3 *scale = nullptr, T4 *zeros = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i1b_to_f16_zeros_original&lt;T1, T2, T3, T4, false&gt;(_i1u, B_local_decode, N, scale, zeros);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i1_to_f16_scale_zeros_rescale">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i1_to_f16_scale_zeros_rescale</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i1_to_f16_scale_zeros_rescale" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4, bool isSigned = false&gt;</span>
+<span class="sd">__device__ void decode_i1b_to_f16_scale_zeros_rescale(T1 *_i1s, T2 *B_local_decode, const int N = 8, T3 *scale = nullptr, T4 *zeros = nullptr)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *h = reinterpret_cast&lt;uint *&gt;(B_local_decode);</span>
+
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x00010001;</span>
+<span class="sd">    static constexpr uint FP16_TOP_MAGIC_NUM = 0x64006400;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = 0x64006400;</span>
+<span class="sd">    // interleave {e31,e29,e27,e25,e23,e21,e19,e17,e15,e13,e11,e9,e7,e5,e3,e1,e30,e28,e26,e24,e22,e20,e18,e16,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // only decode e7,e5,e3,e1,e8,e6,e4,e2,e0</span>
+<span class="sd">    int8_t const i1s_i16 = *reinterpret_cast&lt;int8_t *&gt;(_i1s);</span>
+<span class="sd">    int i1s = (i1s_i16 &amp; 0x0f);</span>
+<span class="sd">    i1s |= ((i1s_i16 &amp; 0xf0) &lt;&lt; 12);</span>
+<span class="sd">    T3 const scale_r = *scale;</span>
+<span class="sd">    uint const packed_scales = __pack_half2(scale_r, scale_r);</span>
+<span class="sd">    T4 const zero_r = *zeros;</span>
+<span class="sd">    uint const packed_zeros = 0x80008000 | __pack_half2(zero_r, zero_r);</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    // decode 2 elems at one time.</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 2); i++)</span>
+<span class="sd">    {</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(h[i])</span>
+<span class="sd">                     : &quot;r&quot;(i1s &gt;&gt; (1 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(FP16_TOP_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        asm volatile(&quot;sub.f16x2 %0, %1, %2;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(MEDIAN_NUM));</span>
+<span class="sd">        asm volatile(&quot;fma.rn.f16x2 %0, %1, %2, %3;\n&quot; : &quot;=r&quot;(h[i]) : &quot;r&quot;(h[i]), &quot;r&quot;(packed_scales), &quot;r&quot;(packed_zeros));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2, typename T3, typename T4&gt;</span>
+<span class="sd">__device__ void decode_i1u_to_f16_scale_zeros_rescale(T1 *_i4u, T2 *B_local_decode, T3 *scale = nullptr, T4 *zeros = nullptr, const int N = 8)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i1b_to_f16_scale_zeros_rescale&lt;T1, T2, T3, T4, false&gt;(_i4u, B_local_decode, N, scale, zeros);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i1s_to_i8s">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i1s_to_i8s</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i1s_to_i8s" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i1s_to_i8s(T1 *_i1b, T2 *_i8s, const int N = 16)</span>
+<span class="sd">{</span>
+<span class="sd">    int i8s[4];</span>
+<span class="sd">    // vector load</span>
+<span class="sd">    *reinterpret_cast&lt;int4 *&gt;(i8s) = *reinterpret_cast&lt;int4 *&gt;(_i8s);</span>
+<span class="sd">    int16_t i1b_i16 = *reinterpret_cast&lt;int16_t *&gt;(_i1b);</span>
+<span class="sd">    // permutate: {e0,e4,e8,e12,e2,e6,e10,e14,e1,e5,e9,e13,e3,e7,e11,e15}</span>
+<span class="sd">    // into: {e0,e4,e8,e12,x,x,x,x,e1,e5,e9,x,x,x,x,e13,e2,e6,e10,e14,e1,e5,e9,e13,e3,e7,e11,e15,x,x,x,x}</span>
+<span class="sd">    int i1b = (i1b_i16 &amp; 0x0f0f);</span>
+<span class="sd">    i1b |= ((i1b_i16 &amp; 0xf0f0) &lt;&lt; 12);</span>
+<span class="sd">    // i1b        {0..,e15,e14,e13,e12,e11,e10,e9,e8,e7,e6,e5,e4,e3,e2,e1,e0}</span>
+<span class="sd">    // interleave {0..,e15,e13,e11,e9,e7,e5,e3,e1,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // First, we extract the i1b and construct an intermediate fp16 number.</span>
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa; // 0b11101010</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x01010101;      // 0x1 -&gt; 0b01 select 0,1</span>
+<span class="sd">    static constexpr uint I8s_MAGIC_NUM = 0x00000000;</span>
+<span class="sd">    static constexpr uint TRANSFORM_SUBTRACT = 0xffffffff; // for signed int 2x - 1</span>
+
+<span class="sd">    for (int i = 0; i &lt; N / 4; i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(i8s[i])</span>
+<span class="sd">                     : &quot;r&quot;(i1b &gt;&gt; i), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(I8s_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        i8s[i] = __vadd4(i8s[i], i8s[i]);</span>
+<span class="sd">        i8s[i] = __vadd4(i8s[i], TRANSFORM_SUBTRACT);</span>
+<span class="sd">    }</span>
+<span class="sd">    *reinterpret_cast&lt;int4 *&gt;(_i8s) = *reinterpret_cast&lt;int4 *&gt;(i8s);</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i1u_to_i8s(T1 *_i1b, T2 *_i8s, const int N = 16)</span>
+<span class="sd">{</span>
+<span class="sd">    int *i8s = reinterpret_cast&lt;int *&gt;(_i8s);</span>
+<span class="sd">    int16_t i1b_i16 = *reinterpret_cast&lt;int16_t *&gt;(_i1b);</span>
+<span class="sd">    // permutate: {e0,e4,e8,e12,e2,e6,e10,e14,e1,e5,e9,e13,e3,e7,e11,e15}</span>
+<span class="sd">    // into: {e0,e4,e8,e12,x,x,x,x,e1,e5,e9,x,x,x,x,e13,e2,e6,e10,e14,e1,e5,e9,e13,e3,e7,e11,e15,x,x,x,x}</span>
+<span class="sd">    int i1b = (i1b_i16 &amp; 0x0f0f);</span>
+<span class="sd">    i1b |= ((i1b_i16 &amp; 0xf0f0) &lt;&lt; 12);</span>
+<span class="sd">    // i1b        {0..,e15,e14,e13,e12,e11,e10,e9,e8,e7,e6,e5,e4,e3,e2,e1,e0}</span>
+<span class="sd">    // interleave {0..,e15,e13,e11,e9,e7,e5,e3,e1,e14,e12,e10,e8,e6,e4,e2,e0}</span>
+<span class="sd">    // First, we extract the i1b and construct an intermediate fp16 number.</span>
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa; // 0b11101010</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x01010101;      // 0x1 -&gt; 0b01 select 0,1</span>
+<span class="sd">    static constexpr uint I8s_MAGIC_NUM = 0x00000000;</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = 0x00000000;</span>
+
+<span class="sd">    for (int i = 0; i &lt; N / 4; i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(i8s[i])</span>
+<span class="sd">                     : &quot;r&quot;(i1b &gt;&gt; i), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(I8s_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i2s_to_i8s">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i2s_to_i8s</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i2s_to_i8s" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i2s_to_i8s(T1 *_i2b, T2 *_i8s, const int N = 16)</span>
+<span class="sd">{</span>
+<span class="sd">    // convert 8 int2b_t to 8 int8b_t -&gt; 2 int32</span>
+<span class="sd">    uint *i8s = reinterpret_cast&lt;uint *&gt;(_i8s);</span>
+
+<span class="sd">    // i2b = {e7,e6,e5,e4,e3,e2,e1,e0}</span>
+<span class="sd">    // also require interleave {e7,e3,e6,e2,e5,e1,e4,e0}</span>
+<span class="sd">    uint const i2b = *reinterpret_cast&lt;uint *&gt;(_i2b);</span>
+
+<span class="sd">    // First, we extract the i4s and construct an intermediate fp16 number.</span>
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa; // 0b11101010</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x03030303;      // 0xf -&gt; 0b11 select 0,3</span>
+<span class="sd">    static constexpr uint I8s_MAGIC_NUM = 0x00000000;    // 1024</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = 0x02020202;</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 4); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(i8s[i])</span>
+<span class="sd">                     : &quot;r&quot;(i2b &gt;&gt; (2 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(I8s_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        i8s[i] = __vsub4(i8s[i], MEDIAN_NUM);</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i2u_to_i8s(T1 *_i2b, T2 *_i8s, const int N = 16)</span>
+<span class="sd">{</span>
+<span class="sd">    // convert 8 int2b_t to 8 int8b_t -&gt; 2 int32</span>
+<span class="sd">    uint *i8s = reinterpret_cast&lt;uint *&gt;(_i8s);</span>
+
+<span class="sd">    // i2b = {e7,e6,e5,e4,e3,e2,e1,e0}</span>
+<span class="sd">    // also require interleave {e7,e3,e6,e2,e5,e1,e4,e0}</span>
+<span class="sd">    uint const i2b = *reinterpret_cast&lt;uint *&gt;(_i2b);</span>
+
+<span class="sd">    // First, we extract the i4s and construct an intermediate fp16 number.</span>
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa; // 0b11101010</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x03030303;      // 0xf -&gt; 0b11 select 0,3</span>
+<span class="sd">    static constexpr uint I8s_MAGIC_NUM = 0x00000000;    // 1024</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 4); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(i8s[i])</span>
+<span class="sd">                     : &quot;r&quot;(i2b &gt;&gt; (2 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(I8s_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i4s_to_i8s">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i4s_to_i8s</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i4s_to_i8s" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i4s_to_i8s(T1 *_i4b, T2 *_i8s, const int N = 16)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *i8s = reinterpret_cast&lt;uint *&gt;(_i8s);</span>
+<span class="sd">    uint *i4b = reinterpret_cast&lt;uint *&gt;(_i4b);</span>
+<span class="sd">    // First, we extract the i4s and construct an intermediate i8 number.</span>
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x0f0f0f0f;          // 0xf -&gt; 0b1111 select 0,4,8,12</span>
+<span class="sd">    static constexpr uint I4b_TO_I8s_MAGIC_NUM = 0x00000000; // 0</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = 0x07070707;</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 8); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        // Extract elt_01 - (i4s &amp; 0x000f000f) | 0x64006400</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(i8s[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4b[0] &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(I4b_TO_I8s_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(i8s[i + 2])</span>
+<span class="sd">                     : &quot;r&quot;(i4b[1] &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(I4b_TO_I8s_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        i8s[i] = __vsubss4(i8s[i], MEDIAN_NUM);</span>
+<span class="sd">        i8s[i + 2] = __vsubss4(i8s[i + 2], MEDIAN_NUM);</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i4u_to_i8s(T1 *_i4b, T2 *_i8s, const int N = 16)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *i8s = reinterpret_cast&lt;uint *&gt;(_i8s);</span>
+<span class="sd">    uint *i4b = reinterpret_cast&lt;uint *&gt;(_i4b);</span>
+<span class="sd">    // First, we extract the i4s and construct an intermediate i8 number.</span>
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x0f0f0f0f;          // 0xf -&gt; 0b1111 select 0,4,8,12</span>
+<span class="sd">    static constexpr uint I4b_TO_I8s_MAGIC_NUM = 0x00000000; // 0</span>
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 8); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        // Extract elt_01 - (i4s &amp; 0x000f000f) | 0x64006400</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(i8s[i])</span>
+<span class="sd">                     : &quot;r&quot;(i4b[0] &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(I4b_TO_I8s_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(i8s[i + 2])</span>
+<span class="sd">                     : &quot;r&quot;(i4b[1] &gt;&gt; (4 * i)), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(I4b_TO_I8s_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.decode_i2s_to_i4s">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">decode_i2s_to_i4s</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.lop3.decode_i2s_to_i4s" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template &lt;typename T1, typename T2, bool isSigned&gt;</span>
+<span class="sd">__device__ void decode_i2b_to_i4s(T1 *_i2b, T2 *_i4s, const int N = 16)</span>
+<span class="sd">{</span>
+<span class="sd">    uint *i4s = reinterpret_cast&lt;uint *&gt;(_i4s);</span>
+<span class="sd">    uint *i2b = reinterpret_cast&lt;uint *&gt;(_i2b);</span>
+<span class="sd">    // First, we extract the i4s and construct an intermediate i8 number.</span>
+<span class="sd">    static constexpr uint immLut = (0xf0 &amp; 0xcc) | 0xaa;</span>
+<span class="sd">    static constexpr uint BOTTOM_MASK = 0x33333333;          // 0xf -&gt; 0b1111 select 0,2,4,6,8,10,12</span>
+<span class="sd">    static constexpr uint I4b_TO_I8s_MAGIC_NUM = 0x00000000; // 0</span>
+<span class="sd">    static constexpr uint MEDIAN_NUM = isSigned ? 0x33333333 : 0x00000000;</span>
+
+<span class="sd">#pragma unroll</span>
+<span class="sd">    for (int i = 0; i &lt; (N / 8); i++)</span>
+<span class="sd">    {</span>
+<span class="sd">        // Extract elt_01 - (i4s &amp; 0x000f000f) | 0x64006400</span>
+<span class="sd">        asm volatile(&quot;lop3.b32 %0, %1, %2, %3, %4;\n&quot;</span>
+<span class="sd">                     : &quot;=r&quot;(i4s[i])</span>
+<span class="sd">                     : &quot;r&quot;(i2b[i / 2] &gt;&gt; (2 * (i % 2))), &quot;n&quot;(BOTTOM_MASK), &quot;n&quot;(I4b_TO_I8s_MAGIC_NUM), &quot;n&quot;(immLut));</span>
+<span class="sd">        if constexpr (isSigned)</span>
+<span class="sd">        {</span>
+<span class="sd">            // TODO(lei): uint4 sub should be enhanced.</span>
+<span class="sd">            // 0x03 0x03 0x03 0x03</span>
+<span class="sd">            // i4s[i] = (((i4s[i] &lt;&lt; 1) | i4s[i]) &lt;&lt; 1) | i4s[i];</span>
+<span class="sd">        }</span>
+<span class="sd">    }</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i2s_to_i4s(T1 *_i4s, T2 *B_local_decode, const int N = 16)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i2b_to_i4s&lt;T1, T2, true&gt;(_i4s, B_local_decode, N);</span>
+<span class="sd">}</span>
+
+<span class="sd">template &lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_i2u_to_i4s(T1 *_i4u, T2 *B_local_decode, const int N = 16)</span>
+<span class="sd">{</span>
+<span class="sd">    decode_i2b_to_i4s&lt;T1, T2, false&gt;(_i4u, B_local_decode, N);</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.quantize.lop3.get_lop3_intrin_group">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.lop3.</span></span><span class="sig-name descname"><span class="pre">get_lop3_intrin_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uint'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_bit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'int8'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_zeros</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeros_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'local'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.quantize.lop3.get_lop3_intrin_group" title="Link to this definition">¶</a></dt>
+<dd><p>This function is used to get the intrinsic group of the LOP3 operation to avoid the overhead of fast decoding.
+LOP3 is a type of logic operation that takes three inputs. The intrinsic group refers to the set of
+intrinsic operations that can be performed on these inputs. This function retrieves and returns this group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_dtype</strong> (<em>Literal</em><em>[</em><em>&quot;int8&quot;</em><em>]</em>) – The data type of the input. It should be “int8”.</p></li>
+<li><p><strong>out_dtype</strong> (<em>Literal</em><em>[</em><em>&quot;float16&quot;</em><em>, </em><em>&quot;int8&quot;</em><em>, </em><em>&quot;int4&quot;</em><em>]</em>) – The data type of the output. It can be either “float16” or “int8” or “int4”.</p></li>
+<li><p><strong>storage_nbit</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of bits used for storage. By default, it is 4.</p></li>
+<li><p><strong>with_scale</strong> (<em>bool</em><em>, </em><em>optional</em>) – A boolean parameter that indicates whether scaling should be applied. By default, it is False.</p></li>
+<li><p><strong>with_zeros</strong> (<em>bool</em><em>, </em><em>optional</em>) – A boolean parameter that indicates whether zeros should be used. By default, it is False.</p></li>
+<li><p><strong>zeros_mode</strong> (<em>Literal</em><em>[</em><em>&quot;original&quot;</em><em>, </em><em>&quot;rescale&quot;</em><em>, </em><em>&quot;quantized&quot;</em><em>]</em><em>, </em><em>optional</em>) – The mode of zeros. It can be either “original”, “rescale”, or “quantized”. By default, it is “original”.</p></li>
+<li><p><strong>storage_scope</strong> (<em>Literal</em><em>[</em><em>&quot;local&quot;</em><em>, </em><em>&quot;warp&quot;</em><em>]</em><em>, </em><em>optional</em>) – The scope of the storage. It can be either “local” or “warp”. By default, it is “local”.</p></li>
+<li><p><strong>source_format</strong> (<em>Literal</em><em>[</em><em>'int'</em><em>, </em><em>'uint'</em><em>]</em>)</p></li>
+<li><p><strong>source_bit</strong> (<em>int</em>)</p></li>
+<li><p><strong>storage_dtype</strong> (<em>Literal</em><em>[</em><em>'int32'</em><em>, </em><em>'int8'</em><em>]</em>)</p></li>
+<li><p><strong>with_scaling</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary mapping the names of the intrinsics to their corresponding implementations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../quantization/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">tilelang.quantize.quantization</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">tilelang.quantize</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025-2025, Tile Lang Contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">tilelang.quantize.lop3</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16"><code class="docutils literal notranslate"><span class="pre">decode_i4_to_f16</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale"><code class="docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_offset"><code class="docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_offset</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_original"><code class="docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_original</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_original_offset"><code class="docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_original_offset</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_rescale"><code class="docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_rescale</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_rescale_offset"><code class="docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_rescale_offset</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_quantized"><code class="docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_quantized</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4_to_f16_scale_zeros_quantized_offset"><code class="docutils literal notranslate"><span class="pre">decode_i4_to_f16_scale_zeros_quantized_offset</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16"><code class="docutils literal notranslate"><span class="pre">decode_i2_to_f16</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale"><code class="docutils literal notranslate"><span class="pre">decode_i2_to_f16_scale</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_original_offset"><code class="docutils literal notranslate"><span class="pre">decode_i2_to_f16_scale_zeros_original_offset</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_original"><code class="docutils literal notranslate"><span class="pre">decode_i2_to_f16_scale_zeros_original</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_rescale"><code class="docutils literal notranslate"><span class="pre">decode_i2_to_f16_scale_zeros_rescale</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2_to_f16_scale_zeros_quantized"><code class="docutils literal notranslate"><span class="pre">decode_i2_to_f16_scale_zeros_quantized</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i1_to_f16"><code class="docutils literal notranslate"><span class="pre">decode_i1_to_f16</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i1_to_f16_scale"><code class="docutils literal notranslate"><span class="pre">decode_i1_to_f16_scale</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i1_to_f16_scale_zeros_original"><code class="docutils literal notranslate"><span class="pre">decode_i1_to_f16_scale_zeros_original</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i1_to_f16_scale_zeros_rescale"><code class="docutils literal notranslate"><span class="pre">decode_i1_to_f16_scale_zeros_rescale</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i1s_to_i8s"><code class="docutils literal notranslate"><span class="pre">decode_i1s_to_i8s</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2s_to_i8s"><code class="docutils literal notranslate"><span class="pre">decode_i2s_to_i8s</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i4s_to_i8s"><code class="docutils literal notranslate"><span class="pre">decode_i4s_to_i8s</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.decode_i2s_to_i4s"><code class="docutils literal notranslate"><span class="pre">decode_i2s_to_i4s</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.lop3.get_lop3_intrin_group"><code class="docutils literal notranslate"><span class="pre">get_lop3_intrin_group()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../_static/documentation_options.js?v=59fadc99"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

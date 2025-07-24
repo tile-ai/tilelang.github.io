@@ -1,0 +1,108 @@
+tilelang.language.allocate
+==========================
+
+.. py:module:: tilelang.language.allocate
+
+.. autoapi-nested-parse::
+
+   Memory allocation utilities for Tile-AI programs.
+
+   This module provides a set of functions for allocating different types of memory buffers
+   in Tile-AI programs. It wraps TVM's buffer allocation functionality with convenient
+   interfaces for different memory scopes.
+
+   Available allocation functions:
+       - alloc_shared: Allocates shared memory buffers for inter-thread communication
+       - alloc_local: Allocates local memory buffers for thread-private storage
+       - alloc_fragment: Allocates fragment memory buffers for specialized operations
+       - alloc_var: Allocates single-element variable buffers
+
+   Each function takes shape and dtype parameters and returns a TVM buffer object
+   with the appropriate memory scope.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.allocate.alloc_shared
+   tilelang.language.allocate.alloc_local
+   tilelang.language.allocate.alloc_fragment
+   tilelang.language.allocate.alloc_var
+   tilelang.language.allocate.alloc_barrier
+
+
+Module Contents
+---------------
+
+.. py:function:: alloc_shared(shape, dtype, scope='shared.dyn')
+
+   Allocate a shared memory buffer for inter-thread communication.
+
+   :param shape: The shape of the buffer to allocate
+   :type shape: tuple
+   :param dtype: The data type of the buffer (e.g., 'float32', 'int32')
+   :type dtype: str
+   :param scope: The memory scope. Defaults to "shared.dyn"
+   :type scope: str, optional
+
+   :returns: A TVM buffer object allocated in shared memory
+   :rtype: T.Buffer
+
+
+.. py:function:: alloc_local(shape, dtype, scope='local')
+
+   Allocate a local memory buffer for thread-private storage.
+
+   :param shape: The shape of the buffer to allocate
+   :type shape: tuple
+   :param dtype: The data type of the buffer (e.g., 'float32', 'int32')
+   :type dtype: str
+   :param scope: The memory scope. Defaults to "local"
+   :type scope: str, optional
+
+   :returns: A TVM buffer object allocated in local memory
+   :rtype: T.Buffer
+
+
+.. py:function:: alloc_fragment(shape, dtype, scope='local.fragment')
+
+   Allocate a fragment memory buffer for specialized operations.
+
+   :param shape: The shape of the buffer to allocate
+   :type shape: tuple
+   :param dtype: The data type of the buffer (e.g., 'float32', 'int32')
+   :type dtype: str
+   :param scope: The memory scope. Defaults to "local.fragment"
+   :type scope: str, optional
+
+   :returns: A TVM buffer object allocated in fragment memory
+   :rtype: T.Buffer
+
+
+.. py:function:: alloc_var(dtype, scope='local.var')
+
+   Allocate a single-element variable buffer.
+
+   :param dtype: The data type of the buffer (e.g., 'float32', 'int32')
+   :type dtype: str
+   :param scope: The memory scope. Defaults to "local.var"
+   :type scope: str, optional
+
+   :returns: A TVM buffer object allocated as a single-element variable
+   :rtype: T.Buffer
+
+
+.. py:function:: alloc_barrier(arrive_count)
+
+   Allocate a barrier buffer.
+
+   :param arrive_count: The number of threads that need to arrive at the barrier
+   :type arrive_count: int
+
+   :returns: A TVM buffer object allocated as a barrier
+   :rtype: T.Buffer
+
+

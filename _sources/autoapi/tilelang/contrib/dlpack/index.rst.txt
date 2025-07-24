@@ -1,0 +1,47 @@
+tilelang.contrib.dlpack
+=======================
+
+.. py:module:: tilelang.contrib.dlpack
+
+.. autoapi-nested-parse::
+
+   Wrapping functions to bridge frameworks with DLPack support to TVM
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.dlpack.convert_func
+   tilelang.contrib.dlpack.to_pytorch_func
+
+
+Module Contents
+---------------
+
+.. py:function:: convert_func(tvm_func, tensor_type, to_dlpack_func)
+
+   Convert a tvm function into one that accepts a tensor from another
+      framework, provided the other framework supports DLPACK
+
+   :param tvm_func: Built tvm function operating on arrays
+   :type tvm_func: Function
+   :param tensor_type: Type of the tensors of the target framework
+   :type tensor_type: Type
+   :param to_dlpack_func: Function to convert the source tensors to DLPACK
+   :type to_dlpack_func: Function
+
+
+.. py:function:: to_pytorch_func(tvm_func)
+
+   Convert a tvm function into one that accepts PyTorch tensors
+
+   :param tvm_func: Built tvm function operating on arrays
+   :type tvm_func: Function
+
+   :returns: **wrapped_func** -- Wrapped tvm function that operates on PyTorch tensors
+   :rtype: Function
+
+

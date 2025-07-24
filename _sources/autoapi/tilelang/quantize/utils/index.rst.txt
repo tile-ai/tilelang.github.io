@@ -1,0 +1,43 @@
+tilelang.quantize.utils
+=======================
+
+.. py:module:: tilelang.quantize.utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.quantize.utils.gen_quant4
+   tilelang.quantize.utils.general_compress
+   tilelang.quantize.utils.interleave_weight
+
+
+Module Contents
+---------------
+
+.. py:function:: gen_quant4(k, n, groupsize=-1)
+
+.. py:function:: general_compress(lowprecision_weight, source_bits=4, storage_dtype=None)
+
+.. py:function:: interleave_weight(qweight, nbits=4, target_dtype='float16')
+
+   Interleave the weight to the target data type.
+
+   :param qweight: _description_
+   :type qweight: _type_
+   :param nbits: _description_. Defaults to 4.
+   :type nbits: int, optional
+   :param target_dtype: _description_. Defaults to "float16".
+   :type target_dtype: str, optional
+
+   :returns: _description_
+   :rtype: _type_
+
+   .. rubric:: Example
+
+   qweight = torch.randint(0, 127, (10, 10), dtype=torch.int8).cuda()
+   interleave_weight(qweight, 4, "float16")
+
+

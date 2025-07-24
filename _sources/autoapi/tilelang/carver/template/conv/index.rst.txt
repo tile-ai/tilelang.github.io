@@ -1,0 +1,218 @@
+tilelang.carver.template.conv
+=============================
+
+.. py:module:: tilelang.carver.template.conv
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.carver.template.conv.ConvTemplate
+
+
+Module Contents
+---------------
+
+.. py:class:: ConvTemplate
+
+   Bases: :py:obj:`tilelang.carver.template.base.BaseTemplate`
+
+
+   A template for convolution (Conv).
+
+   This class defines the computation for a matrix-matrix convolution
+   with configurable parameters such as transposition, data types, and bias addition.
+
+   .. attribute:: N
+
+      The number of input samples processed simultaneously in a batch.
+
+      :type: int
+
+   .. attribute:: C
+
+      The number of input feature maps.
+
+      :type: int
+
+   .. attribute:: H
+
+      The height of the input feature maps.
+
+      :type: int
+
+   .. attribute:: W
+
+      The width of the input feature maps.
+
+      :type: int
+
+   .. attribute:: F
+
+      The number of filters (kernels) applied, determining output depth.
+
+      :type: int
+
+   .. attribute:: K
+
+      The spatial dimensions of each convolutional filter.
+
+      :type: int
+
+   .. attribute:: S
+
+      The step size by which the kernel slides across the input.
+
+      :type: int
+
+   .. attribute:: D
+
+      The spacing between kernel elements, controlling receptive field expansion.
+
+      :type: int
+
+   .. attribute:: P
+
+      The number of pixels added to input borders to control output spatial dimensions.
+
+      :type: int
+
+   .. attribute:: in_dtype
+
+      Data type of input matrices.
+
+      :type: str
+
+   .. attribute:: out_dtype
+
+      Data type of output matrix.
+
+      :type: str
+
+   .. attribute:: accum_dtype
+
+      Data type used for accumulation.
+
+      :type: str
+
+   .. attribute:: with_bias
+
+      Whether to add a bias term.
+
+      :type: bool
+
+
+   .. py:attribute:: N
+      :type:  int
+
+
+   .. py:attribute:: C
+      :type:  int
+
+
+   .. py:attribute:: H
+      :type:  int
+
+
+   .. py:attribute:: W
+      :type:  int
+
+
+   .. py:attribute:: F
+      :type:  int
+
+
+   .. py:attribute:: K
+      :type:  int
+
+
+   .. py:attribute:: S
+      :type:  int
+
+
+   .. py:attribute:: D
+      :type:  int
+
+
+   .. py:attribute:: P
+      :type:  int
+
+
+   .. py:attribute:: in_dtype
+      :type:  str
+      :value: 'float16'
+
+
+
+   .. py:attribute:: out_dtype
+      :type:  str
+      :value: 'float16'
+
+
+
+   .. py:attribute:: accum_dtype
+      :type:  str
+      :value: 'float16'
+
+
+
+   .. py:attribute:: with_bias
+      :type:  bool
+      :value: False
+
+
+
+   .. py:method:: get_hardware_aware_configs(arch=None, topk=10)
+
+      Retrieves optimized hardware-aware configurations.
+
+      :param arch: The target hardware architecture.
+      :type arch: TileDevice, optional
+      :param topk: Number of top configurations to consider.
+      :type topk: int, optional
+
+      :returns: A list of optimization hints for hardware acceleration.
+      :rtype: List[Hint]
+
+
+
+   .. py:method:: initialize_function()
+
+      Defines and initializes the convolution computation.
+
+      This method sets up placeholders for input matrices, computes
+      the convolution using TVM's compute API,
+      and optionally applies bias and type casting.
+
+      :raises AssertionError: If N, C, H, W, F, K, S, D, P are not positive integers.
+
+
+
+   .. py:method:: params_as_dict()
+
+      Returns the template parameters as a dictionary.
+
+      :returns: Dictionary containing template parameter values.
+      :rtype: dict
+
+
+
+   .. py:property:: class_attributes
+
+      Returns the class attributes in dictionary form.
+
+      :returns: Dictionary of class attributes.
+      :rtype: dict
+
+
+   .. py:method:: __repr__()
+
+      Returns a string representation of the class instance.
+
+      :returns: A formatted string representation of the class.
+      :rtype: str
+
+
+

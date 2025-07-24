@@ -1,0 +1,54 @@
+tilelang.language.gemm
+======================
+
+.. py:module:: tilelang.language.gemm
+
+.. autoapi-nested-parse::
+
+   The language interface for tl programs.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.gemm.gemm
+
+
+Module Contents
+---------------
+
+.. py:function:: gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, k_pack = 1, wg_wait = 0)
+
+   Perform a General Matrix Multiplication (GEMM) operation.
+
+   This function computes C = A @ B where A and B can optionally be transposed.
+   The operation supports various warp policies and accumulation modes.
+
+   :param A: First input matrix
+   :type A: Union[tir.Buffer, tir.Var]
+   :param B: Second input matrix
+   :type B: Union[tir.Buffer, tir.Var]
+   :param C: Output matrix for results
+   :type C: Union[tir.Buffer, tir.Var]
+   :param transpose_A: Whether to transpose matrix A. Defaults to False.
+   :type transpose_A: bool, optional
+   :param transpose_B: Whether to transpose matrix B. Defaults to False.
+   :type transpose_B: bool, optional
+   :param policy: Warp execution policy. Defaults to GemmWarpPolicy.Square.
+   :type policy: GemmWarpPolicy, optional
+   :param clear_accum: Whether to clear accumulator before computation. Defaults to False.
+   :type clear_accum: bool, optional
+   :param k_pack: Number of k dimensions packed into a single warp. Defaults to 1.
+   :type k_pack: int, optional
+   :param wg_wait: Warp group wait count. Defaults to 0.
+   :type wg_wait: int, optional
+
+   :returns: A handle to the GEMM operation
+   :rtype: tir.Call
+
+   :raises AssertionError: If the K dimensions of matrices A and B don't match
+
+

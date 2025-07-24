@@ -1,0 +1,125 @@
+tilelang.language.copy
+======================
+
+.. py:module:: tilelang.language.copy
+
+.. autoapi-nested-parse::
+
+   The language interface for tl programs.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.copy.region
+   tilelang.language.copy.buffer_to_tile_region
+   tilelang.language.copy.buffer_load_to_tile_region
+   tilelang.language.copy.buffer_region_to_tile_region
+   tilelang.language.copy.copy
+   tilelang.language.copy.c2d_im2col
+
+
+Module Contents
+---------------
+
+.. py:function:: region(buffer, access_type, *args)
+
+   Create a memory region descriptor for tile operations.
+
+   :param buffer: The buffer to create a region for
+   :type buffer: tir.BufferLoad
+   :param access_type: Type of access - 'r' for read, 'w' for write, 'rw' for read-write
+   :type access_type: str
+   :param \*args: Extent expressions defining the region size
+   :type \*args: tir.PrimExpr
+
+   :returns: A region descriptor for tile operations
+   :rtype: tir.Call
+
+
+.. py:function:: buffer_to_tile_region(buffer, access_type)
+
+   Convert a TVM buffer to a tile region descriptor.
+
+   :param buffer: The buffer to convert
+   :type buffer: tir.Buffer
+   :param access_type: Type of access - 'r' for read, 'w' for write, 'rw' for read-write
+   :type access_type: str
+
+   :returns: A region descriptor covering the entire buffer
+   :rtype: tir.Call
+
+
+.. py:function:: buffer_load_to_tile_region(load, access_type, extents)
+
+   Convert a buffer load operation to a tile region descriptor.
+
+   :param load: The buffer load operation
+   :type load: tir.BufferLoad
+   :param access_type: Type of access - 'r' for read, 'w' for write, 'rw' for read-write
+   :type access_type: str
+   :param extents: List of expressions defining the region size
+   :type extents: List[tir.PrimExpr]
+
+   :returns: A region descriptor for the loaded area
+   :rtype: tir.Call
+
+
+.. py:function:: buffer_region_to_tile_region(buffer_region, access_type, extents)
+
+   Convert a buffer region to a tile region descriptor.
+
+   :param buffer_region: The buffer region to convert
+   :type buffer_region: tir.BufferRegion
+   :param access_type: Type of access - 'r' for read, 'w' for write, 'rw' for read-write
+   :type access_type: str
+
+   :returns: A region descriptor for the specified buffer region
+   :rtype: tir.Call
+
+
+.. py:function:: copy(src, dst, coalesced_width = None, disable_tma = False)
+
+   Copy data between memory regions.
+
+   :param src: Source memory region
+   :type src: Union[tir.Buffer, tir.BufferLoad, tir.BufferRegion]
+   :param dst: Destination memory region
+   :type dst: Union[tir.Buffer, tir.BufferLoad]
+   :param coalesced_width: Width for coalesced memory access. Defaults to None.
+   :type coalesced_width: Optional[int], optional
+
+   :raises TypeError: If copy extents cannot be deduced from arguments
+
+   :returns: A handle to the copy operation
+   :rtype: tir.Call
+
+
+.. py:function:: c2d_im2col(img, col, nhw_step, c_step, kernel, stride, dilation, pad)
+
+   Perform im2col transformation for 2D convolution.
+
+   :param img: Input image buffer
+   :type img: tir.Buffer
+   :param col: Output column buffer
+   :type col: tir.Buffer
+   :param nhw_step: Step size for batch and spatial dimensions
+   :type nhw_step: tir.PrimExpr
+   :param c_step: Step size for channel dimension
+   :type c_step: tir.PrimExpr
+   :param kernel: Kernel size
+   :type kernel: int
+   :param stride: Stride of the convolution
+   :type stride: int
+   :param dilation: Dilation rate
+   :type dilation: int
+   :param pad: Padding size
+   :type pad: int
+
+   :returns: A handle to the im2col operation
+   :rtype: tir.Call
+
+

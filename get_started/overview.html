@@ -1,16 +1,19 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Debugging Tile Language Programs" href="../tutorials/debug_tools_for_tilelang.html" /><link rel="prev" title="Installation Guide" href="Installation.html" />
+        <link rel="prefetch" href="../_static/img/logo-row.svg" as="image" />
+        <link rel="prefetch" href="../_static/img/logo-row.svg" as="image" />
 
-    <!-- Generated with Sphinx 5.2.3 and Furo 2023.03.27 -->
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
         <title>The Tile Language: A Brief Introduction - Tile Language 0.1.5 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
 
@@ -23,14 +26,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
   
       }
     }
@@ -69,7 +72,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -84,22 +87,63 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
@@ -112,6 +156,8 @@
 <label class="overlay toc-overlay" for="__toc">
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -130,7 +176,8 @@
       <div class="theme-toggle-container theme-toggle-header">
         <button class="theme-toggle">
           <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
@@ -145,7 +192,6 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
-  
   <div class="sidebar-logo-container">
     <img class="sidebar-logo only-light" src="../_static/img/logo-row.svg" alt="Light Logo"/>
     <img class="sidebar-logo only-dark" src="../_static/img/logo-row.svg" alt="Dark Logo"/>
@@ -178,196 +224,191 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api/modules.html">Python API</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/tilelang.html">tilelang package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.autotuner.html">tilelang.autotuner package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.autotuner.capture.html">tilelang.autotuner.capture module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.autotuner.param.html">tilelang.autotuner.param module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.autotuner.tuner.html">tilelang.autotuner.tuner module</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../autoapi/tilelang/index.html">tilelang</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of tilelang</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/autotuner/index.html">tilelang.autotuner</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of tilelang.autotuner</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/capture/index.html">tilelang.autotuner.capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/param/index.html">tilelang.autotuner.param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/tuner/index.html">tilelang.autotuner.tuner</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.cache.html">tilelang.cache package</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.cache.kernel_cache.html">tilelang.cache.kernel_cache module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.cache.tuner_cache.html">tilelang.cache.tuner_cache module</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/cache/index.html">tilelang.cache</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of tilelang.cache</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/cache/kernel_cache/index.html">tilelang.cache.kernel_cache</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.carver.html">tilelang.carver package</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.carver.arch.html">tilelang.carver.arch package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.carver.arch.driver.html">tilelang.carver.arch.driver package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.arch.driver.cuda_driver.html">tilelang.carver.arch.driver.cuda_driver module</a></li>
-</ul>
-</li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.arch.arch_base.html">tilelang.carver.arch.arch_base module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.arch.cdna.html">tilelang.carver.arch.cdna module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.arch.cpu.html">tilelang.carver.arch.cpu module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.arch.cuda.html">tilelang.carver.arch.cuda module</a></li>
-</ul>
-</li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.carver.roller.html">tilelang.carver.roller package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.carver.roller.policy.html">tilelang.carver.roller.policy package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.roller.policy.common.html">tilelang.carver.roller.policy.common module</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.roller.policy.default.html">tilelang.carver.roller.policy.default module</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.roller.policy.tensorcore.html">tilelang.carver.roller.policy.tensorcore module</a></li>
-</ul>
-</li>
-<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.carver.roller.shape_inference.html">tilelang.carver.roller.shape_inference package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.roller.shape_inference.common.html">tilelang.carver.roller.shape_inference.common module</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.carver.roller.shape_inference.tir.html">tilelang.carver.roller.shape_inference.tir module</a></li>
-</ul>
-</li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.roller.bestfit.html">tilelang.carver.roller.bestfit module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.roller.hint.html">tilelang.carver.roller.hint module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.roller.node.html">tilelang.carver.roller.node module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.roller.rasterization.html">tilelang.carver.roller.rasterization module</a></li>
-</ul>
-</li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.carver.template.html">tilelang.carver.template package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.base.html">tilelang.carver.template.base module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.conv.html">tilelang.carver.template.conv module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.elementwise.html">tilelang.carver.template.elementwise module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.flashattention.html">tilelang.carver.template.flashattention module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.gemv.html">tilelang.carver.template.gemv module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.general_reduce.html">tilelang.carver.template.general_reduce module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.carver.template.matmul.html">tilelang.carver.template.matmul module</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.carver.analysis.html">tilelang.carver.analysis module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.carver.common_schedules.html">tilelang.carver.common_schedules module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.carver.matmul_analysis.html">tilelang.carver.matmul_analysis module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.carver.utils.html">tilelang.carver.utils module</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.common.html">tilelang.common package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.common.transform_kind.html">tilelang.common.transform_kind module</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.contrib.html">tilelang.contrib package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.cc.html">tilelang.contrib.cc module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.dlpack.html">tilelang.contrib.dlpack module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.hipcc.html">tilelang.contrib.hipcc module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.nvcc.html">tilelang.contrib.nvcc module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.nvrtc.html">tilelang.contrib.nvrtc module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.contrib.rocm.html">tilelang.contrib.rocm module</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.engine.html">tilelang.engine package</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.engine.callback.html">tilelang.engine.callback module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.engine.lower.html">tilelang.engine.lower module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.engine.param.html">tilelang.engine.param module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.engine.phase.html">tilelang.engine.phase module</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.intrinsics.html">tilelang.intrinsics package</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.intrinsics.mfma_layout.html">tilelang.intrinsics.mfma_layout module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.intrinsics.mfma_macro_generator.html">tilelang.intrinsics.mfma_macro_generator module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.intrinsics.mma_layout.html">tilelang.intrinsics.mma_layout module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.intrinsics.mma_macro_generator.html">tilelang.intrinsics.mma_macro_generator module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.intrinsics.utils.html">tilelang.intrinsics.utils module</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.jit.html">tilelang.jit package</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.jit.adapter.html">tilelang.jit.adapter package</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.jit.adapter.ctypes.html">tilelang.jit.adapter.ctypes package</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.jit.adapter.ctypes.adapter.html">tilelang.jit.adapter.ctypes.adapter module</a></li>
-</ul>
-</li>
-<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.jit.adapter.cython.html">tilelang.jit.adapter.cython package</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.jit.adapter.cython.adapter.html">tilelang.jit.adapter.cython.adapter module</a></li>
-<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.jit.adapter.cython.cython_wrapper.html">tilelang.jit.adapter.cython.cython_wrapper module</a></li>
-</ul>
-</li>
-<li class="toctree-l5 has-children"><a class="reference internal" href="../api/tilelang.jit.adapter.nvrtc.html">tilelang.jit.adapter.nvrtc package</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l6"><a class="reference internal" href="../api/tilelang.jit.adapter.nvrtc.adapter.html">tilelang.jit.adapter.nvrtc.adapter module</a></li>
-</ul>
-</li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.jit.adapter.base.html">tilelang.jit.adapter.base module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.jit.adapter.dlpack.html">tilelang.jit.adapter.dlpack module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.jit.adapter.libgen.html">tilelang.jit.adapter.libgen module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.jit.adapter.utils.html">tilelang.jit.adapter.utils module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.jit.adapter.wrapper.html">tilelang.jit.adapter.wrapper module</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.jit.env.html">tilelang.jit.env module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.jit.kernel.html">tilelang.jit.kernel module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.jit.param.html">tilelang.jit.param module</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.language.html">tilelang.language package</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.language.experimental.html">tilelang.language.experimental package</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.language.experimental.gemm_sp.html">tilelang.language.experimental.gemm_sp module</a></li>
-</ul>
-</li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.language.tir.html">tilelang.language.tir package</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.language.tir.entry.html">tilelang.language.tir.entry module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.language.tir.ir.html">tilelang.language.tir.ir module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.language.tir.op.html">tilelang.language.tir.op module</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.allocate.html">tilelang.language.allocate module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.builtin.html">tilelang.language.builtin module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.copy.html">tilelang.language.copy module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.customize.html">tilelang.language.customize module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.fill.html">tilelang.language.fill module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.frame.html">tilelang.language.frame module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.gemm.html">tilelang.language.gemm module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.kernel.html">tilelang.language.kernel module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.logical.html">tilelang.language.logical module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.memscope.html">tilelang.language.memscope module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.parallel.html">tilelang.language.parallel module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.persistent.html">tilelang.language.persistent module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.pipeline.html">tilelang.language.pipeline module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.print.html">tilelang.language.print module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.proxy.html">tilelang.language.proxy module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.reduce.html">tilelang.language.reduce module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.language.warpgroup.html">tilelang.language.warpgroup module</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.layout.html">tilelang.layout package</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.layout.fragment.html">tilelang.layout.fragment module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.layout.gemm_sp.html">tilelang.layout.gemm_sp module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.layout.layout.html">tilelang.layout.layout module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.layout.swizzle.html">tilelang.layout.swizzle module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../api/tilelang.math.html">tilelang.math package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.primitives.html">tilelang.primitives package</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../api/tilelang.primitives.gemm.html">tilelang.primitives.gemm package</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.primitives.gemm.base.html">tilelang.primitives.gemm.base module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/tilelang.primitives.gemm.gemm_mma.html">tilelang.primitives.gemm.gemm_mma module</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/index.html">tilelang.carver</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of tilelang.carver</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/carver/analysis/index.html">tilelang.carver.analysis</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/arch/index.html">tilelang.carver.arch</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of tilelang.carver.arch</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/arch/arch_base/index.html">tilelang.carver.arch.arch_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/arch/cdna/index.html">tilelang.carver.arch.cdna</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/arch/cpu/index.html">tilelang.carver.arch.cpu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/arch/cuda/index.html">tilelang.carver.arch.cuda</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/arch/driver/index.html">tilelang.carver.arch.driver</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tilelang.carver.arch.driver</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/arch/driver/cuda_driver/index.html">tilelang.carver.arch.driver.cuda_driver</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.profiler.html">tilelang.profiler package</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.profiler.bench.html">tilelang.profiler.bench module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/carver/common_schedules/index.html">tilelang.carver.common_schedules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/carver/matmul_analysis/index.html">tilelang.carver.matmul_analysis</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/roller/index.html">tilelang.carver.roller</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of tilelang.carver.roller</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/roller/bestfit/index.html">tilelang.carver.roller.bestfit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/roller/hint/index.html">tilelang.carver.roller.hint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/roller/node/index.html">tilelang.carver.roller.node</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/roller/policy/index.html">tilelang.carver.roller.policy</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of tilelang.carver.roller.policy</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/roller/policy/common/index.html">tilelang.carver.roller.policy.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/roller/policy/default/index.html">tilelang.carver.roller.policy.default</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/roller/policy/tensorcore/index.html">tilelang.carver.roller.policy.tensorcore</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.quantize.html">tilelang.quantize package</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.quantize.lop3.html">tilelang.quantize.lop3 module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.quantize.quantization.html">tilelang.quantize.quantization module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.quantize.utils.html">tilelang.quantize.utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/roller/rasterization/index.html">tilelang.carver.roller.rasterization</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/roller/shape_inference/index.html">tilelang.carver.roller.shape_inference</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of tilelang.carver.roller.shape_inference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/roller/shape_inference/common/index.html">tilelang.carver.roller.shape_inference.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/roller/shape_inference/tir/index.html">tilelang.carver.roller.shape_inference.tir</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../api/tilelang.testing.html">tilelang.testing package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.tools.html">tilelang.tools package</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.tools.Analyzer.html">tilelang.tools.Analyzer module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.tools.plot_layout.html">tilelang.tools.plot_layout module</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.transform.html">tilelang.transform package</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.transform.pass_config.html">tilelang.transform.pass_config module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.transform.simplify.html">tilelang.transform.simplify module</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/template/index.html">tilelang.carver.template</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of tilelang.carver.template</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/base/index.html">tilelang.carver.template.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/conv/index.html">tilelang.carver.template.conv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/elementwise/index.html">tilelang.carver.template.elementwise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/flashattention/index.html">tilelang.carver.template.flashattention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/gemv/index.html">tilelang.carver.template.gemv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/general_reduce/index.html">tilelang.carver.template.general_reduce</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/matmul/index.html">tilelang.carver.template.matmul</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/tilelang.utils.html">tilelang.utils package</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.utils.deprecated.html">tilelang.utils.deprecated module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.utils.language.html">tilelang.utils.language module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.utils.sparse.html">tilelang.utils.sparse module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.utils.target.html">tilelang.utils.target module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/tilelang.utils.tensor.html">tilelang.utils.tensor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/carver/utils/index.html">tilelang.carver.utils</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../api/tilelang.env.html">tilelang.env module</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/common/index.html">tilelang.common</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of tilelang.common</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/common/transform_kind/index.html">tilelang.common.transform_kind</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/contrib/index.html">tilelang.contrib</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of tilelang.contrib</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/cc/index.html">tilelang.contrib.cc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/dlpack/index.html">tilelang.contrib.dlpack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/hipcc/index.html">tilelang.contrib.hipcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/nvcc/index.html">tilelang.contrib.nvcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/nvrtc/index.html">tilelang.contrib.nvrtc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/rocm/index.html">tilelang.contrib.rocm</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/engine/index.html">tilelang.engine</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of tilelang.engine</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/callback/index.html">tilelang.engine.callback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/lower/index.html">tilelang.engine.lower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/param/index.html">tilelang.engine.param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/phase/index.html">tilelang.engine.phase</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/tilelang/env/index.html">tilelang.env</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/intrinsics/index.html">tilelang.intrinsics</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of tilelang.intrinsics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mfma_layout/index.html">tilelang.intrinsics.mfma_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mfma_macro_generator/index.html">tilelang.intrinsics.mfma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/index.html">tilelang.jit</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of tilelang.jit</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/index.html">tilelang.jit.adapter</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of tilelang.jit.adapter</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/base/index.html">tilelang.jit.adapter.base</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/ctypes/index.html">tilelang.jit.adapter.ctypes</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of tilelang.jit.adapter.ctypes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/ctypes/adapter/index.html">tilelang.jit.adapter.ctypes.adapter</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/cython/index.html">tilelang.jit.adapter.cython</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of tilelang.jit.adapter.cython</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/cython/adapter/index.html">tilelang.jit.adapter.cython.adapter</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/dlpack/index.html">tilelang.jit.adapter.dlpack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/libgen/index.html">tilelang.jit.adapter.libgen</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/nvrtc/index.html">tilelang.jit.adapter.nvrtc</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of tilelang.jit.adapter.nvrtc</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/nvrtc/adapter/index.html">tilelang.jit.adapter.nvrtc.adapter</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/utils/index.html">tilelang.jit.adapter.utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/wrapper/index.html">tilelang.jit.adapter.wrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/jit/env/index.html">tilelang.jit.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/jit/kernel/index.html">tilelang.jit.kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/jit/param/index.html">tilelang.jit.param</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/language/index.html">tilelang.language</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of tilelang.language</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/allocate/index.html">tilelang.language.allocate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/builtin/index.html">tilelang.language.builtin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/copy/index.html">tilelang.language.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/customize/index.html">tilelang.language.customize</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/language/experimental/index.html">tilelang.language.experimental</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of tilelang.language.experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/experimental/gemm_sp/index.html">tilelang.language.experimental.gemm_sp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/fill/index.html">tilelang.language.fill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/frame/index.html">tilelang.language.frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/gemm/index.html">tilelang.language.gemm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/kernel/index.html">tilelang.language.kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/logical/index.html">tilelang.language.logical</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/memscope/index.html">tilelang.language.memscope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/parallel/index.html">tilelang.language.parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/persistent/index.html">tilelang.language.persistent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/pipeline/index.html">tilelang.language.pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/print/index.html">tilelang.language.print</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/proxy/index.html">tilelang.language.proxy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/reduce/index.html">tilelang.language.reduce</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/language/tir/index.html">tilelang.language.tir</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of tilelang.language.tir</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/tir/entry/index.html">tilelang.language.tir.entry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/tir/ir/index.html">tilelang.language.tir.ir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/tir/op/index.html">tilelang.language.tir.op</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/warpgroup/index.html">tilelang.language.warpgroup</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/layout/index.html">tilelang.layout</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of tilelang.layout</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/fragment/index.html">tilelang.layout.fragment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/gemm_sp/index.html">tilelang.layout.gemm_sp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/layout/index.html">tilelang.layout.layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/swizzle/index.html">tilelang.layout.swizzle</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/tilelang/math/index.html">tilelang.math</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/primitives/index.html">tilelang.primitives</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of tilelang.primitives</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/primitives/gemm/index.html">tilelang.primitives.gemm</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of tilelang.primitives.gemm</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/primitives/gemm/base/index.html">tilelang.primitives.gemm.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/primitives/gemm/gemm_mma/index.html">tilelang.primitives.gemm.gemm_mma</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/profiler/index.html">tilelang.profiler</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of tilelang.profiler</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/profiler/bench/index.html">tilelang.profiler.bench</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/quantize/index.html">tilelang.quantize</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of tilelang.quantize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/quantize/lop3/index.html">tilelang.quantize.lop3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/quantize/quantization/index.html">tilelang.quantize.quantization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/quantize/utils/index.html">tilelang.quantize.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/tilelang/testing/index.html">tilelang.testing</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/tools/index.html">tilelang.tools</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of tilelang.tools</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/tools/Analyzer/index.html">tilelang.tools.Analyzer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/tools/plot_layout/index.html">tilelang.tools.plot_layout</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/transform/index.html">tilelang.transform</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of tilelang.transform</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/transform/pass_config/index.html">tilelang.transform.pass_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/transform/simplify/index.html">tilelang.transform.simplify</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/utils/index.html">tilelang.utils</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of tilelang.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/deprecated/index.html">tilelang.utils.deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/language/index.html">tilelang.utils.language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/sparse/index.html">tilelang.utils.sparse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/target/index.html">tilelang.utils.target</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/tensor/index.html">tilelang.utils.tensor</a></li>
 </ul>
 </li>
 </ul>
@@ -395,11 +436,17 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/get_started/overview.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
 <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
@@ -409,21 +456,22 @@
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
-        <article role="main">
+        <article role="main" id="furo-main-content">
           <section id="the-tile-language-a-brief-introduction">
-<h1>The Tile Language: A Brief Introduction<a class="headerlink" href="#the-tile-language-a-brief-introduction" title="Permalink to this heading">#</a></h1>
+<h1>The Tile Language: A Brief Introduction<a class="headerlink" href="#the-tile-language-a-brief-introduction" title="Link to this heading">¶</a></h1>
 <section id="programming-interface">
-<h2>Programming Interface<a class="headerlink" href="#programming-interface" title="Permalink to this heading">#</a></h2>
+<h2>Programming Interface<a class="headerlink" href="#programming-interface" title="Link to this heading">¶</a></h2>
 <p>The figure below depicts how <strong>TileLang</strong> programs are progressively lowered from a high-level description to hardware-specific executables. We provide three different programming interfaces—targeted at <strong>Beginner</strong>, <strong>Developer</strong>, and <strong>Expert</strong> users—that each reside at different levels in this lowering pipeline. The <strong>Tile Language</strong> also allows mixing these interfaces within the same kernel, enabling users to work at whichever level of abstraction best suits their needs.</p>
 <figure class="align-center" id="id1">
-<a class="reference internal image-reference" href="../_images/overview.png"><img alt="Overview" src="../_images/overview.png" style="width: 50%;" /></a>
+<a class="reference internal image-reference" href="../_images/overview.png"><img alt="Overview" src="../_images/overview.png" style="width: 50%;" />
+</a>
 <figcaption>
-<p><span class="caption-text">Figure 1: High-level overview of the TileLang compilation flow.</span><a class="headerlink" href="#id1" title="Permalink to this image">#</a></p>
+<p><span class="caption-text">Figure 1: High-level overview of the TileLang compilation flow.</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 </section>
 <section id="programming-interfaces">
-<h2>Programming Interfaces<a class="headerlink" href="#programming-interfaces" title="Permalink to this heading">#</a></h2>
+<h2>Programming Interfaces<a class="headerlink" href="#programming-interfaces" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
 <li><p><strong>Beginner Level (Hardware-Unaware)</strong></p>
 <ul class="simple">
@@ -449,7 +497,7 @@
 </ol>
 </section>
 <section id="compilation-flow">
-<h2>Compilation Flow<a class="headerlink" href="#compilation-flow" title="Permalink to this heading">#</a></h2>
+<h2>Compilation Flow<a class="headerlink" href="#compilation-flow" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
 <li><p><strong>Tile Program</strong><br />
 A high-level specification of the computation. Depending on the user’s expertise, they may write a purely hardware-unaware tile program or incorporate constructs from the Tile Library or thread primitives.</p></li>
@@ -466,7 +514,7 @@ Finally, the generated source is compiled into hardware-specific executables, re
 </ol>
 </section>
 <section id="tile-based-programming-model">
-<h2>Tile-based Programming Model<a class="headerlink" href="#tile-based-programming-model" title="Permalink to this heading">#</a></h2>
+<h2>Tile-based Programming Model<a class="headerlink" href="#tile-based-programming-model" title="Link to this heading">¶</a></h2>
 <p><a class="reference internal" href="#fig-overview-gemm">Figure 2</a> provides a concise matrix multiplication (GEMM) example in <code class="docutils literal notranslate"><span class="pre">TileLang</span></code>,
 illustrating how developers can employ high-level constructs such as tiles, memory placement, pipelining,
 and operator calls to manage data movement and computation with fine-grained control.
@@ -476,17 +524,18 @@ and reduce latency.
 Overall, <a class="reference internal" href="#fig-overview-gemm">Figure 2</a> (b) showcases how the Python-like syntax of <code class="docutils literal notranslate"><span class="pre">TileLang</span></code>
 allows developers to reason about performance-critical optimizations within a user-friendly programming model.</p>
 <figure class="align-center" id="fig-overview-gemm">
-<a class="reference internal image-reference" href="../_images/MatmulExample.png"><img alt="GEMM with Multi-Level Tiling on GPUs" src="../_images/MatmulExample.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="../_images/MatmulExample.png"><img alt="GEMM with Multi-Level Tiling on GPUs" src="../_images/MatmulExample.png" style="width: 100%;" />
+</a>
 <figcaption>
-<p><span class="caption-text">Figure 2: Optimizing GEMM with Multi-Level Tiling on GPUs via <code class="docutils literal notranslate"><span class="pre">TileLang</span></code>.</span><a class="headerlink" href="#fig-overview-gemm" title="Permalink to this image">#</a></p>
+<p><span class="caption-text">Figure 2: Optimizing GEMM with Multi-Level Tiling on GPUs via <code class="docutils literal notranslate"><span class="pre">TileLang</span></code>.</span><a class="headerlink" href="#fig-overview-gemm" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <section id="tile-declarations">
-<h3>Tile declarations<a class="headerlink" href="#tile-declarations" title="Permalink to this heading">#</a></h3>
+<h3>Tile declarations<a class="headerlink" href="#tile-declarations" title="Link to this heading">¶</a></h3>
 <p>At the heart of our approach is the notion of <em>tiles</em> as first-class objects in the programming model. A tile represents a shaped portion of data, which can be owned and manipulated by a warp, thread block, or equivalent parallel unit. In the <code class="docutils literal notranslate"><span class="pre">Matmul</span></code> example, the <code class="docutils literal notranslate"><span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">B</span></code> buffers are read in tiled chunks (determined by <code class="docutils literal notranslate"><span class="pre">block_M</span></code>, <code class="docutils literal notranslate"><span class="pre">block_N</span></code>, <code class="docutils literal notranslate"><span class="pre">block_K</span></code>) inside the kernel loop. With <code class="docutils literal notranslate"><span class="pre">T.Kernel</span></code>, <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> defines the execution context, which includes the thread block index (<code class="docutils literal notranslate"><span class="pre">bx</span></code> and <code class="docutils literal notranslate"><span class="pre">by</span></code>) and the number of threads. These contexts can help compute the index for each thread block and make it easier for <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> to automatically infer and optimize memory access and computation. Additionally, these contexts allow users to manually control the behavior of each independent thread within a thread block.</p>
 </section>
 <section id="explicit-hardware-memory-allocation">
-<h3>Explicit Hardware Memory Allocation<a class="headerlink" href="#explicit-hardware-memory-allocation" title="Permalink to this heading">#</a></h3>
+<h3>Explicit Hardware Memory Allocation<a class="headerlink" href="#explicit-hardware-memory-allocation" title="Link to this heading">¶</a></h3>
 <p>A hallmark of <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> is the ability to explicitly place these tile buffers in the hardware memory hierarchy. Rather than leaving it to a compiler’s opaque optimization passes, <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> exposes user-facing intrinsics that map directly to physical memory spaces or accelerator-specific constructs. In particular:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_shared</span></code>: Allocates memory in a fast, on-chip storage space, which corresponds to shared memory on NVIDIA GPUs. Shared memory is ideal for caching intermediate data during computations, as it is significantly faster than global memory and allows for efficient data sharing between threads in the same thread block. For example, in matrix multiplication, tiles of matrices can be loaded into shared memory to reduce global memory bandwidth demands and improve performance.</p></li>
@@ -494,7 +543,8 @@ allows developers to reason about performance-critical optimizations within a us
 </ul>
 <p>Data transfer between global memory and hardware-specific memory can be managed using <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>. Furthermore, hardware-specific buffers can be initialized using <code class="docutils literal notranslate"><span class="pre">T.clear</span></code> or <code class="docutils literal notranslate"><span class="pre">T.fill</span></code>. For data assignments, operations can also be performed in parallel using <code class="docutils literal notranslate"><span class="pre">T.Parallel</span></code>, as demonstrated in Layout Inference Pass in the following sections.</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="../_images/LayoutInference.png"><img alt="GEMM with Multi-Level Tiling on GPUs" src="../_images/LayoutInference.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="../_images/LayoutInference.png"><img alt="GEMM with Multi-Level Tiling on GPUs" src="../_images/LayoutInference.png" style="width: 100%;" />
+</a>
 </figure>
 </section>
 </section>
@@ -575,12 +625,9 @@ allows developers to reason about performance-critical optimizations within a us
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
+</div><script src="../_static/documentation_options.js?v=59fadc99"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     </body>
 </html>

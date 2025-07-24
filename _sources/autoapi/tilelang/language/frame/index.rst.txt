@@ -1,0 +1,195 @@
+tilelang.language.frame
+=======================
+
+.. py:module:: tilelang.language.frame
+
+.. autoapi-nested-parse::
+
+   Override the LetFrame to print a message when entering the frame.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.language.frame.FrameStack
+   tilelang.language.frame.LetFrame
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.frame.has_let_value
+   tilelang.language.frame.get_let_value
+
+
+Module Contents
+---------------
+
+.. py:class:: FrameStack
+
+   A stack-like container for managing TIR frame objects and their variable bindings.
+
+   This class implements a stack data structure using a deque and maintains a mapping
+   of variables to their values. It provides methods for stack operations and variable
+   value lookups.
+
+
+   .. py:method:: push(item)
+
+      Push an item onto the stack and update variable mapping if applicable.
+
+      :param item: The frame object to push onto the stack
+
+
+
+   .. py:method:: pop()
+
+      Remove and return the top item from the stack.
+
+      :returns: The top frame object from the stack
+
+      :raises IndexError: If the stack is empty
+
+
+
+   .. py:method:: get_value(var)
+
+      Retrieve the value associated with a variable.
+
+      :param var: The variable to look up
+
+      :returns: The value associated with the variable, or None if not found
+
+
+
+   .. py:method:: has_value(var)
+
+      Check if a variable has an associated value.
+
+      :param var: The variable to check
+
+      :returns: True if the variable has an associated value, False otherwise
+      :rtype: bool
+
+
+
+   .. py:method:: top()
+
+      Return the top item of the stack without removing it.
+
+      :returns: The top frame object from the stack
+
+      :raises IndexError: If the stack is empty
+
+
+
+   .. py:method:: __len__()
+
+      Returns the number of items in the stack.
+
+
+
+   .. py:method:: __bool__()
+
+      Allows truthy checks on the stack object itself,
+      e.g., 'if stack: ...'
+
+
+
+.. py:class:: LetFrame
+
+   Bases: :py:obj:`tvm.script.ir_builder.tir.frame.TIRFrame`
+
+
+   A TIR frame for let bindings that manages variable scope and value tracking.
+
+   This frame type extends TIRFrame to provide variable binding functionality and
+   maintains a global stack of active bindings.
+
+
+   .. py:method:: __enter__()
+
+      Enter the let frame scope and process buffer loads.
+
+      :returns: The variable bound in this frame
+      :rtype: Var
+
+
+
+   .. py:method:: __exit__(ptype, value, trace)
+
+      Exit the let frame scope and clean up the stack.
+
+      :param ptype: Exception type if an exception occurred
+      :param value: Exception value if an exception occurred
+      :param trace: Exception traceback if an exception occurred
+
+
+
+   .. py:method:: Current()
+      :classmethod:
+
+
+      Get the current (topmost) let frame.
+
+      :returns: The current let frame
+      :rtype: LetFrame
+
+      :raises IndexError: If there are no active let frames
+
+
+
+   .. py:method:: get_value(var)
+      :staticmethod:
+
+
+      Get the value bound to a variable in any active frame.
+
+      :param var: The variable to look up
+      :type var: Var
+
+      :returns: The value bound to the variable, or None if not found
+
+
+
+   .. py:method:: has_value(var)
+      :staticmethod:
+
+
+      Check if a variable has a binding in any active frame.
+
+      :param var: The variable to check
+      :type var: Var
+
+      :returns: True if the variable has a binding, False otherwise
+      :rtype: bool
+
+
+
+.. py:function:: has_let_value(var)
+
+   Check if a variable has a binding in the current let frame stack.
+
+   :param var: The variable to check
+   :type var: Var
+
+   :returns: True if the variable has a binding, False otherwise
+   :rtype: bool
+
+
+.. py:function:: get_let_value(var)
+
+   Get the value bound to a variable in the current let frame stack.
+
+   :param var: The variable to look up
+   :type var: Var
+
+   :returns: The bound value if found, None otherwise
+   :rtype: Optional[PrimExpr]
+
+

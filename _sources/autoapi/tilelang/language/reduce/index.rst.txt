@@ -1,0 +1,158 @@
+tilelang.language.reduce
+========================
+
+.. py:module:: tilelang.language.reduce
+
+.. autoapi-nested-parse::
+
+   The language interface for tl programs.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.reduce.reduce
+   tilelang.language.reduce.reduce_max
+   tilelang.language.reduce.reduce_min
+   tilelang.language.reduce.reduce_sum
+   tilelang.language.reduce.reduce_abssum
+   tilelang.language.reduce.reduce_absmax
+   tilelang.language.reduce.cumsum_fragment
+   tilelang.language.reduce.cumsum
+
+
+Module Contents
+---------------
+
+.. py:function:: reduce(buffer, out, reduce_type, dim, clear)
+
+   Perform a reduction operation on a buffer along a specified dimension.
+
+   :param buffer: Input buffer to reduce
+   :type buffer: tir.Buffer
+   :param out: Output buffer to store results
+   :type out: tir.Buffer
+   :param reduce_type: Type of reduction ('max', 'min', 'sum', 'abssum')
+   :type reduce_type: str
+   :param dim: Dimension along which to perform reduction
+   :type dim: int
+   :param clear: Whether to initialize the output buffer before reduction
+   :type clear: bool
+
+   :returns: Handle to the reduction operation
+   :rtype: tir.Call
+
+
+.. py:function:: reduce_max(buffer, out, dim = -1, clear = True)
+
+   Perform reduce max on input buffer, store the result to output buffer
+
+   :param buffer: The input buffer.
+   :type buffer: Buffer
+   :param out: The output buffer.
+   :type out: Buffer
+   :param dim: The dimension to perform reduce on
+   :type dim: int
+   :param clear: If set to True, the output buffer will first be initialized to -inf.
+   :type clear: bool
+
+   :returns: **handle**
+   :rtype: PrimExpr
+
+
+.. py:function:: reduce_min(buffer, out, dim = -1, clear = True)
+
+   Perform reduce min on input buffer, store the result to output buffer.
+
+   :param buffer: The input buffer
+   :type buffer: tir.Buffer
+   :param out: The output buffer
+   :type out: tir.Buffer
+   :param dim: The dimension to perform reduce on
+   :type dim: int
+   :param clear: If True, output buffer will be initialized to inf. Defaults to True.
+   :type clear: bool, optional
+
+   :returns: Handle to the reduction operation
+   :rtype: tir.Call
+
+
+.. py:function:: reduce_sum(buffer, out, dim = -1, clear = True)
+
+   Perform reduce sum on input buffer, store the result to output buffer.
+
+   :param buffer: The input buffer
+   :type buffer: tir.Buffer
+   :param out: The output buffer
+   :type out: tir.Buffer
+   :param dim: The dimension to perform reduce on
+   :type dim: int
+   :param clear: If True, output buffer will be cleared before reduction.
+                 If False, results will be accumulated on existing values.
+                 Defaults to True.
+   :type clear: bool, optional
+
+   Note: When clear=True, reduce_sum will not compute directly on the output buffer. This is because
+         during warp reduction, the same value would be accumulated multiple times (number of threads
+         in the warp). Therefore, the implementation with clear=True follows these steps:
+       1. create a temp buffer with same shape and dtype as out
+       2. copy out to temp buffer
+       3. call reduce_sum with temp buffer and out
+       4. Add temp buffer to out
+
+   :returns: Handle to the reduction operation
+   :rtype: tir.Call
+
+
+.. py:function:: reduce_abssum(buffer, out, dim = -1)
+
+   Perform reduce absolute sum on input buffer, store the result to output buffer.
+
+   :param buffer: The input buffer
+   :type buffer: tir.Buffer
+   :param out: The output buffer
+   :type out: tir.Buffer
+   :param dim: The dimension to perform reduce on
+   :type dim: int
+
+   :returns: Handle to the reduction operation
+   :rtype: tir.Call
+
+
+.. py:function:: reduce_absmax(buffer, out, dim = -1, clear = True)
+
+   Perform reduce absolute max on input buffer, store the result to output buffer.
+
+   :param buffer: The input buffer
+   :type buffer: tir.Buffer
+   :param out: The output buffer
+   :type out: tir.Buffer
+   :param dim: The dimension to perform reduce on
+   :type dim: int
+
+   :returns: Handle to the reduction operation
+   :rtype: tir.Call
+
+
+.. py:function:: cumsum_fragment(src, dst, dim, reverse)
+
+.. py:function:: cumsum(src, dst = None, dim = 0, reverse = False)
+
+   Perform cumulative sum on input buffer, store the result to output buffer.
+
+   :param src: The input buffer
+   :type src: tir.Buffer
+   :param dst: The output buffer. Defaults to None.
+   :type dst: tir.Buffer, optional
+   :param dim: The dimension to perform cumulative sum on. Defaults to 0.
+   :type dim: int, optional
+   :param reverse: Whether to perform reverse cumulative sum. Defaults to False.
+   :type reverse: bool, optional
+
+   :returns: Handle to the cumulative sum operation
+   :rtype: tir.Call
+
+

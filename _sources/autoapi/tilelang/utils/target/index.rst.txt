@@ -1,0 +1,59 @@
+tilelang.utils.target
+=====================
+
+.. py:module:: tilelang.utils.target
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.utils.target.AVALIABLE_TARGETS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.utils.target.check_cuda_availability
+   tilelang.utils.target.check_hip_availability
+   tilelang.utils.target.determine_target
+
+
+Module Contents
+---------------
+
+.. py:data:: AVALIABLE_TARGETS
+
+.. py:function:: check_cuda_availability()
+
+   Check if CUDA is available on the system by locating the CUDA path.
+   :returns: True if CUDA is available, False otherwise.
+   :rtype: bool
+
+
+.. py:function:: check_hip_availability()
+
+   Check if HIP (ROCm) is available on the system by locating the ROCm path.
+   :returns: True if HIP is available, False otherwise.
+   :rtype: bool
+
+
+.. py:function:: determine_target(target = 'auto', return_object = False)
+
+   Determine the appropriate target for compilation (CUDA, HIP, or manual selection).
+
+   :param target: User-specified target.
+                  - If "auto", the system will automatically detect whether CUDA or HIP is available.
+                  - If a string or Target, it is directly validated.
+   :type target: Union[str, Target, Literal["auto"]]
+
+   :returns: The selected target ("cuda", "hip", or a valid Target object).
+   :rtype: Union[str, Target]
+
+   :raises ValueError: If no CUDA or HIP is available and the target is "auto".
+   :raises AssertionError: If the target is invalid.
+
+
