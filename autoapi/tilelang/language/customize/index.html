@@ -465,6 +465,18 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.region" title="tilelang.language.customize.region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">region</span></code></a>(buffer, access_type, *args)</p></td>
+<td><p>Create a memory region descriptor for tile operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.buffer_to_tile_region" title="tilelang.language.customize.buffer_to_tile_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buffer_to_tile_region</span></code></a>(buffer, access_type)</p></td>
+<td><p>Convert a TVM buffer to a tile region descriptor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.buffer_load_to_tile_region" title="tilelang.language.customize.buffer_load_to_tile_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buffer_load_to_tile_region</span></code></a>(load, access_type, extents)</p></td>
+<td><p>Convert a buffer load operation to a tile region descriptor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.buffer_region_to_tile_region" title="tilelang.language.customize.buffer_region_to_tile_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buffer_region_to_tile_region</span></code></a>(buffer_region, ...)</p></td>
+<td><p>Convert a buffer region to a tile region descriptor.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_add" title="tilelang.language.customize.atomic_add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_add</span></code></a>(dst, value)</p></td>
 <td><p>Perform an atomic addition operation.</p></td>
 </tr>
@@ -472,7 +484,7 @@
 <td><p>Perform an atomic addition operation with double-width operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_addx4" title="tilelang.language.customize.atomic_addx4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_addx4</span></code></a>(dst, value)</p></td>
-<td><p>Perform an atomic addition operation with double-width operands.</p></td>
+<td><p>Perform an atomic addition operation with quad-width operands.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.dp4a" title="tilelang.language.customize.dp4a"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dp4a</span></code></a>(A, B, C)</p></td>
 <td><p>Perform a 4-element dot product with accumulation (DP4A).</p></td>
@@ -492,6 +504,89 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.customize.region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.region" title="Link to this definition">¶</a></dt>
+<dd><p>Create a memory region descriptor for tile operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tir.BufferLoad</em>) – The buffer to create a region for</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – Type of access - ‘r’ for read, ‘w’ for write, ‘rw’ for read-write</p></li>
+<li><p><strong>*args</strong> (<em>tir.PrimExpr</em>) – Extent expressions defining the region size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A region descriptor for tile operations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.customize.buffer_to_tile_region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">buffer_to_tile_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.buffer_to_tile_region" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a TVM buffer to a tile region descriptor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tir.Buffer</em>) – The buffer to convert</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – Type of access - ‘r’ for read, ‘w’ for write, ‘rw’ for read-write</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A region descriptor covering the entire buffer</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.customize.buffer_load_to_tile_region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">buffer_load_to_tile_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extents</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.buffer_load_to_tile_region" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a buffer load operation to a tile region descriptor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load</strong> (<em>tir.BufferLoad</em>) – The buffer load operation</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – Type of access - ‘r’ for read, ‘w’ for write, ‘rw’ for read-write</p></li>
+<li><p><strong>extents</strong> (<em>List</em><em>[</em><em>tir.PrimExpr</em><em>]</em>) – List of expressions defining the region size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A region descriptor for the loaded area</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.customize.buffer_region_to_tile_region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">buffer_region_to_tile_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extents</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.buffer_region_to_tile_region" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a buffer region to a tile region descriptor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer_region</strong> (<em>tir.BufferRegion</em>) – The buffer region to convert</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – Type of access - ‘r’ for read, ‘w’ for write, ‘rw’ for read-write</p></li>
+<li><p><strong>extents</strong> (<em>List</em><em>[</em><em>tvm.tir.PrimExpr</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A region descriptor for the specified buffer region</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.atomic_add">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_add" title="Link to this definition">¶</a></dt>
@@ -535,16 +630,16 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.atomic_addx4">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_addx4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_addx4" title="Link to this definition">¶</a></dt>
-<dd><p>Perform an atomic addition operation with double-width operands.</p>
+<dd><p>Perform an atomic addition operation with quad-width operands.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dst</strong> (<em>Buffer</em>) – Destination buffer where the atomic addition will be performed</p></li>
-<li><p><strong>value</strong> (<em>PrimExpr</em>) – Value to be atomically added (double-width)</p></li>
+<li><p><strong>value</strong> (<em>PrimExpr</em>) – Value to be atomically added (quad-width)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the double-width atomic addition operation</p>
+<dd class="field-even"><p>Handle to the quad-width atomic addition operation</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PrimExpr</p>
@@ -696,6 +791,10 @@
 <li><a class="reference internal" href="#">tilelang.language.customize</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.language.customize.region"><code class="docutils literal notranslate"><span class="pre">region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.customize.buffer_to_tile_region"><code class="docutils literal notranslate"><span class="pre">buffer_to_tile_region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.customize.buffer_load_to_tile_region"><code class="docutils literal notranslate"><span class="pre">buffer_load_to_tile_region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.customize.buffer_region_to_tile_region"><code class="docutils literal notranslate"><span class="pre">buffer_region_to_tile_region()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.customize.atomic_add"><code class="docutils literal notranslate"><span class="pre">atomic_add()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.customize.atomic_addx2"><code class="docutils literal notranslate"><span class="pre">atomic_addx2()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.customize.atomic_addx4"><code class="docutils literal notranslate"><span class="pre">atomic_addx4()</span></code></a></li>
