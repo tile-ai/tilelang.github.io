@@ -477,7 +477,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy.buffer_region_to_tile_region" title="tilelang.language.copy.buffer_region_to_tile_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buffer_region_to_tile_region</span></code></a>(buffer_region, ...)</p></td>
 <td><p>Convert a buffer region to a tile region descriptor.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy.copy" title="tilelang.language.copy.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>(src, dst[, coalesced_width, disable_tma])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy.copy" title="tilelang.language.copy.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>(src, dst[, coalesced_width, disable_tma, ...])</p></td>
 <td><p>Copy data between memory regions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy.c2d_im2col" title="tilelang.language.copy.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
@@ -574,7 +574,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.copy.copy">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy.</span></span><span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_tma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy.copy" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy.</span></span><span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_tma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy.copy" title="Link to this definition">¶</a></dt>
 <dd><p>Copy data between memory regions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -583,6 +583,7 @@
 <li><p><strong>dst</strong> (<em>Union</em><em>[</em><em>tir.Buffer</em><em>, </em><em>tir.BufferLoad</em><em>]</em>) – Destination memory region</p></li>
 <li><p><strong>coalesced_width</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Width for coalesced memory access. Defaults to None.</p></li>
 <li><p><strong>disable_tma</strong> (<em>bool</em>)</p></li>
+<li><p><strong>eviction_policy</strong> (<em>Optional</em><em>[</em><em>Literal</em><em>[</em><em>'evict_normal'</em><em>, </em><em>'evict_first'</em><em>, </em><em>'evict_last'</em><em>]</em><em>]</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -599,7 +600,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.copy.c2d_im2col">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy.</span></span><span class="sig-name descname"><span class="pre">c2d_im2col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nhw_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dilation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy.c2d_im2col" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy.</span></span><span class="sig-name descname"><span class="pre">c2d_im2col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nhw_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dilation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy.c2d_im2col" title="Link to this definition">¶</a></dt>
 <dd><p>Perform im2col transformation for 2D convolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -612,6 +613,7 @@
 <li><p><strong>stride</strong> (<em>int</em>) – Stride of the convolution</p></li>
 <li><p><strong>dilation</strong> (<em>int</em>) – Dilation rate</p></li>
 <li><p><strong>pad</strong> (<em>int</em>) – Padding size</p></li>
+<li><p><strong>eviction_policy</strong> (<em>Optional</em><em>[</em><em>Literal</em><em>[</em><em>'evict_normal'</em><em>, </em><em>'evict_first'</em><em>, </em><em>'evict_last'</em><em>]</em><em>]</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
