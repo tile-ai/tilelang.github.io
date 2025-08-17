@@ -25,6 +25,7 @@ Classes
    tilelang.language.proxy.BufferProxy
    tilelang.language.proxy.BaseTensorProxy
    tilelang.language.proxy.TensorProxy
+   tilelang.language.proxy.StridedTensorProxy
    tilelang.language.proxy.FragmentBufferProxy
    tilelang.language.proxy.SharedBufferProxy
    tilelang.language.proxy.LocalBufferProxy
@@ -54,7 +55,7 @@ Module Contents
    .. py:method:: __getitem__(keys)
 
 
-   .. py:method:: from_ptr(pointer_var, shape, dtype = 'float32')
+   .. py:method:: from_ptr(pointer_var, shape, dtype = 'float32', strides = None)
 
       Create a buffer from a pointer, shape, and data type.
 
@@ -96,7 +97,7 @@ Module Contents
    .. py:method:: __getitem__(keys)
 
 
-   .. py:method:: from_ptr(pointer_var, shape, dtype = 'float32')
+   .. py:method:: from_ptr(pointer_var, shape, dtype = 'float32', strides = None)
 
       Create a buffer from a pointer, shape, and data type.
 
@@ -116,7 +117,23 @@ Module Contents
    Main tensor proxy class for global scope buffers.
 
    This class implements the default tensor proxy with global memory scope,
-   inheriting all functionality from BaseTensorProxy without modifications.
+   the tensor should be by default contiguous.
+
+
+   .. py:method:: __call__(shape, dtype = 'float32', data=None)
+
+
+.. py:class:: StridedTensorProxy
+
+   Bases: :py:obj:`BaseTensorProxy`
+
+
+   Main tensor proxy class for global scope buffers, with strides supported.
+
+   This class implements the default tensor proxy with global memory scope, with the stride information required.
+
+
+   .. py:method:: __call__(shape, strides, dtype = 'float32')
 
 
 .. py:class:: FragmentBufferProxy
@@ -182,7 +199,7 @@ Module Contents
    .. py:method:: __setitem__(key, value)
 
 
-   .. py:method:: from_ptr(pointer_var, shape, dtype = 'float32')
+   .. py:method:: from_ptr(pointer_var, shape, dtype = 'float32', strides = None)
       :classmethod:
 
 
@@ -202,5 +219,5 @@ Module Contents
    :rtype: PrimExpr
 
 
-.. py:function:: make_tensor(ptr, shape, dtype = 'float32')
+.. py:function:: make_tensor(ptr, shape, dtype = 'float32', strides = None)
 
