@@ -363,6 +363,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../language/tir/op/index.html">tilelang.language.tir.op</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/utils/index.html">tilelang.language.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../language/warpgroup/index.html">tilelang.language.warpgroup</a></li>
 </ul>
 </li>
@@ -388,6 +389,7 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../quantize/index.html">tilelang.quantize</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of tilelang.quantize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../quantize/lop3/index.html">tilelang.quantize.lop3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../quantize/mxfp/index.html">tilelang.quantize.mxfp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../quantize/quantization/index.html">tilelang.quantize.quantization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../quantize/utils/index.html">tilelang.quantize.utils</a></li>
 </ul>
@@ -485,9 +487,6 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.utils.get_mma_micro_size" title="tilelang.intrinsics.utils.get_mma_micro_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mma_micro_size</span></code></a>(dtype)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.utils.index_to_coordinates" title="tilelang.intrinsics.utils.index_to_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index_to_coordinates</span></code></a>(index, shape)</p></td>
-<td><p>General Implementation of:</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -539,22 +538,6 @@
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dtype</strong> (<em>Literal</em><em>[</em><em>'float16'</em><em>, </em><em>'int8'</em><em>]</em>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.utils.index_to_coordinates">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.utils.</span></span><span class="sig-name descname"><span class="pre">index_to_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.utils.index_to_coordinates" title="Link to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>General Implementation of:</dt><dd><p>vjj = index % (micro_size_k // num_elems_per_byte)
-coordinates[-1] = index % shape[-1];
-vii = index // (micro_size_k // num_elems_per_byte) % micro_size_y
-index = index // shape[-1]; coordinates[-2] = index % shape[-2];
-vj = index // (micro_size_k // num_elems_per_byte * micro_size_y) % block_K // (micro_size_k // num_elems_per_byte)
-index = index // shape[-2]; coordinates[-3] = index % shape[-3];
-vi = index // (micro_size_k // num_elems_per_byte * micro_size_y * (block_K // (micro_size_k // num_elems_per_byte))) % block_N // micro_size_y
-index = index // shape[-3]; coordinates[-4] = index % shape[-4];</p>
 </dd>
 </dl>
 </dd></dl>
@@ -627,7 +610,6 @@ index = index // shape[-3]; coordinates[-4] = index % shape[-4];</p>
 <li><a class="reference internal" href="#tilelang.intrinsics.utils.mma_store_index_map"><code class="docutils literal notranslate"><span class="pre">mma_store_index_map()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.utils.mfma_store_index_map"><code class="docutils literal notranslate"><span class="pre">mfma_store_index_map()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.utils.get_mma_micro_size"><code class="docutils literal notranslate"><span class="pre">get_mma_micro_size()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.utils.index_to_coordinates"><code class="docutils literal notranslate"><span class="pre">index_to_coordinates()</span></code></a></li>
 </ul>
 </li>
 </ul>

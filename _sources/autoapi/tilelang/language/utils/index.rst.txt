@@ -1,0 +1,58 @@
+tilelang.language.utils
+=======================
+
+.. py:module:: tilelang.language.utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.utils.index_to_coordinates
+   tilelang.language.utils.linear_index
+
+
+Module Contents
+---------------
+
+.. py:function:: index_to_coordinates(index, shape)
+
+   Convert a flat (linear) index to multi-dimensional coordinates for a given shape.
+
+   .. rubric:: Example
+
+   shape = (4, 5, 6)
+   index = 53
+   index_to_coordinates(53, (4, 5, 6)) -> [1, 3, 5]
+   # Explanation:
+   # 53 // (5*6) = 1  (1st coordinate)
+   # 53 % (5*6) = 23
+   # 23 // 6 = 3      (2nd coordinate)
+   # 23 % 6 = 5       (3rd coordinate)
+
+   :param index: The flat index to convert.
+   :type index: int
+   :param shape: The shape of the multi-dimensional array.
+   :type shape: tuple or list of int
+
+   :returns: A list of coordinates corresponding to each dimension.
+   :rtype: list
+
+
+.. py:function:: linear_index(*args)
+
+   Convert a list of coordinates to a flat (linear) index using strides.
+
+   Usage examples:
+       linear_index(i)                         -> i
+       linear_index(i, j)                      -> i * stride + j
+       linear_index(i, j, stride_j)            -> i * stride_j + j
+       linear_index(i, j, k, stride_j, stride_k)
+                                               -> i * stride_j * stride_k + j * stride_k + k
+
+       Example for index = i * threads * local_size + tx * local_size + v:
+       Suppose you have i, tx, v as coordinates, and threads, local_size as strides:
+       linear_index(i, tx, v, threads, local_size) == i * threads * local_size + tx * local_size + v
+
+
