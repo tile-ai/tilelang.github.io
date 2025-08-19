@@ -479,7 +479,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.mxfp.get_mxfp_intrin_group" title="tilelang.quantize.mxfp.get_mxfp_intrin_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mxfp_intrin_group</span></code></a>([out_dtype, source_format, ...])</p></td>
-<td><p>This function is used to get the intrinsic group of the MXFP operation to avoid the overhead of fast decoding.</p></td>
+<td><p>Return metadata for an MXFP decoding intrinsic: function name and C source string.</p></td>
 </tr>
 </tbody>
 </table>
@@ -541,21 +541,37 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.quantize.mxfp.get_mxfp_intrin_group">
 <span class="sig-prename descclassname"><span class="pre">tilelang.quantize.mxfp.</span></span><span class="sig-name descname"><span class="pre">get_mxfp_intrin_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bfloat16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uint'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_bit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uint8'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_twiddling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.quantize.mxfp.get_mxfp_intrin_group" title="Link to this definition">¶</a></dt>
-<dd><p>This function is used to get the intrinsic group of the MXFP operation to avoid the overhead of fast decoding.
-MXFP is a type of logic operation that takes three inputs. The intrinsic group refers to the set of
-intrinsic operations that can be performed on these inputs. This function retrieves and returns this group.</p>
+<dd><p>Return metadata for an MXFP decoding intrinsic: function name and C source string.</p>
+<p>Validates the requested output dtype, source format, and storage dtype, then constructs
+a lookup key of the form <cite>fp{source_bit}_to_{f16|bf16}</cite> (appending <cite>_twiddling</cite> when
+use_twiddling is True) to select the corresponding C source snippet and a matching
+function name <cite>decode_fp{source_bit}_to_{f16|bf16}</cite> (also optionally suffixed with
+<cite>_twiddling</cite>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>out_dtype</strong> (<em>Literal</em><em>[</em><em>'float16'</em><em>, </em><em>'bfloat16'</em><em>]</em>)</p></li>
-<li><p><strong>source_format</strong> (<em>Literal</em><em>[</em><em>'int'</em><em>, </em><em>'uint'</em><em>]</em>)</p></li>
-<li><p><strong>source_bit</strong> (<em>int</em>)</p></li>
-<li><p><strong>storage_dtype</strong> (<em>Literal</em><em>[</em><em>'int32'</em><em>, </em><em>'int8'</em><em>, </em><em>'uint8'</em><em>]</em>)</p></li>
-<li><p><strong>use_twiddling</strong> (<em>bool</em>)</p></li>
+<li><p><strong>out_dtype</strong> (<em>Literal</em><em>[</em><em>'float16'</em><em>, </em><em>'bfloat16'</em><em>]</em>) – Target floating-point type for decoded values; either “float16” or “bfloat16”.</p></li>
+<li><p><strong>source_format</strong> (<em>Literal</em><em>[</em><em>'int'</em><em>, </em><em>'uint'</em><em>]</em>) – Integer source representation; “int” or “uint”.</p></li>
+<li><p><strong>source_bit</strong> (<em>int</em>) – Bit width of the packed source format (e.g., 4).</p></li>
+<li><p><strong>storage_dtype</strong> (<em>Literal</em><em>[</em><em>'int32'</em><em>, </em><em>'int8'</em><em>, </em><em>'uint8'</em><em>]</em>) – Underlying storage integer dtype (one of “int32”, “int8”, “uint8”).</p></li>
+<li><p><strong>use_twiddling</strong> (<em>bool</em>) – When True, select the twiddling variant of the decoding intrinsic.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dict[str, str]</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>“func_name”: the generated C function name string for the requested decode intrinsic.</p></li>
+<li><p>”c_source”: the C source string for that intrinsic.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dict with</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>AssertionError</strong> – if out_dtype, source_format, or storage_dtype are not supported.</p></li>
+<li><p><strong>KeyError</strong> – if the constructed key does not match any available C source implementation.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

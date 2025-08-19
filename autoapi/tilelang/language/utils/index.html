@@ -467,10 +467,10 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.utils.index_to_coordinates" title="tilelang.language.utils.index_to_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index_to_coordinates</span></code></a>(index, shape)</p></td>
-<td><p>Convert a flat (linear) index to multi-dimensional coordinates for a given shape.</p></td>
+<td><p>Convert a flat (linear) index into multi-dimensional coordinates for a given shape.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.utils.linear_index" title="tilelang.language.utils.linear_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linear_index</span></code></a>(*args)</p></td>
-<td><p>Convert a list of coordinates to a flat (linear) index using strides.</p></td>
+<td><p>Compute a flat (linear) index from multi-dimensional coordinates and strides.</p></td>
 </tr>
 </tbody>
 </table>
@@ -481,28 +481,20 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.utils.index_to_coordinates">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.utils.</span></span><span class="sig-name descname"><span class="pre">index_to_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.utils.index_to_coordinates" title="Link to this definition">¶</a></dt>
-<dd><p>Convert a flat (linear) index to multi-dimensional coordinates for a given shape.</p>
-<p class="rubric">Example</p>
-<p>shape = (4, 5, 6)
-index = 53
-index_to_coordinates(53, (4, 5, 6)) -&gt; [1, 3, 5]
-# Explanation:
-# 53 // (5*6) = 1  (1st coordinate)
-# 53 % (5*6) = 23
-# 23 // 6 = 3      (2nd coordinate)
-# 23 % 6 = 5       (3rd coordinate)</p>
+<dd><p>Convert a flat (linear) index into multi-dimensional coordinates for a given shape.</p>
+<p>Given a linear index and a shape (sequence of dimension extents), returns a list of coordinates (one per dimension) such that converting those coordinates back to a linear index using the usual row-major / C-order formula yields the original index. The computation iterates from the last dimension to the first using modulo and integer division, then reverses the collected coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>index</strong> (<em>int</em>) – The flat index to convert.</p></li>
-<li><p><strong>shape</strong> (<em>tuple</em><em> or </em><em>list</em><em> of </em><em>int</em>) – The shape of the multi-dimensional array.</p></li>
+<li><p><strong>index</strong> (<em>int</em><em> or </em><em>PrimExpr</em>) – The flat index to convert.</p></li>
+<li><p><strong>shape</strong> (<em>Sequence</em><em>[</em><em>int</em><em>]</em>) – The extents of each dimension (length &gt;= 1).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of coordinates corresponding to each dimension.</p>
+<dd class="field-even"><p>Coordinates for each dimension in the same order as <cite>shape</cite>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list</p>
+<dd class="field-odd"><p>list[PrimExpr]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -510,26 +502,38 @@ index_to_coordinates(53, (4, 5, 6)) -&gt; [1, 3, 5]
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.utils.linear_index">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.utils.</span></span><span class="sig-name descname"><span class="pre">linear_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.utils.linear_index" title="Link to this definition">¶</a></dt>
-<dd><p>Convert a list of coordinates to a flat (linear) index using strides.</p>
-<dl>
-<dt>Usage examples:</dt><dd><p>linear_index(i)                         -&gt; i
-linear_index(i, j)                      -&gt; i * stride + j
-linear_index(i, j, stride_j)            -&gt; i * stride_j + j
-linear_index(i, j, k, stride_j, stride_k)</p>
+<dd><p>Compute a flat (linear) index from multi-dimensional coordinates and strides.</p>
+<p>The function accepts a sequence of PrimExpr arguments where the first portion are coordinates
+and the trailing portion are the corresponding strides. The number of strides must equal
+(number of coordinates - 1). The linear index is computed as:</p>
 <blockquote>
-<div><p>-&gt; i * stride_j * stride_k + j * stride_k + k</p>
+<div><p>linear = coords[0]
+for each (coord, stride) in zip(coords[1:], strides):</p>
+<blockquote>
+<div><p>linear = linear * stride + coord</p>
 </div></blockquote>
-<p>Example for index = i * threads * local_size + tx * local_size + v:
-Suppose you have i, tx, v as coordinates, and threads, local_size as strides:
-linear_index(i, tx, v, threads, local_size) == i * threads * local_size + tx * local_size + v</p>
-</dd>
-</dl>
+</div></blockquote>
+<p class="rubric">Examples</p>
+<ul class="simple">
+<li><p>linear_index(i) -&gt; i</p></li>
+<li><p>linear_index(i, j) -&gt; i * j_stride + j  (requires j_stride provided as stride when needed)</p></li>
+<li><p>linear_index(i, j, stride_j) -&gt; i * stride_j + j</p></li>
+<li><p>linear_index(i, j, k, stride_j, stride_k) -&gt; i*stride_j*stride_k + j*stride_k + k</p></li>
+<li><p>linear_index(i, tx, v, threads, local_size) -&gt; i*threads*local_size + tx*local_size + v</p></li>
+</ul>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<em>tvm.tir.PrimExpr</em>)</p>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If called with no arguments, or if the number of strides is not one less than
+the number of coordinates.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed linear index expression.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>args</strong> (<em>tvm.tir.PrimExpr</em>)</p>
 </dd>
 </dl>
 </dd></dl>

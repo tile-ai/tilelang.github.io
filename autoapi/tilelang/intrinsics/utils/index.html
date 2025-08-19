@@ -485,7 +485,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.utils.get_mma_micro_size" title="tilelang.intrinsics.utils.get_mma_micro_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mma_micro_size</span></code></a>(dtype)</p></td>
-<td><p></p></td>
+<td><p>Return the MMA (Tensor Core) micro-tile dimensions for a given data type.</p></td>
 </tr>
 </tbody>
 </table>
@@ -535,7 +535,19 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.intrinsics.utils.get_mma_micro_size">
 <span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.utils.</span></span><span class="sig-name descname"><span class="pre">get_mma_micro_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.utils.get_mma_micro_size" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return the MMA (Tensor Core) micro-tile dimensions for a given data type.</p>
+<p>This function returns the micro tile sizes (x, y, k) used by MMA/Tensor Core operations.
+- x: tile width in the output/result dimension
+- y: tile height in the output/result dimension
+- k: tile depth in the reduction/K dimension</p>
+<p>Accepted dtype strings include “float16”, “int8” and some FP8 identifiers (“float8_e4m3”, “float8_e5m2”). For FP8 and int8 types the reduction depth (<cite>k</cite>) is 32; for float16 it is 16.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(micro_size_x, micro_size_y, micro_size_k)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[int, int, int]</p>
+</dd>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dtype</strong> (<em>Literal</em><em>[</em><em>'float16'</em><em>, </em><em>'int8'</em><em>]</em>)</p>
 </dd>
