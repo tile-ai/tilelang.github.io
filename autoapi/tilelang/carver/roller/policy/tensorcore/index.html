@@ -480,7 +480,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy" title="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TensorCorePolicy</span></code></a></p></td>
-<td><p>Default Policy for fastdlight, a heuristic plan that tries to</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -495,18 +495,8 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.carver.roller.policy.tensorcore.</span></span><span class="sig-name descname"><span class="pre">TensorCorePolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.carver.roller.policy.tensorcore.</span></span><span class="sig-name descname"><span class="pre">TensorCorePolicy</span></span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../default/index.html#tilelang.carver.roller.policy.default.DefaultPolicy" title="tilelang.carver.roller.policy.default.DefaultPolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.carver.roller.policy.default.DefaultPolicy</span></code></a></p>
-<p>Default Policy for fastdlight, a heuristic plan that tries to
-minimize memory traffic and maximize parallelism.for BitBLAS Schedule.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>arch</strong> (<em>tilelang.carver.arch.TileDevice</em>)</p></li>
-<li><p><strong>tags</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em>)</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.wmma_k">
 <span class="sig-name descname"><span class="pre">wmma_k</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.wmma_k" title="Link to this definition">¶</a></dt>
@@ -530,19 +520,12 @@ minimize memory traffic and maximize parallelism.for BitBLAS Schedule.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.infer_node_smem_usage">
 <span class="sig-name descname"><span class="pre">infer_node_smem_usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">td</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.infer_node_smem_usage" title="Link to this definition">¶</a></dt>
-<dd><p>Infers the shared memory usage of a node given a TileDict configuration.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>td</strong> (<a class="reference internal" href="../../hint/index.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><em>TileDict</em></a>) – The TileDict object containing the tile configuration.</p></li>
-<li><p><strong>node</strong> (<a class="reference internal" href="../../node/index.html#tilelang.carver.roller.node.PrimFuncNode" title="tilelang.carver.roller.node.PrimFuncNode"><em>PrimFuncNode</em></a>) – The node for which to infer the shared memory usage.</p></li>
+<li><p><strong>td</strong> (<a class="reference internal" href="../../hint/index.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><em>tilelang.carver.roller.hint.TileDict</em></a>)</p></li>
+<li><p><strong>node</strong> (<a class="reference internal" href="../../node/index.html#tilelang.carver.roller.node.PrimFuncNode" title="tilelang.carver.roller.node.PrimFuncNode"><em>tilelang.carver.roller.node.PrimFuncNode</em></a>)</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The estimated amount of shared memory used by the node.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -550,32 +533,12 @@ minimize memory traffic and maximize parallelism.for BitBLAS Schedule.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.get_node_reduce_step_candidates">
 <span class="sig-name descname"><span class="pre">get_node_reduce_step_candidates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.get_node_reduce_step_candidates" title="Link to this definition">¶</a></dt>
-<dd><p>Calculates reduction step candidates for each reduction axis in a PrimFuncNode. General idea : use factor first, since it does not require extra boundary check. for large prime number, which is rare case, use power of 2.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>node</strong> (<a class="reference internal" href="../../node/index.html#tilelang.carver.roller.node.PrimFuncNode" title="tilelang.carver.roller.node.PrimFuncNode"><em>PrimFuncNode</em></a>) – The node for which to calculate reduction step candidates. It contains reduction axes (raxis)
-with their domains (dom.extent).</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A dictionary mapping axis variable names to lists of step candidates. For each axis in the node,
-this function calculates possible step sizes. For axes with a large prime domain, it uses powers of 2
-as step candidates; for others, it uses all factors of the domain.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict[str, List[int]]</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.check_tile_shape_isvalid">
 <span class="sig-name descname"><span class="pre">check_tile_shape_isvalid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">td</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.check_tile_shape_isvalid" title="Link to this definition">¶</a></dt>
-<dd><p>Checks if the tile shapes in the TileDict are valid for the nodes in this context.</p>
-<p>Parameters:
-- td (TileDict): The TileDict object containing tile shapes and other configurations.</p>
-<p>Returns:
-- bool: True if all tile shapes are valid, False otherwise.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>td</strong> (<a class="reference internal" href="../../hint/index.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><em>tilelang.carver.roller.hint.TileDict</em></a>)</p>
 </dd>
@@ -585,19 +548,12 @@ as step candidates; for others, it uses all factors of the domain.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.compute_node_stride_map">
 <span class="sig-name descname"><span class="pre">compute_node_stride_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">td</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.compute_node_stride_map" title="Link to this definition">¶</a></dt>
-<dd><p>Computes the stride map for a given node based on the TileDict configuration.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>node</strong> (<a class="reference internal" href="../../node/index.html#tilelang.carver.roller.node.PrimFuncNode" title="tilelang.carver.roller.node.PrimFuncNode"><em>PrimFuncNode</em></a>) – The node for which to compute the stride map.</p></li>
-<li><p><strong>td</strong> (<a class="reference internal" href="../../hint/index.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><em>TileDict</em></a>) – The TileDict object containing the tile configuration.</p></li>
+<li><p><strong>node</strong> (<a class="reference internal" href="../../node/index.html#tilelang.carver.roller.node.PrimFuncNode" title="tilelang.carver.roller.node.PrimFuncNode"><em>tilelang.carver.roller.node.PrimFuncNode</em></a>)</p></li>
+<li><p><strong>td</strong> (<a class="reference internal" href="../../hint/index.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><em>tilelang.carver.roller.hint.TileDict</em></a>)</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tuple of dictionaries containing the output strides and tensor strides.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[Dict, Dict]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -605,13 +561,9 @@ as step candidates; for others, it uses all factors of the domain.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.plan_rasterization">
 <span class="sig-name descname"><span class="pre">plan_rasterization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">td</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.plan_rasterization" title="Link to this definition">¶</a></dt>
-<dd><p>Plans the rasterization for the given TileDict. This function is not implemented yet.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>td</strong> (<a class="reference internal" href="../../hint/index.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><em>TileDict</em></a>) – The TileDict object to plan rasterization for.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>RasterRationPlan</strong> – This function is not implemented yet.</p>
+<dd class="field-odd"><p><strong>td</strong> (<a class="reference internal" href="../../hint/index.html#tilelang.carver.roller.hint.TileDict" title="tilelang.carver.roller.hint.TileDict"><em>tilelang.carver.roller.hint.TileDict</em></a>)</p>
 </dd>
 </dl>
 </dd></dl>
