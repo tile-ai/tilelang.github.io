@@ -40,6 +40,7 @@ Functions
    tilelang.transform.MergeIfStmt
    tilelang.transform.MultiVersionBuffer
    tilelang.transform.WarpSpecialized
+   tilelang.transform.AnnotateWarpGroupRegAlloc
    tilelang.transform.InjectTmaBarrier
    tilelang.transform.InjectFenceProxy
    tilelang.transform.LegalizeVectorizedLoop
@@ -193,6 +194,18 @@ Package Contents
 .. py:function:: WarpSpecialized()
 
    WarpSpecializedPipeline
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: AnnotateWarpGroupRegAlloc()
+
+   Inject set_max_nreg calls into warp-specialized functions.
+
+   This pass analyzes the function to collect register hints from set_max_nreg
+   and no_set_max_nreg calls, then injects appropriate set_max_nreg calls into
+   producer and consumer branches of warp-specialized code.
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
