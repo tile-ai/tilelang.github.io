@@ -142,29 +142,25 @@ Module Contents
 
 .. py:function:: cumsum(src, dst = None, dim = 0, reverse = False)
 
-   Perform cumulative sum on input buffer, store the result to output buffer.
+   Compute the cumulative sum of `src` along `dim`, writing results to `dst`.
 
-   :param src: The input buffer
-   :type src: tir.Buffer
-   :param dst: The output buffer. Defaults to None.
-   :type dst: tir.Buffer, optional
-   :param dim: The dimension to perform cumulative sum on. Defaults to 0.
-   :type dim: int, optional
-   :param reverse: Whether to perform reverse cumulative sum. Defaults to False.
-   :type reverse: bool, optional
+   Negative `dim` indices are normalized (Python-style). If `dst` is None, the operation is performed in-place into `src`. Raises ValueError when `dim` is out of bounds for `src.shape`. When `src.scope() == "local.fragment"`, this delegates to `cumsum_fragment`; otherwise it emits the `tl.cumsum` intrinsic.
 
-   :returns: Handle to the cumulative sum operation
+   :returns: A handle to the emitted cumulative-sum operation.
    :rtype: tir.Call
 
 
 .. py:function:: finalize_reducer(reducer)
 
-   Finalize the reducer buffer.
+   Finalize a reducer buffer by emitting the `tl.finalize_reducer` intrinsic.
 
-   :param reducer: The reducer buffer
+   This returns a TVM `tir.Call` handle that finalizes the given reducer using its writable pointer.
+   The call does not modify Python objects directly; it produces the low-level intrinsic call used by the IR.
+
+   :param reducer: Reducer buffer whose writable pointer will be finalized.
    :type reducer: tir.Buffer
 
-   :returns: Handle to the finalize reducer operation
+   :returns: Handle to the finalize reducer intrinsic call.
    :rtype: tir.Call
 
 

@@ -36,17 +36,22 @@ Module Contents
 
 .. py:function:: region(buffer, access_type, *args)
 
-   Create a memory region descriptor for tile operations.
+   Create a tile memory-region descriptor for a BufferLoad.
 
-   :param buffer: The buffer to create a region for
+   Maps access_type ('r', 'w', 'rw') to the numeric codes expected by the `tl.region` intrinsic
+   (1, 2, 3 respectively) and returns a tir.Call representing the region with the provided extents.
+
+   :param buffer: The BufferLoad that identifies the underlying buffer and indices.
    :type buffer: tir.BufferLoad
-   :param access_type: Type of access - 'r' for read, 'w' for write, 'rw' for read-write
+   :param access_type: One of 'r', 'w', or 'rw' indicating read, write, or read-write access.
    :type access_type: str
-   :param \*args: Extent expressions defining the region size
+   :param \*args: Extent expressions for each region dimension.
    :type \*args: tir.PrimExpr
 
-   :returns: A region descriptor for tile operations
+   :returns: A call to the `tl.region` intrinsic describing the memory region.
    :rtype: tir.Call
+
+   :raises KeyError: If access_type is not one of 'r', 'w', or 'rw'.
 
 
 .. py:function:: buffer_to_tile_region(buffer, access_type)
@@ -79,53 +84,61 @@ Module Contents
 
 .. py:function:: buffer_region_to_tile_region(buffer_region, access_type, extents)
 
-   Convert a buffer region to a tile region descriptor.
+   Create a tl region descriptor for the given BufferRegion.
 
-   :param buffer_region: The buffer region to convert
+   :param buffer_region: Source buffer region whose `region` items provide mins and extents.
    :type buffer_region: tir.BufferRegion
-   :param access_type: Type of access - 'r' for read, 'w' for write, 'rw' for read-write
+   :param access_type: Access mode: "r", "w", or "rw".
    :type access_type: str
+   :param extents: Requested extents; must have length <= the number of extents in buffer_region.region.
+   :type extents: List[PrimExpr]
 
-   :returns: A region descriptor for the specified buffer region
+   :returns: A tile-region descriptor (tl.region) covering the buffer_region.
    :rtype: tir.Call
+
+   :raises AssertionError: If the number of extents in buffer_region.region is smaller than len(extents).
 
 
 .. py:function:: atomic_max(dst, value, memory_order = None)
 
-   Perform an atomic maximum operation.
+   Perform an atomic maximum on the value stored at dst with an optional memory-order.
 
-   :param dst: Destination buffer where the atomic maximum will be performed
+   If memory_order is None the runtime extern "AtomicMax" is called without an explicit memory-order id; otherwise the provided memory_order string is mapped to a numeric id using the module's memory-order map and passed to the extern.
+
+   :param dst: Destination buffer/address to apply the atomic max.
    :type dst: Buffer
-   :param value: Value to be atomically added
+   :param value: Value to compare/store atomically.
    :type value: PrimExpr
+   :param memory_order: Optional memory-order name (e.g. "relaxed", "acquire", "seq_cst").
+                        If provided, it is translated to the corresponding numeric memory-order id before the call.
+   :type memory_order: str | None
 
-   :returns: Handle to the atomic maximum operation
+   :returns: A handle/expression representing the issued atomic maximum operation.
    :rtype: PrimExpr
 
 
 .. py:function:: atomic_min(dst, value, memory_order = None)
 
-   Perform an atomic minimum operation.
+   Atomically update the value at dst to the minimum of its current value and value.
 
-   :param dst: Destination buffer where the atomic minimum will be performed
-   :type dst: Buffer
-   :param value: Value to be atomically added
-   :type value: PrimExpr
+   If memory_order is provided, it selects the memory-order semantic used by the underlying extern call;
+   allowed names are "relaxed", "consume", "acquire", "release", "acq_rel", and "seq_cst" (mapped internally
+   to integer IDs). If memory_order is None, the extern is invoked without an explicit memory-order argument.
 
-   :returns: Handle to the atomic minimum operation
+   :param memory_order: Optional memory-order name controlling the atomic operation's ordering.
+   :type memory_order: str | None
+
+   :returns: A handle expression representing the atomic-min operation.
    :rtype: PrimExpr
 
 
 .. py:function:: atomic_add(dst, value, memory_order = None)
 
-   Perform an atomic addition operation.
+   Atomically add `value` into `dst`, returning a handle to the operation.
 
-   :param dst: Destination buffer where the atomic addition will be performed
-   :type dst: Buffer
-   :param value: Value to be atomically added
-   :type value: PrimExpr
+   Supports scalar/addressed extern atomic add when neither argument exposes extents, or tile-region-based atomic add for Buffer/BufferRegion/BufferLoad inputs. If both arguments are plain Buffers their shapes must be structurally equal. If at least one side exposes extents, extents are aligned (missing dimensions are treated as size 1); an assertion is raised if extents cannot be deduced. The optional `memory_order` (one of "relaxed","consume","acquire","release","acq_rel","seq_cst") is used only for the direct extern `AtomicAdd` path when no extents are available — otherwise the tile-region path ignores `memory_order`.
 
-   :returns: Handle to the atomic addition operation
+   :returns: A handle representing the atomic addition operation.
    :rtype: PrimExpr
 
 
@@ -196,44 +209,37 @@ Module Contents
 
 .. py:function:: view(src, shape = None, dtype = None)
 
-   Views the input buffer with optionally modified shape and dtype.
+   Return a Tensor view of the input buffer with an optional new shape and dtype.
 
-   :param src: Input buffer to be viewed
-   :type src: Buffer
-   :param shape: New shape for the buffer. Defaults to None.
-   :type shape: Union[List[PrimExpr], None], optional
-   :param dtype: New dtype for the buffer. Defaults to None.
-   :type dtype: Union[str, None], optional
-
-   :returns: A new buffer view with the specified shape and dtype
-   :rtype: Buffer
+   If `shape` is None the source buffer's shape is used; if `dtype` is None the source buffer's dtype is used. The returned buffer shares the same underlying data as `src` (no copy).
 
 
 .. py:function:: atomic_load(src, memory_order = 'seq_cst')
 
-   Loads a value from the input buffer with specified memory_order.
+   Load a value from the given buffer using the specified atomic memory ordering.
 
-   :param src: Input buffer to load from
-   :type src: Buffer
-   :param memory_order: Atomicity level for the load operation. Defaults to "seq_cst".
-   :type memory_order: str, optional
-
-   :returns: The loaded value from the buffer
-   :rtype: PrimExpr
+   Performs an atomic load from `src` and returns a PrimExpr representing the loaded value.
+   memory_order selects the ordering and must be one of: "relaxed", "consume", "acquire",
+   "release", "acq_rel", or "seq_cst" (default).
+   Raises KeyError if an unknown memory_order is provided.
 
 
 .. py:function:: atomic_store(dst, src, memory_order = 'seq_cst')
 
-   Stores a value to the input buffer with specified memory_order.
+   Perform an atomic store of `src` into `dst` with the given memory ordering.
 
-   :param dst: Input buffer to store to
+   :param dst: Destination buffer to store into.
    :type dst: Buffer
-   :param src: Value to store
+   :param src: Value to store.
    :type src: PrimExpr
-   :param memory_order: Atomicity level for the load operation. Defaults to "seq_cst".
+   :param memory_order: Memory ordering name; one of "relaxed", "consume",
+                        "acquire", "release", "acq_rel", or "seq_cst". Defaults to "seq_cst".
+                        The name is mapped to an internal numeric ID used by the underlying runtime.
    :type memory_order: str, optional
 
-   :returns: The handle of the store operation
+   :returns: A handle representing the issued atomic store operation.
    :rtype: PrimExpr
+
+   :raises KeyError: If `memory_order` is not one of the supported names.
 
 

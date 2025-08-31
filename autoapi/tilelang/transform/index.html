@@ -590,10 +590,10 @@
 <td><p>LowerThreadAllreduce</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.transform.LowerDeviceKernelLaunch" title="tilelang.transform.LowerDeviceKernelLaunch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerDeviceKernelLaunch</span></code></a>()</p></td>
-<td><p>LowerDeviceKernelLaunch</p></td>
+<td><p>Create and return a transform pass that lowers device kernel launch constructs to target-specific IR.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.transform.LayoutReducer" title="tilelang.transform.LayoutReducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LayoutReducer</span></code></a>()</p></td>
-<td><p>LayoutReducer</p></td>
+<td><p>Return a TVM transform pass that performs layout reduction/normalization.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1101,13 +1101,29 @@ producer and consumer branches of warp-specialized code.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.transform.LowerDeviceKernelLaunch">
 <span class="sig-prename descclassname"><span class="pre">tilelang.transform.</span></span><span class="sig-name descname"><span class="pre">LowerDeviceKernelLaunch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.LowerDeviceKernelLaunch" title="Link to this definition">¶</a></dt>
-<dd><p>LowerDeviceKernelLaunch</p>
+<dd><p>Create and return a transform pass that lowers device kernel launch constructs to target-specific IR.</p>
+<p>This pass transforms high-level device kernel launch and related intrinsics into lower-level
+IR suitable for backend code generation and device-side lowering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The transform pass that performs device kernel launch lowering.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.transform.Pass</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.transform.LayoutReducer">
 <span class="sig-prename descclassname"><span class="pre">tilelang.transform.</span></span><span class="sig-name descname"><span class="pre">LayoutReducer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.LayoutReducer" title="Link to this definition">¶</a></dt>
-<dd><p>LayoutReducer</p>
+<dd><p>Return a TVM transform pass that performs layout reduction/normalization.</p>
+<p>This wrapper delegates to the underlying FFI implementation and returns a pass object suitable for use in a PassContext or pass pipeline. The pass is intended to simplify or reduce tensor/layout-related representations during relay/tile transformations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The transform pass object produced by the FFI backend.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

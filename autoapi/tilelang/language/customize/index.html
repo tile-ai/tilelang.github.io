@@ -467,7 +467,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.region" title="tilelang.language.customize.region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">region</span></code></a>(buffer, access_type, *args)</p></td>
-<td><p>Create a memory region descriptor for tile operations.</p></td>
+<td><p>Create a tile memory-region descriptor for a BufferLoad.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.buffer_to_tile_region" title="tilelang.language.customize.buffer_to_tile_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buffer_to_tile_region</span></code></a>(buffer, access_type)</p></td>
 <td><p>Convert a TVM buffer to a tile region descriptor.</p></td>
@@ -476,16 +476,16 @@
 <td><p>Convert a buffer load operation to a tile region descriptor.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.buffer_region_to_tile_region" title="tilelang.language.customize.buffer_region_to_tile_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buffer_region_to_tile_region</span></code></a>(buffer_region, ...)</p></td>
-<td><p>Convert a buffer region to a tile region descriptor.</p></td>
+<td><p>Create a tl region descriptor for the given BufferRegion.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_max" title="tilelang.language.customize.atomic_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_max</span></code></a>(dst, value[, memory_order])</p></td>
-<td><p>Perform an atomic maximum operation.</p></td>
+<td><p>Perform an atomic maximum on the value stored at dst with an optional memory-order.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_min" title="tilelang.language.customize.atomic_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_min</span></code></a>(dst, value[, memory_order])</p></td>
-<td><p>Perform an atomic minimum operation.</p></td>
+<td><p>Atomically update the value at dst to the minimum of its current value and value.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_add" title="tilelang.language.customize.atomic_add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_add</span></code></a>(dst, value[, memory_order])</p></td>
-<td><p>Perform an atomic addition operation.</p></td>
+<td><p>Atomically add <cite>value</cite> into <cite>dst</cite>, returning a handle to the operation.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_addx2" title="tilelang.language.customize.atomic_addx2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_addx2</span></code></a>(dst, value)</p></td>
 <td><p>Perform an atomic addition operation with double-width operands.</p></td>
@@ -503,13 +503,13 @@
 <td><p>Reshapes the input buffer to the specified shape.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.view" title="tilelang.language.customize.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>(src[, shape, dtype])</p></td>
-<td><p>Views the input buffer with optionally modified shape and dtype.</p></td>
+<td><p>Return a Tensor view of the input buffer with an optional new shape and dtype.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_load" title="tilelang.language.customize.atomic_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_load</span></code></a>(src[, memory_order])</p></td>
-<td><p>Loads a value from the input buffer with specified memory_order.</p></td>
+<td><p>Load a value from the given buffer using the specified atomic memory ordering.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_store" title="tilelang.language.customize.atomic_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_store</span></code></a>(dst, src[, memory_order])</p></td>
-<td><p>Stores a value to the input buffer with specified memory_order.</p></td>
+<td><p>Perform an atomic store of <cite>src</cite> into <cite>dst</cite> with the given memory ordering.</p></td>
 </tr>
 </tbody>
 </table>
@@ -520,20 +520,25 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.region">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.region" title="Link to this definition">¶</a></dt>
-<dd><p>Create a memory region descriptor for tile operations.</p>
+<dd><p>Create a tile memory-region descriptor for a BufferLoad.</p>
+<p>Maps access_type (‘r’, ‘w’, ‘rw’) to the numeric codes expected by the <cite>tl.region</cite> intrinsic
+(1, 2, 3 respectively) and returns a tir.Call representing the region with the provided extents.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer</strong> (<em>tir.BufferLoad</em>) – The buffer to create a region for</p></li>
-<li><p><strong>access_type</strong> (<em>str</em>) – Type of access - ‘r’ for read, ‘w’ for write, ‘rw’ for read-write</p></li>
-<li><p><strong>*args</strong> (<em>tir.PrimExpr</em>) – Extent expressions defining the region size</p></li>
+<li><p><strong>buffer</strong> (<em>tir.BufferLoad</em>) – The BufferLoad that identifies the underlying buffer and indices.</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – One of ‘r’, ‘w’, or ‘rw’ indicating read, write, or read-write access.</p></li>
+<li><p><strong>*args</strong> (<em>tir.PrimExpr</em>) – Extent expressions for each region dimension.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A region descriptor for tile operations</p>
+<dd class="field-even"><p>A call to the <cite>tl.region</cite> intrinsic describing the memory region.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tir.Call</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – If access_type is not one of ‘r’, ‘w’, or ‘rw’.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -582,20 +587,23 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.buffer_region_to_tile_region">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">buffer_region_to_tile_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extents</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.buffer_region_to_tile_region" title="Link to this definition">¶</a></dt>
-<dd><p>Convert a buffer region to a tile region descriptor.</p>
+<dd><p>Create a tl region descriptor for the given BufferRegion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer_region</strong> (<em>tir.BufferRegion</em>) – The buffer region to convert</p></li>
-<li><p><strong>access_type</strong> (<em>str</em>) – Type of access - ‘r’ for read, ‘w’ for write, ‘rw’ for read-write</p></li>
-<li><p><strong>extents</strong> (<em>List</em><em>[</em><em>tvm.tir.PrimExpr</em><em>]</em>)</p></li>
+<li><p><strong>buffer_region</strong> (<em>tir.BufferRegion</em>) – Source buffer region whose <cite>region</cite> items provide mins and extents.</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – Access mode: “r”, “w”, or “rw”.</p></li>
+<li><p><strong>extents</strong> (<em>List</em><em>[</em><em>PrimExpr</em><em>]</em>) – Requested extents; must have length &lt;= the number of extents in buffer_region.region.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A region descriptor for the specified buffer region</p>
+<dd class="field-even"><p>A tile-region descriptor (tl.region) covering the buffer_region.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tir.Call</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If the number of extents in buffer_region.region is smaller than len(extents).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -603,17 +611,19 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.atomic_max">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_max" title="Link to this definition">¶</a></dt>
-<dd><p>Perform an atomic maximum operation.</p>
+<dd><p>Perform an atomic maximum on the value stored at dst with an optional memory-order.</p>
+<p>If memory_order is None the runtime extern “AtomicMax” is called without an explicit memory-order id; otherwise the provided memory_order string is mapped to a numeric id using the module’s memory-order map and passed to the extern.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dst</strong> (<em>Buffer</em>) – Destination buffer where the atomic maximum will be performed</p></li>
-<li><p><strong>value</strong> (<em>PrimExpr</em>) – Value to be atomically added</p></li>
-<li><p><strong>memory_order</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>dst</strong> (<em>Buffer</em>) – Destination buffer/address to apply the atomic max.</p></li>
+<li><p><strong>value</strong> (<em>PrimExpr</em>) – Value to compare/store atomically.</p></li>
+<li><p><strong>memory_order</strong> (<em>str</em><em> | </em><em>None</em>) – Optional memory-order name (e.g. “relaxed”, “acquire”, “seq_cst”).
+If provided, it is translated to the corresponding numeric memory-order id before the call.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the atomic maximum operation</p>
+<dd class="field-even"><p>A handle/expression representing the issued atomic maximum operation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PrimExpr</p>
@@ -624,17 +634,20 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.atomic_min">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_min" title="Link to this definition">¶</a></dt>
-<dd><p>Perform an atomic minimum operation.</p>
+<dd><p>Atomically update the value at dst to the minimum of its current value and value.</p>
+<p>If memory_order is provided, it selects the memory-order semantic used by the underlying extern call;
+allowed names are “relaxed”, “consume”, “acquire”, “release”, “acq_rel”, and “seq_cst” (mapped internally
+to integer IDs). If memory_order is None, the extern is invoked without an explicit memory-order argument.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dst</strong> (<em>Buffer</em>) – Destination buffer where the atomic minimum will be performed</p></li>
-<li><p><strong>value</strong> (<em>PrimExpr</em>) – Value to be atomically added</p></li>
-<li><p><strong>memory_order</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>memory_order</strong> (<em>str</em><em> | </em><em>None</em>) – Optional memory-order name controlling the atomic operation’s ordering.</p></li>
+<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em>)</p></li>
+<li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the atomic minimum operation</p>
+<dd class="field-even"><p>A handle expression representing the atomic-min operation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PrimExpr</p>
@@ -645,20 +658,21 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.atomic_add">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_add" title="Link to this definition">¶</a></dt>
-<dd><p>Perform an atomic addition operation.</p>
+<dd><p>Atomically add <cite>value</cite> into <cite>dst</cite>, returning a handle to the operation.</p>
+<p>Supports scalar/addressed extern atomic add when neither argument exposes extents, or tile-region-based atomic add for Buffer/BufferRegion/BufferLoad inputs. If both arguments are plain Buffers their shapes must be structurally equal. If at least one side exposes extents, extents are aligned (missing dimensions are treated as size 1); an assertion is raised if extents cannot be deduced. The optional <cite>memory_order</cite> (one of “relaxed”,”consume”,”acquire”,”release”,”acq_rel”,”seq_cst”) is used only for the direct extern <cite>AtomicAdd</cite> path when no extents are available — otherwise the tile-region path ignores <cite>memory_order</cite>.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A handle representing the atomic addition operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>PrimExpr</p>
+</dd>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dst</strong> (<em>Buffer</em>) – Destination buffer where the atomic addition will be performed</p></li>
-<li><p><strong>value</strong> (<em>PrimExpr</em>) – Value to be atomically added</p></li>
+<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em>)</p></li>
+<li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
 <li><p><strong>memory_order</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the atomic addition operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -768,20 +782,18 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.view">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.view" title="Link to this definition">¶</a></dt>
-<dd><p>Views the input buffer with optionally modified shape and dtype.</p>
+<dd><p>Return a Tensor view of the input buffer with an optional new shape and dtype.</p>
+<p>If <cite>shape</cite> is None the source buffer’s shape is used; if <cite>dtype</cite> is None the source buffer’s dtype is used. The returned buffer shares the same underlying data as <cite>src</cite> (no copy).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>Buffer</em>) – Input buffer to be viewed</p></li>
-<li><p><strong>shape</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>PrimExpr</em><em>]</em><em>, </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – New shape for the buffer. Defaults to None.</p></li>
-<li><p><strong>dtype</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – New dtype for the buffer. Defaults to None.</p></li>
+<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em>)</p></li>
+<li><p><strong>shape</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>tvm.tir.PrimExpr</em><em>]</em><em>, </em><em>None</em><em>]</em>)</p></li>
+<li><p><strong>dtype</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>None</em><em>]</em>)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new buffer view with the specified shape and dtype</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Buffer</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.Buffer</p>
 </dd>
 </dl>
 </dd></dl>
@@ -789,19 +801,20 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.atomic_load">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'seq_cst'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_load" title="Link to this definition">¶</a></dt>
-<dd><p>Loads a value from the input buffer with specified memory_order.</p>
+<dd><p>Load a value from the given buffer using the specified atomic memory ordering.</p>
+<p>Performs an atomic load from <cite>src</cite> and returns a PrimExpr representing the loaded value.
+memory_order selects the ordering and must be one of: “relaxed”, “consume”, “acquire”,
+“release”, “acq_rel”, or “seq_cst” (default).
+Raises KeyError if an unknown memory_order is provided.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>Buffer</em>) – Input buffer to load from</p></li>
-<li><p><strong>memory_order</strong> (<em>str</em><em>, </em><em>optional</em>) – Atomicity level for the load operation. Defaults to “seq_cst”.</p></li>
+<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em>)</p></li>
+<li><p><strong>memory_order</strong> (<em>str</em>)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The loaded value from the buffer</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>PrimExpr</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -809,20 +822,25 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.atomic_store">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'seq_cst'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_store" title="Link to this definition">¶</a></dt>
-<dd><p>Stores a value to the input buffer with specified memory_order.</p>
+<dd><p>Perform an atomic store of <cite>src</cite> into <cite>dst</cite> with the given memory ordering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dst</strong> (<em>Buffer</em>) – Input buffer to store to</p></li>
-<li><p><strong>src</strong> (<em>PrimExpr</em>) – Value to store</p></li>
-<li><p><strong>memory_order</strong> (<em>str</em><em>, </em><em>optional</em>) – Atomicity level for the load operation. Defaults to “seq_cst”.</p></li>
+<li><p><strong>dst</strong> (<em>Buffer</em>) – Destination buffer to store into.</p></li>
+<li><p><strong>src</strong> (<em>PrimExpr</em>) – Value to store.</p></li>
+<li><p><strong>memory_order</strong> (<em>str</em><em>, </em><em>optional</em>) – Memory ordering name; one of “relaxed”, “consume”,
+“acquire”, “release”, “acq_rel”, or “seq_cst”. Defaults to “seq_cst”.
+The name is mapped to an internal numeric ID used by the underlying runtime.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The handle of the store operation</p>
+<dd class="field-even"><p>A handle representing the issued atomic store operation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PrimExpr</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – If <cite>memory_order</cite> is not one of the supported names.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -36,5 +36,26 @@ Module Contents
 
 .. py:function:: LowerAndLegalize(mod, target)
 
+   Bind target information and progressively legalize and lower frontend Tile IR into a form suitable for downstream optimization and codegen.
+
+   This pass pipeline:
+   - Binds the provided target to the module.
+   - Legalizes frontend Tile IR into TVM-compatible constructs.
+   - Simplifies expressions.
+   - Configures reducer layouts and performs layout inference for fragments and shared memory.
+   - Lowers high-level tile operations and L2 persistent maps.
+   - Legalizes vectorized loops and inserts safety checks for memory accesses.
+   - Re-simplifies to remove redundancies introduced by safety checks.
+   - Attempts loop vectorization for dynamic-shaped loops.
+
+   :param mod: The input IR module containing frontend Tile IR.
+   :type mod: IRModule
+   :param target: Target device information to bind into the module.
+   :type target: Target
+
+   :returns: The transformed module, ready for target-specific optimization passes.
+   :rtype: IRModule
+
+
 .. py:function:: OptimizeForTarget(mod, target)
 

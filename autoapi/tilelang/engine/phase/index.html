@@ -484,7 +484,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.phase.LowerAndLegalize" title="tilelang.engine.phase.LowerAndLegalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerAndLegalize</span></code></a>(mod, target)</p></td>
-<td><p></p></td>
+<td><p>Bind target information and progressively legalize and lower frontend Tile IR into a form suitable for downstream optimization and codegen.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.phase.OptimizeForTarget" title="tilelang.engine.phase.OptimizeForTarget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OptimizeForTarget</span></code></a>(mod, target)</p></td>
 <td><p></p></td>
@@ -585,15 +585,28 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.engine.phase.LowerAndLegalize">
 <span class="sig-prename descclassname"><span class="pre">tilelang.engine.phase.</span></span><span class="sig-name descname"><span class="pre">LowerAndLegalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.phase.LowerAndLegalize" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Bind target information and progressively legalize and lower frontend Tile IR into a form suitable for downstream optimization and codegen.</p>
+<p>This pass pipeline:
+- Binds the provided target to the module.
+- Legalizes frontend Tile IR into TVM-compatible constructs.
+- Simplifies expressions.
+- Configures reducer layouts and performs layout inference for fragments and shared memory.
+- Lowers high-level tile operations and L2 persistent maps.
+- Legalizes vectorized loops and inserts safety checks for memory accesses.
+- Re-simplifies to remove redundancies introduced by safety checks.
+- Attempts loop vectorization for dynamic-shaped loops.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mod</strong> (<em>tvm.IRModule</em>)</p></li>
-<li><p><strong>target</strong> (<em>tvm.target.Target</em>)</p></li>
+<li><p><strong>mod</strong> (<em>IRModule</em>) – The input IR module containing frontend Tile IR.</p></li>
+<li><p><strong>target</strong> (<em>Target</em>) – Target device information to bind into the module.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.IRModule</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The transformed module, ready for target-specific optimization passes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>IRModule</p>
 </dd>
 </dl>
 </dd></dl>
