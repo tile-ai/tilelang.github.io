@@ -478,7 +478,13 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.buffer_region_to_tile_region" title="tilelang.language.customize.buffer_region_to_tile_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buffer_region_to_tile_region</span></code></a>(buffer_region, ...)</p></td>
 <td><p>Convert a buffer region to a tile region descriptor.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_add" title="tilelang.language.customize.atomic_add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_add</span></code></a>(dst, value)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_max" title="tilelang.language.customize.atomic_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_max</span></code></a>(dst, value[, memory_order])</p></td>
+<td><p>Perform an atomic maximum operation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_min" title="tilelang.language.customize.atomic_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_min</span></code></a>(dst, value[, memory_order])</p></td>
+<td><p>Perform an atomic minimum operation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_add" title="tilelang.language.customize.atomic_add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_add</span></code></a>(dst, value[, memory_order])</p></td>
 <td><p>Perform an atomic addition operation.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_addx2" title="tilelang.language.customize.atomic_addx2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_addx2</span></code></a>(dst, value)</p></td>
@@ -498,6 +504,12 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.view" title="tilelang.language.customize.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>(src[, shape, dtype])</p></td>
 <td><p>Views the input buffer with optionally modified shape and dtype.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_load" title="tilelang.language.customize.atomic_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_load</span></code></a>(src[, memory_order])</p></td>
+<td><p>Loads a value from the input buffer with specified memory_order.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.customize.atomic_store" title="tilelang.language.customize.atomic_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_store</span></code></a>(dst, src[, memory_order])</p></td>
+<td><p>Stores a value to the input buffer with specified memory_order.</p></td>
 </tr>
 </tbody>
 </table>
@@ -589,14 +601,57 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.customize.atomic_max">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_max" title="Link to this definition">¶</a></dt>
+<dd><p>Perform an atomic maximum operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst</strong> (<em>Buffer</em>) – Destination buffer where the atomic maximum will be performed</p></li>
+<li><p><strong>value</strong> (<em>PrimExpr</em>) – Value to be atomically added</p></li>
+<li><p><strong>memory_order</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Handle to the atomic maximum operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.customize.atomic_min">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_min" title="Link to this definition">¶</a></dt>
+<dd><p>Perform an atomic minimum operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst</strong> (<em>Buffer</em>) – Destination buffer where the atomic minimum will be performed</p></li>
+<li><p><strong>value</strong> (<em>PrimExpr</em>) – Value to be atomically added</p></li>
+<li><p><strong>memory_order</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Handle to the atomic minimum operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.customize.atomic_add">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_add" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_add" title="Link to this definition">¶</a></dt>
 <dd><p>Perform an atomic addition operation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dst</strong> (<em>Buffer</em>) – Destination buffer where the atomic addition will be performed</p></li>
 <li><p><strong>value</strong> (<em>PrimExpr</em>) – Value to be atomically added</p></li>
+<li><p><strong>memory_order</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -731,6 +786,47 @@
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.customize.atomic_load">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'seq_cst'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_load" title="Link to this definition">¶</a></dt>
+<dd><p>Loads a value from the input buffer with specified memory_order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>Buffer</em>) – Input buffer to load from</p></li>
+<li><p><strong>memory_order</strong> (<em>str</em><em>, </em><em>optional</em>) – Atomicity level for the load operation. Defaults to “seq_cst”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loaded value from the buffer</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.customize.atomic_store">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.customize.</span></span><span class="sig-name descname"><span class="pre">atomic_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'seq_cst'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.customize.atomic_store" title="Link to this definition">¶</a></dt>
+<dd><p>Stores a value to the input buffer with specified memory_order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst</strong> (<em>Buffer</em>) – Input buffer to store to</p></li>
+<li><p><strong>src</strong> (<em>PrimExpr</em>) – Value to store</p></li>
+<li><p><strong>memory_order</strong> (<em>str</em><em>, </em><em>optional</em>) – Atomicity level for the load operation. Defaults to “seq_cst”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The handle of the store operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -796,6 +892,8 @@
 <li><a class="reference internal" href="#tilelang.language.customize.buffer_to_tile_region"><code class="docutils literal notranslate"><span class="pre">buffer_to_tile_region()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.customize.buffer_load_to_tile_region"><code class="docutils literal notranslate"><span class="pre">buffer_load_to_tile_region()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.customize.buffer_region_to_tile_region"><code class="docutils literal notranslate"><span class="pre">buffer_region_to_tile_region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.customize.atomic_max"><code class="docutils literal notranslate"><span class="pre">atomic_max()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.customize.atomic_min"><code class="docutils literal notranslate"><span class="pre">atomic_min()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.customize.atomic_add"><code class="docutils literal notranslate"><span class="pre">atomic_add()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.customize.atomic_addx2"><code class="docutils literal notranslate"><span class="pre">atomic_addx2()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.customize.atomic_addx4"><code class="docutils literal notranslate"><span class="pre">atomic_addx4()</span></code></a></li>
@@ -803,6 +901,8 @@
 <li><a class="reference internal" href="#tilelang.language.customize.clamp"><code class="docutils literal notranslate"><span class="pre">clamp()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.customize.reshape"><code class="docutils literal notranslate"><span class="pre">reshape()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.customize.view"><code class="docutils literal notranslate"><span class="pre">view()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.customize.atomic_load"><code class="docutils literal notranslate"><span class="pre">atomic_load()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.customize.atomic_store"><code class="docutils literal notranslate"><span class="pre">atomic_store()</span></code></a></li>
 </ul>
 </li>
 </ul>

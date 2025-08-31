@@ -18,6 +18,8 @@ Functions
    tilelang.language.customize.buffer_to_tile_region
    tilelang.language.customize.buffer_load_to_tile_region
    tilelang.language.customize.buffer_region_to_tile_region
+   tilelang.language.customize.atomic_max
+   tilelang.language.customize.atomic_min
    tilelang.language.customize.atomic_add
    tilelang.language.customize.atomic_addx2
    tilelang.language.customize.atomic_addx4
@@ -25,6 +27,8 @@ Functions
    tilelang.language.customize.clamp
    tilelang.language.customize.reshape
    tilelang.language.customize.view
+   tilelang.language.customize.atomic_load
+   tilelang.language.customize.atomic_store
 
 
 Module Contents
@@ -86,7 +90,33 @@ Module Contents
    :rtype: tir.Call
 
 
-.. py:function:: atomic_add(dst, value)
+.. py:function:: atomic_max(dst, value, memory_order = None)
+
+   Perform an atomic maximum operation.
+
+   :param dst: Destination buffer where the atomic maximum will be performed
+   :type dst: Buffer
+   :param value: Value to be atomically added
+   :type value: PrimExpr
+
+   :returns: Handle to the atomic maximum operation
+   :rtype: PrimExpr
+
+
+.. py:function:: atomic_min(dst, value, memory_order = None)
+
+   Perform an atomic minimum operation.
+
+   :param dst: Destination buffer where the atomic minimum will be performed
+   :type dst: Buffer
+   :param value: Value to be atomically added
+   :type value: PrimExpr
+
+   :returns: Handle to the atomic minimum operation
+   :rtype: PrimExpr
+
+
+.. py:function:: atomic_add(dst, value, memory_order = None)
 
    Perform an atomic addition operation.
 
@@ -177,5 +207,33 @@ Module Contents
 
    :returns: A new buffer view with the specified shape and dtype
    :rtype: Buffer
+
+
+.. py:function:: atomic_load(src, memory_order = 'seq_cst')
+
+   Loads a value from the input buffer with specified memory_order.
+
+   :param src: Input buffer to load from
+   :type src: Buffer
+   :param memory_order: Atomicity level for the load operation. Defaults to "seq_cst".
+   :type memory_order: str, optional
+
+   :returns: The loaded value from the buffer
+   :rtype: PrimExpr
+
+
+.. py:function:: atomic_store(dst, src, memory_order = 'seq_cst')
+
+   Stores a value to the input buffer with specified memory_order.
+
+   :param dst: Input buffer to store to
+   :type dst: Buffer
+   :param src: Value to store
+   :type src: PrimExpr
+   :param memory_order: Atomicity level for the load operation. Defaults to "seq_cst".
+   :type memory_order: str, optional
+
+   :returns: The handle of the store operation
+   :rtype: PrimExpr
 
 
