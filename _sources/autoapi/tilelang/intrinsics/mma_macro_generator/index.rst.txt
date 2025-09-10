@@ -28,7 +28,7 @@ Module Contents
 
 .. py:data:: lift
 
-.. py:class:: TensorCoreIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float16', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False)
+.. py:class:: TensorCoreIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float16', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, thread_var = None)
 
    Bases: :py:obj:`object`
 
@@ -41,7 +41,7 @@ Module Contents
 
 
 
-   .. py:attribute:: N_DIM
+   .. py:attribute:: n_dim
       :value: 16
 
 
@@ -109,16 +109,6 @@ Module Contents
 
 
 
-   .. py:attribute:: warp_rows
-      :value: 0
-
-
-
-   .. py:attribute:: warp_cols
-      :value: 0
-
-
-
    .. py:attribute:: reduce_k
       :value: 1
 
@@ -132,6 +122,14 @@ Module Contents
    .. py:attribute:: num_elems_per_byte
       :value: 1
 
+
+
+   .. py:attribute:: thread_var
+      :value: None
+
+
+
+   .. py:method:: get_thread_binding()
 
 
    .. py:method:: get_store_index_map(inverse = False)
@@ -209,7 +207,7 @@ Module Contents
    .. py:method:: mma(A_local_buf, B_local_buf, C_local_buf)
 
 
-.. py:class:: INT4TensorCoreIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float16', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False)
+.. py:class:: INT4TensorCoreIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float16', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, thread_var = None)
 
    Bases: :py:obj:`TensorCoreIntrinEmitter`
 
