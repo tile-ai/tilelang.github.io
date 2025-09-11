@@ -504,6 +504,9 @@ with the appropriate memory scope.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_barrier" title="tilelang.language.allocate.alloc_barrier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_barrier</span></code></a>(arrive_count)</p></td>
 <td><p>Allocate a barrier buffer.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_reducer" title="tilelang.language.allocate.alloc_reducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_reducer</span></code></a>(shape, dtype[, op, replication])</p></td>
+<td><p>Allocate a reducer buffer.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -610,6 +613,35 @@ with the appropriate memory scope.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.allocate.alloc_reducer">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_reducer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replication</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_reducer" title="Link to this definition">¶</a></dt>
+<dd><p>Allocate a reducer buffer.</p>
+<p>Modifications needs to conform with <cite>op</cite>,
+such as <cite>op=”sum”</cite> requires <cite>reducer[…] += …</cite> and
+<cite>op=”max”</cite> requires <cite>reducer[…] = T.max(reducer[…], …)</cite>.</p>
+<p>Only after T.fill with proper initializer the reduction may begin;
+only after T.finalize_reducer the partial results will be available.</p>
+<p>For <cite>op=”sum”</cite>, filled value must be 0; for min and max, the filled initializer will become max or min clamper correspondingly.
+You may want to use <cite>T.max_value</cite> for min and <cite>T.min_value</cite> for max.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shape</strong> (<em>tuple</em>) – The shape of the buffer to allocate</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>) – The data type of the buffer (e.g., ‘float32’, ‘int32’)</p></li>
+<li><p><strong>op</strong> (<em>str</em>) – The reduce operation corresponded with the reducer</p></li>
+<li><p><strong>replication</strong> (<em>str</em><em> | </em><em>None</em>) – Replication strategy, can be “all” or “none”. Defaults to not specified, and the compiler will do whatever it want.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A TVM buffer object allocated in thread-private storage, available to reduce values in T.Parallel loops.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>T.Buffer</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -676,6 +708,7 @@ with the appropriate memory scope.</p>
 <li><a class="reference internal" href="#tilelang.language.allocate.alloc_fragment"><code class="docutils literal notranslate"><span class="pre">alloc_fragment()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.allocate.alloc_var"><code class="docutils literal notranslate"><span class="pre">alloc_var()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.allocate.alloc_barrier"><code class="docutils literal notranslate"><span class="pre">alloc_barrier()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.allocate.alloc_reducer"><code class="docutils literal notranslate"><span class="pre">alloc_reducer()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -32,6 +32,7 @@ Functions
    tilelang.language.allocate.alloc_fragment
    tilelang.language.allocate.alloc_var
    tilelang.language.allocate.alloc_barrier
+   tilelang.language.allocate.alloc_reducer
 
 
 Module Contents
@@ -103,6 +104,33 @@ Module Contents
    :type arrive_count: int
 
    :returns: A TVM buffer object allocated as a barrier
+   :rtype: T.Buffer
+
+
+.. py:function:: alloc_reducer(shape, dtype, op='sum', replication=None)
+
+   Allocate a reducer buffer.
+
+   Modifications needs to conform with `op`,
+   such as `op="sum"` requires `reducer[...] += ...` and
+   `op="max"` requires `reducer[...] = T.max(reducer[...], ...)`.
+
+   Only after T.fill with proper initializer the reduction may begin;
+   only after T.finalize_reducer the partial results will be available.
+
+   For `op="sum"`, filled value must be 0; for min and max, the filled initializer will become max or min clamper correspondingly.
+   You may want to use `T.max_value` for min and `T.min_value` for max.
+
+   :param shape: The shape of the buffer to allocate
+   :type shape: tuple
+   :param dtype: The data type of the buffer (e.g., 'float32', 'int32')
+   :type dtype: str
+   :param op: The reduce operation corresponded with the reducer
+   :type op: str
+   :param replication: Replication strategy, can be "all" or "none". Defaults to not specified, and the compiler will do whatever it want.
+   :type replication: str | None
+
+   :returns: A TVM buffer object allocated in thread-private storage, available to reduce values in T.Parallel loops.
    :rtype: T.Buffer
 
 
