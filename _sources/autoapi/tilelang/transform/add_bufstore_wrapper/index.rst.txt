@@ -1,0 +1,128 @@
+tilelang.transform.add_bufstore_wrapper
+=======================================
+
+.. py:module:: tilelang.transform.add_bufstore_wrapper
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.transform.add_bufstore_wrapper.FindVarUse
+   tilelang.transform.add_bufstore_wrapper.AddWrapperForSingleStoreMutator
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.transform.add_bufstore_wrapper.AddWrapperForSingleBufStore
+
+
+Module Contents
+---------------
+
+.. py:class:: FindVarUse
+
+   Bases: :py:obj:`tvm.tir.PyStmtExprVisitor`
+
+
+   A Python StmtExprVisitor to define custom visitor for both Stmt and PrimExpr.
+
+   Users can customize any of the visit function.
+
+
+   .. py:attribute:: used_var
+
+
+   .. py:method:: visit_var_(op)
+
+      Visit Var.
+
+      Users can customize this function to overwrite VisitVar_(const VarNode* op)
+      on the C++ side.
+
+      :param op: The Var to be visited.
+      :type op: Var
+
+
+
+.. py:class:: AddWrapperForSingleStoreMutator
+
+   Bases: :py:obj:`tvm.tir.PyStmtExprMutator`
+
+
+   Add a dummy parallel for loop to wrap the single buffer store
+     Condition:
+       1. not inside a parallel for loop
+       2. no custom thread binding, i.e. threadIdx.x, blockIdx.x
+
+
+   .. py:attribute:: inside_pfor
+      :value: 0
+
+
+
+   .. py:attribute:: thread_binding_var
+
+
+   .. py:method:: visit_block_(op)
+
+      Visit Block.
+      Users can customize this function to overwrite VisitStmt_(const BlockNode* op)
+      on the C++ side.
+
+      :param op: The Block to be visited.
+      :type op: Block
+
+      :returns: **result** -- The mutated Stmt.
+      :rtype: Stmt
+
+
+
+   .. py:method:: visit_attr_stmt_(op)
+
+      Visit AttrStmt.
+      Users can customize this function to overwrite VisitStmt_(const AttrStmtNode* op)
+      on the C++ side.
+
+      :param op: The AttrStmt to be visited.
+      :type op: AttrStmt
+
+      :returns: **result** -- The mutated Stmt.
+      :rtype: Stmt
+
+
+
+   .. py:method:: visit_for_(op)
+
+      Visit For.
+      Users can customize this function to overwrite VisitStmt_(const ForNode* op)
+      on the C++ side.
+
+      :param op: The For to be visited.
+      :type op: For
+
+      :returns: **result** -- The mutated Stmt.
+      :rtype: Stmt
+
+
+
+   .. py:method:: visit_buffer_store_(op)
+
+      Visit BufferStore.
+      Users can customize this function to overwrite VisitStmt_(const BufferStoreNode* op)
+      on the C++ side.
+
+      :param op: The BufferStore to be visited.
+      :type op: BufferStore
+
+      :returns: **result** -- The mutated Stmt.
+      :rtype: Stmt
+
+
+
+.. py:function:: AddWrapperForSingleBufStore()
+
