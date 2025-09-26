@@ -18,17 +18,11 @@ Functions
    tilelang.language.customize.buffer_to_tile_region
    tilelang.language.customize.buffer_load_to_tile_region
    tilelang.language.customize.buffer_region_to_tile_region
-   tilelang.language.customize.atomic_max
-   tilelang.language.customize.atomic_min
-   tilelang.language.customize.atomic_add
-   tilelang.language.customize.atomic_addx2
-   tilelang.language.customize.atomic_addx4
    tilelang.language.customize.dp4a
    tilelang.language.customize.clamp
    tilelang.language.customize.reshape
    tilelang.language.customize.view
-   tilelang.language.customize.atomic_load
-   tilelang.language.customize.atomic_store
+   tilelang.language.customize.loop_break
 
 
 Module Contents
@@ -99,75 +93,6 @@ Module Contents
    :raises AssertionError: If the number of extents in buffer_region.region is smaller than len(extents).
 
 
-.. py:function:: atomic_max(dst, value, memory_order = None)
-
-   Perform an atomic maximum on the value stored at dst with an optional memory-order.
-
-   If memory_order is None the runtime extern "AtomicMax" is called without an explicit memory-order id; otherwise the provided memory_order string is mapped to a numeric id using the module's memory-order map and passed to the extern.
-
-   :param dst: Destination buffer/address to apply the atomic max.
-   :type dst: Buffer
-   :param value: Value to compare/store atomically.
-   :type value: PrimExpr
-   :param memory_order: Optional memory-order name (e.g. "relaxed", "acquire", "seq_cst").
-                        If provided, it is translated to the corresponding numeric memory-order id before the call.
-   :type memory_order: Optional[str]
-
-   :returns: A handle/expression representing the issued atomic maximum operation.
-   :rtype: PrimExpr
-
-
-.. py:function:: atomic_min(dst, value, memory_order = None)
-
-   Atomically update the value at dst to the minimum of its current value and value.
-
-   If memory_order is provided, it selects the memory-order semantic used by the underlying extern call;
-   allowed names are "relaxed", "consume", "acquire", "release", "acq_rel", and "seq_cst" (mapped internally
-   to integer IDs). If memory_order is None, the extern is invoked without an explicit memory-order argument.
-
-   :param memory_order: Optional memory-order name controlling the atomic operation's ordering.
-   :type memory_order: Optional[str]
-
-   :returns: A handle expression representing the atomic-min operation.
-   :rtype: PrimExpr
-
-
-.. py:function:: atomic_add(dst, value, memory_order = None)
-
-   Atomically add `value` into `dst`, returning a handle to the operation.
-
-   Supports scalar/addressed extern atomic add when neither argument exposes extents, or tile-region-based atomic add for Buffer/BufferRegion/BufferLoad inputs. If both arguments are plain Buffers their shapes must be structurally equal. If at least one side exposes extents, extents are aligned (missing dimensions are treated as size 1); an assertion is raised if extents cannot be deduced. The optional `memory_order` (one of "relaxed","consume","acquire","release","acq_rel","seq_cst") is used only for the direct extern `AtomicAdd` path when no extents are available — otherwise the tile-region path ignores `memory_order`.
-
-   :returns: A handle representing the atomic addition operation.
-   :rtype: PrimExpr
-
-
-.. py:function:: atomic_addx2(dst, value)
-
-   Perform an atomic addition operation with double-width operands.
-
-   :param dst: Destination buffer where the atomic addition will be performed
-   :type dst: Buffer
-   :param value: Value to be atomically added (double-width)
-   :type value: PrimExpr
-
-   :returns: Handle to the double-width atomic addition operation
-   :rtype: PrimExpr
-
-
-.. py:function:: atomic_addx4(dst, value)
-
-   Perform an atomic addition operation with quad-width operands.
-
-   :param dst: Destination buffer where the atomic addition will be performed
-   :type dst: Buffer
-   :param value: Value to be atomically added (quad-width)
-   :type value: PrimExpr
-
-   :returns: Handle to the quad-width atomic addition operation
-   :rtype: PrimExpr
-
-
 .. py:function:: dp4a(A, B, C)
 
    Perform a 4-element dot product with accumulation (DP4A).
@@ -214,32 +139,11 @@ Module Contents
    If `shape` is None the source buffer's shape is used; if `dtype` is None the source buffer's dtype is used. The returned buffer shares the same underlying data as `src` (no copy).
 
 
-.. py:function:: atomic_load(src, memory_order = 'seq_cst')
+.. py:function:: loop_break()
 
-   Load a value from the given buffer using the specified atomic memory ordering.
+   Break out of the current loop.
 
-   Performs an atomic load from `src` and returns a PrimExpr representing the loaded value.
-   memory_order selects the ordering and must be one of: "relaxed", "consume", "acquire",
-   "release", "acq_rel", or "seq_cst" (default).
-   Raises KeyError if an unknown memory_order is provided.
-
-
-.. py:function:: atomic_store(dst, src, memory_order = 'seq_cst')
-
-   Perform an atomic store of `src` into `dst` with the given memory ordering.
-
-   :param dst: Destination buffer to store into.
-   :type dst: Buffer
-   :param src: Value to store.
-   :type src: PrimExpr
-   :param memory_order: Memory ordering name; one of "relaxed", "consume",
-                        "acquire", "release", "acq_rel", or "seq_cst". Defaults to "seq_cst".
-                        The name is mapped to an internal numeric ID used by the underlying runtime.
-   :type memory_order: str, optional
-
-   :returns: A handle representing the issued atomic store operation.
-   :rtype: PrimExpr
-
-   :raises KeyError: If `memory_order` is not one of the supported names.
+   :returns: A call to the `tl.loop_break` intrinsic.
+   :rtype: tir.Call
 
 
