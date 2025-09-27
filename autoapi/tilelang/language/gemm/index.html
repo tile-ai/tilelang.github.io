@@ -340,11 +340,13 @@
 <li class="toctree-l4"><a class="reference internal" href="../experimental/gemm_sp/index.html">tilelang.language.experimental.gemm_sp</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../fastmath/index.html">tilelang.language.fastmath</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../fill/index.html">tilelang.language.fill</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../frame/index.html">tilelang.language.frame</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">tilelang.language.gemm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../kernel/index.html">tilelang.language.kernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../logical/index.html">tilelang.language.logical</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../math_intrinsics/index.html">tilelang.language.math_intrinsics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../parallel/index.html">tilelang.language.parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../persistent/index.html">tilelang.language.persistent</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../pipeline/index.html">tilelang.language.pipeline</a></li>
@@ -482,7 +484,7 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.gemm.gemm">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm.</span></span><span class="sig-name descname"><span class="pre">gemm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">GemmWarpPolicy.Square</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_pack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wg_wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.gemm.gemm" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm.</span></span><span class="sig-name descname"><span class="pre">gemm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">GemmWarpPolicy.Square</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_pack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wg_wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.gemm.gemm" title="Link to this definition">¶</a></dt>
 <dd><p>Perform a General Matrix Multiplication (GEMM) operation.</p>
 <p>This function computes C = A &#64; B where A and B can optionally be transposed.
 The operation supports various warp policies and accumulation modes.</p>
@@ -497,7 +499,10 @@ The operation supports various warp policies and accumulation modes.</p>
 <li><p><strong>policy</strong> (<a class="reference internal" href="../../ir/index.html#tilelang.ir.GemmWarpPolicy" title="tilelang.ir.GemmWarpPolicy"><em>GemmWarpPolicy</em></a><em>, </em><em>optional</em>) – Warp execution policy. Defaults to GemmWarpPolicy.Square.</p></li>
 <li><p><strong>clear_accum</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to clear accumulator before computation. Defaults to False.</p></li>
 <li><p><strong>k_pack</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of k dimensions packed into a single warp. Defaults to 1.</p></li>
-<li><p><strong>wg_wait</strong> (<em>int</em><em>, </em><em>optional</em>) – Warp group wait count. Defaults to 0.</p></li>
+<li><p><strong>wg_wait</strong> (<em>int</em><em>, </em><em>optional</em>) – Warp group wait count. Defaults to 0.
+On hopper it is equivalent to <cite>wgmma.wait_group.sync.aligned &lt;wg_wait&gt;</cite> if wg_wait is not -1
+On sm100 (datacenter blackwell), <cite>wg_wait</cite> can only be 0 or -1. <cite>mbarrier_wait(UTCMMA barrier)</cite> will be appended if wg_wait is 0.</p></li>
+<li><p><strong>mbar</strong> (<em>tir.Buffer</em><em>, </em><em>optional</em>) – mbarrier for UTCMMA synchronization</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

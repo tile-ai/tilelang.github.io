@@ -21,7 +21,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, k_pack = 1, wg_wait = 0)
+.. py:function:: gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, k_pack = 1, wg_wait = 0, mbar = None)
 
    Perform a General Matrix Multiplication (GEMM) operation.
 
@@ -45,7 +45,11 @@ Module Contents
    :param k_pack: Number of k dimensions packed into a single warp. Defaults to 1.
    :type k_pack: int, optional
    :param wg_wait: Warp group wait count. Defaults to 0.
+                   On hopper it is equivalent to `wgmma.wait_group.sync.aligned <wg_wait>` if wg_wait is not -1
+                   On sm100 (datacenter blackwell), `wg_wait` can only be 0 or -1. `mbarrier_wait(UTCMMA barrier)` will be appended if wg_wait is 0.
    :type wg_wait: int, optional
+   :param mbar: mbarrier for UTCMMA synchronization
+   :type mbar: tir.Buffer, optional
 
    :returns: A handle to the GEMM operation
    :rtype: tir.Call
