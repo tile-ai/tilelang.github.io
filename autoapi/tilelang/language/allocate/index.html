@@ -500,7 +500,7 @@ with the appropriate memory scope.</p>
 <td><p>Allocate a barrier buffer.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_tmem" title="tilelang.language.allocate.alloc_tmem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_tmem</span></code></a>(shape, dtype)</p></td>
-<td><p>Allocate a Tensor Memory (TMEM) buffer for use with 5th generation Tensor Core operations (e.g., UMMA).</p></td>
+<td><p>Allocate a Tensor Memory (TMEM) buffer for use with 5th generation Tensor Core operations (e.g., TCGEN5.MMA).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_reducer" title="tilelang.language.allocate.alloc_reducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_reducer</span></code></a>(shape, dtype[, op, replication])</p></td>
 <td><p>Allocate a reducer buffer.</p></td>
@@ -614,15 +614,15 @@ with the appropriate memory scope.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.allocate.alloc_tmem">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_tmem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_tmem" title="Link to this definition">¶</a></dt>
-<dd><p>Allocate a Tensor Memory (TMEM) buffer for use with 5th generation Tensor Core operations (e.g., UMMA).</p>
+<dd><p>Allocate a Tensor Memory (TMEM) buffer for use with 5th generation Tensor Core operations (e.g., TCGEN5.MMA).</p>
 <p>TMEM is a dedicated on-chip memory introduced in Hopper GPUs, designed to reduce register pressure and enable asynchronous, single-threaded MMA operations. It is organized as a 2D array of 512 columns by 128 rows (lanes), with each cell being 32 bits. Allocation is performed in units of columns, and every lane of a column is allocated together.</p>
 <dl class="simple">
 <dt>Key properties and requirements:</dt><dd><ul class="simple">
 <li><p>The number of columns allocated must be a power of 2 and at least 32.</p></li>
 <li><p>TMEM allocations are dynamic and must be explicitly deallocated.</p></li>
 <li><p>Both allocation and deallocation must be performed by the same warp.</p></li>
-<li><p>The base address of the TMEM allocation is stored in shared memory and used as the offset for UMMA accumulator tensors.</p></li>
-<li><p>Only UMMA and specific TMEM load/store instructions can access TMEM; all pre-processing must occur before data is loaded into TMEM, and all post-processing after data is retrieved.</p></li>
+<li><p>The base address of the TMEM allocation is stored in shared memory and used as the offset for TCGEN5.MMA accumulator tensors.</p></li>
+<li><p>Only TCGEN5.MMA and specific TMEM load/store instructions can access TMEM; all pre-processing must occur before data is loaded into TMEM, and all post-processing after data is retrieved.</p></li>
 <li><p>The number of columns allocated should not increase between any two allocations in the execution order within the CTA.</p></li>
 </ul>
 </dd>
@@ -632,7 +632,7 @@ with the appropriate memory scope.</p>
 <dd class="field-odd"><p><strong>num_cols</strong> (<em>int</em>) – Number of columns to allocate in TMEM. Must be a power of 2 and &gt;= 32 but less than or equal to 512.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A TVM buffer object allocated in TMEM scope, suitable for use as an accumulator or operand in UMMA operations.</p>
+<dd class="field-even"><p>A TVM buffer object allocated in TMEM scope, suitable for use as an accumulator or operand in TCGEN5.MMA operations.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>T.Buffer</p>
