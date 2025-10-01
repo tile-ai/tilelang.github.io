@@ -20,6 +20,8 @@ Functions
    tilelang.utils.sparse.compress_sm90
    tilelang.utils.sparse.compress_sm80
    tilelang.utils.sparse.compress
+   tilelang.utils.sparse.randn_semi_sparse
+   tilelang.utils.sparse.arange_semi_sparse
 
 
 Module Contents
@@ -34,5 +36,31 @@ Module Contents
 .. py:function:: compress(A, transposed, arch = None, **kwargs)
 
    Compress a tensor using the appropriate method based on the CUDA architecture.
+
+
+.. py:function:: randn_semi_sparse(M, K, dtype=torch.float16, device='cuda', transposed = False)
+
+   Generate a random semi-sparse tensor. The generated tensor will have 2:4 sparsity along the K dimension.
+   :param M: Number of rows
+   :type M: int
+   :param K: Number of columns
+   :type K: int
+   :param dtype: Data type of the tensor
+   :param device: Device to create the tensor on
+   :param transposed: If True, returns a transposed tensor of shape (K, M)
+   :type transposed: bool
+
+
+.. py:function:: arange_semi_sparse(M, K, dtype=torch.float16, device='cuda', transposed = False)
+
+   Generate a semi-sparse tensor with values from 0 to M*K-1. The generated tensor will have 2:4 sparsity along the K dimension.
+   :param M: Number of rows
+   :type M: int
+   :param K: Number of columns
+   :type K: int
+   :param dtype: Data type of the tensor
+   :param device: Device to create the tensor on
+   :param transposed: If True, returns a transposed tensor of shape (K, M)
+   :type transposed: bool
 
 

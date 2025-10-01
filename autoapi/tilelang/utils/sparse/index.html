@@ -490,6 +490,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.compress" title="tilelang.utils.sparse.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>(A, transposed[, arch])</p></td>
 <td><p>Compress a tensor using the appropriate method based on the CUDA architecture.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.sparse.randn_semi_sparse" title="tilelang.utils.sparse.randn_semi_sparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randn_semi_sparse</span></code></a>(M, K[, dtype, device, transposed])</p></td>
+<td><p>Generate a random semi-sparse tensor. The generated tensor will have 2:4 sparsity along the K dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.arange_semi_sparse" title="tilelang.utils.sparse.arange_semi_sparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arange_semi_sparse</span></code></a>(M, K[, dtype, device, transposed])</p></td>
+<td><p>Generate a semi-sparse tensor with values from 0 to M*K-1. The generated tensor will have 2:4 sparsity along the K dimension.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -548,6 +554,52 @@
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Tuple[torch.Tensor, torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.sparse.randn_semi_sparse">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">randn_semi_sparse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.sparse.randn_semi_sparse" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a random semi-sparse tensor. The generated tensor will have 2:4 sparsity along the K dimension.
+:param M: Number of rows
+:type M: int
+:param K: Number of columns
+:type K: int
+:param dtype: Data type of the tensor
+:param device: Device to create the tensor on
+:param transposed: If True, returns a transposed tensor of shape (K, M)
+:type transposed: bool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>M</strong> (<em>int</em>)</p></li>
+<li><p><strong>K</strong> (<em>int</em>)</p></li>
+<li><p><strong>transposed</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.sparse.arange_semi_sparse">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">arange_semi_sparse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.sparse.arange_semi_sparse" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a semi-sparse tensor with values from 0 to M*K-1. The generated tensor will have 2:4 sparsity along the K dimension.
+:param M: Number of rows
+:type M: int
+:param K: Number of columns
+:type K: int
+:param dtype: Data type of the tensor
+:param device: Device to create the tensor on
+:param transposed: If True, returns a transposed tensor of shape (K, M)
+:type transposed: bool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>M</strong> (<em>int</em>)</p></li>
+<li><p><strong>K</strong> (<em>int</em>)</p></li>
+<li><p><strong>transposed</strong> (<em>bool</em>)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -618,6 +670,8 @@
 <li><a class="reference internal" href="#tilelang.utils.sparse.compress_sm90"><code class="docutils literal notranslate"><span class="pre">compress_sm90()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.sparse.compress_sm80"><code class="docutils literal notranslate"><span class="pre">compress_sm80()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.sparse.compress"><code class="docutils literal notranslate"><span class="pre">compress()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.sparse.randn_semi_sparse"><code class="docutils literal notranslate"><span class="pre">randn_semi_sparse()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.sparse.arange_semi_sparse"><code class="docutils literal notranslate"><span class="pre">arange_semi_sparse()</span></code></a></li>
 </ul>
 </li>
 </ul>
