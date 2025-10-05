@@ -9,12 +9,77 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.language.utils.region
+   tilelang.language.utils.buffer_to_tile_region
+   tilelang.language.utils.buffer_load_to_tile_region
+   tilelang.language.utils.buffer_region_to_tile_region
    tilelang.language.utils.index_to_coordinates
    tilelang.language.utils.linear_index
 
 
 Module Contents
 ---------------
+
+.. py:function:: region(buffer, access_type, *args)
+
+   Create a tile memory-region descriptor for a BufferLoad.
+
+   Maps access_type ('r', 'w', 'rw') to the numeric codes expected by the `tl.region` intrinsic
+   (1, 2, 3 respectively) and returns a tir.Call representing the region with the provided extents.
+
+   :param buffer: The BufferLoad that identifies the underlying buffer and indices.
+   :type buffer: tir.BufferLoad
+   :param access_type: One of 'r', 'w', or 'rw' indicating read, write, or read-write access.
+   :type access_type: str
+   :param \*args: Extent expressions for each region dimension.
+   :type \*args: tir.PrimExpr
+
+   :returns: A call to the `tl.region` intrinsic describing the memory region.
+   :rtype: tir.Call
+
+   :raises KeyError: If access_type is not one of 'r', 'w', or 'rw'.
+
+
+.. py:function:: buffer_to_tile_region(buffer, access_type)
+
+   Convert a TVM buffer to a tile region descriptor.
+
+   :param buffer: The buffer to convert
+   :type buffer: tir.Buffer
+   :param access_type: Type of access - 'r' for read, 'w' for write, 'rw' for read-write
+   :type access_type: str
+
+   :returns: A region descriptor covering the entire buffer
+   :rtype: tir.Call
+
+
+.. py:function:: buffer_load_to_tile_region(load, access_type, extents)
+
+   Convert a buffer load operation to a tile region descriptor.
+
+   :param load: The buffer load operation
+   :type load: tir.BufferLoad
+   :param access_type: Type of access - 'r' for read, 'w' for write, 'rw' for read-write
+   :type access_type: str
+   :param extents: List of expressions defining the region size
+   :type extents: List[tir.PrimExpr]
+
+   :returns: A region descriptor for the loaded area
+   :rtype: tir.Call
+
+
+.. py:function:: buffer_region_to_tile_region(buffer_region, access_type, extents)
+
+   Convert a buffer region to a tile region descriptor.
+
+   :param buffer_region: The buffer region to convert
+   :type buffer_region: tir.BufferRegion
+   :param access_type: Type of access - 'r' for read, 'w' for write, 'rw' for read-write
+   :type access_type: str
+
+   :returns: A region descriptor for the specified buffer region
+   :rtype: tir.Call
+
 
 .. py:function:: index_to_coordinates(index, shape)
 
