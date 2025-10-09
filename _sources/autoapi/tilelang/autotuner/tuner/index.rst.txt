@@ -1,0 +1,250 @@
+tilelang.autotuner.tuner
+========================
+
+.. py:module:: tilelang.autotuner.tuner
+
+.. autoapi-nested-parse::
+
+   The auto-tune module for tilelang programs.
+
+   This module provides functionality for auto-tuning tilelang programs, including JIT compilation
+   and performance optimization through configuration search.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.autotuner.tuner.logger
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   tilelang.autotuner.tuner.TimeoutException
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.autotuner.tuner.AutoTuner
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.autotuner.tuner.timeout_handler
+   tilelang.autotuner.tuner.run_with_timeout
+   tilelang.autotuner.tuner.get_available_cpu_count
+   tilelang.autotuner.tuner.autotune
+
+
+Module Contents
+---------------
+
+.. py:exception:: TimeoutException
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:function:: timeout_handler(signum, frame)
+
+.. py:function:: run_with_timeout(func, timeout, *args, **kwargs)
+
+.. py:data:: logger
+
+.. py:function:: get_available_cpu_count()
+
+   Gets the number of CPU cores available to the current process.
+
+
+
+.. py:class:: AutoTuner(fn, configs)
+
+   Auto-tuner for tilelang programs.
+
+   This class handles the auto-tuning process by testing different configurations
+   and finding the optimal parameters for program execution.
+
+   :param fn: The function to be auto-tuned.
+   :param configs: List of configurations to try during auto-tuning.
+
+
+   .. py:attribute:: compile_args
+
+
+   .. py:attribute:: profile_args
+
+
+   .. py:attribute:: cache_dir
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: fn
+
+
+   .. py:attribute:: configs
+
+
+   .. py:attribute:: ref_latency_cache
+      :value: None
+
+
+
+   .. py:attribute:: jit_input_tensors
+      :value: None
+
+
+
+   .. py:attribute:: ref_input_tensors
+      :value: None
+
+
+
+   .. py:attribute:: jit_compile
+      :value: None
+
+
+
+   .. py:method:: from_kernel(kernel, configs)
+      :classmethod:
+
+
+      Create an AutoTuner instance from a kernel function.
+
+      :param kernel: The kernel function to auto-tune.
+      :param configs: List of configurations to try.
+
+      :returns: A new AutoTuner instance.
+      :rtype: AutoTuner
+
+
+
+   .. py:method:: set_compile_args(out_idx = None, target = 'auto', execution_backend = 'cython', target_host = None, verbose = False, pass_configs = None)
+
+      Set compilation arguments for the auto-tuner.
+
+      :param out_idx: List of output tensor indices.
+      :param target: Target platform.
+      :param execution_backend: Execution backend to use for kernel execution.
+      :param target_host: Target host for cross-compilation.
+      :param verbose: Whether to enable verbose output.
+      :param pass_configs: Additional keyword arguments to pass to the Compiler PassContext.
+
+      :returns: Self for method chaining.
+      :rtype: AutoTuner
+
+
+
+   .. py:method:: set_profile_args(warmup = 25, rep = 100, timeout = 30, supply_type = tilelang.TensorSupplyType.Auto, ref_prog = None, supply_prog = None, rtol = 0.01, atol = 0.01, max_mismatched_ratio = 0.01, skip_check = False, manual_check_prog = None, cache_input_tensors = False)
+
+      Set profiling arguments for the auto-tuner.
+
+      :param supply_type: Type of tensor supply mechanism. Ignored if `supply_prog` is provided.
+      :param ref_prog: Reference program for validation.
+      :param supply_prog: Supply program for input tensors.
+      :param rtol: Relative tolerance for validation.
+      :param atol: Absolute tolerance for validation.
+      :param max_mismatched_ratio: Maximum allowed mismatch ratio.
+      :param skip_check: Whether to skip validation.
+      :param manual_check_prog: Manual check program for validation.
+      :param cache_input_tensors: Whether to cache input tensors.
+      :param warmup: Number of warmup iterations.
+      :param rep: Number of repetitions for timing.
+      :param timeout: Maximum time per configuration.
+
+      :returns: Self for method chaining.
+      :rtype: AutoTuner
+
+
+
+   .. py:method:: set_kernel_parameters(k_parameters, f_parameters)
+
+
+   .. py:method:: generate_cache_key(parameters)
+
+      Generate a cache key for the auto-tuning process.
+
+
+
+
+   .. py:method:: run(warmup = 25, rep = 100, timeout = 30)
+
+      Run the auto-tuning process.
+
+      :param warmup: Number of warmup iterations.
+      :param rep: Number of repetitions for timing.
+      :param timeout: Maximum time per configuration.
+
+      :returns: Results of the auto-tuning process.
+      :rtype: AutotuneResult
+
+
+
+   .. py:method:: __call__()
+
+      Make the AutoTuner callable, running the auto-tuning process.
+
+      :returns: Results of the auto-tuning process.
+      :rtype: AutotuneResult
+
+
+
+.. py:function:: autotune(func = None, *, configs, warmup = 25, rep = 100, timeout = 100, supply_type = tilelang.TensorSupplyType.Auto, ref_prog = None, supply_prog = None, rtol = 0.01, atol = 0.01, max_mismatched_ratio = 0.01, skip_check = False, manual_check_prog = None, cache_input_tensors = False)
+
+   Just-In-Time (JIT) compiler decorator for TileLang functions.
+
+   This decorator can be used without arguments (e.g., `@tilelang.jit`):
+      Applies JIT compilation with default settings.
+
+   Tips:
+       - If you want to skip the auto-tuning process, you can set override the tunable parameters in the function signature.
+           ```python
+               if enable_autotune:
+                   kernel = flashattn(batch, heads, seq_len, dim, is_causal)
+               else:
+                   kernel = flashattn(
+                       batch, heads, seq_len, dim, is_causal, groups=groups, block_M=128, block_N=128, num_stages=2, threads=256)
+           ```
+
+   :param func_or_out_idx: If using `@tilelang.jit(...)` to configure, this is the `out_idx` parameter.
+                           If using `@tilelang.jit` directly on a function, this argument is implicitly
+                           the function to be decorated (and `out_idx` will be `None`).
+   :type func_or_out_idx: Any, optional
+   :param configs: Configuration space to explore during auto-tuning.
+   :type configs: Dict or Callable
+   :param warmup: Number of warmup iterations before timing.
+   :type warmup: int, optional
+   :param rep: Number of repetitions for timing measurements.
+   :type rep: int, optional
+   :param timeout:
+   :type timeout: int, optional
+   :param target: Compilation target for TVM (e.g., "cuda", "llvm"). Defaults to "auto".
+   :type target: Union[str, Target], optional
+   :param target_host: Target host for cross-compilation. Defaults to None.
+   :type target_host: Union[str, Target], optional
+   :param execution_backend: Backend for kernel execution and argument passing. Defaults to "cython".
+   :type execution_backend: Literal["dlpack", "ctypes", "cython"], optional
+   :param verbose: Enables verbose logging during compilation. Defaults to False.
+   :type verbose: bool, optional
+   :param pass_configs: Configurations for TVM's pass context. Defaults to None.
+   :type pass_configs: Optional[Dict[str, Any]], optional
+   :param debug_root_path: Directory to save compiled kernel source for debugging. Defaults to None.
+   :type debug_root_path: Optional[str], optional
+
+   :returns: Either a JIT-compiled wrapper around the input function, or a configured decorator
+             instance that can then be applied to a function.
+   :rtype: Callable
+
+

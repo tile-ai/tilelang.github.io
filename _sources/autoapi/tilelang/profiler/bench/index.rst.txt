@@ -1,0 +1,84 @@
+tilelang.profiler.bench
+=======================
+
+.. py:module:: tilelang.profiler.bench
+
+.. autoapi-nested-parse::
+
+   Profiler and benchmarking utilities for PyTorch functions.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.profiler.bench.IS_CUDA
+   tilelang.profiler.bench.device
+   tilelang.profiler.bench.Event
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.profiler.bench.suppress_stdout_stderr
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.profiler.bench.do_bench
+
+
+Module Contents
+---------------
+
+.. py:class:: suppress_stdout_stderr
+
+   Context manager to suppress stdout and stderr output.
+
+   Source: https://github.com/deepseek-ai/DeepGEMM/blob/main/deep_gemm/testing/bench.py
+
+
+   .. py:method:: __enter__()
+
+
+   .. py:method:: __exit__(*_)
+
+
+.. py:data:: IS_CUDA
+
+.. py:data:: device
+   :value: 'cuda:0'
+
+
+.. py:data:: Event
+
+.. py:function:: do_bench(fn, warmup = 25, rep = 100, _n_warmup = 0, _n_repeat = 0, quantiles = None, fast_flush = True, backend = 'event', return_mode = 'mean')
+
+   Benchmark the runtime of a PyTorch function with L2 cache management.
+
+   This function provides accurate GPU kernel timing by:
+   - Clearing L2 cache between runs for consistent measurements
+   - Auto-calculating warmup and repeat counts based on kernel runtime
+   - Supporting multiple profiling backends (CUDA events or CUPTI)
+   - Offering flexible result aggregation (mean/median/min/max/quantiles)
+
+   :param fn: Function to benchmark
+   :param warmup: Target warmup time in milliseconds (default: 25)
+   :param rep: Target total benchmark time in milliseconds (default: 100)
+   :param _n_warmup: Manual override for warmup iterations (default: 0 = auto)
+   :param _n_repeat: Manual override for benchmark iterations (default: 0 = auto)
+   :param quantiles: Performance percentiles to compute (e.g., [0.5, 0.95])
+   :param fast_flush: Use faster L2 cache flush with int32 vs int8 (default: True)
+   :param backend: Profiler backend - "event" (CUDA events) or "cupti" (default: "event")
+   :param return_mode: Result aggregation method - "mean", "median", "min", or "max"
+
+   :returns: Runtime in milliseconds (float) or list of quantile values if quantiles specified
+
+

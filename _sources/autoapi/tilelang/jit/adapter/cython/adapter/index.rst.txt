@@ -1,0 +1,218 @@
+tilelang.jit.adapter.cython.adapter
+===================================
+
+.. py:module:: tilelang.jit.adapter.cython.adapter
+
+.. autoapi-nested-parse::
+
+   The profiler and convert to torch utils
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.cython.adapter.logger
+   tilelang.jit.adapter.cython.adapter.current_dir
+   tilelang.jit.adapter.cython.adapter.cython_wrapper_path
+   tilelang.jit.adapter.cython.adapter.cython_wrapper_code
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.cython.adapter.CythonKernelAdapter
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.cython.adapter.get_cython_compiler
+   tilelang.jit.adapter.cython.adapter.get_cache_dir
+   tilelang.jit.adapter.cython.adapter.get_cached_lib
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:function:: get_cython_compiler()
+
+   Return the path to the Cython compiler.
+
+   :returns: **out** -- The path to the Cython compiler, or None if none was found.
+   :rtype: Optional[str]
+
+
+.. py:function:: get_cache_dir()
+
+   Get the cache directory for the current Python version.
+
+
+.. py:function:: get_cached_lib(source_code)
+
+   Try to load cached library or return None if not found.
+
+
+.. py:data:: current_dir
+
+.. py:data:: cython_wrapper_path
+
+.. py:data:: cython_wrapper_code
+
+.. py:class:: CythonKernelAdapter(params, result_idx, target, func_or_mod, host_mod = None, device_mod = None, kernel_global_source = None, verbose = False, pass_configs = None, compile_flags = None)
+
+   Bases: :py:obj:`tilelang.jit.adapter.base.BaseKernelAdapter`
+
+
+   Adapter class that converts TVM/TIR functions to callable CUDA kernels using cython.
+
+   This adapter handles:
+   1. Converting TIR functions to compiled CUDA libraries
+   2. Managing dynamic shapes in tensor operations
+   3. Wrapping C++ kernels for Python/PyTorch usage
+
+
+   .. py:attribute:: target
+      :type:  Union[str, tvm.target.Target]
+      :value: 'cuda'
+
+
+
+   .. py:attribute:: ir_module
+      :type:  Optional[tilelang.tvm.IRModule]
+      :value: None
+
+
+
+   .. py:attribute:: kernel_global_source
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: lib
+      :type:  Optional[ctypes.CDLL]
+      :value: None
+
+
+
+   .. py:attribute:: wrapped_source
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: dynamic_symbolic_map
+      :type:  Optional[Dict[tvm.tir.Var, Tuple[int, int]]]
+      :value: None
+
+
+
+   .. py:attribute:: ptr_map
+      :type:  Optional[Dict[int, str]]
+      :value: None
+
+
+
+   .. py:attribute:: buffer_dtype_map
+      :type:  Optional[Dict[tvm.tir.Var, Tuple[int, torch.dtype]]]
+      :value: None
+
+
+
+   .. py:attribute:: static_shape_map
+      :type:  Optional[Dict[tvm.tir.Var, Tuple[int, List[Tuple[int, int]]]]]
+      :value: None
+
+
+
+   .. py:attribute:: static_strides_map
+      :type:  Optional[Dict[tvm.tir.Var, Tuple[int, List[Tuple[int, int]]]]]
+      :value: None
+
+
+
+   .. py:attribute:: static_contiguous_list
+      :type:  Optional[List[tvm.tir.Var]]
+      :value: None
+
+
+
+   .. py:attribute:: buffer_device_map
+      :type:  Optional[Dict[tvm.tir.Var, Tuple[int, torch.device]]]
+      :value: None
+
+
+
+   .. py:attribute:: pass_configs
+      :type:  Optional[Dict[str, Any]]
+      :value: None
+
+
+
+   .. py:attribute:: params
+
+
+   .. py:attribute:: result_idx
+
+
+   .. py:attribute:: verbose
+      :value: False
+
+
+
+   .. py:attribute:: wrapper
+
+
+   .. py:attribute:: lib_generator
+
+
+   .. py:attribute:: cython_wrapper
+
+
+   .. py:method:: from_database(params, result_idx, target, func_or_mod, kernel_global_source, kernel_lib_path, verbose = False, pass_configs = None, compile_flags = None)
+      :classmethod:
+
+
+
+   .. py:property:: prim_func
+      :type: tvm.tir.PrimFunc
+
+
+      Returns the primary TIR function from the IR module.
+
+
+   .. py:property:: srcpath
+
+      Returns the source path of the compiled library.
+
+
+   .. py:property:: libpath
+
+      Returns the path to the compiled library.
+
+
+   .. py:property:: lib_code
+
+      Returns the code of the compiled library.
+
+
+   .. py:property:: is_dynamic
+
+      Indicates whether the kernel handles dynamic shapes.
+
+
+   .. py:method:: get_kernel_source(kernel_only = False)
+
+      Returns the source code of the compiled kernel.
+
+
+

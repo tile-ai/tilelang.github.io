@@ -1,0 +1,120 @@
+tilelang.contrib.rocm
+=====================
+
+.. py:module:: tilelang.contrib.rocm
+
+.. autoapi-nested-parse::
+
+   Utility for ROCm backend
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.rocm.find_lld
+   tilelang.contrib.rocm.rocm_link
+   tilelang.contrib.rocm.callback_rocm_link
+   tilelang.contrib.rocm.callback_rocm_bitcode_path
+   tilelang.contrib.rocm.parse_compute_version
+   tilelang.contrib.rocm.have_matrixcore
+   tilelang.contrib.rocm.get_rocm_arch
+   tilelang.contrib.rocm.find_rocm_path
+
+
+Module Contents
+---------------
+
+.. py:function:: find_lld(required=True)
+
+   Find ld.lld in system.
+
+   :param required: Whether it is required,
+                    runtime error will be raised if the compiler is required.
+   :type required: bool
+
+   :returns: **valid_list** -- List of possible paths.
+   :rtype: list of str
+
+   .. note::
+
+      This function will first search ld.lld that
+      matches the major llvm version that built with tvm
+
+
+.. py:function:: rocm_link(in_file, out_file, lld=None)
+
+   Link relocatable ELF object to shared ELF object using lld
+
+   :param in_file: Input file name (relocatable ELF object file)
+   :type in_file: str
+   :param out_file: Output file name (shared ELF object file)
+   :type out_file: str
+   :param lld: The lld linker, if not specified,
+               we will try to guess the matched clang version.
+   :type lld: str, optional
+
+
+.. py:function:: callback_rocm_link(obj_bin)
+
+   Links object file generated from LLVM to HSA Code Object
+
+   :param obj_bin: The object file
+   :type obj_bin: bytearray
+
+   :returns: **cobj_bin** -- The HSA Code Object
+   :rtype: bytearray
+
+
+.. py:function:: callback_rocm_bitcode_path(rocdl_dir=None)
+
+   Utility function to find ROCm device library bitcodes
+
+   :param rocdl_dir: The path to rocm library directory
+                     The default value is the standard location
+   :type rocdl_dir: str
+
+
+.. py:function:: parse_compute_version(compute_version)
+
+   Parse compute capability string to divide major and minor version
+
+   :param compute_version: compute capability of a GPU (e.g. "6.0")
+   :type compute_version: str
+
+   :returns: * **major** (*int*) -- major version number
+             * **minor** (*int*) -- minor version number
+
+
+.. py:function:: have_matrixcore(compute_version=None)
+
+   Either MatrixCore support is provided in the compute capability or not
+
+   :param compute_version: compute capability of a GPU (e.g. "7.0").
+   :type compute_version: str, optional
+
+   :returns: **have_matrixcore** -- True if MatrixCore support is provided, False otherwise
+   :rtype: bool
+
+
+.. py:function:: get_rocm_arch(rocm_path='/opt/rocm')
+
+   Utility function to get the AMD GPU architecture
+
+   :param rocm_path: The path to rocm installation directory
+   :type rocm_path: str
+
+   :returns: **gpu_arch** -- The AMD GPU architecture
+   :rtype: str
+
+
+.. py:function:: find_rocm_path()
+
+   Utility function to find ROCm path
+
+   :returns: **path** -- Path to ROCm root.
+   :rtype: str
+
+

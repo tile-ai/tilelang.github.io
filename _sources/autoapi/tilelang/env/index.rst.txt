@@ -1,0 +1,269 @@
+tilelang.env
+============
+
+.. py:module:: tilelang.env
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.env.logger
+   tilelang.env.CUTLASS_NOT_FOUND_MESSAGE
+   tilelang.env.COMPOSABLE_KERNEL_NOT_FOUND_MESSAGE
+   tilelang.env.TL_TEMPLATE_NOT_FOUND_MESSAGE
+   tilelang.env.TVM_LIBRARY_NOT_FOUND_MESSAGE
+   tilelang.env.enable_cache
+   tilelang.env.disable_cache
+   tilelang.env.is_cache_enabled
+   tilelang.env.env
+   tilelang.env.CUDA_HOME
+   tilelang.env.ROCM_HOME
+   tilelang.env.install_tvm_path
+   tilelang.env.install_cutlass_path
+   tilelang.env.install_ck_path
+   tilelang.env.install_tl_template_path
+   tilelang.env.CUTLASS_INCLUDE_DIR
+   tilelang.env.COMPOSABLE_KERNEL_INCLUDE_DIR
+   tilelang.env.TILELANG_TEMPLATE_PATH
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.env.CacheState
+   tilelang.env.EnvVar
+   tilelang.env.Environment
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: CUTLASS_NOT_FOUND_MESSAGE
+   :value: 'CUTLASS is not installed or found in the expected path'
+
+
+   , which may lead to compilation bugs when utilize tilelang backend.
+
+.. py:data:: COMPOSABLE_KERNEL_NOT_FOUND_MESSAGE
+   :value: 'Composable Kernel is not installed or found in the expected path'
+
+
+   , which may lead to compilation bugs when utilize tilelang backend.
+
+.. py:data:: TL_TEMPLATE_NOT_FOUND_MESSAGE
+   :value: 'TileLang is not installed or found in the expected path'
+
+
+   , which may lead to compilation bugs when utilize tilelang backend.
+
+.. py:data:: TVM_LIBRARY_NOT_FOUND_MESSAGE
+   :value: 'TVM is not installed or found in the expected path'
+
+
+.. py:class:: CacheState
+
+   Class to manage global kernel caching state.
+
+
+   .. py:method:: enable()
+      :classmethod:
+
+
+      Enable kernel caching globally.
+
+
+
+   .. py:method:: disable()
+      :classmethod:
+
+
+      Disable kernel caching globally.
+
+
+
+   .. py:method:: is_enabled()
+      :classmethod:
+
+
+      Return current cache state.
+
+
+
+.. py:class:: EnvVar
+
+   Descriptor for managing access to a single environment variable.
+
+   Purpose
+   -------
+   In many projects, access to environment variables is scattered across the codebase:
+       * `os.environ.get(...)` calls are repeated everywhere
+       * Default values are hard-coded in multiple places
+       * Overriding env vars for tests/debugging is messy
+       * There's no central place to see all environment variables a package uses
+
+   This descriptor solves those issues by:
+       1. Centralizing the definition of the variable's **key** and **default value**
+       2. Allowing *dynamic* reads from `os.environ` so changes take effect immediately
+       3. Supporting **forced overrides** at runtime (for unit tests or debugging)
+       4. Logging a warning when a forced value is used (helps detect unexpected overrides)
+       5. Optionally syncing forced values back to `os.environ` if global consistency is desired
+
+   How it works
+   ------------
+   - This is a `dataclass` implementing the descriptor protocol (`__get__`, `__set__`)
+   - When used as a class attribute, `instance.attr` triggers `__get__()`
+       → returns either the forced override or the live value from `os.environ`
+   - Assigning to the attribute (`instance.attr = value`) triggers `__set__()`
+       → stores `_forced_value` for future reads
+   - You may uncomment the `os.environ[...] = value` line in `__set__` if you want
+     the override to persist globally in the process
+
+   .. rubric:: Example
+
+   ```python
+   class Environment:
+       TILELANG_PRINT_ON_COMPILATION = EnvVar("TILELANG_PRINT_ON_COMPILATION", "0")
+
+   env = Environment()
+   print(cfg.TILELANG_PRINT_ON_COMPILATION)  # Reads from os.environ (with default fallback)
+   cfg.TILELANG_PRINT_ON_COMPILATION = "1"   # Forces value to "1" until changed/reset
+   ```
+
+   Benefits
+   --------
+   * Centralizes all env-var keys and defaults in one place
+   * Live, up-to-date reads (no stale values after `import`)
+   * Testing convenience (override without touching the real env)
+   * Improves IDE discoverability and type hints
+   * Avoids hardcoding `os.environ.get(...)` in multiple places
+
+
+   .. py:attribute:: key
+      :type:  str
+
+
+   .. py:attribute:: default
+      :type:  str
+
+
+   .. py:method:: get()
+
+
+   .. py:method:: __get__(instance, owner)
+
+      Called when the attribute is accessed.
+      1. If a forced value is set, return it and log a warning
+      2. Otherwise, look up the value in os.environ; return the default if missing
+
+
+
+   .. py:method:: __set__(instance, value)
+
+      Called when the attribute is assigned to.
+      Stores the value as a runtime override (forced value).
+      Optionally, you can also sync this into os.environ for global effect.
+
+
+
+.. py:data:: enable_cache
+
+.. py:data:: disable_cache
+
+.. py:data:: is_cache_enabled
+
+.. py:class:: Environment
+
+   Environment configuration for TileLang.
+   Handles CUDA/ROCm detection, integration paths, template/cache locations,
+   auto-tuning configs, and build options.
+
+
+   .. py:attribute:: CUDA_HOME
+
+
+   .. py:attribute:: ROCM_HOME
+
+
+   .. py:attribute:: TILELANG_PACKAGE_PATH
+
+
+   .. py:attribute:: CUTLASS_INCLUDE_DIR
+
+
+   .. py:attribute:: COMPOSABLE_KERNEL_INCLUDE_DIR
+
+
+   .. py:attribute:: TVM_PYTHON_PATH
+
+
+   .. py:attribute:: TVM_LIBRARY_PATH
+
+
+   .. py:attribute:: TILELANG_TEMPLATE_PATH
+
+
+   .. py:attribute:: TILELANG_CACHE_DIR
+
+
+   .. py:attribute:: TILELANG_TMP_DIR
+
+
+   .. py:attribute:: TILELANG_PRINT_ON_COMPILATION
+
+
+   .. py:attribute:: TILELANG_CLEAR_CACHE
+
+
+   .. py:attribute:: TILELANG_AUTO_TUNING_CPU_UTILITIES
+
+
+   .. py:attribute:: TILELANG_AUTO_TUNING_CPU_COUNTS
+
+
+   .. py:attribute:: TILELANG_AUTO_TUNING_MAX_CPU_COUNT
+
+
+   .. py:attribute:: SKIP_LOADING_TILELANG_SO
+
+
+   .. py:attribute:: TVM_IMPORT_PYTHON_PATH
+
+
+   .. py:method:: is_cache_enabled()
+
+
+   .. py:method:: enable_cache()
+
+
+   .. py:method:: disable_cache()
+
+
+   .. py:method:: is_print_on_compilation_enabled()
+
+
+.. py:data:: env
+
+.. py:data:: CUDA_HOME
+
+.. py:data:: ROCM_HOME
+
+.. py:data:: install_tvm_path
+
+.. py:data:: install_cutlass_path
+
+.. py:data:: install_ck_path
+
+.. py:data:: install_tl_template_path
+
+.. py:data:: CUTLASS_INCLUDE_DIR
+
+.. py:data:: COMPOSABLE_KERNEL_INCLUDE_DIR
+
+.. py:data:: TILELANG_TEMPLATE_PATH
+

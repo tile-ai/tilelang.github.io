@@ -1,0 +1,188 @@
+tilelang.carver.template.matmul
+===============================
+
+.. py:module:: tilelang.carver.template.matmul
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.carver.template.matmul.MatmulTemplate
+
+
+Module Contents
+---------------
+
+.. py:class:: MatmulTemplate
+
+   Bases: :py:obj:`tilelang.carver.template.base.BaseTemplate`
+
+
+   A template for matrix multiplication (MatMul).
+
+   This class defines the computation for a matrix-matrix multiplication
+   with configurable parameters such as transposition, data types, and bias addition.
+
+   .. attribute:: M
+
+      Number of rows in matrix A and matrix C.
+
+      :type: int
+
+   .. attribute:: N
+
+      Number of columns in matrix B and matrix C.
+
+      :type: int
+
+   .. attribute:: K
+
+      Number of columns in matrix A and rows in matrix B.
+
+      :type: int
+
+   .. attribute:: trans_A
+
+      Whether to transpose matrix A before multiplication.
+
+      :type: bool
+
+   .. attribute:: trans_B
+
+      Whether to transpose matrix B before multiplication.
+
+      :type: bool
+
+   .. attribute:: in_dtype
+
+      Data type of input matrices.
+
+      :type: str
+
+   .. attribute:: out_dtype
+
+      Data type of output matrix.
+
+      :type: str
+
+   .. attribute:: accum_dtype
+
+      Data type used for accumulation.
+
+      :type: str
+
+   .. attribute:: with_bias
+
+      Whether to add a bias term.
+
+      :type: bool
+
+
+   .. py:attribute:: M
+      :type:  int
+      :value: None
+
+
+
+   .. py:attribute:: N
+      :type:  int
+      :value: None
+
+
+
+   .. py:attribute:: K
+      :type:  int
+      :value: None
+
+
+
+   .. py:attribute:: trans_A
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: trans_B
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: in_dtype
+      :type:  str
+      :value: 'float16'
+
+
+
+   .. py:attribute:: out_dtype
+      :type:  str
+      :value: 'float16'
+
+
+
+   .. py:attribute:: accum_dtype
+      :type:  str
+      :value: 'float16'
+
+
+
+   .. py:attribute:: with_bias
+      :type:  bool
+      :value: False
+
+
+
+   .. py:method:: get_hardware_aware_configs(arch = None, topk = 10)
+
+      Retrieves optimized hardware-aware configurations.
+
+      :param arch: The target hardware architecture.
+      :type arch: TileDevice, optional
+      :param topk: Number of top configurations to consider.
+      :type topk: int, optional
+
+      :returns: A list of optimization hints for hardware acceleration.
+      :rtype: List[Hint]
+
+
+
+   .. py:method:: initialize_function()
+
+      Defines and initializes the matrix multiplication computation.
+
+      This method sets up placeholders for input matrices, computes
+      the matrix multiplication using TVM's compute API,
+      and optionally applies bias and type casting.
+
+      :raises AssertionError: If M, N, or K are not positive integers.
+
+
+
+   .. py:method:: params_as_dict()
+
+      Returns the template parameters as a dictionary.
+
+      :returns: Dictionary containing template parameter values.
+      :rtype: dict
+
+
+
+   .. py:property:: class_attributes
+
+      Returns the class attributes in dictionary form.
+
+      :returns: Dictionary of class attributes.
+      :rtype: dict
+
+
+   .. py:method:: __repr__()
+
+      Returns a string representation of the class instance.
+
+      :returns: A formatted string representation of the class.
+      :rtype: str
+
+
+

@@ -1,0 +1,361 @@
+tilelang.autotuner.param
+========================
+
+.. py:module:: tilelang.autotuner.param
+
+.. autoapi-nested-parse::
+
+   The auto-tune parameters.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.autotuner.param.BEST_CONFIG_PATH
+   tilelang.autotuner.param.FUNCTION_PATH
+   tilelang.autotuner.param.LATENCY_PATH
+   tilelang.autotuner.param.KERNEL_PATH
+   tilelang.autotuner.param.WRAPPED_KERNEL_PATH
+   tilelang.autotuner.param.KERNEL_LIB_PATH
+   tilelang.autotuner.param.PARAMS_PATH
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.autotuner.param.CompileArgs
+   tilelang.autotuner.param.ProfileArgs
+   tilelang.autotuner.param.AutotuneResult
+
+
+Module Contents
+---------------
+
+.. py:data:: BEST_CONFIG_PATH
+   :value: 'best_config.json'
+
+
+.. py:data:: FUNCTION_PATH
+   :value: 'function.pkl'
+
+
+.. py:data:: LATENCY_PATH
+   :value: 'latency.json'
+
+
+.. py:data:: KERNEL_PATH
+   :value: 'kernel.cu'
+
+
+.. py:data:: WRAPPED_KERNEL_PATH
+   :value: 'wrapped_kernel.cu'
+
+
+.. py:data:: KERNEL_LIB_PATH
+   :value: 'kernel_lib.so'
+
+
+.. py:data:: PARAMS_PATH
+   :value: 'params.pkl'
+
+
+.. py:class:: CompileArgs
+
+   Compile arguments for the auto-tuner. Detailed description can be found in `tilelang.jit.compile`.
+   .. attribute:: out_idx
+
+      List of output tensor indices.
+
+   .. attribute:: execution_backend
+
+      Execution backend to use for kernel execution (default: "cython").
+
+   .. attribute:: target
+
+      Compilation target, either as a string or a TVM Target object (default: "auto").
+
+   .. attribute:: target_host
+
+      Target host for cross-compilation (default: None).
+
+   .. attribute:: verbose
+
+      Whether to enable verbose output (default: False).
+
+   .. attribute:: pass_configs
+
+      Additional keyword arguments to pass to the Compiler PassContext.
+
+   .. attribute:: Available options
+
+      "tir.disable_vectorize": bool, default: False
+      "tl.disable_tma_lower": bool, default: False
+      "tl.disable_warp_specialized": bool, default: False
+      "tl.config_index_bitwidth": int, default: None
+      "tl.disable_dynamic_tail_split": bool, default: False
+      "tl.dynamic_vectorize_size_bits": int, default: 128
+      "tl.disable_safe_memory_legalize": bool, default: False
+
+
+   .. py:attribute:: out_idx
+      :type:  Optional[Union[List[int], int]]
+      :value: None
+
+
+
+   .. py:attribute:: execution_backend
+      :type:  Literal['dlpack', 'ctypes', 'cython']
+      :value: 'cython'
+
+
+
+   .. py:attribute:: target
+      :type:  Literal['auto', 'cuda', 'hip']
+      :value: 'auto'
+
+
+
+   .. py:attribute:: target_host
+      :type:  Union[str, tvm.target.Target]
+      :value: None
+
+
+
+   .. py:attribute:: verbose
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: pass_configs
+      :type:  Optional[Dict[str, Any]]
+      :value: None
+
+
+
+   .. py:method:: compile_program(program)
+
+
+   .. py:method:: __hash__()
+
+
+.. py:class:: ProfileArgs
+
+   Profile arguments for the auto-tuner.
+
+   .. attribute:: warmup
+
+      Number of warmup iterations.
+
+   .. attribute:: rep
+
+      Number of repetitions for timing.
+
+   .. attribute:: timeout
+
+      Maximum time per configuration.
+
+   .. attribute:: supply_type
+
+      Type of tensor supply mechanism.
+
+   .. attribute:: ref_prog
+
+      Reference program for correctness validation.
+
+   .. attribute:: supply_prog
+
+      Supply program for input tensors.
+
+   .. attribute:: out_idx
+
+      Union[List[int], int] = -1
+
+   .. attribute:: supply_type
+
+      tilelang.TensorSupplyType = tilelang.TensorSupplyType.Auto
+
+   .. attribute:: ref_prog
+
+      Callable = None
+
+   .. attribute:: supply_prog
+
+      Callable = None
+
+   .. attribute:: rtol
+
+      float = 1e-2
+
+   .. attribute:: atol
+
+      float = 1e-2
+
+   .. attribute:: max_mismatched_ratio
+
+      float = 0.01
+
+   .. attribute:: skip_check
+
+      bool = False
+
+   .. attribute:: manual_check_prog
+
+      Callable = None
+
+   .. attribute:: cache_input_tensors
+
+      bool = True
+
+
+   .. py:attribute:: warmup
+      :type:  int
+      :value: 25
+
+
+
+   .. py:attribute:: rep
+      :type:  int
+      :value: 100
+
+
+
+   .. py:attribute:: timeout
+      :type:  int
+      :value: 30
+
+
+
+   .. py:attribute:: supply_type
+      :type:  tilelang.TensorSupplyType
+
+
+   .. py:attribute:: ref_prog
+      :type:  Callable
+      :value: None
+
+
+
+   .. py:attribute:: supply_prog
+      :type:  Callable
+      :value: None
+
+
+
+   .. py:attribute:: rtol
+      :type:  float
+      :value: 0.01
+
+
+
+   .. py:attribute:: atol
+      :type:  float
+      :value: 0.01
+
+
+
+   .. py:attribute:: max_mismatched_ratio
+      :type:  float
+      :value: 0.01
+
+
+
+   .. py:attribute:: skip_check
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: manual_check_prog
+      :type:  Callable
+      :value: None
+
+
+
+   .. py:attribute:: cache_input_tensors
+      :type:  bool
+      :value: True
+
+
+
+   .. py:method:: __hash__()
+
+
+.. py:class:: AutotuneResult
+
+   Results from auto-tuning process.
+
+   .. attribute:: latency
+
+      Best achieved execution latency.
+
+   .. attribute:: config
+
+      Configuration that produced the best result.
+
+   .. attribute:: ref_latency
+
+      Reference implementation latency.
+
+   .. attribute:: libcode
+
+      Generated library code.
+
+   .. attribute:: func
+
+      Optimized function.
+
+   .. attribute:: kernel
+
+      Compiled kernel function.
+
+
+   .. py:attribute:: latency
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: config
+      :type:  Optional[dict]
+      :value: None
+
+
+
+   .. py:attribute:: ref_latency
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: libcode
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: func
+      :type:  Optional[Callable]
+      :value: None
+
+
+
+   .. py:attribute:: kernel
+      :type:  Optional[Callable]
+      :value: None
+
+
+
+   .. py:method:: save_to_disk(path, verbose = False)
+
+
+   .. py:method:: load_from_disk(path, compile_args)
+      :classmethod:
+
+
+

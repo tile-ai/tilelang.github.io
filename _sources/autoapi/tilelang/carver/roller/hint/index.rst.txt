@@ -1,0 +1,324 @@
+tilelang.carver.roller.hint
+===========================
+
+.. py:module:: tilelang.carver.roller.hint
+
+.. autoapi-nested-parse::
+
+   Hint definition for schedule
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.carver.roller.hint.TensorCoreExtraConfig
+   tilelang.carver.roller.hint.Stride
+   tilelang.carver.roller.hint.TileDict
+   tilelang.carver.roller.hint.IntrinInfo
+   tilelang.carver.roller.hint.Hint
+
+
+Module Contents
+---------------
+
+.. py:class:: TensorCoreExtraConfig(AS_shape, BS_shape, AF_shape, BF_shape, tc_axis)
+
+   This class is used to store extra information for tensorcore
+
+
+   .. py:attribute:: AS_shape
+      :type:  Tuple[int]
+
+
+   .. py:attribute:: BS_shape
+      :type:  Tuple[int]
+
+
+   .. py:attribute:: AF_shape
+      :type:  Tuple[int]
+
+
+   .. py:attribute:: BF_shape
+      :type:  Tuple[int]
+
+
+   .. py:attribute:: tc_axis
+      :type:  Tuple[int]
+
+
+.. py:class:: Stride(stride = 1, ax = -1)
+
+   Manages stride information for a given axis of a tensor.
+
+
+   .. py:property:: ax
+      :type: int
+
+
+
+   .. py:property:: stride
+      :type: int
+
+
+
+   .. py:method:: compute_strides_from_shape(shape)
+
+
+   .. py:method:: compute_elements_from_shape(shape)
+
+
+   .. py:method:: is_valid()
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: TileDict(output_tile)
+
+   Manages tiling information and configurations for computational tasks.
+
+
+   .. py:attribute:: output_tile
+
+
+   .. py:attribute:: tile_map
+
+
+   .. py:attribute:: rstep_map
+
+
+   .. py:attribute:: cached_tensors_map
+
+
+   .. py:attribute:: output_strides_map
+
+
+   .. py:attribute:: tensor_strides_map
+
+
+   .. py:attribute:: traffic
+      :value: -1
+
+
+
+   .. py:attribute:: smem_cost
+      :value: -1
+
+
+
+   .. py:attribute:: block_per_SM
+      :value: -1
+
+
+
+   .. py:attribute:: num_wave
+      :value: -1
+
+
+
+   .. py:attribute:: grid_size
+      :value: -1
+
+
+
+   .. py:attribute:: valid
+      :value: True
+
+
+
+   .. py:method:: get_tile(func)
+
+
+   .. py:method:: get_rstep(node)
+
+
+   .. py:method:: __hash__()
+
+
+.. py:class:: IntrinInfo(in_dtype, out_dtype, trans_b, input_transform_kind = 0, weight_transform_kind = 0)
+
+   The information of tensorcore intrinsic related information
+
+
+   .. py:attribute:: in_dtype
+
+
+   .. py:attribute:: out_dtype
+
+
+   .. py:attribute:: trans_a
+      :value: False
+
+
+
+   .. py:attribute:: trans_b
+
+
+   .. py:attribute:: input_transform_kind
+      :value: 0
+
+
+
+   .. py:attribute:: weight_transform_kind
+      :value: 0
+
+
+
+   .. py:method:: __repr__()
+
+
+   .. py:method:: is_input_8bit()
+
+
+   .. py:property:: smooth_a
+      :type: bool
+
+
+
+   .. py:property:: smooth_b
+      :type: bool
+
+
+
+   .. py:property:: inter_transform_a
+      :type: bool
+
+
+
+   .. py:property:: inter_transform_b
+      :type: bool
+
+
+
+.. py:class:: Hint
+
+   Bases: :py:obj:`object`
+
+
+   Central configuration class for managing various parameters of computational tasks.
+
+
+   .. py:attribute:: arch
+      :value: None
+
+
+
+   .. py:attribute:: use_tc
+      :value: None
+
+
+
+   .. py:attribute:: block
+      :value: []
+
+
+
+   .. py:attribute:: thread
+      :value: []
+
+
+
+   .. py:attribute:: warp
+      :value: []
+
+
+
+   .. py:attribute:: rstep
+      :value: []
+
+
+
+   .. py:attribute:: reduce_thread
+      :value: []
+
+
+
+   .. py:attribute:: rasterization_plan
+
+
+   .. py:attribute:: cached_tensors
+      :value: []
+
+
+
+   .. py:attribute:: output_strides
+
+
+   .. py:attribute:: schedule_stages
+      :value: None
+
+
+
+   .. py:attribute:: block_reduction_depth
+      :type:  int
+      :value: None
+
+
+
+   .. py:attribute:: split_k_factor
+      :type:  int
+      :value: 1
+
+
+
+   .. py:attribute:: vectorize
+      :type:  Dict[str, int]
+
+
+   .. py:attribute:: pipeline_stage
+      :value: 1
+
+
+
+   .. py:attribute:: use_async
+      :value: False
+
+
+
+   .. py:attribute:: opt_shapes
+      :type:  Dict[str, int]
+
+
+   .. py:attribute:: intrin_info
+
+
+   .. py:attribute:: shared_scope
+      :type:  str
+      :value: 'shared'
+
+
+
+   .. py:attribute:: pass_context
+      :type:  Dict
+
+
+   .. py:method:: to_dict()
+
+
+   .. py:method:: from_dict(dic)
+      :classmethod:
+
+
+
+   .. py:method:: tensorcore_legalization()
+
+
+   .. py:property:: raxis_order
+      :type: tilelang.carver.roller.rasterization.List[int]
+
+
+
+   .. py:property:: step
+      :type: tilelang.carver.roller.rasterization.List[int]
+
+
+
+   .. py:method:: __repr__()
+
+
+   .. py:method:: complete_config(node)
+
+

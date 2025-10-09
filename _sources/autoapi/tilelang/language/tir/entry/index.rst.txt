@@ -1,0 +1,74 @@
+tilelang.language.tir.entry
+===========================
+
+.. py:module:: tilelang.language.tir.entry
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.tir.entry.prim_func
+   tilelang.language.tir.entry.macro
+
+
+Module Contents
+---------------
+
+.. py:function:: prim_func(func = None, private = False, check_well_formed = False)
+
+   The parsing method for tir prim func, by using `@prim_func` as decorator.
+
+   :param func: The function to be parsed as prim func.
+                (Listed as optional to allow the decorator to be used
+                without arguments, like `@prim_func`,
+                or with an argument, `@prim_func(private=True)`)
+   :type func: Callable
+   :param private: Whether the function should be treated as private.
+                   A private function has no global symbol attribute;
+                   if the function is not private, it will have a global symbol
+                   matching the function name.
+   :type private: bool, optional
+
+   :returns: **res** -- The parsed tir prim func.
+   :rtype: Union[PrimFunc, Callable]
+
+
+.. py:function:: macro(*args, hygienic = True)
+
+   Decorator for macro definitions.
+
+   :param hygienic: Specifies whether the macro is hygienic or not.
+                    A macro is hygienic if all symbols used in the macro's body are resolved
+                    to values from the location of the macro definition. A non-hygienic macro
+                    will have its symbols resolved to values at the time of the macro's use.
+
+                    Example:
+                    ```
+                    import tvm
+                    from tvm.script import tir as T
+
+                    x_value = 128
+
+                    @T.macro(hygienic=True)
+                    def static_capture(A, B):
+                        B[()] = A[x_value]          ### x_value binds to 128
+
+                    @T.macro(hygienic=False)
+                    def dynamic_capture(A, B):
+                        B[()] = A[x_value]          ### x_value will bind at the time of use
+   :type hygienic: bool
+
+       @T.prim_func
+       def use1(A: T.Buffer((1024,), "int32"), B: T.Buffer((), "int32")) -> None:
+           for x_value in T.serial(10):
+               static_capture(A, B)    ### Produces B[()] = A[128]
+
+       @T.prim_func
+       def use2(A: T.Buffer((1024,), "int32"), B: T.Buffer((), "int32")) -> None:
+           for x_value in T.serial(10):
+               dynamic_capture(A, B)   ### Produces B[()] = A[x_value]
+       ```
+
+

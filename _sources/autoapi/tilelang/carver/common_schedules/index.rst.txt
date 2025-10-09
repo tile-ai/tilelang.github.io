@@ -1,0 +1,77 @@
+tilelang.carver.common_schedules
+================================
+
+.. py:module:: tilelang.carver.common_schedules
+
+.. autoapi-nested-parse::
+
+   Common schedule strategies for TIR.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.carver.common_schedules.get_block
+   tilelang.carver.common_schedules.get_output_blocks
+   tilelang.carver.common_schedules.try_inline
+   tilelang.carver.common_schedules.try_inline_contiguous_spatial
+
+
+Module Contents
+---------------
+
+.. py:function:: get_block(sch, blocks, name)
+
+   Get the target block from a schedule.
+
+   :param sch: The TIR schedule used to get target block.
+   :type sch: tir.Schedule
+   :param name: The name of the target block.
+   :type name: str
+
+   :returns: **target_block** -- The target block.
+   :rtype: BlockRV
+
+
+.. py:function:: get_output_blocks(sch, blocks)
+
+   Get the output blocks of a schedule.
+
+   :param sch: The TIR schedule used to get output blocks.
+   :type sch: tir.Schedule
+   :param blocks: The blocks to be analyzed.
+   :type blocks: List[BlockInfo]
+
+   :returns: **output_blocks** -- The output blocks.
+   :rtype: List[BlockInfo]
+
+
+.. py:function:: try_inline(sch, blocks)
+
+   Try to inline as many blocks as possible, and return the remaining blocks.
+
+   :param sch: The TIR schedule used to inline blocks.
+   :type sch: tir.Schedule
+   :param blocks: The blocks to be inlined.
+   :type blocks: List[BlockInfo]
+
+   :returns: **remaining** -- The remaining blocks that cannot be inlined.
+   :rtype: List[BlockInfo]
+
+
+.. py:function:: try_inline_contiguous_spatial(sch, block_infos)
+
+   Try to inline contiguous spatial blocks in a schedule
+
+   :param sch: The TIR schedule used to inline blocks.
+   :type sch: tir.Schedule
+   :param block_infos: The blocks to be try.
+   :type block_infos: List[BlockInfo]
+
+   :returns: **remaining** -- The remaining blocks that cannot be inlined.
+   :rtype: List[BlockInfo]
+
+

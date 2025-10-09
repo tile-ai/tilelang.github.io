@@ -1,0 +1,160 @@
+tilelang.contrib.cc
+===================
+
+.. py:module:: tilelang.contrib.cc
+
+.. autoapi-nested-parse::
+
+   Util to invoke C/C++ compilers in the system.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cc.get_cc
+   tilelang.contrib.cc.get_cplus_compiler
+   tilelang.contrib.cc.is_darwin
+   tilelang.contrib.cc.create_shared
+   tilelang.contrib.cc.create_staticlib
+   tilelang.contrib.cc.create_executable
+   tilelang.contrib.cc.get_global_symbol_section_map
+   tilelang.contrib.cc.get_target_by_dump_machine
+   tilelang.contrib.cc.cross_compiler
+
+
+Module Contents
+---------------
+
+.. py:function:: get_cc()
+
+   Return the path to the default C/C++ compiler.
+
+   :returns: **out** -- The path to the default C/C++ compiler, or None if none was found.
+   :rtype: Optional[str]
+
+
+.. py:function:: get_cplus_compiler()
+
+   Return the path to the default C/C++ compiler.
+
+   :returns: **out** -- The path to the default C/C++ compiler, or None if none was found.
+   :rtype: Optional[str]
+
+
+.. py:function:: is_darwin()
+
+.. py:function:: create_shared(output, objects, options=None, cc=None, cwd=None, ccache_env=None)
+
+   Create shared library.
+
+   :param output: The target shared library.
+   :type output: str
+   :param objects: List of object files.
+   :type objects: List[str]
+   :param options: The list of additional options string.
+   :type options: List[str]
+   :param cc: The compiler command.
+   :type cc: Optional[str]
+   :param cwd: The current working directory.
+   :type cwd: Optional[str]
+   :param ccache_env: The environment variable for ccache. Set `None` to disable ccache by default.
+   :type ccache_env: Optional[Dict[str, str]]
+
+
+.. py:function:: create_staticlib(output, inputs, ar=None)
+
+   Create static library.
+
+   :param output: The target shared library.
+   :type output: str
+   :param inputs: List of inputs files. Each input file can be a tarball
+                  of objects or an object file.
+   :type inputs: List[str]
+   :param ar: Path to the ar command to be used
+   :type ar: Optional[str]
+
+
+.. py:function:: create_executable(output, objects, options=None, cc=None, cwd=None, ccache_env=None)
+
+   Create executable binary.
+
+   :param output: The target executable.
+   :type output: str
+   :param objects: List of object files.
+   :type objects: List[str]
+   :param options: The list of additional options string.
+   :type options: List[str]
+   :param cc: The compiler command.
+   :type cc: Optional[str]
+   :param cwd: The urrent working directory.
+   :type cwd: Optional[str]
+   :param ccache_env: The environment variable for ccache. Set `None` to disable ccache by default.
+   :type ccache_env: Optional[Dict[str, str]]
+
+
+.. py:function:: get_global_symbol_section_map(path, *, nm=None)
+
+   Get global symbols from a library via nm -g
+
+   :param path: The library path
+   :type path: str
+   :param nm: The path to nm command
+   :type nm: str
+
+   :returns: **symbol_section_map** -- A map from defined global symbol to their sections
+   :rtype: Dict[str, str]
+
+
+.. py:function:: get_target_by_dump_machine(compiler)
+
+   Functor of get_target_triple that can get the target triple using compiler.
+
+   :param compiler: The compiler.
+   :type compiler: Optional[str]
+
+   :returns: **out** -- A function that can get target triple according to dumpmachine option of compiler.
+   :rtype: Callable
+
+
+.. py:function:: cross_compiler(compile_func, options=None, output_format=None, get_target_triple=None, add_files=None)
+
+   Create a cross compiler function by specializing compile_func with options.
+
+   This function can be used to construct compile functions that
+   can be passed to AutoTVM measure or export_library.
+
+
+   :param compile_func: Function that performs the actual compilation
+   :type compile_func: Union[str, Callable[[str, str, Optional[str]], None]]
+   :param options: List of additional optional string.
+   :type options: Optional[List[str]]
+   :param output_format: Library output format.
+   :type output_format: Optional[str]
+   :param get_target_triple: Function that can target triple according to dumpmachine option of compiler.
+   :type get_target_triple: Optional[Callable]
+   :param add_files: List of paths to additional object, source, library files
+                     to pass as part of the compilation.
+   :type add_files: Optional[List[str]]
+
+   :returns: **fcompile** -- A compilation function that can be passed to export_library.
+   :rtype: Callable[[str, str, Optional[str]], None]
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+      from tvm.contrib import cc, ndk
+      # export using arm gcc
+      mod = build_runtime_module()
+      mod.export_library(path_dso,
+                         fcompile=cc.cross_compiler("arm-linux-gnueabihf-gcc"))
+      # specialize ndk compilation options.
+      specialized_ndk = cc.cross_compiler(
+          ndk.create_shared,
+          ["--sysroot=/path/to/sysroot", "-shared", "-fPIC", "-lm"])
+      mod.export_library(path_dso, fcompile=specialized_ndk)
+
+

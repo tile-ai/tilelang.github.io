@@ -1,0 +1,305 @@
+tilelang.carver.roller.node
+===========================
+
+.. py:module:: tilelang.carver.roller.node
+
+.. autoapi-nested-parse::
+
+   PrimFunc Wrapper and Block information Analaysis
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.carver.roller.node.BlockAnalyzer
+   tilelang.carver.roller.node.Edge
+   tilelang.carver.roller.node.Node
+   tilelang.carver.roller.node.PlaceHolderNode
+   tilelang.carver.roller.node.PrimFuncNode
+   tilelang.carver.roller.node.OutputNode
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.carver.roller.node.pre_order_traverse
+   tilelang.carver.roller.node.topo_order
+   tilelang.carver.roller.node.find_topo_sort_priority
+   tilelang.carver.roller.node.find_topo_sort
+
+
+Module Contents
+---------------
+
+.. py:function:: pre_order_traverse(block_analyzer, blocks, func)
+
+.. py:class:: BlockAnalyzer(sch)
+
+   Bases: :py:obj:`object`
+
+
+   .. py:attribute:: sch
+      :type:  tvm.tir.Schedule
+
+
+   .. py:attribute:: block_infos
+      :type:  List[tilelang.carver.analysis.BlockInfo]
+      :value: None
+
+
+
+   .. py:method:: get_block_name(block)
+
+
+   .. py:method:: get_block_info(block)
+
+
+   .. py:method:: get_spatial_axis(block)
+
+
+   .. py:method:: get_reduce_axis(block)
+
+
+   .. py:method:: get_input_buffers(block)
+
+
+   .. py:method:: get_output_buffers(block)
+
+
+   .. py:method:: get_buffers(block)
+
+
+   .. py:method:: get_producer_blocks(block)
+
+
+   .. py:method:: get_consumer_blocks(block)
+
+
+.. py:class:: Edge
+
+   .. py:attribute:: src_node
+      :type:  Node
+
+
+   .. py:attribute:: dst_node
+      :type:  Node
+
+
+   .. py:attribute:: src_id
+      :type:  int
+
+
+   .. py:attribute:: dst_id
+      :type:  int
+
+
+.. py:class:: Node(tags = None, name = 'Node')
+
+   Bases: :py:obj:`object`
+
+
+   .. py:attribute:: name
+      :value: 'Node'
+
+
+
+   .. py:method:: update_tags(tags)
+
+
+   .. py:method:: set_tag(k, v = True)
+
+
+   .. py:method:: add_tag(k, v = True)
+
+
+   .. py:method:: get_tag(k)
+
+
+   .. py:method:: is_placeholder()
+
+
+   .. py:method:: is_output()
+
+
+   .. py:property:: inputs
+      :type: List[Edge]
+
+
+
+   .. py:property:: outputs
+      :type: List[Edge]
+
+
+
+   .. py:method:: set_inputs(i, edge)
+
+
+   .. py:method:: set_outputs(i, edge)
+
+
+   .. py:method:: get_dtype(id=0)
+
+
+   .. py:method:: set_dtype(dtype, id=0)
+
+
+   .. py:method:: get_shape(id = 0)
+
+
+   .. py:method:: set_shape(shape, id=0, overwrite=False)
+
+
+   .. py:method:: num_outputs()
+
+
+   .. py:method:: get_ir()
+      :abstractmethod:
+
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: PlaceHolderNode(name='')
+
+   Bases: :py:obj:`Node`
+
+
+   .. py:method:: is_placeholder()
+
+
+   .. py:method:: get_ir()
+
+
+.. py:class:: PrimFuncNode(prim_func, tags = None, name = 'PrimFuncNode')
+
+   Bases: :py:obj:`Node`
+
+
+   .. py:attribute:: prim_func
+
+
+   .. py:attribute:: sch
+      :type:  tvm.tir.Schedule
+
+
+   .. py:attribute:: block_analyzer
+      :type:  BlockAnalyzer
+
+
+   .. py:attribute:: schedule_stages
+      :type:  List[tvm.tir.schedule.schedule.BlockRV]
+      :value: []
+
+
+
+   .. py:attribute:: blocks
+      :type:  List[tvm.tir.schedule.schedule.BlockRV]
+      :value: []
+
+
+
+   .. py:attribute:: output_blocks
+      :type:  List[tvm.tir.schedule.schedule.BlockRV]
+      :value: None
+
+
+
+   .. py:attribute:: reduction_block
+      :type:  tvm.tir.schedule.schedule.BlockRV
+      :value: None
+
+
+
+   .. py:attribute:: raxis
+      :value: []
+
+
+
+   .. py:attribute:: input_buffers
+      :value: []
+
+
+
+   .. py:attribute:: output_buffers
+      :value: []
+
+
+
+   .. py:attribute:: buffers
+      :value: []
+
+
+
+   .. py:attribute:: args
+      :value: []
+
+
+
+   .. py:attribute:: ana
+
+
+   .. py:method:: get_opt_shape(name)
+
+
+   .. py:method:: extent_wrapper(value)
+
+
+   .. py:method:: get_space_dim()
+
+
+   .. py:method:: set_dtype(dtype, id=0)
+
+
+   .. py:method:: get_buffer_dtype(buffer)
+
+
+   .. py:method:: propagate(tile, rstep = None, targets=None)
+
+
+   .. py:method:: propagate_inputs(tile, rstep = None)
+
+
+   .. py:method:: propagate_inputs_on_reduction(tile, rstep = None)
+
+
+   .. py:method:: propagate_outputs(tile, rstep = None)
+
+
+   .. py:method:: propagate_reduction_inputs(shape, rstep = None)
+
+
+   .. py:method:: get_reduce_inputs_dtype()
+
+
+   .. py:method:: infer_tensorcore_axis()
+
+
+   .. py:method:: footprint(shape, rstep, stride_map = None)
+
+
+   .. py:method:: get_input_buffers()
+
+
+.. py:class:: OutputNode(node, id=0)
+
+   Bases: :py:obj:`Node`
+
+
+   .. py:method:: is_output()
+
+
+   .. py:method:: get_ir()
+
+
+.. py:function:: topo_order(list_of_nodes)
+
+.. py:function:: find_topo_sort_priority(output_node_list)
+
+.. py:function:: find_topo_sort(output_node_list)
+

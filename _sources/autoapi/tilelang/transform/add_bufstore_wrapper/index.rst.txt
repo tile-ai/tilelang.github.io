@@ -1,0 +1,29 @@
+tilelang.transform.add_bufstore_wrapper
+=======================================
+
+.. py:module:: tilelang.transform.add_bufstore_wrapper
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.transform.add_bufstore_wrapper.AddWrapperForSingleBufStore
+
+
+Module Contents
+---------------
+
+.. py:function:: AddWrapperForSingleBufStore()
+
+   Creates a TVM pass that wraps single buffer stores with parallel loops.
+
+   This transformation adds T.Parallel wrappers around buffer stores that:
+   1. Access fragment buffers with index 0
+   2. Are not inside existing tile operations or thread bindings
+   3. Don't access fragment buffers with non-zero indices
+
+   :returns: A prim_func_pass that applies the transformation
+
+

@@ -1,0 +1,134 @@
+tilelang.tools.Analyzer
+=======================
+
+.. py:module:: tilelang.tools.Analyzer
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.tools.Analyzer.ARCH_CONFIGS
+   tilelang.tools.Analyzer.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.tools.Analyzer.AnalysisResult
+   tilelang.tools.Analyzer.Analyzer
+
+
+Module Contents
+---------------
+
+.. py:data:: ARCH_CONFIGS
+
+.. py:data:: logger
+
+.. py:class:: AnalysisResult
+
+   A data class to store the results of the analysis.
+   .. attribute:: total_flops
+
+      Total floating-point operations.
+
+   .. attribute:: total_global_bytes
+
+      Total bytes transferred to/from global memory.
+
+   .. attribute:: estimated_time
+
+      Estimated execution time (seconds).
+
+   .. attribute:: tflops
+
+      Achieved TFLOPS (trillions of FLOPs per second).
+
+   .. attribute:: bandwidth_GBps
+
+      Achieved memory bandwidth in GB/s.
+
+
+   .. py:attribute:: total_flops
+      :type:  int
+
+
+   .. py:attribute:: total_global_bytes
+      :type:  int
+
+
+   .. py:attribute:: estimated_time
+      :type:  float
+
+
+   .. py:attribute:: expected_tflops
+      :type:  float
+
+
+   .. py:attribute:: expected_bandwidth_GBps
+      :type:  float
+
+
+.. py:class:: Analyzer(fn, device)
+
+   A class to analyze the performance of a TVM IR module.
+   It calculates metrics such as FLOPs, memory bandwidth, and estimated execution time.
+
+
+   .. py:attribute:: device
+
+
+   .. py:attribute:: total_flops
+      :value: 0
+
+
+
+   .. py:attribute:: total_global_bytes
+      :value: 0
+
+
+
+   .. py:attribute:: block_counts
+
+
+   .. py:attribute:: loop_stack
+      :value: []
+
+
+
+   .. py:attribute:: global_buffers
+
+
+   .. py:method:: ir_pass()
+
+      Traverse and transform the IR module to extract performance-related information.
+      :returns: The Analyzer instance.
+      :rtype: self
+
+
+
+   .. py:method:: calculate()
+
+      Calculate performance metrics based on the analysis.
+      :returns: The calculated performance metrics.
+      :rtype: AnalysisResult
+
+
+
+   .. py:method:: analysis(fn, device)
+      :classmethod:
+
+
+      Perform a full analysis of the given IR module or PrimFunc.
+      :param fn: A TVM IRModule or PrimFunc to analyze.
+      :param device: The target device information.
+
+      :returns: The calculated performance metrics.
+      :rtype: AnalysisResult
+
+
+
