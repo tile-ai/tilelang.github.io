@@ -302,6 +302,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../ir/index.html">tilelang.ir</a></li>
@@ -400,6 +401,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../tileop/gemm/index.html">tilelang.tileop.gemm</a><input aria-label="Toggle navigation of tilelang.tileop.gemm" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm/gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm/gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm/gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
 </li>
 </ul>
@@ -612,6 +614,12 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_mma_sp" title="tilelang.language.tir.op.ptx_mma_sp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_mma_sp</span></code></a>(dtype, shape, A_layout, B_layout, A_dtype, ...)</p></td>
 <td><p>TVM intrinsic for sparse tensor core ptx instructions</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_ss" title="tilelang.language.tir.op.ptx_wgmma_ss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_wgmma_ss</span></code></a>(dtype, wgmma_prefix, a_is_k_major, ...)</p></td>
+<td><p>TVM intrinsic for ptx tensor core wmma instructions</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_rs" title="tilelang.language.tir.op.ptx_wgmma_rs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_wgmma_rs</span></code></a>(dtype, wgmma_prefix, a_is_k_major, ...)</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.mma_store" title="tilelang.language.tir.op.mma_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mma_store</span></code></a>(dtype, m, n, dst_ptr, src_ptr, src_offset, ...)</p></td>
 <td><p>TVM intrinsic for storing the result of PTX MMA into a destination pointer</p></td>
@@ -1796,6 +1804,18 @@ the intrinsic translation rule.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.tir.op.ptx_wgmma_ss">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_wgmma_ss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wgmma_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_wgmma_ss" title="Link to this definition">¶</a></dt>
+<dd><p>TVM intrinsic for ptx tensor core wmma instructions
+<a class="reference external" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-for-wmma">https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-for-wmma</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.tir.op.ptx_wgmma_rs">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_wgmma_rs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wgmma_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_wgmma_rs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.tir.op.mma_store">
@@ -3954,6 +3974,8 @@ list_handle: Var</p>
 <li><a class="reference internal" href="#tilelang.language.tir.op.tvm_store_matrix_sync"><code class="docutils literal notranslate"><span class="pre">tvm_store_matrix_sync()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_mma"><code class="docutils literal notranslate"><span class="pre">ptx_mma()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_mma_sp"><code class="docutils literal notranslate"><span class="pre">ptx_mma_sp()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_ss"><code class="docutils literal notranslate"><span class="pre">ptx_wgmma_ss()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_rs"><code class="docutils literal notranslate"><span class="pre">ptx_wgmma_rs()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.mma_store"><code class="docutils literal notranslate"><span class="pre">mma_store()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.mma_fill"><code class="docutils literal notranslate"><span class="pre">mma_fill()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_ldmatrix"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix()</span></code></a></li>

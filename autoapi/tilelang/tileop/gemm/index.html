@@ -302,6 +302,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../ir/index.html">tilelang.ir</a></li>
@@ -400,6 +401,7 @@
 <li class="toctree-l3 current has-children current-page"><a class="current reference internal" href="#">tilelang.tileop.gemm</a><input aria-label="Toggle navigation of tilelang.tileop.gemm" checked="" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
 </li>
 </ul>
@@ -476,6 +478,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
 </div>
 </section>
@@ -484,7 +487,10 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.tileop.gemm.GemmPy" title="tilelang.tileop.gemm.GemmPy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmPy</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst" title="tilelang.tileop.gemm.GemmInst"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmInst</span></code></a></p></td>
+<td><p>Enum where members are also (and must be) ints</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.tileop.gemm.GemmPy" title="tilelang.tileop.gemm.GemmPy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmPy</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -499,7 +505,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.tileop.gemm.gemm_py_infer_layout" title="tilelang.tileop.gemm.gemm_py_infer_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gemm_py_infer_layout</span></code></a>(gemm_py, target, thread_bounds)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.tileop.gemm.gemm_py_lower" title="tilelang.tileop.gemm.gemm_py_lower"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gemm_py_lower</span></code></a>(gemm_py, target, thread_bounds, thread_var)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.tileop.gemm.gemm_py_lower" title="tilelang.tileop.gemm.gemm_py_lower"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gemm_py_lower</span></code></a>(gemm_py, layout_map, target, ...)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -515,8 +521,60 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_py_lower">
-<span class="sig-prename descclassname"><span class="pre">tilelang.tileop.gemm.</span></span><span class="sig-name descname"><span class="pre">gemm_py_lower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gemm_py</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_py_lower" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.tileop.gemm.</span></span><span class="sig-name descname"><span class="pre">gemm_py_lower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gemm_py</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_py_lower" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.tileop.gemm.</span></span><span class="sig-name descname"><span class="pre">GemmInst</span></span><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></p>
+<p>Enum where members are also (and must be) ints</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.MMA">
+<span class="sig-name descname"><span class="pre">MMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.MMA" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.WGMMMA">
+<span class="sig-name descname"><span class="pre">WGMMMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.WGMMMA" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.MFMA">
+<span class="sig-name descname"><span class="pre">MFMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.MFMA" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.is_mma">
+<span class="sig-name descname"><span class="pre">is_mma</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.is_mma" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.is_wgmma">
+<span class="sig-name descname"><span class="pre">is_wgmma</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.is_wgmma" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.is_mfma">
+<span class="sig-name descname"><span class="pre">is_mfma</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.is_mfma" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmPy">
@@ -620,7 +678,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmPy.infer_layout">
 <span class="sig-name descname"><span class="pre">infer_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_nums</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.GemmPy.infer_layout" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Infer the layout for the GEMM operation based on target architecture.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>tvm.target.Target</em>)</p></li>
@@ -632,10 +691,12 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmPy.lower">
-<span class="sig-name descname"><span class="pre">lower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_nums</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.GemmPy.lower" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<span class="sig-name descname"><span class="pre">lower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_nums</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.GemmPy.lower" title="Link to this definition">¶</a></dt>
+<dd><p>Lower the GEMM operation to TIR statements based on target architecture.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>layout_map</strong> (<em>dict</em>)</p></li>
 <li><p><strong>target</strong> (<em>tvm.target.Target</em>)</p></li>
 <li><p><strong>thread_nums</strong> (<em>int</em>)</p></li>
 <li><p><strong>thread_var</strong> (<em>tvm.tir.Var</em>)</p></li>
@@ -711,6 +772,15 @@
 <li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_py_infer_layout"><code class="docutils literal notranslate"><span class="pre">gemm_py_infer_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_py_lower"><code class="docutils literal notranslate"><span class="pre">gemm_py_lower()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst"><code class="docutils literal notranslate"><span class="pre">GemmInst</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.MMA"><code class="docutils literal notranslate"><span class="pre">GemmInst.MMA</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.WGMMMA"><code class="docutils literal notranslate"><span class="pre">GemmInst.WGMMMA</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.MFMA"><code class="docutils literal notranslate"><span class="pre">GemmInst.MFMA</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.is_mma"><code class="docutils literal notranslate"><span class="pre">GemmInst.is_mma()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.is_wgmma"><code class="docutils literal notranslate"><span class="pre">GemmInst.is_wgmma()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.is_mfma"><code class="docutils literal notranslate"><span class="pre">GemmInst.is_mfma()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.GemmPy"><code class="docutils literal notranslate"><span class="pre">GemmPy</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.GemmPy.A"><code class="docutils literal notranslate"><span class="pre">GemmPy.A</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.GemmPy.B"><code class="docutils literal notranslate"><span class="pre">GemmPy.B</span></code></a></li>

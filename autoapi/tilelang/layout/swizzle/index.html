@@ -302,6 +302,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../ir/index.html">tilelang.ir</a></li>
@@ -400,6 +401,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../tileop/gemm/index.html">tilelang.tileop.gemm</a><input aria-label="Toggle navigation of tilelang.tileop.gemm" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
 </li>
 </ul>
@@ -476,7 +478,22 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_swizzled_layout" title="tilelang.layout.swizzle.make_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_swizzled_layout</span></code></a>(buffer)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_swizzled_layout" title="tilelang.layout.swizzle.make_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_swizzled_layout</span></code></a>(buffer[, k_major, allow_pad])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_wgmma_swizzled_layout" title="tilelang.layout.swizzle.make_wgmma_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wgmma_swizzled_layout</span></code></a>(buffer[, continuity, k_major])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_full_bank_swizzled_layout" title="tilelang.layout.swizzle.make_full_bank_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_full_bank_swizzled_layout</span></code></a>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_half_bank_swizzled_layout" title="tilelang.layout.swizzle.make_half_bank_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_half_bank_swizzled_layout</span></code></a>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_quarter_bank_swizzled_layout" title="tilelang.layout.swizzle.make_quarter_bank_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_quarter_bank_swizzled_layout</span></code></a>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_linear_layout" title="tilelang.layout.swizzle.make_linear_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_linear_layout</span></code></a>(*args)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -487,12 +504,82 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.layout.swizzle.make_swizzled_layout">
-<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_swizzled_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_swizzled_layout" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_swizzled_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_major</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_swizzled_layout" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em>)</p></li>
+<li><p><strong>k_major</strong> (<em>bool</em>)</p></li>
+<li><p><strong>allow_pad</strong> (<em>bool</em>)</p></li>
+</ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.swizzle.make_wgmma_swizzled_layout">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_wgmma_swizzled_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">continuity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_major</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_wgmma_swizzled_layout" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em>)</p></li>
+<li><p><strong>continuity</strong> (<em>int</em>)</p></li>
+<li><p><strong>k_major</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.swizzle.make_full_bank_swizzled_layout">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_full_bank_swizzled_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_full_bank_swizzled_layout" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> – buffer or (stride, continuous, element_size)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>make_full_bank_swizzled_layout(buffer)
+make_full_bank_swizzled_layout(stride, continuous, element_size)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.swizzle.make_half_bank_swizzled_layout">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_half_bank_swizzled_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_half_bank_swizzled_layout" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> – buffer or (stride, continuous, element_size)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>make_half_bank_swizzled_layout(buffer)
+make_half_bank_swizzled_layout(stride, continuous, element_size)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.swizzle.make_quarter_bank_swizzled_layout">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_quarter_bank_swizzled_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_quarter_bank_swizzled_layout" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> – buffer or (stride, continuous, element_size)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>make_quarter_bank_swizzled_layout(buffer)
+make_quarter_bank_swizzled_layout(stride, continuous, element_size)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.swizzle.make_linear_layout">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_linear_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_linear_layout" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> – buffer or (stride, continuous)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>make_linear_layout(buffer)
+make_linear_layout(stride, continuous)</p>
 </dd></dl>
 
 </section>
@@ -557,6 +644,11 @@
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_swizzled_layout()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.swizzle.make_wgmma_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_wgmma_swizzled_layout()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.swizzle.make_full_bank_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_full_bank_swizzled_layout()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.swizzle.make_half_bank_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_half_bank_swizzled_layout()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.swizzle.make_quarter_bank_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_quarter_bank_swizzled_layout()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.swizzle.make_linear_layout"><code class="docutils literal notranslate"><span class="pre">make_linear_layout()</span></code></a></li>
 </ul>
 </li>
 </ul>

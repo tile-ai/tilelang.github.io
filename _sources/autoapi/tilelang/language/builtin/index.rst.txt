@@ -40,6 +40,8 @@ Functions
    tilelang.language.builtin.sync_threads
    tilelang.language.builtin.sync_global
    tilelang.language.builtin.sync_grid
+   tilelang.language.builtin.initialize_descriptor
+   tilelang.language.builtin.increase_descriptor_offset
    tilelang.language.builtin.loop_break
    tilelang.language.builtin.cp_async_barrier_noinc
 
@@ -317,6 +319,38 @@ Module Contents
 
    Synchronize all threads in a grid.
 
+
+
+.. py:function:: initialize_descriptor(descriptor, start_address, layout_type_ = 0, leading_byte_offset = 0, stride_byte_offset = 0)
+
+   Initialize a memory descriptor with the given parameters.
+
+   :param descriptor: The memory descriptor to initialize.
+   :type descriptor: Buffer
+   :param start_address: The starting address of the memory region.
+   :type start_address: PrimExpr
+   :param layout_type_: Layout type identifier. Defaults to 0.
+   :type layout_type_: int, optional
+   :param leading_byte_offset: Leading byte offset. Defaults to 0.
+   :type leading_byte_offset: int, optional
+   :param stride_byte_offset: Stride byte offset. Defaults to 0.
+   :type stride_byte_offset: int, optional
+
+   :returns: A handle representing the initialized descriptor.
+   :rtype: PrimExpr
+
+
+.. py:function:: increase_descriptor_offset(descriptor, offset)
+
+   Increase the offset of a memory descriptor.
+
+   :param descriptor: The memory descriptor to modify.
+   :type descriptor: PrimExpr
+   :param offset: The offset value to increase.
+   :type offset: PrimExpr
+
+   :returns: A handle representing the modified descriptor.
+   :rtype: PrimExpr
 
 
 .. py:function:: loop_break()

@@ -59,6 +59,8 @@ Functions
    tilelang.language.tir.op.tvm_store_matrix_sync
    tilelang.language.tir.op.ptx_mma
    tilelang.language.tir.op.ptx_mma_sp
+   tilelang.language.tir.op.ptx_wgmma_ss
+   tilelang.language.tir.op.ptx_wgmma_rs
    tilelang.language.tir.op.mma_store
    tilelang.language.tir.op.mma_fill
    tilelang.language.tir.op.ptx_ldmatrix
@@ -858,6 +860,14 @@ Module Contents
    :returns: **call** -- The call expression.
    :rtype: PrimExpr
 
+
+.. py:function:: ptx_wgmma_ss(dtype, wgmma_prefix, a_is_k_major, b_is_k_major, a_dtype_abbrv, b_dtype_abbrv, accum_dtype_abbrv, A_desc, A_offset, B_desc, B_offset, C_data, C_offset, scale_out, scale_in_a, scale_in_b)
+
+   TVM intrinsic for ptx tensor core wmma instructions
+   https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-for-wmma
+
+
+.. py:function:: ptx_wgmma_rs(dtype, wgmma_prefix, a_is_k_major, b_is_k_major, a_dtype_abbrv, b_dtype_abbrv, accum_dtype_abbrv, A_buf, A_offset, B_desc, B_offset, C_data, C_offset, scale_out, scale_in_a, scale_in_b)
 
 .. py:function:: mma_store(dtype, m, n, dst_ptr, src_ptr, src_offset, dst_stride)
 

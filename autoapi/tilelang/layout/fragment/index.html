@@ -302,6 +302,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../ir/index.html">tilelang.ir</a></li>
@@ -400,6 +401,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../tileop/gemm/index.html">tilelang.tileop.gemm</a><input aria-label="Toggle navigation of tilelang.tileop.gemm" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
 </li>
 </ul>
@@ -478,18 +480,6 @@
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Fragment</span></code></a></p></td>
 <td><p>A Fragment layout object that encapsulates iteration variables (forward_vars),</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.fragment.make_swizzled_layout" title="tilelang.layout.fragment.make_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_swizzled_layout</span></code></a>(buffer)</p></td>
-<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -605,16 +595,20 @@ is no longer needed as a separate dimension.</p>
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.layout.fragment.make_swizzled_layout">
-<span class="sig-prename descclassname"><span class="pre">tilelang.layout.fragment.</span></span><span class="sig-name descname"><span class="pre">make_swizzled_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.fragment.make_swizzled_layout" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.fragment.Fragment.is_equal">
+<span class="sig-name descname"><span class="pre">is_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.fragment.Fragment.is_equal" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the current fragment is equal to another fragment.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em>)</p>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment"><em>Fragment</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
 </dd>
 </dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -677,7 +671,6 @@ is no longer needed as a separate dimension.</p>
             <ul>
 <li><a class="reference internal" href="#">tilelang.layout.fragment</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.layout.fragment.Fragment"><code class="docutils literal notranslate"><span class="pre">Fragment</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.thread"><code class="docutils literal notranslate"><span class="pre">Fragment.thread</span></code></a></li>
@@ -687,9 +680,9 @@ is no longer needed as a separate dimension.</p>
 <li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.condense_rep_var"><code class="docutils literal notranslate"><span class="pre">Fragment.condense_rep_var()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.map_forward_thread"><code class="docutils literal notranslate"><span class="pre">Fragment.map_forward_thread()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.__repr__"><code class="docutils literal notranslate"><span class="pre">Fragment.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.fragment.Fragment.is_equal"><code class="docutils literal notranslate"><span class="pre">Fragment.is_equal()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#tilelang.layout.fragment.make_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_swizzled_layout()</span></code></a></li>
 </ul>
 </li>
 </ul>

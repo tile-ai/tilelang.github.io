@@ -12,6 +12,7 @@ Submodules
 
    /autoapi/tilelang/tileop/gemm/gemm_base/index
    /autoapi/tilelang/tileop/gemm/gemm_mma/index
+   /autoapi/tilelang/tileop/gemm/gemm_wgmma/index
 
 
 Classes
@@ -19,6 +20,7 @@ Classes
 
 .. autoapisummary::
 
+   tilelang.tileop.gemm.GemmInst
    tilelang.tileop.gemm.GemmPy
 
 
@@ -36,7 +38,39 @@ Package Contents
 
 .. py:function:: gemm_py_infer_layout(gemm_py, target, thread_bounds)
 
-.. py:function:: gemm_py_lower(gemm_py, target, thread_bounds, thread_var)
+.. py:function:: gemm_py_lower(gemm_py, layout_map, target, thread_bounds, thread_var)
+
+.. py:class:: GemmInst
+
+   Bases: :py:obj:`enum.IntEnum`
+
+
+   Enum where members are also (and must be) ints
+
+
+   .. py:attribute:: MMA
+      :value: 0
+
+
+
+   .. py:attribute:: WGMMMA
+      :value: 1
+
+
+
+   .. py:attribute:: MFMA
+      :value: 2
+
+
+
+   .. py:method:: is_mma()
+
+
+   .. py:method:: is_wgmma()
+
+
+   .. py:method:: is_mfma()
+
 
 .. py:class:: GemmPy
 
@@ -121,7 +155,13 @@ Package Contents
 
    .. py:method:: infer_layout(target, thread_nums)
 
+      Infer the layout for the GEMM operation based on target architecture.
 
-   .. py:method:: lower(target, thread_nums, thread_var)
+
+
+   .. py:method:: lower(layout_map, target, thread_nums, thread_var)
+
+      Lower the GEMM operation to TIR statements based on target architecture.
+
 
 
