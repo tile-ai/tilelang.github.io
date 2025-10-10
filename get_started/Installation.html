@@ -529,14 +529,87 @@ pip<span class="w"> </span>install<span class="w"> </span>.<span class="w">  </s
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </pre></div>
 </div>
-<p>We currently provide three methods to install <strong>tile-lang</strong>:</p>
+<p>We currently provide four methods to install <strong>tile-lang</strong>:</p>
 <ol class="arabic simple">
-<li><p><a class="reference internal" href="#install-method-1">Install from Source (using your own TVM installation)</a></p></li>
-<li><p><a class="reference internal" href="#install-method-2">Install from Source (using the bundled TVM submodule)</a></p></li>
-<li><p><a class="reference internal" href="#install-method-3">Install Using the Provided Script</a></p></li>
+<li><p><a class="reference internal" href="#install-method-1">Install Using Docker</a> (Recommended)</p></li>
+<li><p><a class="reference internal" href="#install-method-2">Install from Source (using your own TVM installation)</a></p></li>
+<li><p><a class="reference internal" href="#install-method-3">Install from Source (using the bundled TVM submodule)</a></p></li>
+<li><p><a class="reference internal" href="#install-method-4">Install Using the Provided Script</a></p></li>
 </ol>
-<section id="method-1-install-from-source-using-your-own-tvm-installation">
-<span id="install-method-1"></span><h3>Method 1: Install from Source (Using Your Own TVM Installation)<a class="headerlink" href="#method-1-install-from-source-using-your-own-tvm-installation" title="Link to this heading">¶</a></h3>
+<section id="method-1-install-using-docker-recommended">
+<span id="install-method-1"></span><h3>Method 1: Install Using Docker (Recommended)<a class="headerlink" href="#method-1-install-using-docker-recommended" title="Link to this heading">¶</a></h3>
+<p>For users who prefer a containerized environment with all dependencies pre-configured, <strong>tile-lang</strong> provides Docker images for different CUDA versions. This method is particularly useful for ensuring consistent environments across different systems and is the <strong>recommended approach</strong> for most users.</p>
+<p><strong>Prerequisites:</strong></p>
+<ul class="simple">
+<li><p>Docker installed on your system</p></li>
+<li><p>NVIDIA Docker runtime (nvidia-docker2) for GPU support</p></li>
+<li><p>Compatible NVIDIA GPU (e.g., B200, H100, etc.)</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p><strong>Clone the Repository</strong>:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang
+<span class="nb">cd</span><span class="w"> </span>tilelang
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Build Docker Image</strong>:</p></li>
+</ol>
+<p>Navigate to the docker directory and build the image for your desired CUDA version:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docker
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Dockerfile.cu120<span class="w"> </span>-t<span class="w"> </span>tilelang-cu120<span class="w"> </span>.
+</pre></div>
+</div>
+<p>Available Dockerfiles:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Dockerfile.cu120</span></code> - For CUDA 12.0</p></li>
+<li><p>Other CUDA versions may be available in the docker directory</p></li>
+</ul>
+<ol class="arabic simple" start="3">
+<li><p><strong>Run Docker Container</strong>:</p></li>
+</ol>
+<p>Start the container with GPU access and volume mounting:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-itd<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--shm-size<span class="w"> </span>32g<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--gpus<span class="w"> </span>all<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>/home/tilelang:/home/tilelang<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>tilelang_b200<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>tilelang-cu120<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>/bin/zsh
+</pre></div>
+</div>
+<p><strong>Command Parameters Explanation:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--shm-size</span> <span class="pre">32g</span></code>: Increases shared memory size for better performance</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--gpus</span> <span class="pre">all</span></code>: Enables access to all available GPUs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v</span> <span class="pre">/home/tilelang:/home/tilelang</span></code>: Mounts host directory to container (adjust path as needed)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--name</span> <span class="pre">tilelang_b200</span></code>: Assigns a name to the container for easy management</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/bin/zsh</span></code>: Uses zsh as the default shell</p></li>
+</ul>
+<ol class="arabic simple" start="4">
+<li><p><strong>Access the Container</strong>:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>tilelang_b200<span class="w"> </span>/bin/zsh
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p><strong>Verify Installation</strong>:</p></li>
+</ol>
+<p>Once inside the container, verify that <strong>tile-lang</strong> is working correctly:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import tilelang; print(tilelang.__version__)&quot;</span>
+</pre></div>
+</div>
+<p>You can now run TileLang examples and develop your applications within the containerized environment. The Docker image comes with all necessary dependencies pre-installed, including CUDA toolkit, TVM, and TileLang itself.</p>
+<p><strong>Example Usage:</strong></p>
+<p>After accessing the container, you can run TileLang examples:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/home/tilelang/examples
+python<span class="w"> </span>elementwise/test_example_elementwise.py
+</pre></div>
+</div>
+<p>This Docker-based installation method provides a complete, isolated environment that works seamlessly on systems with compatible NVIDIA GPUs like the B200, ensuring optimal performance for TileLang applications.</p>
+</section>
+<section id="method-2-install-from-source-using-your-own-tvm-installation">
+<span id="install-method-2"></span><h3>Method 2: Install from Source (Using Your Own TVM Installation)<a class="headerlink" href="#method-2-install-from-source-using-your-own-tvm-installation" title="Link to this heading">¶</a></h3>
 <p>If you already have a compatible TVM installation, follow these steps:</p>
 <ol class="arabic simple">
 <li><p><strong>Clone the Repository</strong>:</p></li>
@@ -566,8 +639,8 @@ make<span class="w"> </span>-j<span class="w"> </span><span class="m">16</span>
 </pre></div>
 </div>
 </section>
-<section id="method-2-install-from-source-using-the-bundled-tvm-submodule">
-<span id="install-method-2"></span><h3>Method 2: Install from Source (Using the Bundled TVM Submodule)<a class="headerlink" href="#method-2-install-from-source-using-the-bundled-tvm-submodule" title="Link to this heading">¶</a></h3>
+<section id="method-3-install-from-source-using-the-bundled-tvm-submodule">
+<span id="install-method-3"></span><h3>Method 3: Install from Source (Using the Bundled TVM Submodule)<a class="headerlink" href="#method-3-install-from-source-using-the-bundled-tvm-submodule" title="Link to this heading">¶</a></h3>
 <p>If you prefer to use the built-in TVM version, follow these instructions:</p>
 <ol class="arabic simple">
 <li><p><strong>Clone the Repository</strong>:</p></li>
@@ -600,8 +673,8 @@ make<span class="w"> </span>-j<span class="w"> </span><span class="m">16</span>
 </pre></div>
 </div>
 </section>
-<section id="method-3-install-using-the-provided-script">
-<span id="install-method-3"></span><h3>Method 3: Install Using the Provided Script<a class="headerlink" href="#method-3-install-using-the-provided-script" title="Link to this heading">¶</a></h3>
+<section id="method-4-install-using-the-provided-script">
+<span id="install-method-4"></span><h3>Method 4: Install Using the Provided Script<a class="headerlink" href="#method-4-install-using-the-provided-script" title="Link to this heading">¶</a></h3>
 <p>For a simplified installation, use the provided script:</p>
 <ol class="arabic simple">
 <li><p><strong>Clone the Repository</strong>:</p></li>
@@ -690,9 +763,10 @@ make<span class="w"> </span>-j<span class="w"> </span><span class="m">16</span>
 <li><a class="reference internal" href="#">Installation Guide</a><ul>
 <li><a class="reference internal" href="#installing-with-pip">Installing with pip</a></li>
 <li><a class="reference internal" href="#building-from-source">Building from Source</a><ul>
-<li><a class="reference internal" href="#method-1-install-from-source-using-your-own-tvm-installation">Method 1: Install from Source (Using Your Own TVM Installation)</a></li>
-<li><a class="reference internal" href="#method-2-install-from-source-using-the-bundled-tvm-submodule">Method 2: Install from Source (Using the Bundled TVM Submodule)</a></li>
-<li><a class="reference internal" href="#method-3-install-using-the-provided-script">Method 3: Install Using the Provided Script</a></li>
+<li><a class="reference internal" href="#method-1-install-using-docker-recommended">Method 1: Install Using Docker (Recommended)</a></li>
+<li><a class="reference internal" href="#method-2-install-from-source-using-your-own-tvm-installation">Method 2: Install from Source (Using Your Own TVM Installation)</a></li>
+<li><a class="reference internal" href="#method-3-install-from-source-using-the-bundled-tvm-submodule">Method 3: Install from Source (Using the Bundled TVM Submodule)</a></li>
+<li><a class="reference internal" href="#method-4-install-using-the-provided-script">Method 4: Install Using the Provided Script</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#install-with-nightly-version">Install with Nightly Version</a></li>
