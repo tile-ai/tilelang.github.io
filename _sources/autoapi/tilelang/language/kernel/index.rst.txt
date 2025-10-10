@@ -216,6 +216,31 @@ Module Contents
    :returns: **res** -- The result LaunchThreadFrame.
    :rtype: Tuple[frame.LaunchThreadFrame]
 
+   .. rubric:: Examples
+
+   Create a 1-D CUDA kernel launch and unpack the single block index:
+
+   .. code-block:: python
+
+       with T.Kernel(T.ceildiv(N, 128), threads=128) as bx:
+           # bx is the blockIdx.x binding (also iterable as (bx,))
+           ...
+
+   Launch a 2-D grid while requesting two thread dimensions:
+
+   .. code-block:: python
+
+       with T.Kernel(grid_x, grid_y, threads=(64, 2)) as (bx, by):
+           tx, ty = T.get_thread_bindings()
+           ...
+
+   Emit a CPU kernel where thread bindings are skipped:
+
+   .. code-block:: python
+
+       with T.Kernel(loop_extent, is_cpu=True) as (i,):
+           ...
+
 
 .. py:function:: get_thread_binding(dim = 0)
 
