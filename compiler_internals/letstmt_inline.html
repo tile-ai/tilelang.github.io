@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Debugging Tile Language Programs" href="../tutorials/debug_tools_for_tilelang.html"><link rel="prev" title="Installation Guide" href="Installation.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="tilelang" href="../autoapi/tilelang/index.html"><link rel="prev" title="🚀 Write High Performance FlashMLA with TileLang on Hopper" href="../deeplearning_operators/deepseek_mla.html">
         <link rel="prefetch" href="../_static/img/logo-row.svg" as="image">
         <link rel="prefetch" href="../_static/img/logo-row.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>The Tile Language: A Brief Introduction - Tile Language 0.1.6.post1 documentation</title>
+        <title>LetStmt Inlining in TileLang - Tile Language 0.1.6.post1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -199,9 +199,9 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">GET STARTED</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="Installation.html">Installation Guide</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">The Tile Language: A Brief Introduction</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/Installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/overview.html">The Tile Language: A Brief Introduction</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
 <ul>
@@ -216,8 +216,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../deeplearning_operators/deepseek_mla.html">🚀 Write High Performance FlashMLA with TileLang on Hopper</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">COMPILER INTERNALS</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">LetStmt Inlining in TileLang</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -456,7 +456,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/get_started/overview.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/compiler_internals/letstmt_inline.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -474,96 +474,168 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="the-tile-language-a-brief-introduction">
-<h1>The Tile Language: A Brief Introduction<a class="headerlink" href="#the-tile-language-a-brief-introduction" title="Link to this heading">¶</a></h1>
-<section id="programming-interface">
-<h2>Programming Interface<a class="headerlink" href="#programming-interface" title="Link to this heading">¶</a></h2>
-<p>The figure below depicts how <strong>TileLang</strong> programs are progressively lowered from a high-level description to hardware-specific executables. We provide three different programming interfaces—targeted at <strong>Beginner</strong>, <strong>Developer</strong>, and <strong>Expert</strong> users—that each reside at different levels in this lowering pipeline. The <strong>Tile Language</strong> also allows mixing these interfaces within the same kernel, enabling users to work at whichever level of abstraction best suits their needs.</p>
-<figure class="align-center" id="id1">
-<a class="reference internal image-reference" href="../_images/overview.png"><img alt="Overview" src="../_images/overview.png" style="width: 50%;" />
-</a>
-<figcaption>
-<p><span class="caption-text">Figure 1: High-level overview of the TileLang compilation flow.</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
-</figcaption>
-</figure>
+          <section id="letstmt-inlining-in-tilelang">
+<h1>LetStmt Inlining in TileLang<a class="headerlink" href="#letstmt-inlining-in-tilelang" title="Link to this heading">¶</a></h1>
+<p>This document explains how <code class="docutils literal notranslate"><span class="pre">LetStmt</span></code> inlining works in TileLang’s simplification pipeline, which is an important optimization that affects code generation and performance.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">LetStmt</span></code> (Let Statement) is a temporary variable binding in the IR (Intermediate Representation). During compilation, TileLang’s simplifier may choose to inline these temporary variables to simplify the code. TileLang also provides a standalone <code class="docutils literal notranslate"><span class="pre">LetInline</span></code> pass that performs eager substitution before the main legalization pipeline. However, not all <code class="docutils literal notranslate"><span class="pre">LetStmt</span></code> nodes can be safely inlined.</p>
 </section>
-<section id="programming-interfaces">
-<h2>Programming Interfaces<a class="headerlink" href="#programming-interfaces" title="Link to this heading">¶</a></h2>
+<section id="when-does-letstmt-get-inlined">
+<h2>When Does LetStmt Get Inlined?<a class="headerlink" href="#when-does-letstmt-get-inlined" title="Link to this heading">¶</a></h2>
+<p>The inlining logic is implemented in <code class="docutils literal notranslate"><span class="pre">src/transform/simplify.cc</span></code>. A <code class="docutils literal notranslate"><span class="pre">LetStmt</span></code> will be inlined if <strong>both</strong> of the following conditions are met:</p>
+<section id="the-value-satisfies-caninlineletstmt">
+<h3>1. The value satisfies <code class="docutils literal notranslate"><span class="pre">CanInlineLetStmt</span></code><a class="headerlink" href="#the-value-satisfies-caninlineletstmt" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">CanInlineLetStmt</span></code> helper returns <code class="docutils literal notranslate"><span class="pre">true</span></code> when:</p>
+<ul class="simple">
+<li><p><strong>The value is a constant</strong> (<code class="docutils literal notranslate"><span class="pre">is_const_number(op-&gt;value)</span></code> returns true)</p></li>
+<li><p><strong>The value is a variable</strong> (<code class="docutils literal notranslate"><span class="pre">op-&gt;value.as&lt;VarNode&gt;()</span></code> returns a node)</p></li>
+<li><p><strong>The value is an integer expression without side effects</strong>:</p>
+<ul>
+<li><p>The value has <code class="docutils literal notranslate"><span class="pre">int</span></code> dtype</p></li>
+<li><p>The side effect level is <code class="docutils literal notranslate"><span class="pre">kPure</span></code> or lower (no observable side effects)</p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span><span class="w"> </span><span class="nf">CanInlineLetStmt</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">LetStmtNode</span><span class="w"> </span><span class="o">*</span><span class="n">op</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">is_const_number</span><span class="p">(</span><span class="n">op</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">))</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">op</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">.</span><span class="n">as</span><span class="o">&lt;</span><span class="n">VarNode</span><span class="o">&gt;</span><span class="p">())</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">  </span><span class="c1">// Won&#39;t face the deep expression explosion problem as in Let expression.</span>
+<span class="w">  </span><span class="c1">// attempt to inline as much as possible if the value integer type(can be</span>
+<span class="w">  </span><span class="c1">// index).</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">op</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">.</span><span class="n">dtype</span><span class="p">().</span><span class="n">is_int</span><span class="p">())</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">SideEffect</span><span class="p">(</span><span class="n">op</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">CallEffectKind</span><span class="o">::</span><span class="n">kPure</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="the-variable-is-not-used-in-buffer-definitions">
+<h3>2. The variable is NOT used in buffer definitions<a class="headerlink" href="#the-variable-is-not-used-in-buffer-definitions" title="Link to this heading">¶</a></h3>
+<p>Even if <code class="docutils literal notranslate"><span class="pre">CanInlineLetStmt</span></code> returns true, the variable will <strong>not</strong> be inlined if it’s used in a buffer’s definition (shape, strides, elem_offset, or data fields).</p>
+<p>This protection exists because:</p>
+<ul class="simple">
+<li><p>Buffer definitions are not updated during the simplification pass</p></li>
+<li><p>If a variable used in a buffer definition is inlined, later references to that buffer would fail to find the variable definition</p></li>
+<li><p>This would cause compilation errors or incorrect behavior</p></li>
+</ul>
+<p>The mutator checks this before dropping the binding:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span><span class="w"> </span><span class="n">used_in_buffer_def</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">used_in_buffer_def_</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="n">op</span><span class="o">-&gt;</span><span class="n">var</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">can_inline</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">used_in_buffer_def</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">body</span><span class="p">;</span><span class="w">  </span><span class="c1">// Inline: remove LetStmt and return body directly</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="example-why-buffer-definition-variables-are-protected">
+<h2>Example: Why Buffer Definition Variables Are Protected<a class="headerlink" href="#example-why-buffer-definition-variables-are-protected" title="Link to this heading">¶</a></h2>
+<p>Consider this code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">let</span> <span class="n">stride</span> <span class="o">=</span> <span class="n">M</span> <span class="o">*</span> <span class="mi">16</span>
+<span class="n">let</span> <span class="n">buffer_a</span> <span class="o">=</span> <span class="n">Buffer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">],</span> <span class="n">strides</span><span class="o">=</span><span class="p">[</span><span class="n">stride</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">buffer_a</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">...</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">stride</span></code> satisfies <code class="docutils literal notranslate"><span class="pre">CanInlineLetStmt</span></code> (it’s an int expression with no side effects)</p></li>
+<li><p>However, <code class="docutils literal notranslate"><span class="pre">stride</span></code> is used in <code class="docutils literal notranslate"><span class="pre">buffer_a</span></code>’s <code class="docutils literal notranslate"><span class="pre">strides</span></code> field</p></li>
+<li><p>If we inline it, the buffer definition becomes <code class="docutils literal notranslate"><span class="pre">strides=[M*16,</span> <span class="pre">1]</span></code></p></li>
+<li><p>But the Buffer object’s fields are not updated during simplification</p></li>
+<li><p>Later code accessing <code class="docutils literal notranslate"><span class="pre">buffer_a</span></code> would fail to find the <code class="docutils literal notranslate"><span class="pre">stride</span></code> variable</p></li>
+</ul>
+<p>Therefore, <code class="docutils literal notranslate"><span class="pre">stride</span></code> is added to <code class="docutils literal notranslate"><span class="pre">used_in_buffer_def_</span></code> and will <strong>not</strong> be inlined.</p>
+</section>
+<section id="how-variables-are-collected">
+<h2>How Variables Are Collected<a class="headerlink" href="#how-variables-are-collected" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">CollectVarsUsedInBufferDefinition</span></code> helper traverses all <code class="docutils literal notranslate"><span class="pre">BufferLoad</span></code> and <code class="docutils literal notranslate"><span class="pre">BufferStore</span></code> nodes and collects variables used in their buffer definitions:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">VisitBuffer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Buffer</span><span class="w"> </span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Collect variables that should remain defined</span>
+<span class="w">  </span><span class="n">VarUseDefAnalyzer</span><span class="w"> </span><span class="n">usage</span><span class="p">(</span><span class="n">Array</span><span class="o">&lt;</span><span class="n">Var</span><span class="o">&gt;</span><span class="p">{});</span>
+<span class="w">  </span><span class="n">usage</span><span class="p">(</span><span class="n">buf</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">);</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">dim</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">buf</span><span class="o">-&gt;</span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">usage</span><span class="p">(</span><span class="n">dim</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">dim</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">buf</span><span class="o">-&gt;</span><span class="n">strides</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">usage</span><span class="p">(</span><span class="n">dim</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">usage</span><span class="p">(</span><span class="n">buf</span><span class="o">-&gt;</span><span class="n">elem_offset</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// Track for use in LetStmtNode mutator</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">var</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">usage</span><span class="p">.</span><span class="n">undefined_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">used_in_buffer_def_</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">var</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="practical-example-temporary-variable-issue">
+<h2>Practical Example: Temporary Variable Issue<a class="headerlink" href="#practical-example-temporary-variable-issue" title="Link to this heading">¶</a></h2>
+<p>Consider this TileLang code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_N</span><span class="p">):</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span> <span class="o">+</span> <span class="n">i</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">B</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">*</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>In this case:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tmp</span></code> is an integer-like temporary variable</p></li>
+<li><p>It satisfies <code class="docutils literal notranslate"><span class="pre">CanInlineLetStmt</span></code> (pure int expression)</p></li>
+<li><p>It’s <strong>not</strong> used in any buffer definition</p></li>
+<li><p>Therefore, <code class="docutils literal notranslate"><span class="pre">tmp</span></code> <strong>will be inlined</strong></p></li>
+</ul>
+<p>This means the IR becomes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_N</span><span class="p">):</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span> <span class="o">+</span> <span class="n">i</span>
+    <span class="n">B</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>If this causes issues (e.g., <code class="docutils literal notranslate"><span class="pre">A[idx]</span></code> being read twice with different values due to the first write), it indicates a potential problem with the inlining heuristic or the code pattern.</p>
+</section>
+<section id="controlling-let-inlining-via-pass-config">
+<h2>Controlling Let Inlining via Pass Config<a class="headerlink" href="#controlling-let-inlining-via-pass-config" title="Link to this heading">¶</a></h2>
+<p>TileLang exposes an explicit pass configuration key, <code class="docutils literal notranslate"><span class="pre">tilelang.PassConfigKey.TL_FORCE_LET_INLINE</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;tl.force_let_inline&quot;</span></code>), that allows users to force the eager <code class="docutils literal notranslate"><span class="pre">LetInline</span></code> pass to run before the legalization pipeline begins. When enabled, the pipeline invokes <code class="docutils literal notranslate"><span class="pre">tilelang.transform.LetInline()</span></code> at the start of <code class="docutils literal notranslate"><span class="pre">LowerAndLegalize</span></code> (see <code class="docutils literal notranslate"><span class="pre">tilelang/engine/phase.py</span></code>). This knob is useful when debugging LetStmt-related issues or when deterministic inlining behavior is desired across different environments.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang</span><span class="w"> </span><span class="kn">import</span> <span class="n">transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.engine.phase</span><span class="w"> </span><span class="kn">import</span> <span class="n">LowerAndLegalize</span>
+
+<span class="k">with</span> <span class="n">transform</span><span class="o">.</span><span class="n">PassContext</span><span class="p">(</span>
+    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="n">transform</span><span class="o">.</span><span class="n">PassConfigKey</span><span class="o">.</span><span class="n">TL_FORCE_LET_INLINE</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<span class="p">):</span>
+    <span class="n">lowered_mod</span> <span class="o">=</span> <span class="n">LowerAndLegalize</span><span class="p">(</span><span class="n">input_mod</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the flag is left unset (the default), the eager pass is only applied when downstream transforms opt in (for example, by calling <code class="docutils literal notranslate"><span class="pre">_Simplify(...,</span> <span class="pre">inline_let=True)</span></code> inside Tile operators). The guard in <code class="docutils literal notranslate"><span class="pre">tilelang/engine/phase.py</span></code> ensures the eager pass is only triggered when the user explicitly requests it.</p>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>
+<p>The LetStmt inlining mechanism is a <strong>conservative optimization</strong> that:</p>
 <ol class="arabic simple">
-<li><p><strong>Beginner Level (Hardware-Unaware)</strong></p>
-<ul class="simple">
-<li><p>Intended for users who need to write code that is independent of specific hardware details.</p></li>
-<li><p>The goal is to let developers focus on the basic logic without worrying about memory hierarchies or hardware-specific optimizations.</p></li>
-<li><p><em>Note:</em> This interface is not yet fully implemented.</p></li>
-</ul>
-</li>
-<li><p><strong>Developer Level (Hardware-Aware with Tile Library)</strong></p>
-<ul class="simple">
-<li><p>Designed for developers who have a basic understanding of GPU memory hierarchies and performance considerations.</p></li>
-<li><p>Provides a <strong>Tile Library</strong>, containing predefined operations and patterns optimized for various hardware architectures.</p></li>
-<li><p>Users at this level can leverage these ready-made primitives without diving into low-level threading details.</p></li>
-</ul>
-</li>
-<li><p><strong>Expert Level (Hardware-Aware with Thread Primitives)</strong></p>
-<ul class="simple">
-<li><p>For highly experienced users who have an in-depth understanding of low-level hardware characteristics (e.g., threading models, memory coalescing).</p></li>
-<li><p>Offers direct access to <strong>thread primitives</strong> and other low-level constructs, allowing for fine-grained control of performance-critical kernels.</p></li>
-<li><p>This level grants maximum flexibility for specialized optimizations tailored to specific GPU or multi-core architectures.</p></li>
-</ul>
-</li>
+<li><p>Aggressively inlines simple, pure integer expressions to simplify the IR</p></li>
+<li><p>Protects variables used in buffer definitions to avoid breaking buffer access</p></li>
+<li><p>Helps reduce IR complexity and improve code generation</p></li>
+<li><p>Can be forced through <code class="docutils literal notranslate"><span class="pre">TL_FORCE_LET_INLINE</span></code> when deterministic eager inlining is required</p></li>
 </ol>
-</section>
-<section id="compilation-flow">
-<h2>Compilation Flow<a class="headerlink" href="#compilation-flow" title="Link to this heading">¶</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Tile Program</strong><br />
-A high-level specification of the computation. Depending on the user’s expertise, they may write a purely hardware-unaware tile program or incorporate constructs from the Tile Library or thread primitives.</p></li>
-<li><p><strong>Tile Program with Tile Library</strong><br />
-When developers choose from the Tile Library, the original Tile Program is expanded with specialized library calls. These calls encapsulate efficient implementation patterns for different operations.</p></li>
-<li><p><strong>Tile Program with Thread Primitives</strong><br />
-Expert-level developers can explicitly use low-level threading constructs to hand-optimize data layout, synchronization, and memory usage.</p></li>
-<li><p><strong>IRModule</strong><br />
-After the program is composed with libraries or thread primitives, it is lowered to an intermediate representation (IR) that captures the necessary hardware details.</p></li>
-<li><p><strong>Source Code Generation (C/CUDA/HIP/LLVM/…)</strong><br />
-From the IR, the system generates target-specific source code. This source code is tuned for the desired backends or GPU architectures (e.g., NVIDIA, AMD).</p></li>
-<li><p><strong>Hardware-Specific Executable/Runtime</strong><br />
-Finally, the generated source is compiled into hardware-specific executables, ready to run on the corresponding devices. The pipeline supports multiple GPU backends and can be extended to additional architectures.</p></li>
-</ol>
-</section>
-<section id="tile-based-programming-model">
-<h2>Tile-based Programming Model<a class="headerlink" href="#tile-based-programming-model" title="Link to this heading">¶</a></h2>
-<p><a class="reference internal" href="#fig-overview-gemm">Figure 2</a> provides a concise matrix multiplication (GEMM) example in <code class="docutils literal notranslate"><span class="pre">TileLang</span></code>,
-illustrating how developers can employ high-level constructs such as tiles, memory placement, pipelining,
-and operator calls to manage data movement and computation with fine-grained control.
-In particular, this snippet (<a class="reference internal" href="#fig-overview-gemm">Figure 2</a> (a)) demonstrates how multi-level tiling
-leverages different memory hierarchies (global, shared, and registers) to optimize bandwidth utilization
-and reduce latency.
-Overall, <a class="reference internal" href="#fig-overview-gemm">Figure 2</a> (b) showcases how the Python-like syntax of <code class="docutils literal notranslate"><span class="pre">TileLang</span></code>
-allows developers to reason about performance-critical optimizations within a user-friendly programming model.</p>
-<figure class="align-center" id="fig-overview-gemm">
-<a class="reference internal image-reference" href="../_images/MatmulExample.png"><img alt="GEMM with Multi-Level Tiling on GPUs" src="../_images/MatmulExample.png" style="width: 100%;" />
-</a>
-<figcaption>
-<p><span class="caption-text">Figure 2: Optimizing GEMM with Multi-Level Tiling on GPUs via <code class="docutils literal notranslate"><span class="pre">TileLang</span></code>.</span><a class="headerlink" href="#fig-overview-gemm" title="Link to this image">¶</a></p>
-</figcaption>
-</figure>
-<section id="tile-declarations">
-<h3>Tile declarations<a class="headerlink" href="#tile-declarations" title="Link to this heading">¶</a></h3>
-<p>At the heart of our approach is the notion of <em>tiles</em> as first-class objects in the programming model. A tile represents a shaped portion of data, which can be owned and manipulated by a warp, thread block, or equivalent parallel unit. In the <code class="docutils literal notranslate"><span class="pre">Matmul</span></code> example, the <code class="docutils literal notranslate"><span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">B</span></code> buffers are read in tiled chunks (determined by <code class="docutils literal notranslate"><span class="pre">block_M</span></code>, <code class="docutils literal notranslate"><span class="pre">block_N</span></code>, <code class="docutils literal notranslate"><span class="pre">block_K</span></code>) inside the kernel loop. With <code class="docutils literal notranslate"><span class="pre">T.Kernel</span></code>, <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> defines the execution context, which includes the thread block index (<code class="docutils literal notranslate"><span class="pre">bx</span></code> and <code class="docutils literal notranslate"><span class="pre">by</span></code>) and the number of threads. These contexts can help compute the index for each thread block and make it easier for <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> to automatically infer and optimize memory access and computation. Additionally, these contexts allow users to manually control the behavior of each independent thread within a thread block.</p>
-</section>
-<section id="explicit-hardware-memory-allocation">
-<h3>Explicit Hardware Memory Allocation<a class="headerlink" href="#explicit-hardware-memory-allocation" title="Link to this heading">¶</a></h3>
-<p>A hallmark of <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> is the ability to explicitly place these tile buffers in the hardware memory hierarchy. Rather than leaving it to a compiler’s opaque optimization passes, <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> exposes user-facing intrinsics that map directly to physical memory spaces or accelerator-specific constructs. In particular:</p>
+<p>Understanding when inlining happens is crucial for:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_shared</span></code>: Allocates memory in a fast, on-chip storage space, which corresponds to shared memory on NVIDIA GPUs. Shared memory is ideal for caching intermediate data during computations, as it is significantly faster than global memory and allows for efficient data sharing between threads in the same thread block. For example, in matrix multiplication, tiles of matrices can be loaded into shared memory to reduce global memory bandwidth demands and improve performance.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_fragment</span></code>: Allocates accumulators in fragment memory, which corresponds to register files on NVIDIA GPUs. By keeping inputs and partial sums in registers or hardware-level caches, latency is further minimized. Note that in this tile program, each tile allocates the same local buffers as shared memory, which might seem counterintuitive, as shared memory is generally faster but more abundant, whereas register file space is limited. This is because the allocation here refers to the register files for an entire thread block. <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> uses a Layout Inference Pass during compilation to derive a Layout object <code class="docutils literal notranslate"><span class="pre">T.Fragment</span></code>, which determines how to allocate the corresponding register files for each thread. This process will be discussed in detail in subsequent sections.</p></li>
+<li><p>Debugging compilation issues</p></li>
+<li><p>Understanding generated code</p></li>
+<li><p>Writing efficient TileLang programs</p></li>
+<li><p>Identifying potential optimization opportunities or bugs</p></li>
 </ul>
-<p>Data transfer between global memory and hardware-specific memory can be managed using <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>. Furthermore, hardware-specific buffers can be initialized using <code class="docutils literal notranslate"><span class="pre">T.clear</span></code> or <code class="docutils literal notranslate"><span class="pre">T.fill</span></code>. For data assignments, operations can also be performed in parallel using <code class="docutils literal notranslate"><span class="pre">T.Parallel</span></code>, as demonstrated in Layout Inference Pass in the following sections.</p>
-<figure class="align-center">
-<a class="reference internal image-reference" href="../_images/LayoutInference.png"><img alt="GEMM with Multi-Level Tiling on GPUs" src="../_images/LayoutInference.png" style="width: 100%;" />
-</a>
-</figure>
 </section>
+<section id="related-files">
+<h2>Related Files<a class="headerlink" href="#related-files" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">src/transform/simplify.cc</span></code>: Main Simplify implementation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src/transform/frontend_legalize.cc</span></code>: Standalone LetInline pass</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tilelang/engine/phase.py</span></code>: Pipeline integration for eager LetInlining</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">testing/python/transform/test_tilelang_transform_let_inline.py</span></code>: Regression coverage for the pass</p></li>
+</ul>
 </section>
 </section>
 
@@ -572,23 +644,23 @@ allows developers to reason about performance-critical optimizations within a us
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../tutorials/debug_tools_for_tilelang.html">
+          <a class="next-page" href="../autoapi/tilelang/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Debugging Tile Language Programs</div>
+                <div class="title">tilelang</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="Installation.html">
+          <a class="prev-page" href="../deeplearning_operators/deepseek_mla.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Installation Guide</div>
+                <div class="title">🚀 Write High Performance FlashMLA with TileLang on Hopper</div>
                 
               </div>
             </a>
@@ -622,15 +694,19 @@ allows developers to reason about performance-critical optimizations within a us
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">The Tile Language: A Brief Introduction</a><ul>
-<li><a class="reference internal" href="#programming-interface">Programming Interface</a></li>
-<li><a class="reference internal" href="#programming-interfaces">Programming Interfaces</a></li>
-<li><a class="reference internal" href="#compilation-flow">Compilation Flow</a></li>
-<li><a class="reference internal" href="#tile-based-programming-model">Tile-based Programming Model</a><ul>
-<li><a class="reference internal" href="#tile-declarations">Tile declarations</a></li>
-<li><a class="reference internal" href="#explicit-hardware-memory-allocation">Explicit Hardware Memory Allocation</a></li>
+<li><a class="reference internal" href="#">LetStmt Inlining in TileLang</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#when-does-letstmt-get-inlined">When Does LetStmt Get Inlined?</a><ul>
+<li><a class="reference internal" href="#the-value-satisfies-caninlineletstmt">1. The value satisfies <code class="docutils literal notranslate"><span class="pre">CanInlineLetStmt</span></code></a></li>
+<li><a class="reference internal" href="#the-variable-is-not-used-in-buffer-definitions">2. The variable is NOT used in buffer definitions</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#example-why-buffer-definition-variables-are-protected">Example: Why Buffer Definition Variables Are Protected</a></li>
+<li><a class="reference internal" href="#how-variables-are-collected">How Variables Are Collected</a></li>
+<li><a class="reference internal" href="#practical-example-temporary-variable-issue">Practical Example: Temporary Variable Issue</a></li>
+<li><a class="reference internal" href="#controlling-let-inlining-via-pass-config">Controlling Let Inlining via Pass Config</a></li>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+<li><a class="reference internal" href="#related-files">Related Files</a></li>
 </ul>
 </li>
 </ul>

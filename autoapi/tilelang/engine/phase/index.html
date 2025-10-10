@@ -215,6 +215,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../deeplearning_operators/matmul.html">General Matrix-Matrix Multiplication with Tile Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../deeplearning_operators/deepseek_mla.html">🚀 Write High Performance FlashMLA with TileLang on Hopper</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">COMPILER INTERNALS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../../index.html">tilelang</a><input aria-label="Toggle navigation of tilelang" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
@@ -495,10 +499,13 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.phase.should_enable_aggressive_merge" title="tilelang.engine.phase.should_enable_aggressive_merge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">should_enable_aggressive_merge</span></code></a>([pass_ctx, target])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.phase.LowerAndLegalize" title="tilelang.engine.phase.LowerAndLegalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerAndLegalize</span></code></a>(mod, target)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.phase.should_force_let_inline" title="tilelang.engine.phase.should_force_let_inline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">should_force_let_inline</span></code></a>([pass_ctx])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.phase.LowerAndLegalize" title="tilelang.engine.phase.LowerAndLegalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerAndLegalize</span></code></a>(mod, target)</p></td>
 <td><p>Bind target information and progressively legalize and lower frontend Tile IR into a form suitable for downstream optimization and codegen.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.phase.OptimizeForTarget" title="tilelang.engine.phase.OptimizeForTarget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OptimizeForTarget</span></code></a>(mod, target)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.phase.OptimizeForTarget" title="tilelang.engine.phase.OptimizeForTarget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OptimizeForTarget</span></code></a>(mod, target)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -587,6 +594,19 @@
 <li><p><strong>pass_ctx</strong> (<em>Optional</em><em>[</em><em>tilelang.transform.PassContext</em><em>]</em>)</p></li>
 <li><p><strong>target</strong> (<em>Optional</em><em>[</em><em>tvm.target.Target</em><em>]</em>)</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.engine.phase.should_force_let_inline">
+<span class="sig-prename descclassname"><span class="pre">tilelang.engine.phase.</span></span><span class="sig-name descname"><span class="pre">should_force_let_inline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pass_ctx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.phase.should_force_let_inline" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pass_ctx</strong> (<em>Optional</em><em>[</em><em>tilelang.transform.PassContext</em><em>]</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
@@ -706,6 +726,7 @@
 <li><a class="reference internal" href="#tilelang.engine.phase.allow_vectorize"><code class="docutils literal notranslate"><span class="pre">allow_vectorize()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.phase.allow_global_thread_synchronization"><code class="docutils literal notranslate"><span class="pre">allow_global_thread_synchronization()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.phase.should_enable_aggressive_merge"><code class="docutils literal notranslate"><span class="pre">should_enable_aggressive_merge()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.engine.phase.should_force_let_inline"><code class="docutils literal notranslate"><span class="pre">should_force_let_inline()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.phase.LowerAndLegalize"><code class="docutils literal notranslate"><span class="pre">LowerAndLegalize()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.phase.OptimizeForTarget"><code class="docutils literal notranslate"><span class="pre">OptimizeForTarget()</span></code></a></li>
 </ul>
