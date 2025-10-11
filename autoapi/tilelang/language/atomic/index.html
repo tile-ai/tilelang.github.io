@@ -490,7 +490,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.atomic.atomic_min" title="tilelang.language.atomic.atomic_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_min</span></code></a>(dst, value[, memory_order, return_prev])</p></td>
 <td><p>Atomically update the value at dst to the minimum of its current value and value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.atomic.atomic_add" title="tilelang.language.atomic.atomic_add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_add</span></code></a>(dst, value[, memory_order, return_prev])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.atomic.atomic_add" title="tilelang.language.atomic.atomic_add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_add</span></code></a>(dst, value[, memory_order, return_prev, ...])</p></td>
 <td><p>Atomically add <cite>value</cite> into <cite>dst</cite>, returning a handle to the operation.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.atomic.atomic_addx2" title="tilelang.language.atomic.atomic_addx2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_addx2</span></code></a>(dst, value[, return_prev])</p></td>
@@ -607,7 +607,7 @@ to integer IDs). If memory_order is None, the extern is invoked without an expli
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.atomic.atomic_add">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.atomic.</span></span><span class="sig-name descname"><span class="pre">atomic_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_prev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.atomic.atomic_add" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.atomic.</span></span><span class="sig-name descname"><span class="pre">atomic_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_prev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_tma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.atomic.atomic_add" title="Link to this definition">¶</a></dt>
 <dd><p>Atomically add <cite>value</cite> into <cite>dst</cite>, returning a handle to the operation.</p>
 <p>Supports scalar/addressed extern atomic add when neither argument exposes extents, or tile-region-based atomic add for Buffer/BufferRegion/BufferLoad inputs. If both arguments are plain Buffers their shapes must be structurally equal. If at least one side exposes extents, extents are aligned (missing dimensions are treated as size 1); an assertion is raised if extents cannot be deduced. The optional <cite>memory_order</cite> (one of “relaxed”,”consume”,”acquire”,”release”,”acq_rel”,”seq_cst”) is used only for the direct extern <cite>AtomicAdd</cite> path when no extents are available — otherwise the tile-region path ignores <cite>memory_order</cite>.</p>
 <dl class="field-list simple">
@@ -617,6 +617,7 @@ to integer IDs). If memory_order is None, the extern is invoked without an expli
 <li><p><strong>value</strong> (<em>PrimExpr</em>) – Value to add atomically.</p></li>
 <li><p><strong>memory_order</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional memory-order name controlling the atomic operation’s ordering.</p></li>
 <li><p><strong>return_prev</strong> (<em>bool</em>) – If True, return the previous value; if False, return handle (default False).</p></li>
+<li><p><strong>use_tma</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
