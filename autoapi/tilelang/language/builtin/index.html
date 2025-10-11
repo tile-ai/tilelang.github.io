@@ -218,6 +218,7 @@
 <p class="caption" role="heading"><span class="caption-text">COMPILER INTERNALS</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="current">
@@ -534,43 +535,52 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.mbarrier_expect_tx" title="tilelang.language.builtin.mbarrier_expect_tx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mbarrier_expect_tx</span></code></a>(*args)</p></td>
 <td><p>Set expected transaction count for memory barrier.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.wait_wgmma" title="tilelang.language.builtin.wait_wgmma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wait_wgmma</span></code></a>(id)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.warpgroup_arrive" title="tilelang.language.builtin.warpgroup_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warpgroup_arrive</span></code></a>()</p></td>
+<td><p>Signal warpgroup readiness for subsequent WGMMA operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.warpgroup_commit_batch" title="tilelang.language.builtin.warpgroup_commit_batch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warpgroup_commit_batch</span></code></a>()</p></td>
+<td><p>Commit the current warpgroup batch for WGMMA operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.warpgroup_wait" title="tilelang.language.builtin.warpgroup_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warpgroup_wait</span></code></a>(num_mma)</p></td>
+<td><p>Wait for completion of the specified warpgroup batch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.wait_wgmma" title="tilelang.language.builtin.wait_wgmma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wait_wgmma</span></code></a>(id)</p></td>
 <td><p>Wait for WGMMA (Warp Group Matrix Multiply-Accumulate) operations to complete.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_wait" title="tilelang.language.builtin.barrier_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_wait</span></code></a>(barrier_id[, parity])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_wait" title="tilelang.language.builtin.barrier_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_wait</span></code></a>(barrier_id[, parity])</p></td>
 <td><p>Wait for a memory barrier to complete.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_arrive" title="tilelang.language.builtin.barrier_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_arrive</span></code></a>(barrier_id)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_arrive" title="tilelang.language.builtin.barrier_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_arrive</span></code></a>(barrier_id)</p></td>
 <td><p>Arrive at a memory barrier.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_xor" title="tilelang.language.builtin.shfl_xor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_xor</span></code></a>(value, offset)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_xor" title="tilelang.language.builtin.shfl_xor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_xor</span></code></a>(value, offset)</p></td>
 <td><p>Perform a shuffle operation with XOR offset.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_down" title="tilelang.language.builtin.shfl_down"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_down</span></code></a>(value, offset)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_down" title="tilelang.language.builtin.shfl_down"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_down</span></code></a>(value, offset)</p></td>
 <td><p>Perform a shuffle operation with down offset.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_up" title="tilelang.language.builtin.shfl_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_up</span></code></a>(value, offset)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_up" title="tilelang.language.builtin.shfl_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_up</span></code></a>(value, offset)</p></td>
 <td><p>Perform a shuffle operation with up offset.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_threads" title="tilelang.language.builtin.sync_threads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_threads</span></code></a>([barrier_id, arrive_count])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_threads" title="tilelang.language.builtin.sync_threads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_threads</span></code></a>([barrier_id, arrive_count])</p></td>
 <td><p>Synchronize all threads in a block.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_global" title="tilelang.language.builtin.sync_global"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_global</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_global" title="tilelang.language.builtin.sync_global"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_global</span></code></a>()</p></td>
 <td><p>Synchronize all threads in the entire grid.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_grid" title="tilelang.language.builtin.sync_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_grid</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_grid" title="tilelang.language.builtin.sync_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_grid</span></code></a>()</p></td>
 <td><p>Synchronize all threads in a grid.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.initialize_descriptor" title="tilelang.language.builtin.initialize_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_descriptor</span></code></a>(descriptor, start_address[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.initialize_descriptor" title="tilelang.language.builtin.initialize_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_descriptor</span></code></a>(descriptor, start_address[, ...])</p></td>
 <td><p>Initialize a memory descriptor with the given parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.increase_descriptor_offset" title="tilelang.language.builtin.increase_descriptor_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increase_descriptor_offset</span></code></a>(descriptor, offset)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.increase_descriptor_offset" title="tilelang.language.builtin.increase_descriptor_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increase_descriptor_offset</span></code></a>(descriptor, offset)</p></td>
 <td><p>Increase the offset of a memory descriptor.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.loop_break" title="tilelang.language.builtin.loop_break"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loop_break</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.loop_break" title="tilelang.language.builtin.loop_break"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loop_break</span></code></a>()</p></td>
 <td><p>Break out of the innermost loop.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc" title="tilelang.language.builtin.cp_async_barrier_noinc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cp_async_barrier_noinc</span></code></a>(barrier_id)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc" title="tilelang.language.builtin.cp_async_barrier_noinc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cp_async_barrier_noinc</span></code></a>(barrier_id)</p></td>
 <td><p>Perform a ptx async copy barrier using cp.async.mbarrier.arrive.noinc.</p></td>
 </tr>
 </tbody>
@@ -875,6 +885,52 @@ The memory barrier to arrive at</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.warpgroup_arrive">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">warpgroup_arrive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.warpgroup_arrive" title="Link to this definition">¶</a></dt>
+<dd><p>Signal warpgroup readiness for subsequent WGMMA operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A handle to the warpgroup arrive operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.warpgroup_commit_batch">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">warpgroup_commit_batch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.warpgroup_commit_batch" title="Link to this definition">¶</a></dt>
+<dd><p>Commit the current warpgroup batch for WGMMA operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A handle to the warpgroup commit batch operation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.warpgroup_wait">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">warpgroup_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_mma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.warpgroup_wait" title="Link to this definition">¶</a></dt>
+<dd><p>Wait for completion of the specified warpgroup batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_mma</strong> (<em>int</em>) – int
+Identifier of the warpgroup MMA batch to wait on.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the warpgroup wait operation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.wait_wgmma">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">wait_wgmma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.wait_wgmma" title="Link to this definition">¶</a></dt>
 <dd><p>Wait for WGMMA (Warp Group Matrix Multiply-Accumulate) operations to complete.</p>
@@ -1144,6 +1200,9 @@ The value to shuffle</p></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.mbarrier_wait_parity"><code class="docutils literal notranslate"><span class="pre">mbarrier_wait_parity()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.mbarrier_arrive"><code class="docutils literal notranslate"><span class="pre">mbarrier_arrive()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.mbarrier_expect_tx"><code class="docutils literal notranslate"><span class="pre">mbarrier_expect_tx()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.warpgroup_arrive"><code class="docutils literal notranslate"><span class="pre">warpgroup_arrive()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.warpgroup_commit_batch"><code class="docutils literal notranslate"><span class="pre">warpgroup_commit_batch()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.warpgroup_wait"><code class="docutils literal notranslate"><span class="pre">warpgroup_wait()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.wait_wgmma"><code class="docutils literal notranslate"><span class="pre">wait_wgmma()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.barrier_wait"><code class="docutils literal notranslate"><span class="pre">barrier_wait()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.barrier_arrive"><code class="docutils literal notranslate"><span class="pre">barrier_arrive()</span></code></a></li>

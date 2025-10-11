@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="ElementWise Operators" href="../deeplearning_operators/elementwise.html"><link rel="prev" title="Debugging Tile Language Programs" href="debug_tools_for_tilelang.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="tilelang" href="../autoapi/tilelang/index.html"><link rel="prev" title="LetStmt Inlining in TileLang" href="letstmt_inline.html">
         <link rel="prefetch" href="../_static/img/logo-row.svg" as="image">
         <link rel="prefetch" href="../_static/img/logo-row.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>Auto-Tuning Techniques for Performance Optimization - Tile Language 0.1.6.post1 documentation</title>
+        <title>InjectFenceProxy Pass - Tile Language 0.1.6.post1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -204,9 +204,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../get_started/overview.html">The Tile Language: A Brief Introduction</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Auto-Tuning Techniques for Performance Optimization</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/auto_tuning.html">Auto-Tuning Techniques for Performance Optimization</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">DEEP LEARNING OPERATORS</span></p>
 <ul>
@@ -216,9 +216,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../deeplearning_operators/deepseek_mla.html">🚀 Write High Performance FlashMLA with TileLang on Hopper</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">COMPILER INTERNALS</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">InjectFenceProxy Pass</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -458,7 +458,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/tutorials/auto_tuning.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/compiler_internals/inject_fence_proxy.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -476,157 +476,113 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="auto-tuning-techniques-for-performance-optimization">
-<h1>Auto-Tuning Techniques for Performance Optimization<a class="headerlink" href="#auto-tuning-techniques-for-performance-optimization" title="Link to this heading">¶</a></h1>
-<div style="text-align: left;">
-<em>Author:</em> <a href="https://github.com/yyttt6">yyttt6</a>
-</div>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>Auto-tuning a Tile Language program involves three main steps:</p>
-<ol class="arabic simple">
-<li><p>Implement the target program using Tile Language with reserved optimization parameters</p></li>
-<li><p>​Provide candidate configurations through manual search or <a class="reference internal" href="#using-carver-to-auto-generate-candidate-configurations"><span class="xref myst">auto-generation using Carver</span></a></p></li>
-<li><p>Parallel compile and benchmark candidate configurations to identify the best performance</p></li>
-</ol>
+          <section id="injectfenceproxy-pass">
+<h1>InjectFenceProxy Pass<a class="headerlink" href="#injectfenceproxy-pass" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">tl.InjectFenceProxy</span></code> is a TIR-level transform that keeps the GPU proxy state consistent on NVIDIA Hopper (SM90+) by inserting <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> instructions when control flow switches from generic memory operations to asynchronous proxy operations.</p>
+<section id="why-fences-are-needed">
+<h2>Why Fences Are Needed<a class="headerlink" href="#why-fences-are-needed" title="Link to this heading">¶</a></h2>
+<p>Hopper separates memory instructions into generic and asynchronous proxy paths. When an asynchronous instruction (for example, <code class="docutils literal notranslate"><span class="pre">cp.async</span></code> or <code class="docutils literal notranslate"><span class="pre">tma.load</span></code>) issues after generic traffic (like <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code> or plain buffer stores), the hardware requires a <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> to guarantee ordering. Missing fences can lead to race conditions or undefined behaviour.</p>
 </section>
-<section id="matrix-multiplication-example">
-<h2>Matrix Multiplication Example<a class="headerlink" href="#matrix-multiplication-example" title="Link to this heading">¶</a></h2>
-<p>The following example demonstrates auto-tuning matrix multiplication. Code has been simplified for readability - see <code class="docutils literal notranslate"><span class="pre">examples/gemm/example_gemm.py</span></code> for complete implementation.</p>
-<section id="step-1-implement-with-reserved-parameters">
-<h3>Step 1: Implement with Reserved Parameters<a class="headerlink" href="#step-1-implement-with-reserved-parameters" title="Link to this heading">¶</a></h3>
-<p>Users can implement matrix multiplication in Tile Language while reserving parameters for optimization:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reserved parameters for optimization</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span>
-    <span class="n">block_M</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">block_N</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">block_K</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">num_stages</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">thread_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">enable_rasteration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span>
-    <span class="n">accum_dtype</span> <span class="o">=</span> <span class="s2">&quot;float&quot;</span>
+<section id="what-the-pass-does">
+<h2>What the Pass Does<a class="headerlink" href="#what-the-pass-does" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Walks every statement in the <code class="docutils literal notranslate"><span class="pre">PrimFunc</span></code>, tracking whether it behaves as a <strong>generic</strong>, <strong>async</strong>, or <strong>neutral</strong> proxy (neutral statements reset the state, such as an explicit fence).</p></li>
+<li><p>Automatically lowers <code class="docutils literal notranslate"><span class="pre">tma_store</span></code> intrinsics into the required <code class="docutils literal notranslate"><span class="pre">arrive</span></code>/<code class="docutils literal notranslate"><span class="pre">wait</span></code> handshake so that TMA stores participate correctly in synchronization.</p></li>
+<li><p>Injects an explicit <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> whenever a generic statement is followed by an async statement without an intervening neutral barrier.</p></li>
+</ul>
+<p>The pass is conservative: unknown extern calls are treated as async so that the fence is inserted rather than accidentally omitted.</p>
+<section id="timeline-view">
+<h3>Timeline View<a class="headerlink" href="#timeline-view" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>generic initialize_descriptor → generic shared-store → async wgmma
+             │                           │                   │
+             └─ generic proxy            ┴─ generic proxy    ┴─ async proxy
+                         │        fence inserted here   ↑
+                         └──────────────────────────────┘
+</pre></div>
+</div>
+<p>The proxy tracker scans the sequence from left to right. The moment it detects a transition from generic to async (between the store and <code class="docutils literal notranslate"><span class="pre">cp.async</span></code> above), it synthesizes a <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> to reset the hardware proxy state before the async path runs.</p>
+</section>
+</section>
+<section id="coverage-of-intrinsics">
+<h2>Coverage of Intrinsics<a class="headerlink" href="#coverage-of-intrinsics" title="Link to this heading">¶</a></h2>
+<p>The tracker understands the TileLang intrinsics for TMA load/store, shared-memory MMA (<code class="docutils literal notranslate"><span class="pre">wgmma</span></code>), and TVM/PTX async copy intrinsics (<code class="docutils literal notranslate"><span class="pre">cp.async</span></code> variants). Generic operations currently include <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">stmatrix</span></code>, and descriptor initialization. Other IR nodes (loops, blocks, attributes) receive a proxy kind derived from their bodies so that the analysis survives structured control flow.</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<p>The pass is part of the default TileLang lowering pipeline. To apply it manually:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang</span><span class="w"> </span><span class="kn">import</span> <span class="n">tl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tvm</span><span class="w"> </span><span class="kn">import</span> <span class="n">IRModule</span>
 
-    <span class="c1"># Matrix multiplication implementation</span>
-    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span>
-            <span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-            <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-            <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-    <span class="p">):</span>
-        <span class="c1"># ...existing code...</span>
-
-    <span class="k">return</span> <span class="n">main</span>
+<span class="n">mod</span> <span class="o">=</span> <span class="n">IRModule</span><span class="p">({</span><span class="s2">&quot;main&quot;</span><span class="p">:</span> <span class="n">prim_func</span><span class="p">})</span>
+<span class="k">with</span> <span class="n">tvm</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">PassContext</span><span class="p">():</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">InjectFenceProxy</span><span class="p">()(</span><span class="n">mod</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="step-2-generate-candidate-configurations">
-<h3>Step 2: Generate Candidate Configurations<a class="headerlink" href="#step-2-generate-candidate-configurations" title="Link to this heading">¶</a></h3>
-<p>Manually define configurations or use combinatorial generation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">configs</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;block_M&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
-        <span class="s2">&quot;block_N&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
-        <span class="s2">&quot;block_K&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
-        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-        <span class="s2">&quot;thread_num&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
-        <span class="s2">&quot;enable_rasteration&quot;</span><span class="p">:</span> <span class="kc">True</span>
-    <span class="p">},</span>
-        <span class="p">{</span>
-        <span class="s2">&quot;block_M&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-        <span class="s2">&quot;block_N&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-        <span class="s2">&quot;block_K&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;thread_num&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-        <span class="s2">&quot;enable_rasteration&quot;</span><span class="p">:</span> <span class="kc">False</span>
-    <span class="p">},</span>
-    <span class="c1"># ...additional configurations...</span>
-<span class="p">]</span>
+<section id="end-to-end-example">
+<h2>End-to-End Example<a class="headerlink" href="#end-to-end-example" title="Link to this heading">¶</a></h2>
+<p>Before the pass:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">&quot;uint64&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;local.descriptor&quot;</span><span class="p">)</span>
+        <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;shared&quot;</span><span class="p">)</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">initialize_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+        <span class="n">smem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">ptx_wgmma_ss</span><span class="p">(</span>
+            <span class="s2">&quot;float16&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;m64n64k16&quot;</span><span class="p">,</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
+            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">smem</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
+            <span class="mi">1</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
 </pre></div>
 </div>
-<p>It can also be given by combinatorial traversal of different parameters</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
-
-<span class="n">block_M</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
-<span class="n">block_N</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
-<span class="n">block_K</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">]</span>
-<span class="n">num_stages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-<span class="n">thread_num</span> <span class="o">=</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
-<span class="n">enable_rasterization</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span>
-<span class="n">_configs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-    <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span>
-        <span class="n">block_M</span><span class="p">,</span>
-        <span class="n">block_N</span><span class="p">,</span>
-        <span class="n">block_K</span><span class="p">,</span>
-        <span class="n">num_stages</span><span class="p">,</span>
-        <span class="n">thread_num</span><span class="p">,</span>
-        <span class="n">enable_rasterization</span><span class="p">,</span>
-    <span class="p">))</span>
-
-<span class="n">configs</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;block_M&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s2">&quot;block_N&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-        <span class="s2">&quot;block_K&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
-        <span class="s2">&quot;thread_num&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
-        <span class="s2">&quot;enable_rasteration&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-    <span class="p">}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">_configs</span>
-<span class="p">]</span>
+<p>After <code class="docutils literal notranslate"><span class="pre">tl.transform.InjectFenceProxy</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">&quot;uint64&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;local.descriptor&quot;</span><span class="p">)</span>
+        <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;shared&quot;</span><span class="p">)</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">initialize_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+        <span class="n">smem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">fence_proxy_async</span><span class="p">()</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">ptx_wgmma_ss</span><span class="p">(</span>
+            <span class="s2">&quot;float16&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;m64n64k16&quot;</span><span class="p">,</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
+            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">smem</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
+            <span class="mi">1</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
 </pre></div>
 </div>
+<p>The only change is the <code class="docutils literal notranslate"><span class="pre">fence_proxy_async</span></code> between the generic descriptor setup / shared-memory write and the async <code class="docutils literal notranslate"><span class="pre">wgmma</span></code>. In larger kernels the pass performs the same operation across nested blocks, loops, and conditional branches.</p>
 </section>
-<section id="step-3-compile-and-benchmark">
-<h3>Step 3: Compile and Benchmark<a class="headerlink" href="#step-3-compile-and-benchmark" title="Link to this heading">¶</a></h3>
-<p>Configure JIT compilation and benchmarking settings:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">autotuner</span> <span class="o">=</span> <span class="n">AutoTuner</span><span class="o">.</span><span class="n">from_kernel</span><span class="p">(</span>
-    <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">get_configs</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">with_roller</span><span class="p">))</span><span class="o">.</span><span class="n">set_compile_args</span><span class="p">(</span>
-        <span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-        <span class="n">supply_type</span><span class="o">=</span><span class="n">tl</span><span class="o">.</span><span class="n">TensorSupplyType</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
-        <span class="n">ref_prog</span><span class="o">=</span><span class="n">ref_program</span><span class="p">,</span>
-        <span class="n">skip_check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">target</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">autotuner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">warmup</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">rep</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
-<span class="n">out_c</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The result object contains optimized kernel implementation which can be used by users directly</p>
-</section>
-</section>
-<section id="using-carver-to-auto-generate-candidate-configurations">
-<h2>Using Carver to Auto-Generate Candidate Configurations<a class="headerlink" href="#using-carver-to-auto-generate-candidate-configurations" title="Link to this heading">¶</a></h2>
-<p>Carver is a lightweight framework for generating and ranking tile configurations (also known as tiling strategies, blocking schemes, or scheduling hints) for common GPU, CPU, and accelerator backends. It helps you explore efficient mappings of loops for operations such as matrix multiplication, elementwise transforms, and other reduction-oriented kernels.</p>
-<p>or common operators, Carver provides pre-built templates (e.g., <code class="docutils literal notranslate"><span class="pre">MatmulTemplate</span></code>):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Configure Matmul template</span>
-<span class="n">arch</span> <span class="o">=</span> <span class="n">CUDA</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
-<span class="n">carve_template</span> <span class="o">=</span> <span class="n">MatmulTemplate</span><span class="p">(</span>
-    <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span>
-    <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span>
-    <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span>
-    <span class="n">in_dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span>
-    <span class="n">out_dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span>
-    <span class="n">accum_dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">with_arch</span><span class="p">(</span><span class="n">arch</span><span class="p">)</span>
-
-<span class="c1"># Generate top-k optimization hints (topk=10 recommended)</span>
-<span class="n">roller_hints</span> <span class="o">=</span> <span class="n">carve_template</span><span class="o">.</span><span class="n">recommend_hints</span><span class="p">(</span><span class="n">topk</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-
-<span class="c1"># Configure candidate parameters</span>
-<span class="k">for</span> <span class="n">hint</span> <span class="ow">in</span> <span class="n">roller_hints</span><span class="p">:</span>
-
-    <span class="c1"># ...existing code...</span>
-
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;block_M&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block_m</span>
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;block_N&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block_n</span>
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;block_K&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">rstep</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;num_stages&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">pipeline_stage</span>
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;thread_num&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block_rows</span> <span class="o">*</span> <span class="n">block_cols</span> <span class="o">*</span> <span class="mi">32</span>
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;enable_rasteration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">rasterization_plan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoRasterization</span>
-
-</pre></div>
-</div>
+<section id="extending-the-pass">
+<h2>Extending the Pass<a class="headerlink" href="#extending-the-pass" title="Link to this heading">¶</a></h2>
+<p>If you introduce a new intrinsic that behaves like an async proxy, add it to <code class="docutils literal notranslate"><span class="pre">IsAsyncIntrinsic</span></code> in <code class="docutils literal notranslate"><span class="pre">src/transform/inject_fence_proxy.cc</span></code>. Likewise, extend <code class="docutils literal notranslate"><span class="pre">IsKnownGeneric</span></code> for additional generic operations. When adding new neutral barriers, make sure they set the proxy kind to <code class="docutils literal notranslate"><span class="pre">kNeutral</span></code> so the state resets correctly.</p>
 </section>
 </section>
 
@@ -635,23 +591,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../deeplearning_operators/elementwise.html">
+          <a class="next-page" href="../autoapi/tilelang/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">ElementWise Operators</div>
+                <div class="title">tilelang</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="debug_tools_for_tilelang.html">
+          <a class="prev-page" href="letstmt_inline.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Debugging Tile Language Programs</div>
+                <div class="title">LetStmt Inlining in TileLang</div>
                 
               </div>
             </a>
@@ -685,15 +641,16 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Auto-Tuning Techniques for Performance Optimization</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#matrix-multiplication-example">Matrix Multiplication Example</a><ul>
-<li><a class="reference internal" href="#step-1-implement-with-reserved-parameters">Step 1: Implement with Reserved Parameters</a></li>
-<li><a class="reference internal" href="#step-2-generate-candidate-configurations">Step 2: Generate Candidate Configurations</a></li>
-<li><a class="reference internal" href="#step-3-compile-and-benchmark">Step 3: Compile and Benchmark</a></li>
+<li><a class="reference internal" href="#">InjectFenceProxy Pass</a><ul>
+<li><a class="reference internal" href="#why-fences-are-needed">Why Fences Are Needed</a></li>
+<li><a class="reference internal" href="#what-the-pass-does">What the Pass Does</a><ul>
+<li><a class="reference internal" href="#timeline-view">Timeline View</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#using-carver-to-auto-generate-candidate-configurations">Using Carver to Auto-Generate Candidate Configurations</a></li>
+<li><a class="reference internal" href="#coverage-of-intrinsics">Coverage of Intrinsics</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#end-to-end-example">End-to-End Example</a></li>
+<li><a class="reference internal" href="#extending-the-pass">Extending the Pass</a></li>
 </ul>
 </li>
 </ul>

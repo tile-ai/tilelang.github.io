@@ -31,6 +31,9 @@ Functions
    tilelang.language.builtin.mbarrier_wait_parity
    tilelang.language.builtin.mbarrier_arrive
    tilelang.language.builtin.mbarrier_expect_tx
+   tilelang.language.builtin.warpgroup_arrive
+   tilelang.language.builtin.warpgroup_commit_batch
+   tilelang.language.builtin.warpgroup_wait
    tilelang.language.builtin.wait_wgmma
    tilelang.language.builtin.barrier_wait
    tilelang.language.builtin.barrier_arrive
@@ -237,6 +240,33 @@ Module Contents
    :param \*args: Variable arguments specifying the expected transaction count
 
    :returns: A handle to the barrier expectation operation
+   :rtype: tir.Call
+
+
+.. py:function:: warpgroup_arrive()
+
+   Signal warpgroup readiness for subsequent WGMMA operations.
+
+   :returns: A handle to the warpgroup arrive operation.
+   :rtype: tir.Call
+
+
+.. py:function:: warpgroup_commit_batch()
+
+   Commit the current warpgroup batch for WGMMA operations.
+
+   :returns: A handle to the warpgroup commit batch operation.
+   :rtype: tir.Call
+
+
+.. py:function:: warpgroup_wait(num_mma)
+
+   Wait for completion of the specified warpgroup batch.
+
+   :param num_mma: int
+                   Identifier of the warpgroup MMA batch to wait on.
+
+   :returns: A handle to the warpgroup wait operation.
    :rtype: tir.Call
 
 
