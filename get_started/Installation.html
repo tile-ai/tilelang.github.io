@@ -482,9 +482,9 @@
 <h2>Installing with pip<a class="headerlink" href="#installing-with-pip" title="Link to this heading">¶</a></h2>
 <p><strong>Prerequisites for installation via wheel or PyPI:</strong></p>
 <ul class="simple">
-<li><p><strong>Operating System</strong>: Ubuntu 20.04 or later</p></li>
+<li><p><strong>glibc</strong>: 2.28 (Ubuntu 20.04 or later)</p></li>
 <li><p><strong>Python Version</strong>: &gt;= 3.8</p></li>
-<li><p><strong>CUDA Version</strong>: &gt;= 11.0</p></li>
+<li><p><strong>CUDA Version</strong>: 12.0 &lt;= CUDA &lt; 13</p></li>
 </ul>
 <p>The easiest way to install <strong>tile-lang</strong> is directly from PyPI using pip. To install the latest version, run the following command in your terminal:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>tilelang
@@ -508,12 +508,10 @@
 <p><strong>Prerequisites for building from source:</strong></p>
 <ul class="simple">
 <li><p><strong>Operating System</strong>: Linux</p></li>
-<li><p><strong>Python Version</strong>: &gt;= 3.7</p></li>
+<li><p><strong>Python Version</strong>: &gt;= 3.8</p></li>
 <li><p><strong>CUDA Version</strong>: &gt;= 10.0</p></li>
-<li><p><strong>LLVM</strong>: &lt; 20 if you are using the bundled TVM submodule</p></li>
 </ul>
-<p>We recommend using a Docker container with the necessary dependencies to build <strong>tile-lang</strong> from source. You can use the following command to run a Docker container with the required dependencies:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--gpus<span class="w"> </span>all<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>--ipc<span class="o">=</span>host<span class="w"> </span>nvcr.io/nvidia/pytorch:23.01-py3
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>--ipc<span class="o">=</span>host<span class="w"> </span>nvcr.io/nvidia/pytorch:23.01-py3
 </pre></div>
 </div>
 <p>To build and install <strong>tile-lang</strong> directly from source, follow these steps. This process requires certain pre-requisites from Apache TVM, which can be installed on Ubuntu/Debian-based systems using the following commands:</p>
@@ -524,19 +522,18 @@ apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w">
 <p>After installing the prerequisites, you can clone the <strong>tile-lang</strong> repository and install it using pip:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang.git
 <span class="nb">cd</span><span class="w"> </span>tilelang
-pip<span class="w"> </span>install<span class="w"> </span>.<span class="w">  </span><span class="c1"># Please be patient, this may take some time.</span>
+pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v
 </pre></div>
 </div>
 <p>If you want to install <strong>tile-lang</strong> in development mode, you can run the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="w"> </span>-v
 </pre></div>
 </div>
 <p>We currently provide four methods to install <strong>tile-lang</strong>:</p>
 <ol class="arabic simple">
 <li><p><a class="reference internal" href="#install-method-1">Install Using Docker</a> (Recommended)</p></li>
-<li><p><a class="reference internal" href="#install-method-2">Install from Source (using your own TVM installation)</a></p></li>
-<li><p><a class="reference internal" href="#install-method-3">Install from Source (using the bundled TVM submodule)</a></p></li>
-<li><p><a class="reference internal" href="#install-method-4">Install Using the Provided Script</a></p></li>
+<li><p><a class="reference internal" href="#install-method-2">Install from Source (using the bundled TVM submodule)</a></p></li>
+<li><p><a class="reference internal" href="#install-method-3">Install from Source (using your own TVM installation)</a></p></li>
 </ol>
 <section id="method-1-install-using-docker-recommended">
 <span id="install-method-1"></span><h3>Method 1: Install Using Docker (Recommended)<a class="headerlink" href="#method-1-install-using-docker-recommended" title="Link to this heading">¶</a></h3>
@@ -544,8 +541,7 @@ pip<span class="w"> </span>install<span class="w"> </span>.<span class="w">  </s
 <p><strong>Prerequisites:</strong></p>
 <ul class="simple">
 <li><p>Docker installed on your system</p></li>
-<li><p>NVIDIA Docker runtime (nvidia-docker2) for GPU support</p></li>
-<li><p>Compatible NVIDIA GPU (e.g., B200, H100, etc.)</p></li>
+<li><p>NVIDIA Docker runtime or GPU is not necessary for building tilelang, you can build on a host without GPU and use that built image on other machine.</p></li>
 </ul>
 <ol class="arabic simple">
 <li><p><strong>Clone the Repository</strong>:</p></li>
@@ -610,8 +606,8 @@ python<span class="w"> </span>elementwise/test_example_elementwise.py
 </div>
 <p>This Docker-based installation method provides a complete, isolated environment that works seamlessly on systems with compatible NVIDIA GPUs like the B200, ensuring optimal performance for TileLang applications.</p>
 </section>
-<section id="method-2-install-from-source-using-your-own-tvm-installation">
-<span id="install-method-2"></span><h3>Method 2: Install from Source (Using Your Own TVM Installation)<a class="headerlink" href="#method-2-install-from-source-using-your-own-tvm-installation" title="Link to this heading">¶</a></h3>
+<section id="method-2-install-from-source-using-the-bundled-tvm-submodule">
+<span id="install-method-2"></span><h3>Method 2: Install from Source (Using the Bundled TVM Submodule)<a class="headerlink" href="#method-2-install-from-source-using-the-bundled-tvm-submodule" title="Link to this heading">¶</a></h3>
 <p>If you already have a compatible TVM installation, follow these steps:</p>
 <ol class="arabic simple">
 <li><p><strong>Clone the Repository</strong>:</p></li>
@@ -625,24 +621,12 @@ python<span class="w"> </span>elementwise/test_example_elementwise.py
 <li><p><strong>Configure Build Options</strong>:</p></li>
 </ol>
 <p>Create a build directory and specify your existing TVM path:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>build
-<span class="nb">cd</span><span class="w"> </span>build
-cmake<span class="w"> </span>..<span class="w"> </span>-DTVM_PREBUILD_PATH<span class="o">=</span>/your/path/to/tvm/build<span class="w">  </span><span class="c1"># e.g., /workspace/tvm/build</span>
-make<span class="w"> </span>-j<span class="w"> </span><span class="m">16</span>
-</pre></div>
-</div>
-<ol class="arabic simple" start="3">
-<li><p><strong>Set Environment Variables</strong>:</p></li>
-</ol>
-<p>Update <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> to include the <code class="docutils literal notranslate"><span class="pre">tile-lang</span></code> Python module:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span>/your/path/to/tilelang/:<span class="nv">$PYTHONPATH</span>
-<span class="c1"># TVM_IMPORT_PYTHON_PATH is used by 3rd-party frameworks to import TVM</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">TVM_IMPORT_PYTHON_PATH</span><span class="o">=</span>/your/path/to/tvm/python
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v
 </pre></div>
 </div>
 </section>
-<section id="method-3-install-from-source-using-the-bundled-tvm-submodule">
-<span id="install-method-3"></span><h3>Method 3: Install from Source (Using the Bundled TVM Submodule)<a class="headerlink" href="#method-3-install-from-source-using-the-bundled-tvm-submodule" title="Link to this heading">¶</a></h3>
+<section id="method-3-install-from-source-using-your-own-tvm-installation">
+<span id="install-method-3"></span><h3>Method 3: Install from Source (Using Your Own TVM Installation)<a class="headerlink" href="#method-3-install-from-source-using-your-own-tvm-installation" title="Link to this heading">¶</a></h3>
 <p>If you prefer to use the built-in TVM version, follow these instructions:</p>
 <ol class="arabic simple">
 <li><p><strong>Clone the Repository</strong>:</p></li>
@@ -656,40 +640,7 @@ make<span class="w"> </span>-j<span class="w"> </span><span class="m">16</span>
 <li><p><strong>Configure Build Options</strong>:</p></li>
 </ol>
 <p>Copy the configuration file and enable the desired backends (e.g., LLVM and CUDA):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>build
-cp<span class="w"> </span>3rdparty/tvm/cmake/config.cmake<span class="w"> </span>build
-<span class="nb">cd</span><span class="w"> </span>build
-<span class="c1"># echo &quot;set(USE_LLVM ON)&quot;  # set USE_LLVM to ON if using LLVM</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;set(USE_CUDA ON)&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>config.cmake<span class="w"> </span>
-<span class="c1"># or echo &quot;set(USE_ROCM ON)&quot; &gt;&gt; config.cmake to enable ROCm runtime</span>
-cmake<span class="w"> </span>..
-make<span class="w"> </span>-j<span class="w"> </span><span class="m">16</span>
-</pre></div>
-</div>
-<p>The build outputs (e.g., <code class="docutils literal notranslate"><span class="pre">libtilelang.so</span></code>, <code class="docutils literal notranslate"><span class="pre">libtvm.so</span></code>, <code class="docutils literal notranslate"><span class="pre">libtvm_runtime.so</span></code>) will be generated in the <code class="docutils literal notranslate"><span class="pre">build</span></code> directory.</p>
-<ol class="arabic simple" start="3">
-<li><p><strong>Set Environment Variables</strong>:</p></li>
-</ol>
-<p>Ensure the <code class="docutils literal notranslate"><span class="pre">tile-lang</span></code> Python package is in your <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span>/your/path/to/tilelang/:<span class="nv">$PYTHONPATH</span>
-</pre></div>
-</div>
-</section>
-<section id="method-4-install-using-the-provided-script">
-<span id="install-method-4"></span><h3>Method 4: Install Using the Provided Script<a class="headerlink" href="#method-4-install-using-the-provided-script" title="Link to this heading">¶</a></h3>
-<p>For a simplified installation, use the provided script:</p>
-<ol class="arabic simple">
-<li><p><strong>Clone the Repository</strong>:</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang
-<span class="nb">cd</span><span class="w"> </span>tilelang
-</pre></div>
-</div>
-<ol class="arabic simple" start="2">
-<li><p><strong>Run the Installation Script</strong>:</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>install_cuda.sh
-<span class="c1"># or bash `install_amd.sh` if you want to enable ROCm runtime</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">TVM_ROOT</span><span class="o">=</span>&lt;your-tvm-repo&gt;<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v
 </pre></div>
 </div>
 </section>
@@ -704,6 +655,48 @@ make<span class="w"> </span>-j<span class="w"> </span><span class="m">16</span>
 <blockquote>
 <div><p><strong>Note:</strong> Nightly builds contain the most recent code changes but may be less stable than official releases. They’re ideal for testing new features or if you need a specific bugfix that hasn’t been released yet.</p>
 </div></blockquote>
+</section>
+<section id="install-configs">
+<h2>Install Configs<a class="headerlink" href="#install-configs" title="Link to this heading">¶</a></h2>
+<p>tilelang use ffi/cython/dlpack to interact with pytorch tensor,
+so <code class="docutils literal notranslate"><span class="pre">--no-build-isolation</span></code> and similar configs are not necessary.</p>
+<section id="build-time-environment-variables">
+<h3>Build-time environment variables<a class="headerlink" href="#build-time-environment-variables" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">USE_CUDA</span></code>: If to enable CUDA support, default: <code class="docutils literal notranslate"><span class="pre">ON</span></code> on Linux, set to <code class="docutils literal notranslate"><span class="pre">OFF</span></code> to build a CPU version. By default, we’ll use <code class="docutils literal notranslate"><span class="pre">/usr/local/cuda</span></code> for building tilelang. Set <code class="docutils literal notranslate"><span class="pre">CUDAToolkit_ROOT</span></code> to use different cuda toolkit.</p>
+<p><code class="docutils literal notranslate"><span class="pre">USE_ROCM</span></code>: If to enable ROCm support, default: <code class="docutils literal notranslate"><span class="pre">OFF</span></code>. If your ROCm SDK does not located in <code class="docutils literal notranslate"><span class="pre">/opt/rocm</span></code>, set <code class="docutils literal notranslate"><span class="pre">USE_ROCM=&lt;rocm_sdk&gt;</span></code> to enable build ROCm against custom sdk path.</p>
+<p><code class="docutils literal notranslate"><span class="pre">USE_METAL</span></code>: If to enable Metal support, default: <code class="docutils literal notranslate"><span class="pre">ON</span></code> on Darwin.</p>
+<p><code class="docutils literal notranslate"><span class="pre">TVM_ROOT</span></code>: TVM source root to use.</p>
+<p><code class="docutils literal notranslate"><span class="pre">NO_VERSION_LABEL</span></code> and <code class="docutils literal notranslate"><span class="pre">NO_TOOLCHAIN_VERSION</span></code>:
+When building tilelang, we’ll try to embed SDK and version information into package version as below,
+where local version label could look like <code class="docutils literal notranslate"><span class="pre">&lt;sdk&gt;.git&lt;git_hash&gt;</span></code>. Set <code class="docutils literal notranslate"><span class="pre">NO_VERSION_LABEL=ON</span></code> to disable this behavior.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -mbuild -w
+...
+Successfully built tilelang-0.1.6.post1+cu116.git0d4a74be-cp38-abi3-linux_x86_64.whl
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">&lt;sdk&gt;={cuda,rocm,metal}</span></code>. Specifically, when <code class="docutils literal notranslate"><span class="pre">&lt;sdk&gt;=cuda</span></code> and <code class="docutils literal notranslate"><span class="pre">CUDA_VERSION</span></code> is provided via env,
+<code class="docutils literal notranslate"><span class="pre">&lt;sdk&gt;=cu&lt;cuda_major&gt;&lt;cuda_minor&gt;</span></code>, similar with this part in pytorch.
+Set <code class="docutils literal notranslate"><span class="pre">NO_TOOLCHAIN_VERSION=ON</span></code> to disable this.</p>
+</section>
+<section id="run-time-environment-variables">
+<h3>Run-time environment variables<a class="headerlink" href="#run-time-environment-variables" title="Link to this heading">¶</a></h3>
+<!-- TODO: tvm -->
+</section>
+</section>
+<section id="ide-configs">
+<h2>IDE Configs<a class="headerlink" href="#ide-configs" title="Link to this heading">¶</a></h2>
+<p>Building tilelang locally will automatically <code class="docutils literal notranslate"><span class="pre">compile_commands.json</span></code> file in <code class="docutils literal notranslate"><span class="pre">build</span></code> dir.
+VSCode with clangd and <a class="reference external" href="https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd">clangd extension</a> should be able to index that without extra configuration.</p>
+</section>
+<section id="compile-cache">
+<h2>Compile cache<a class="headerlink" href="#compile-cache" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ccache</span></code> will be automatically used if found.</p>
+</section>
+<section id="repairing-wheels">
+<h2>Repairing wheels<a class="headerlink" href="#repairing-wheels" title="Link to this heading">¶</a></h2>
+<p>If you plan to use your wheel in other environment,
+it’s recommend to use auditwheel (on Linux) or delocate (on Darwin)
+to repair them.</p>
 </section>
 </section>
 
@@ -766,12 +759,19 @@ make<span class="w"> </span>-j<span class="w"> </span><span class="m">16</span>
 <li><a class="reference internal" href="#installing-with-pip">Installing with pip</a></li>
 <li><a class="reference internal" href="#building-from-source">Building from Source</a><ul>
 <li><a class="reference internal" href="#method-1-install-using-docker-recommended">Method 1: Install Using Docker (Recommended)</a></li>
-<li><a class="reference internal" href="#method-2-install-from-source-using-your-own-tvm-installation">Method 2: Install from Source (Using Your Own TVM Installation)</a></li>
-<li><a class="reference internal" href="#method-3-install-from-source-using-the-bundled-tvm-submodule">Method 3: Install from Source (Using the Bundled TVM Submodule)</a></li>
-<li><a class="reference internal" href="#method-4-install-using-the-provided-script">Method 4: Install Using the Provided Script</a></li>
+<li><a class="reference internal" href="#method-2-install-from-source-using-the-bundled-tvm-submodule">Method 2: Install from Source (Using the Bundled TVM Submodule)</a></li>
+<li><a class="reference internal" href="#method-3-install-from-source-using-your-own-tvm-installation">Method 3: Install from Source (Using Your Own TVM Installation)</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#install-with-nightly-version">Install with Nightly Version</a></li>
+<li><a class="reference internal" href="#install-configs">Install Configs</a><ul>
+<li><a class="reference internal" href="#build-time-environment-variables">Build-time environment variables</a></li>
+<li><a class="reference internal" href="#run-time-environment-variables">Run-time environment variables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ide-configs">IDE Configs</a></li>
+<li><a class="reference internal" href="#compile-cache">Compile cache</a></li>
+<li><a class="reference internal" href="#repairing-wheels">Repairing wheels</a></li>
 </ul>
 </li>
 </ul>
