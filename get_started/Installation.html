@@ -658,8 +658,6 @@ python<span class="w"> </span>elementwise/test_example_elementwise.py
 </section>
 <section id="install-configs">
 <h2>Install Configs<a class="headerlink" href="#install-configs" title="Link to this heading">¶</a></h2>
-<p>tilelang use ffi/cython/dlpack to interact with pytorch tensor,
-so <code class="docutils literal notranslate"><span class="pre">--no-build-isolation</span></code> and similar configs are not necessary.</p>
 <section id="build-time-environment-variables">
 <h3>Build-time environment variables<a class="headerlink" href="#build-time-environment-variables" title="Link to this heading">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">USE_CUDA</span></code>: If to enable CUDA support, default: <code class="docutils literal notranslate"><span class="pre">ON</span></code> on Linux, set to <code class="docutils literal notranslate"><span class="pre">OFF</span></code> to build a CPU version. By default, we’ll use <code class="docutils literal notranslate"><span class="pre">/usr/local/cuda</span></code> for building tilelang. Set <code class="docutils literal notranslate"><span class="pre">CUDAToolkit_ROOT</span></code> to use different cuda toolkit.</p>
@@ -697,6 +695,24 @@ VSCode with clangd and <a class="reference external" href="https://marketplace.v
 <p>If you plan to use your wheel in other environment,
 it’s recommend to use auditwheel (on Linux) or delocate (on Darwin)
 to repair them.</p>
+</section>
+<section id="faster-rebuild-for-developers">
+<h2>Faster rebuild for developers<a class="headerlink" href="#faster-rebuild-for-developers" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> introduces extra [un]packaging and takes ~30 sec to complete,
+even if no source change.</p>
+<p>Developers who needs to recompile frequently could use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="w"> </span>-v<span class="w"> </span>--no-build-isolation
+
+<span class="nb">cd</span><span class="w"> </span>build<span class="p">;</span><span class="w"> </span>ninja
+</pre></div>
+</div>
+<p>When running in editable/developer mode,
+you’ll see logs like below:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;import tilelang&#39;</span>
+<span class="go">2025-10-14 11:11:29  [TileLang:tilelang.env:WARNING]: Loading tilelang libs from dev root: /Users/yyc/repo/tilelang/build</span>
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -772,6 +788,7 @@ to repair them.</p>
 <li><a class="reference internal" href="#ide-configs">IDE Configs</a></li>
 <li><a class="reference internal" href="#compile-cache">Compile cache</a></li>
 <li><a class="reference internal" href="#repairing-wheels">Repairing wheels</a></li>
+<li><a class="reference internal" href="#faster-rebuild-for-developers">Faster rebuild for developers</a></li>
 </ul>
 </li>
 </ul>
