@@ -34,6 +34,11 @@ Functions
    tilelang.language.builtin.warpgroup_arrive
    tilelang.language.builtin.warpgroup_commit_batch
    tilelang.language.builtin.warpgroup_wait
+   tilelang.language.builtin.get_lane_idx
+   tilelang.language.builtin.get_warp_idx_sync
+   tilelang.language.builtin.get_warp_idx
+   tilelang.language.builtin.get_warp_group_idx
+   tilelang.language.builtin.shuffle_elect
    tilelang.language.builtin.wait_wgmma
    tilelang.language.builtin.barrier_wait
    tilelang.language.builtin.barrier_arrive
@@ -268,6 +273,103 @@ Module Contents
 
    :returns: A handle to the warpgroup wait operation.
    :rtype: tir.Call
+
+
+.. py:function:: get_lane_idx(warp_size = None)
+
+   Return the logical lane index of the calling thread within a warp.
+
+   :param warp_size: Logical warp (or wavefront) size. Defaults to 32 on NVIDIA and 64 on AMD.
+   :type warp_size: Optional[int, PrimExpr]
+
+   .. rubric:: Example
+
+   >>> lane = T.get_lane_idx()
+   >>> custom_lane = T.get_lane_idx(64)  # override warp size explicitly
+
+   Implementation Notes
+   --------------------
+   Lowers to the CUDA helper `tl::get_lane_idx(warp_size)` defined in
+   `src/tl_templates/cuda/intrin.h`, which computes the lane index from the
+   linear thread id using the provided `warp_size`.
+
+
+.. py:function:: get_warp_idx_sync(warp_size = None)
+
+   Return the canonical warp index, assuming the warp's threads are converged.
+
+   :param warp_size: Logical warp size used for the index calculation.
+   :type warp_size: Optional[int, PrimExpr]
+
+   .. rubric:: Example
+
+   >>> warp = T.get_warp_idx_sync()
+   >>> custom_warp = T.get_warp_idx_sync(64)
+
+   Implementation Notes
+   --------------------
+   Emits `tl::get_warp_idx_sync(warp_size)` which divides the block-linear
+   thread id by `warp_size`, matching the semantics of CUTLASS' canonical helpers.
+
+
+.. py:function:: get_warp_idx(warp_size = None)
+
+   Return the canonical warp index without synchronizing the warp.
+
+   :param warp_size: Logical warp size used for the index calculation.
+   :type warp_size: Optional[int, PrimExpr]
+
+   .. rubric:: Example
+
+   >>> warp = T.get_warp_idx()
+   >>> custom_warp = T.get_warp_idx(64)
+
+   Implementation Notes
+   --------------------
+   Lowers to `tl::get_warp_idx(warp_size)` which divides the block-linear
+   thread id by the provided `warp_size` without requiring warp convergence.
+
+
+.. py:function:: get_warp_group_idx(warp_size = None, warps_per_group = None)
+
+   Return the canonical warp group index for the calling thread.
+
+   :param warp_size: Logical warp size to use (defaults to 32 on NVIDIA / 64 on AMD).
+   :type warp_size: Optional[int, PrimExpr]
+   :param warps_per_group: Number of warps per warp-group. Defaults to 4 on NVIDIA architectures.
+   :type warps_per_group: Optional[int, PrimExpr]
+
+   .. rubric:: Example
+
+   >>> group = T.get_warp_group_idx()
+   >>> custom_group = T.get_warp_group_idx(32, 6)  # treat 6 warps as a group
+
+   Implementation Notes
+   --------------------
+   Generates `tl::get_warp_group_idx(warp_size, warps_per_group)` which
+   divides the block-linear thread id by `warp_size * warps_per_group`,
+   matching the canonical ordering while allowing architecture-specific overrides.
+
+
+.. py:function:: shuffle_elect(thread_extent)
+
+   Elect exactly one lane within a logical thread group.
+
+   :param thread_extent: Size (in threads) of the group in which a single lane should be elected.
+                         Passing 0 elects a single lane in the entire thread block.
+   :type thread_extent: int
+
+   .. rubric:: Example
+
+   >>> is_leader = T.shuffle_elect(64)
+   >>> T.if_then_else(is_leader, do_leader_work(), T.evaluate(0))
+
+   Implementation Notes
+   --------------------
+   Lowered to the CUDA helper `tl::tl_shuffle_elect<thread_extent>()` defined in
+   `src/tl_templates/cuda/intrin.h`, which relies on
+   `cutlass::canonical_warp_idx_sync()` and `cute::elect_one_sync()` (or
+   `__shfl_sync`) to pick one lane per group.
 
 
 .. py:function:: wait_wgmma(id)

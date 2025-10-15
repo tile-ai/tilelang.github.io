@@ -544,43 +544,58 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.warpgroup_wait" title="tilelang.language.builtin.warpgroup_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warpgroup_wait</span></code></a>(num_mma)</p></td>
 <td><p>Wait for completion of the specified warpgroup batch.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.wait_wgmma" title="tilelang.language.builtin.wait_wgmma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wait_wgmma</span></code></a>(id)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.get_lane_idx" title="tilelang.language.builtin.get_lane_idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_lane_idx</span></code></a>([warp_size])</p></td>
+<td><p>Return the logical lane index of the calling thread within a warp.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.get_warp_idx_sync" title="tilelang.language.builtin.get_warp_idx_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_warp_idx_sync</span></code></a>([warp_size])</p></td>
+<td><p>Return the canonical warp index, assuming the warp's threads are converged.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.get_warp_idx" title="tilelang.language.builtin.get_warp_idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_warp_idx</span></code></a>([warp_size])</p></td>
+<td><p>Return the canonical warp index without synchronizing the warp.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.get_warp_group_idx" title="tilelang.language.builtin.get_warp_group_idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_warp_group_idx</span></code></a>([warp_size, warps_per_group])</p></td>
+<td><p>Return the canonical warp group index for the calling thread.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shuffle_elect" title="tilelang.language.builtin.shuffle_elect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shuffle_elect</span></code></a>(thread_extent)</p></td>
+<td><p>Elect exactly one lane within a logical thread group.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.wait_wgmma" title="tilelang.language.builtin.wait_wgmma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wait_wgmma</span></code></a>(id)</p></td>
 <td><p>Wait for WGMMA (Warp Group Matrix Multiply-Accumulate) operations to complete.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_wait" title="tilelang.language.builtin.barrier_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_wait</span></code></a>(barrier_id[, parity])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_wait" title="tilelang.language.builtin.barrier_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_wait</span></code></a>(barrier_id[, parity])</p></td>
 <td><p>Wait for a memory barrier to complete.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_arrive" title="tilelang.language.builtin.barrier_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_arrive</span></code></a>(barrier_id)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_arrive" title="tilelang.language.builtin.barrier_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_arrive</span></code></a>(barrier_id)</p></td>
 <td><p>Arrive at a memory barrier.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_xor" title="tilelang.language.builtin.shfl_xor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_xor</span></code></a>(value, offset)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_xor" title="tilelang.language.builtin.shfl_xor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_xor</span></code></a>(value, offset)</p></td>
 <td><p>Perform a shuffle operation with XOR offset.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_down" title="tilelang.language.builtin.shfl_down"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_down</span></code></a>(value, offset)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_down" title="tilelang.language.builtin.shfl_down"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_down</span></code></a>(value, offset)</p></td>
 <td><p>Perform a shuffle operation with down offset.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_up" title="tilelang.language.builtin.shfl_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_up</span></code></a>(value, offset)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_up" title="tilelang.language.builtin.shfl_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_up</span></code></a>(value, offset)</p></td>
 <td><p>Perform a shuffle operation with up offset.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_threads" title="tilelang.language.builtin.sync_threads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_threads</span></code></a>([barrier_id, arrive_count])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_threads" title="tilelang.language.builtin.sync_threads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_threads</span></code></a>([barrier_id, arrive_count])</p></td>
 <td><p>Synchronize all threads in a block.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_global" title="tilelang.language.builtin.sync_global"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_global</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_global" title="tilelang.language.builtin.sync_global"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_global</span></code></a>()</p></td>
 <td><p>Synchronize all threads in the entire grid.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_grid" title="tilelang.language.builtin.sync_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_grid</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_grid" title="tilelang.language.builtin.sync_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_grid</span></code></a>()</p></td>
 <td><p>Synchronize all threads in a grid.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.initialize_descriptor" title="tilelang.language.builtin.initialize_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_descriptor</span></code></a>(descriptor, start_address[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.initialize_descriptor" title="tilelang.language.builtin.initialize_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_descriptor</span></code></a>(descriptor, start_address[, ...])</p></td>
 <td><p>Initialize a memory descriptor with the given parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.increase_descriptor_offset" title="tilelang.language.builtin.increase_descriptor_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increase_descriptor_offset</span></code></a>(descriptor, offset)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.increase_descriptor_offset" title="tilelang.language.builtin.increase_descriptor_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increase_descriptor_offset</span></code></a>(descriptor, offset)</p></td>
 <td><p>Increase the offset of a memory descriptor.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.loop_break" title="tilelang.language.builtin.loop_break"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loop_break</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.loop_break" title="tilelang.language.builtin.loop_break"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loop_break</span></code></a>()</p></td>
 <td><p>Break out of the innermost loop.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc" title="tilelang.language.builtin.cp_async_barrier_noinc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cp_async_barrier_noinc</span></code></a>(barrier_id)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc" title="tilelang.language.builtin.cp_async_barrier_noinc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cp_async_barrier_noinc</span></code></a>(barrier_id)</p></td>
 <td><p>Perform a ptx async copy barrier using cp.async.mbarrier.arrive.noinc.</p></td>
 </tr>
 </tbody>
@@ -931,6 +946,134 @@ Identifier of the warpgroup MMA batch to wait on.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.get_lane_idx">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">get_lane_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">warp_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.get_lane_idx" title="Link to this definition">¶</a></dt>
+<dd><p>Return the logical lane index of the calling thread within a warp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>warp_size</strong> (<em>Optional</em><em>[</em><em>int</em><em>, </em><em>PrimExpr</em><em>]</em>) – Logical warp (or wavefront) size. Defaults to 32 on NVIDIA and 64 on AMD.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lane</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_lane_idx</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">custom_lane</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_lane_idx</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>  <span class="c1"># override warp size explicitly</span>
+</pre></div>
+</div>
+<section id="implementation-notes">
+<h3>Implementation Notes<a class="headerlink" href="#implementation-notes" title="Link to this heading">¶</a></h3>
+<p>Lowers to the CUDA helper <cite>tl::get_lane_idx(warp_size)</cite> defined in
+<cite>src/tl_templates/cuda/intrin.h</cite>, which computes the lane index from the
+linear thread id using the provided <cite>warp_size</cite>.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.get_warp_idx_sync">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">get_warp_idx_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">warp_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.get_warp_idx_sync" title="Link to this definition">¶</a></dt>
+<dd><p>Return the canonical warp index, assuming the warp’s threads are converged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>warp_size</strong> (<em>Optional</em><em>[</em><em>int</em><em>, </em><em>PrimExpr</em><em>]</em>) – Logical warp size used for the index calculation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">warp</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_warp_idx_sync</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">custom_warp</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_warp_idx_sync</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="id1">
+<h3>Implementation Notes<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<p>Emits <cite>tl::get_warp_idx_sync(warp_size)</cite> which divides the block-linear
+thread id by <cite>warp_size</cite>, matching the semantics of CUTLASS’ canonical helpers.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.get_warp_idx">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">get_warp_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">warp_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.get_warp_idx" title="Link to this definition">¶</a></dt>
+<dd><p>Return the canonical warp index without synchronizing the warp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>warp_size</strong> (<em>Optional</em><em>[</em><em>int</em><em>, </em><em>PrimExpr</em><em>]</em>) – Logical warp size used for the index calculation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">warp</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_warp_idx</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">custom_warp</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_warp_idx</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="id2">
+<h3>Implementation Notes<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<p>Lowers to <cite>tl::get_warp_idx(warp_size)</cite> which divides the block-linear
+thread id by the provided <cite>warp_size</cite> without requiring warp convergence.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.get_warp_group_idx">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">get_warp_group_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">warp_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warps_per_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.get_warp_group_idx" title="Link to this definition">¶</a></dt>
+<dd><p>Return the canonical warp group index for the calling thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>warp_size</strong> (<em>Optional</em><em>[</em><em>int</em><em>, </em><em>PrimExpr</em><em>]</em>) – Logical warp size to use (defaults to 32 on NVIDIA / 64 on AMD).</p></li>
+<li><p><strong>warps_per_group</strong> (<em>Optional</em><em>[</em><em>int</em><em>, </em><em>PrimExpr</em><em>]</em>) – Number of warps per warp-group. Defaults to 4 on NVIDIA architectures.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">group</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_warp_group_idx</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">custom_group</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_warp_group_idx</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>  <span class="c1"># treat 6 warps as a group</span>
+</pre></div>
+</div>
+<section id="id3">
+<h3>Implementation Notes<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p>Generates <cite>tl::get_warp_group_idx(warp_size, warps_per_group)</cite> which
+divides the block-linear thread id by <cite>warp_size * warps_per_group</cite>,
+matching the canonical ordering while allowing architecture-specific overrides.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.shuffle_elect">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shuffle_elect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_extent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shuffle_elect" title="Link to this definition">¶</a></dt>
+<dd><p>Elect exactly one lane within a logical thread group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>thread_extent</strong> (<em>int</em>) – Size (in threads) of the group in which a single lane should be elected.
+Passing 0 elects a single lane in the entire thread block.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_leader</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">shuffle_elect</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">if_then_else</span><span class="p">(</span><span class="n">is_leader</span><span class="p">,</span> <span class="n">do_leader_work</span><span class="p">(),</span> <span class="n">T</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<section id="id4">
+<h3>Implementation Notes<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<p>Lowered to the CUDA helper <cite>tl::tl_shuffle_elect&lt;thread_extent&gt;()</cite> defined in
+<cite>src/tl_templates/cuda/intrin.h</cite>, which relies on
+<cite>cutlass::canonical_warp_idx_sync()</cite> and <cite>cute::elect_one_sync()</cite> (or
+<cite>__shfl_sync</cite>) to pick one lane per group.</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.wait_wgmma">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">wait_wgmma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.wait_wgmma" title="Link to this definition">¶</a></dt>
 <dd><p>Wait for WGMMA (Warp Group Matrix Multiply-Accumulate) operations to complete.</p>
@@ -1203,6 +1346,11 @@ The value to shuffle</p></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.warpgroup_arrive"><code class="docutils literal notranslate"><span class="pre">warpgroup_arrive()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.warpgroup_commit_batch"><code class="docutils literal notranslate"><span class="pre">warpgroup_commit_batch()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.warpgroup_wait"><code class="docutils literal notranslate"><span class="pre">warpgroup_wait()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.get_lane_idx"><code class="docutils literal notranslate"><span class="pre">get_lane_idx()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.get_warp_idx_sync"><code class="docutils literal notranslate"><span class="pre">get_warp_idx_sync()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.get_warp_idx"><code class="docutils literal notranslate"><span class="pre">get_warp_idx()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.get_warp_group_idx"><code class="docutils literal notranslate"><span class="pre">get_warp_group_idx()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.shuffle_elect"><code class="docutils literal notranslate"><span class="pre">shuffle_elect()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.wait_wgmma"><code class="docutils literal notranslate"><span class="pre">wait_wgmma()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.barrier_wait"><code class="docutils literal notranslate"><span class="pre">barrier_wait()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.barrier_arrive"><code class="docutils literal notranslate"><span class="pre">barrier_arrive()</span></code></a></li>
