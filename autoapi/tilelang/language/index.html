@@ -523,8 +523,8 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.annotate_layout" title="tilelang.language.annotate_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_layout</span></code></a>(layout_map)</p></td>
 <td><p>Annotate the layout of the buffer</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.annotate_padding" title="tilelang.language.annotate_padding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_padding</span></code></a>(padding_map)</p></td>
-<td><p>Annotate the padding of the buffer</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.annotate_safe_value" title="tilelang.language.annotate_safe_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_safe_value</span></code></a>(safe_value_map)</p></td>
+<td><p>Annotate the safe value of the buffer.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.annotate_l2_hit_ratio" title="tilelang.language.annotate_l2_hit_ratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_l2_hit_ratio</span></code></a>(l2_hit_ratio_map)</p></td>
 <td><p>Annotate the L2 hit ratio of the buffer, detailed explanation please refer to:</p></td>
@@ -615,12 +615,14 @@ for i, j in T.Parallel(block_M, block_N):</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.annotate_padding">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.</span></span><span class="sig-name descname"><span class="pre">annotate_padding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">padding_map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotate_padding" title="Link to this definition">¶</a></dt>
-<dd><p>Annotate the padding of the buffer</p>
+<dt class="sig sig-object py" id="tilelang.language.annotate_safe_value">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.</span></span><span class="sig-name descname"><span class="pre">annotate_safe_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">safe_value_map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotate_safe_value" title="Link to this definition">¶</a></dt>
+<dd><p>Annotate the safe value of the buffer.</p>
+<p>A safe value of a buffer is the value that will be used when the
+buffer is accessed out of bounds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>padding_map</strong> (<em>dict</em>) – a dictionary of buffer to padding value</p>
+<dd class="field-odd"><p><strong>safe_value_map</strong> (<em>dict</em>) – a dictionary of buffer to safe value</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a block attribute</p>
@@ -641,7 +643,7 @@ B: T.Tensor((M, N), dtype),</p>
 with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):</p>
 <blockquote>
 <div><p>A_shared = T.alloc_shared((block_M, block_N), dtype)</p>
-<p>T.annotate_padding({A_shared: pad_value})
+<p>T.annotate_safe_value({A: safe_value})
 for i, j in T.Parallel(block_M, block_N):</p>
 <blockquote>
 <div><p>A_shared[i, j] = A[by * block_M + i - 10, bx * block_N + j]</p>
@@ -746,7 +748,7 @@ T.annotate_l2_hit_ratio({A: 0.5})</p>
 <li><a class="reference internal" href="#tilelang.language.symbolic"><code class="docutils literal notranslate"><span class="pre">symbolic()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.use_swizzle"><code class="docutils literal notranslate"><span class="pre">use_swizzle()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotate_layout"><code class="docutils literal notranslate"><span class="pre">annotate_layout()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.annotate_padding"><code class="docutils literal notranslate"><span class="pre">annotate_padding()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.annotate_safe_value"><code class="docutils literal notranslate"><span class="pre">annotate_safe_value()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotate_l2_hit_ratio"><code class="docutils literal notranslate"><span class="pre">annotate_l2_hit_ratio()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.import_source"><code class="docutils literal notranslate"><span class="pre">import_source()</span></code></a></li>
 </ul>

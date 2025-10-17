@@ -48,7 +48,7 @@ Functions
    tilelang.language.symbolic
    tilelang.language.use_swizzle
    tilelang.language.annotate_layout
-   tilelang.language.annotate_padding
+   tilelang.language.annotate_safe_value
    tilelang.language.annotate_l2_hit_ratio
    tilelang.language.import_source
 
@@ -102,12 +102,15 @@ Package Contents
    return main
 
 
-.. py:function:: annotate_padding(padding_map)
+.. py:function:: annotate_safe_value(safe_value_map)
 
-   Annotate the padding of the buffer
+   Annotate the safe value of the buffer.
 
-   :param padding_map: a dictionary of buffer to padding value
-   :type padding_map: dict
+   A safe value of a buffer is the value that will be used when the
+   buffer is accessed out of bounds.
+
+   :param safe_value_map: a dictionary of buffer to safe value
+   :type safe_value_map: dict
 
    :returns: a block attribute
    :rtype: block_attr
@@ -123,7 +126,7 @@ Package Contents
        with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):
            A_shared = T.alloc_shared((block_M, block_N), dtype)
 
-           T.annotate_padding({A_shared: pad_value})
+           T.annotate_safe_value({A: safe_value})
            for i, j in T.Parallel(block_M, block_N):
                A_shared[i, j] = A[by * block_M + i - 10, bx * block_N + j]
 
