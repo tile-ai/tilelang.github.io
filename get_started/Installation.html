@@ -529,6 +529,24 @@ pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </sp
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="w"> </span>-v
 </pre></div>
 </div>
+<p>If you prefer to work directly from the source tree via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, make sure the native extension is built first:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>build
+<span class="nb">cd</span><span class="w"> </span>build
+cmake<span class="w"> </span>..<span class="w"> </span>-DUSE_CUDA<span class="o">=</span>ON
+make<span class="w"> </span>-j
+</pre></div>
+</div>
+<p>Then add the repository root to <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> before importing <code class="docutils literal notranslate"><span class="pre">tilelang</span></code>, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span>/path/to/tilelang:<span class="nv">$PYTHONPATH</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import tilelang; print(tilelang.__version__)&quot;</span>
+</pre></div>
+</div>
+<p>Some useful CMake options you can toggle while configuring:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-DUSE_CUDA=ON|OFF</span></code> builds against NVIDIA CUDA (default ON when CUDA headers are found).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DUSE_ROCM=ON</span></code> selects ROCm support when building on AMD GPUs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DNO_VERSION_LABEL=ON</span></code> disables the backend/git suffix in <code class="docutils literal notranslate"><span class="pre">tilelang.__version__</span></code>.</p></li>
+</ul>
 <p>We currently provide four methods to install <strong>tile-lang</strong>:</p>
 <ol class="arabic simple">
 <li><p><a class="reference internal" href="#install-method-1">Install Using Docker</a> (Recommended)</p></li>
