@@ -502,13 +502,22 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce.reduce_absmax" title="tilelang.language.reduce.reduce_absmax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce_absmax</span></code></a>(buffer, out[, dim, clear])</p></td>
 <td><p>Perform reduce absolute max on input buffer, store the result to output buffer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce.cumsum_fragment" title="tilelang.language.reduce.cumsum_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum_fragment</span></code></a>(src, dst, dim, reverse)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce.reduce_bitand" title="tilelang.language.reduce.reduce_bitand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce_bitand</span></code></a>(buffer, out[, dim, clear])</p></td>
+<td><p>Perform reduce bitwise-and on input buffer, store the result to output buffer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce.reduce_bitor" title="tilelang.language.reduce.reduce_bitor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce_bitor</span></code></a>(buffer, out[, dim, clear])</p></td>
+<td><p>Perform reduce bitwise-or on input buffer, store the result to output buffer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce.reduce_bitxor" title="tilelang.language.reduce.reduce_bitxor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce_bitxor</span></code></a>(buffer, out[, dim, clear])</p></td>
+<td><p>Perform reduce bitwise-xor on input buffer, store the result to output buffer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce.cumsum_fragment" title="tilelang.language.reduce.cumsum_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum_fragment</span></code></a>(src, dst, dim, reverse)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce.cumsum" title="tilelang.language.reduce.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a>(src[, dst, dim, reverse])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce.cumsum" title="tilelang.language.reduce.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a>(src[, dst, dim, reverse])</p></td>
 <td><p>Compute the cumulative sum of <cite>src</cite> along <cite>dim</cite>, writing results to <cite>dst</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce.finalize_reducer" title="tilelang.language.reduce.finalize_reducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize_reducer</span></code></a>(reducer)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce.finalize_reducer" title="tilelang.language.reduce.finalize_reducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize_reducer</span></code></a>(reducer)</p></td>
 <td><p>Finalize a reducer buffer by emitting the <cite>tl.finalize_reducer</cite> intrinsic.</p></td>
 </tr>
 </tbody>
@@ -656,6 +665,72 @@ in the warp). Therefore, the implementation with clear=True follows these steps:
 <dt class="sig sig-object py" id="tilelang.language.reduce.reduce_absmax">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">reduce_absmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.reduce_absmax" title="Link to this definition">¶</a></dt>
 <dd><p>Perform reduce absolute max on input buffer, store the result to output buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tir.Buffer</em>) – The input buffer</p></li>
+<li><p><strong>out</strong> (<em>tir.Buffer</em>) – The output buffer</p></li>
+<li><p><strong>dim</strong> (<em>int</em>) – The dimension to perform reduce on</p></li>
+<li><p><strong>clear</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Handle to the reduction operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.reduce.reduce_bitand">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">reduce_bitand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.reduce_bitand" title="Link to this definition">¶</a></dt>
+<dd><p>Perform reduce bitwise-and on input buffer, store the result to output buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tir.Buffer</em>) – The input buffer</p></li>
+<li><p><strong>out</strong> (<em>tir.Buffer</em>) – The output buffer</p></li>
+<li><p><strong>dim</strong> (<em>int</em>) – The dimension to perform reduce on</p></li>
+<li><p><strong>clear</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Handle to the reduction operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.reduce.reduce_bitor">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">reduce_bitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.reduce_bitor" title="Link to this definition">¶</a></dt>
+<dd><p>Perform reduce bitwise-or on input buffer, store the result to output buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tir.Buffer</em>) – The input buffer</p></li>
+<li><p><strong>out</strong> (<em>tir.Buffer</em>) – The output buffer</p></li>
+<li><p><strong>dim</strong> (<em>int</em>) – The dimension to perform reduce on</p></li>
+<li><p><strong>clear</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Handle to the reduction operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.reduce.reduce_bitxor">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">reduce_bitxor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.reduce_bitxor" title="Link to this definition">¶</a></dt>
+<dd><p>Perform reduce bitwise-xor on input buffer, store the result to output buffer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -824,6 +899,9 @@ The call does not modify Python objects directly; it produces the low-level intr
 <li><a class="reference internal" href="#tilelang.language.reduce.reduce_sum"><code class="docutils literal notranslate"><span class="pre">reduce_sum()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce.reduce_abssum"><code class="docutils literal notranslate"><span class="pre">reduce_abssum()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce.reduce_absmax"><code class="docutils literal notranslate"><span class="pre">reduce_absmax()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.reduce.reduce_bitand"><code class="docutils literal notranslate"><span class="pre">reduce_bitand()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.reduce.reduce_bitor"><code class="docutils literal notranslate"><span class="pre">reduce_bitor()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.reduce.reduce_bitxor"><code class="docutils literal notranslate"><span class="pre">reduce_bitxor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce.cumsum_fragment"><code class="docutils literal notranslate"><span class="pre">cumsum_fragment()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce.cumsum"><code class="docutils literal notranslate"><span class="pre">cumsum()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce.finalize_reducer"><code class="docutils literal notranslate"><span class="pre">finalize_reducer()</span></code></a></li>
