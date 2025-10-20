@@ -343,6 +343,7 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/language/index.html">tilelang.language</a><input aria-label="Toggle navigation of tilelang.language" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/allocate/index.html">tilelang.language.allocate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/annotations/index.html">tilelang.language.annotations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/atomic/index.html">tilelang.language.atomic</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/builtin/index.html">tilelang.language.builtin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/copy/index.html">tilelang.language.copy</a></li>
@@ -365,6 +366,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/print/index.html">tilelang.language.print</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/proxy/index.html">tilelang.language.proxy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/reduce/index.html">tilelang.language.reduce</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/symbolics/index.html">tilelang.language.symbolics</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/language/tir/index.html">tilelang.language.tir</a><input aria-label="Toggle navigation of tilelang.language.tir" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/tir/entry/index.html">tilelang.language.tir.entry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/tir/ir/index.html">tilelang.language.tir.ir</a></li>
@@ -552,7 +554,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <section id="how-to-compile-operators-with-dynamic-shapes">
 <h3>How to compile operators with dynamic shapes?<a class="headerlink" href="#how-to-compile-operators-with-dynamic-shapes" title="Link to this heading">¶</a></h3>
 <p>In the compilation process above, a fixed shape was used. However, in practical usage, we often want the kernel to support dynamic shapes. So, how can we compile a kernel in TileLang to handle dynamic shapes? In TileLang, we can replace the target size with a dynamic symbolic value, making the dimension dynamic. The following example illustrates this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">program</span> <span class="o">=</span> <span class="n">elementwise_add</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">symbolic</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">program</span> <span class="o">=</span> <span class="n">elementwise_add</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">dynamic</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;bfloat16&quot;</span><span class="p">)</span>
 <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">out_idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">execution_backend</span><span class="o">=</span><span class="s2">&quot;cython&quot;</span><span class="p">)</span>
 </pre></div>
 </div>

@@ -16,6 +16,7 @@ Submodules
    :maxdepth: 1
 
    /autoapi/tilelang/language/allocate/index
+   /autoapi/tilelang/language/annotations/index
    /autoapi/tilelang/language/atomic/index
    /autoapi/tilelang/language/builtin/index
    /autoapi/tilelang/language/copy/index
@@ -35,6 +36,7 @@ Submodules
    /autoapi/tilelang/language/print/index
    /autoapi/tilelang/language/proxy/index
    /autoapi/tilelang/language/reduce/index
+   /autoapi/tilelang/language/symbolics/index
    /autoapi/tilelang/language/tir/index
    /autoapi/tilelang/language/utils/index
    /autoapi/tilelang/language/warpgroup/index
@@ -45,110 +47,11 @@ Functions
 
 .. autoapisummary::
 
-   tilelang.language.symbolic
-   tilelang.language.use_swizzle
-   tilelang.language.annotate_layout
-   tilelang.language.annotate_safe_value
-   tilelang.language.annotate_l2_hit_ratio
    tilelang.language.import_source
 
 
 Package Contents
 ----------------
-
-.. py:function:: symbolic(name, dtype = 'int32')
-
-   Create a TIR symbolic variable.
-
-   :param name: Identifier for the variable in generated TIR.
-   :type name: str
-   :param dtype: Data type string for the variable (e.g., "int32"). Defaults to "int32".
-   :type dtype: str
-
-   :returns: A TIR variable with the given name and dtype for use in TIR/TensorIR kernels.
-   :rtype: tir.Var
-
-
-.. py:function:: use_swizzle(panel_size, order = 'row', enable = True)
-
-.. py:function:: annotate_layout(layout_map)
-
-   Annotate the layout of the buffer
-
-   :param layout_map: a dictionary of buffer to layout
-   :type layout_map: Dict
-
-   :returns: a block attribute
-   :rtype: block_attr
-
-   .. rubric:: Example
-
-   @T.prim_func
-   def main(
-           A: T.Tensor((M, N), dtype),
-           B: T.Tensor((M, N), dtype),
-   ):
-       # Initialize Kernel Context
-       with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):
-           A_shared = T.alloc_shared((block_M, block_N), dtype)
-
-           T.annotate_layout({A_shared: layout})
-           for i, j in T.Parallel(block_M, block_N):
-               A_shared[i, j] = A[by * block_M + i, bx * block_N + j]
-
-           for i, j in T.Parallel(block_M, block_N):
-               B[by * block_M + i, bx * block_N + j] = A_shared[i, j]
-
-   return main
-
-
-.. py:function:: annotate_safe_value(safe_value_map)
-
-   Annotate the safe value of the buffer.
-
-   A safe value of a buffer is the value that will be used when the
-   buffer is accessed out of bounds.
-
-   :param safe_value_map: a dictionary of buffer to safe value
-   :type safe_value_map: dict
-
-   :returns: a block attribute
-   :rtype: block_attr
-
-   .. rubric:: Example
-
-   @T.prim_func
-   def main(
-           A: T.Tensor((M, N), dtype),
-           B: T.Tensor((M, N), dtype),
-   ):
-       # Initialize Kernel Context
-       with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):
-           A_shared = T.alloc_shared((block_M, block_N), dtype)
-
-           T.annotate_safe_value({A: safe_value})
-           for i, j in T.Parallel(block_M, block_N):
-               A_shared[i, j] = A[by * block_M + i - 10, bx * block_N + j]
-
-           for i, j in T.Parallel(block_M, block_N):
-               B[by * block_M + i, bx * block_N + j] = A_shared[i, j]
-
-   return main
-
-
-.. py:function:: annotate_l2_hit_ratio(l2_hit_ratio_map)
-
-   Annotate the L2 hit ratio of the buffer, detailed explanation please refer to:
-   https://docs.nvidia.com/cuda/cuda-c-programming-guide/#l2-policy-for-persisting-accesses
-
-   :param l2_hit_ratio_map: a dictionary of buffer to L2 hit ratio value
-   :type l2_hit_ratio_map: dict
-
-   .. rubric:: Example
-
-   # 0.5 is the hit ratio
-   T.annotate_l2_hit_ratio({A: 0.5})
-
 
 .. py:function:: import_source(source = None)
 
