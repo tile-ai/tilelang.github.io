@@ -696,6 +696,42 @@ synchronization is not needed. Default: False</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TL_STORAGE_REWRITE_DETECT_INPLACE">
+<span class="sig-name descname"><span class="pre">TL_STORAGE_REWRITE_DETECT_INPLACE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tl.storage_rewrite_detect_inplace'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TL_STORAGE_REWRITE_DETECT_INPLACE" title="Link to this definition">¶</a></dt>
+<dd><p>Control StorageRewrite inplace detection.</p>
+<p>When False (default) StorageRewrite keeps distinct temporaries for patterns
+such as <cite>dst[i] = f(src[i])</cite>, avoiding implicit aliasing:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">read</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">&quot;local.var&quot;)</span>
+<span class="pre">write</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">&quot;local.var&quot;)</span>
+<span class="pre">read_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">data=read,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
+<span class="pre">write_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">data=write,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
+<span class="pre">write_buf[0]</span> <span class="pre">=</span> <span class="pre">read_buf[0]</span> <span class="pre">*</span> <span class="pre">2</span>
+<span class="pre">f(write_buf[0])</span>
+<span class="pre">`</span></code></p>
+<p>Setting the flag to True allows StorageRewrite to reuse the <cite>read</cite> buffer
+for the write when it can prove the update is safely inplace, producing IR
+like:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">read</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">&quot;local.var&quot;)</span>
+<span class="pre">read_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">data=read,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
+<span class="pre">read_buf[0]</span> <span class="pre">=</span> <span class="pre">read_buf[0]</span> <span class="pre">*</span> <span class="pre">2</span>
+<span class="pre">f(read_buf[0])</span>
+<span class="pre">`</span></code></p>
+<p>This reduces local memory usage but introduces aliasing between the buffers.</p>
+<p>Usage:</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
+from tilelang.transform import PassContext, PassConfigKey</p>
+<dl class="simple">
+<dt>with PassContext(</dt><dd><p>config={PassConfigKey.TL_STORAGE_REWRITE_DETECT_INPLACE.value: True}</p>
+</dd>
+<dt>):</dt><dd><p>mod = tilelang.transform.StorageRewrite()(mod)</p>
+</dd>
+</dl>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TIR_ENABLE_EQUIV_TERMS_IN_CSE">
 <span class="sig-name descname"><span class="pre">TIR_ENABLE_EQUIV_TERMS_IN_CSE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tir.enable_equiv_terms_in_cse_tir'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_ENABLE_EQUIV_TERMS_IN_CSE" title="Link to this definition">¶</a></dt>
 <dd><p>True</p>
@@ -898,6 +934,7 @@ synchronization is not needed. Default: False</p>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_SHUFFLE_ELECT"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_DISABLE_SHUFFLE_ELECT</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_THREAD_STORAGE_SYNC"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_DISABLE_THREAD_STORAGE_SYNC</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_FORCE_LET_INLINE"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_FORCE_LET_INLINE</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_STORAGE_REWRITE_DETECT_INPLACE"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_STORAGE_REWRITE_DETECT_INPLACE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TIR_ENABLE_EQUIV_TERMS_IN_CSE"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TIR_ENABLE_EQUIV_TERMS_IN_CSE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_CSE"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TIR_DISABLE_CSE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TIR_SIMPLIFY"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TIR_SIMPLIFY</span></code></a></li>
