@@ -510,7 +510,7 @@ with the appropriate memory scope.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_fragment" title="tilelang.language.allocate.alloc_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_fragment</span></code></a>(shape, dtype[, scope])</p></td>
 <td><p>Allocate a fragment memory buffer for specialized operations.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_var" title="tilelang.language.allocate.alloc_var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_var</span></code></a>(dtype[, scope])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_var" title="tilelang.language.allocate.alloc_var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_var</span></code></a>(dtype, *args[, scope, init])</p></td>
 <td><p>Allocate a single-element variable buffer.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_barrier" title="tilelang.language.allocate.alloc_barrier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_barrier</span></code></a>(arrive_count)</p></td>
@@ -596,13 +596,22 @@ with the appropriate memory scope.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.allocate.alloc_var">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'local.var'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_var" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'local.var'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_var" title="Link to this definition">¶</a></dt>
 <dd><p>Allocate a single-element variable buffer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtype</strong> (<em>str</em>) – The data type of the buffer (e.g., ‘float32’, ‘int32’)</p></li>
-<li><p><strong>scope</strong> (<em>str</em><em>, </em><em>optional</em>) – The memory scope. Defaults to “local.var”</p></li>
+<li><p><strong>*args</strong> – Optional positional arguments. A single positional string is treated
+as the scope for backward compatibility. A single non-string positional
+argument (or keyword <code class="docutils literal notranslate"><span class="pre">init</span></code>) specifies the initializer. When two
+positional arguments are provided, they are interpreted as
+<code class="docutils literal notranslate"><span class="pre">(init,</span> <span class="pre">scope)</span></code>.</p></li>
+<li><p><strong>scope</strong> (<em>str</em><em>, </em><em>optional</em>) – The memory scope. Defaults to “local.var”.
+Use as keyword argument for clarity when also providing an initializer.</p></li>
+<li><p><strong>init</strong> (<em>PrimExpr</em><em>, </em><em>optional</em>) – The optional initializer value. When provided,
+the generated code will initialize the variable with this value instead
+of defaulting to zero.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

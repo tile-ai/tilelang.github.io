@@ -85,14 +85,24 @@ Module Contents
    :rtype: T.Buffer
 
 
-.. py:function:: alloc_var(dtype, scope='local.var')
+.. py:function:: alloc_var(dtype, *args, scope='local.var', init = None)
 
    Allocate a single-element variable buffer.
 
    :param dtype: The data type of the buffer (e.g., 'float32', 'int32')
    :type dtype: str
-   :param scope: The memory scope. Defaults to "local.var"
+   :param \*args: Optional positional arguments. A single positional string is treated
+                  as the scope for backward compatibility. A single non-string positional
+                  argument (or keyword ``init``) specifies the initializer. When two
+                  positional arguments are provided, they are interpreted as
+                  ``(init, scope)``.
+   :param scope: The memory scope. Defaults to "local.var".
+                 Use as keyword argument for clarity when also providing an initializer.
    :type scope: str, optional
+   :param init: The optional initializer value. When provided,
+                the generated code will initialize the variable with this value instead
+                of defaulting to zero.
+   :type init: PrimExpr, optional
 
    :returns: A TVM buffer object allocated as a single-element variable
    :rtype: T.Buffer
