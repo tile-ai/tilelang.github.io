@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="tilelang" href="../autoapi/tilelang/index.html"><link rel="prev" title="LetStmt Inlining in TileLang" href="letstmt_inline.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Debugging Tile Language Programs" href="../tutorials/debug_tools_for_tilelang.html"><link rel="prev" title="The Tile Language: A Brief Introduction" href="overview.html">
         <link rel="prefetch" href="../_static/img/logo-row.svg" as="image">
         <link rel="prefetch" href="../_static/img/logo-row.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>InjectFenceProxy Pass - Tile Language 0.1.6.post1 documentation</title>
+        <title>Understanding Targets - Tile Language 0.1.6.post1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -199,10 +199,10 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">GET STARTED</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../get_started/Installation.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../get_started/overview.html">The Tile Language: A Brief Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../get_started/targets.html">Understanding Targets</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">The Tile Language: A Brief Introduction</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Understanding Targets</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
 <ul>
@@ -217,9 +217,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../deeplearning_operators/deepseek_mla.html">🚀 Write High Performance FlashMLA with TileLang on Hopper</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">COMPILER INTERNALS</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">InjectFenceProxy Pass</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -461,7 +461,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/compiler_internals/inject_fence_proxy.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/get_started/targets.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -479,113 +479,186 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="injectfenceproxy-pass">
-<h1>InjectFenceProxy Pass<a class="headerlink" href="#injectfenceproxy-pass" title="Link to this heading">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">tl.InjectFenceProxy</span></code> is a TIR-level transform that keeps the GPU proxy state consistent on NVIDIA Hopper (SM90+) by inserting <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> instructions when control flow switches from generic memory operations to asynchronous proxy operations.</p>
-<section id="why-fences-are-needed">
-<h2>Why Fences Are Needed<a class="headerlink" href="#why-fences-are-needed" title="Link to this heading">¶</a></h2>
-<p>Hopper separates memory instructions into generic and asynchronous proxy paths. When an asynchronous instruction (for example, <code class="docutils literal notranslate"><span class="pre">cp.async</span></code> or <code class="docutils literal notranslate"><span class="pre">tma.load</span></code>) issues after generic traffic (like <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code> or plain buffer stores), the hardware requires a <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> to guarantee ordering. Missing fences can lead to race conditions or undefined behavior.</p>
-</section>
-<section id="what-the-pass-does">
-<h2>What the Pass Does<a class="headerlink" href="#what-the-pass-does" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Walks every statement in the <code class="docutils literal notranslate"><span class="pre">PrimFunc</span></code>, tracking whether it behaves as a <strong>generic</strong>, <strong>async</strong>, or <strong>neutral</strong> proxy (neutral statements reset the state, such as an explicit fence).</p></li>
-<li><p>Automatically lowers <code class="docutils literal notranslate"><span class="pre">tma_store</span></code> intrinsics into the required <code class="docutils literal notranslate"><span class="pre">arrive</span></code>/<code class="docutils literal notranslate"><span class="pre">wait</span></code> handshake so that TMA stores participate correctly in synchronization.</p></li>
-<li><p>Injects an explicit <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> whenever a generic statement is followed by an async statement without an intervening neutral barrier.</p></li>
-</ul>
-<p>The pass is conservative: unknown extern calls are treated as async so that the fence is inserted rather than accidentally omitted.</p>
-<section id="timeline-view">
-<h3>Timeline View<a class="headerlink" href="#timeline-view" title="Link to this heading">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>generic initialize_descriptor → generic shared-store → async wgmma
-             │                           │                   │
-             └─ generic proxy            ┴─ generic proxy    ┴─ async proxy
-                         │        fence inserted here   ↑
-                         └──────────────────────────────┘
+          <section id="understanding-targets">
+<h1>Understanding Targets<a class="headerlink" href="#understanding-targets" title="Link to this heading">¶</a></h1>
+<p>TileLang is built on top of TVM, which relies on <strong>targets</strong> to describe the device you want to compile for.
+The target determines which code generator is used (CUDA, HIP, Metal, LLVM, …) and allows you to pass
+device-specific options such as GPU architecture flags. This page summarises how to pick and customise a target
+when compiling TileLang programs.</p>
+<section id="common-target-strings">
+<h2>Common target strings<a class="headerlink" href="#common-target-strings" title="Link to this heading">¶</a></h2>
+<p>TileLang ships with a small set of common targets; each accepts the full range of TVM options so you can fine-tune
+the generated code. The most frequent choices are listed below:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Base name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p></td>
+<td><p>Detects CUDA → HIP → Metal in that order. Useful when running the same script across machines.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cuda</span></code></p></td>
+<td><p>NVIDIA GPUs. Supports options such as <code class="docutils literal notranslate"><span class="pre">-arch=sm_80</span></code>, <code class="docutils literal notranslate"><span class="pre">-max_num_threads=1024</span></code>, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hip</span></code></p></td>
+<td><p>AMD GPUs via ROCm. Options like <code class="docutils literal notranslate"><span class="pre">-mcpu=gfx90a</span></code> can be appended.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metal</span></code></p></td>
+<td><p>Apple Silicon GPUs (arm64 Macs).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">llvm</span></code></p></td>
+<td><p>CPU execution; accepts the standard TVM LLVM switches.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">webgpu</span></code></p></td>
+<td><p>Browser / WebGPU runtimes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">c</span></code></p></td>
+<td><p>Emit plain C source for inspection or custom toolchains.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>To add options, append them after the base name, separated by spaces. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;cuda -arch=sm_90&quot;</span>
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">execution_backend</span><span class="o">=</span><span class="s2">&quot;cython&quot;</span><span class="p">)</span>
+<span class="c1"># or</span>
+<span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compiled_kernel</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The proxy tracker scans the sequence from left to right. The moment it detects a transition from generic to async (between the store and <code class="docutils literal notranslate"><span class="pre">cp.async</span></code> above), it synthesizes a <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> to reset the hardware proxy state before the async path runs.</p>
+<p>The same convention works for HIP or LLVM (e.g. <code class="docutils literal notranslate"><span class="pre">hip</span> <span class="pre">-mcpu=gfx940</span></code>, <code class="docutils literal notranslate"><span class="pre">llvm</span> <span class="pre">-mtriple=x86_64-linux-gnu</span></code>).</p>
+<section id="advanced-specify-exact-hardware">
+<h3>Advanced: Specify Exact Hardware<a class="headerlink" href="#advanced-specify-exact-hardware" title="Link to this heading">¶</a></h3>
+<p>When you already know the precise GPU model, you can encode it in the target string—either via <code class="docutils literal notranslate"><span class="pre">-arch=sm_XX</span></code> or by
+using one of TVM’s pre-defined target tags such as <code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-h100</span></code>.  Supplying this detail is optional for
+TileLang in general use, but it becomes valuable when the TVM cost model is enabled (e.g. during autotuning).  The
+cost model uses the extra attributes to make better scheduling predictions.  If you skip this step (or do not use the
+cost model), generic targets like <code class="docutils literal notranslate"><span class="pre">cuda</span></code> or <code class="docutils literal notranslate"><span class="pre">auto</span></code> are perfectly fine.</p>
+<p>All CUDA compute capabilities recognised by TVM’s target registry are listed below.  Pick the one that matches your
+GPU and append it to the target string or use the corresponding target tag—for example <code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-a100</span></code>.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Architecture</p></th>
+<th class="head"><p>GPUs (examples)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sm_20</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/tesla-c2050</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/tesla-c2070</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sm_21</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/nvs-5400m</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/geforce-gt-520</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sm_30</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/quadro-k5000</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/geforce-gtx-780m</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sm_35</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/tesla-k40</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/quadro-k6000</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sm_37</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/tesla-k80</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sm_50</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/quadro-k2200</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/geforce-gtx-950m</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sm_52</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/tesla-m40</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/geforce-gtx-980</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sm_53</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/jetson-tx1</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/jetson-nano</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sm_60</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/tesla-p100</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/quadro-gp100</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sm_61</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/tesla-p4</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/quadro-p6000</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/geforce-gtx-1080</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sm_62</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/jetson-tx2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sm_70</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-v100</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/quadro-gv100</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sm_72</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/jetson-agx-xavier</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sm_75</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-t4</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/quadro-rtx-8000</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/geforce-rtx-2080</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sm_80</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-a100</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-a30</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sm_86</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-a40</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-a10</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/geforce-rtx-3090</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sm_87</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/jetson-agx-orin-32gb</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia/jetson-agx-orin-64gb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sm_89</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/geforce-rtx-4090</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sm_90a</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-h100</span></code> (DPX profile)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sm_100a</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-b100</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Refer to NVIDIA’s <a class="reference external" href="https://developer.nvidia.com/cuda-gpus">CUDA GPUs</a> page or the TVM source
+(<code class="docutils literal notranslate"><span class="pre">3rdparty/tvm/src/target/tag.cc</span></code>) for the latest mapping between devices and compute capabilities.</p>
 </section>
 </section>
-<section id="coverage-of-intrinsics">
-<h2>Coverage of Intrinsics<a class="headerlink" href="#coverage-of-intrinsics" title="Link to this heading">¶</a></h2>
-<p>The tracker understands the TileLang intrinsics for TMA load/store, shared-memory MMA (<code class="docutils literal notranslate"><span class="pre">wgmma</span></code>), and TVM/PTX async copy intrinsics (<code class="docutils literal notranslate"><span class="pre">cp.async</span></code> variants). Generic operations currently include <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">stmatrix</span></code>, and descriptor initialization. Other IR nodes (loops, blocks, attributes) receive a proxy kind derived from their bodies so that the analysis survives structured control flow.</p>
-</section>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
-<p>The pass is part of the default TileLang lowering pipeline. To apply it manually:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang</span><span class="w"> </span><span class="kn">import</span> <span class="n">tl</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tvm</span><span class="w"> </span><span class="kn">import</span> <span class="n">IRModule</span>
+<section id="creating-targets-programmatically">
+<h2>Creating targets programmatically<a class="headerlink" href="#creating-targets-programmatically" title="Link to this heading">¶</a></h2>
+<p>If you prefer working with TVM’s <code class="docutils literal notranslate"><span class="pre">Target</span></code> objects, TileLang exposes the helper
+<code class="docutils literal notranslate"><span class="pre">tilelang.utils.target.determine_target</span></code> (returns a canonical target string by default, or the <code class="docutils literal notranslate"><span class="pre">Target</span></code>
+object when <code class="docutils literal notranslate"><span class="pre">return_object=True</span></code>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.utils.target</span><span class="w"> </span><span class="kn">import</span> <span class="n">determine_target</span>
 
-<span class="n">mod</span> <span class="o">=</span> <span class="n">IRModule</span><span class="p">({</span><span class="s2">&quot;main&quot;</span><span class="p">:</span> <span class="n">prim_func</span><span class="p">})</span>
-<span class="k">with</span> <span class="n">tvm</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">PassContext</span><span class="p">():</span>
-    <span class="n">mod</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">InjectFenceProxy</span><span class="p">()(</span><span class="n">mod</span><span class="p">)</span>
+<span class="n">tvm_target</span> <span class="o">=</span> <span class="n">determine_target</span><span class="p">(</span><span class="s2">&quot;cuda -arch=sm_80&quot;</span><span class="p">,</span> <span class="n">return_object</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">tvm_target</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>You can also build targets directly through TVM:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tvm.target</span><span class="w"> </span><span class="kn">import</span> <span class="n">Target</span>
+
+<span class="n">target</span> <span class="o">=</span> <span class="n">Target</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">with_host</span><span class="p">(</span><span class="n">Target</span><span class="p">(</span><span class="s2">&quot;llvm -mcpu=skylake&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>TileLang accepts either <code class="docutils literal notranslate"><span class="pre">str</span></code> or <code class="docutils literal notranslate"><span class="pre">Target</span></code> inputs; internally they are normalised and cached using the canonical
+string representation.  <strong>In user code we strongly recommend passing target strings rather than
+<code class="docutils literal notranslate"><span class="pre">tvm.target.Target</span></code> instances—strings keep cache keys compact and deterministic across runs, whereas constructing
+fresh <code class="docutils literal notranslate"><span class="pre">Target</span></code> objects may lead to slightly higher hashing overhead or inconsistent identity semantics.</strong></p>
 </section>
-<section id="end-to-end-example">
-<h2>End-to-End Example<a class="headerlink" href="#end-to-end-example" title="Link to this heading">¶</a></h2>
-<p>Before the pass:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">():</span>
-    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">&quot;uint64&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;local.descriptor&quot;</span><span class="p">)</span>
-        <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;shared&quot;</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">initialize_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
-        <span class="n">smem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">ptx_wgmma_ss</span><span class="p">(</span>
-            <span class="s2">&quot;float16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;m64n64k16&quot;</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">smem</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">1</span><span class="p">,</span>
-        <span class="p">)</span>
+<section id="discovering-supported-targets-in-code">
+<h2>Discovering supported targets in code<a class="headerlink" href="#discovering-supported-targets-in-code" title="Link to this heading">¶</a></h2>
+<p>Looking for a quick reminder of the built-in base names and their descriptions? Use:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.utils.target</span><span class="w"> </span><span class="kn">import</span> <span class="n">describe_supported_targets</span>
+
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">describe_supported_targets</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>After <code class="docutils literal notranslate"><span class="pre">tl.transform.InjectFenceProxy</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">():</span>
-    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">&quot;uint64&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;local.descriptor&quot;</span><span class="p">)</span>
-        <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;shared&quot;</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">initialize_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
-        <span class="n">smem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">fence_proxy_async</span><span class="p">()</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">ptx_wgmma_ss</span><span class="p">(</span>
-            <span class="s2">&quot;float16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;m64n64k16&quot;</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">smem</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">1</span><span class="p">,</span>
-        <span class="p">)</span>
-</pre></div>
-</div>
-<p>The only change is the <code class="docutils literal notranslate"><span class="pre">fence_proxy_async</span></code> between the generic descriptor setup / shared-memory write and the async <code class="docutils literal notranslate"><span class="pre">wgmma</span></code>. In larger kernels the pass performs the same operation across nested blocks, loops, and conditional branches.</p>
+<p>This helper mirrors the table above and is safe to call at runtime (for example when validating CLI arguments).</p>
 </section>
-<section id="extending-the-pass">
-<h2>Extending the Pass<a class="headerlink" href="#extending-the-pass" title="Link to this heading">¶</a></h2>
-<p>If you introduce a new intrinsic that behaves like an async proxy, add it to <code class="docutils literal notranslate"><span class="pre">IsAsyncIntrinsic</span></code> in <code class="docutils literal notranslate"><span class="pre">src/transform/inject_fence_proxy.cc</span></code>. Likewise, extend <code class="docutils literal notranslate"><span class="pre">IsKnownGeneric</span></code> for additional generic operations. When adding new neutral barriers, make sure they set the proxy kind to <code class="docutils literal notranslate"><span class="pre">kNeutral</span></code> so the state resets correctly.</p>
+<section id="troubleshooting-tips">
+<h2>Troubleshooting tips<a class="headerlink" href="#troubleshooting-tips" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>If you see <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">cuda</span> <span class="pre">-arch=sm_80</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">supported</span></code>, double-check the spellings and that the option is valid for
+TVM. Any invalid switch will surface as a target-construction error.</p></li>
+<li><p>Runtime errors such as “no kernel image is available” usually mean the <code class="docutils literal notranslate"><span class="pre">-arch</span></code> flag does not match the GPU you are
+running on. Try dropping the flag or switching to the correct compute capability.</p></li>
+<li><p>When targeting multiple environments, use <code class="docutils literal notranslate"><span class="pre">auto</span></code> for convenience and override with an explicit string only when
+you need architecture-specific tuning.</p></li>
+</ul>
 </section>
 </section>
 
@@ -594,23 +667,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../autoapi/tilelang/index.html">
+          <a class="next-page" href="../tutorials/debug_tools_for_tilelang.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">tilelang</div>
+                <div class="title">Debugging Tile Language Programs</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="letstmt_inline.html">
+          <a class="prev-page" href="overview.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">LetStmt Inlining in TileLang</div>
+                <div class="title">The Tile Language: A Brief Introduction</div>
                 
               </div>
             </a>
@@ -644,16 +717,14 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">InjectFenceProxy Pass</a><ul>
-<li><a class="reference internal" href="#why-fences-are-needed">Why Fences Are Needed</a></li>
-<li><a class="reference internal" href="#what-the-pass-does">What the Pass Does</a><ul>
-<li><a class="reference internal" href="#timeline-view">Timeline View</a></li>
+<li><a class="reference internal" href="#">Understanding Targets</a><ul>
+<li><a class="reference internal" href="#common-target-strings">Common target strings</a><ul>
+<li><a class="reference internal" href="#advanced-specify-exact-hardware">Advanced: Specify Exact Hardware</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#coverage-of-intrinsics">Coverage of Intrinsics</a></li>
-<li><a class="reference internal" href="#usage">Usage</a></li>
-<li><a class="reference internal" href="#end-to-end-example">End-to-End Example</a></li>
-<li><a class="reference internal" href="#extending-the-pass">Extending the Pass</a></li>
+<li><a class="reference internal" href="#creating-targets-programmatically">Creating targets programmatically</a></li>
+<li><a class="reference internal" href="#discovering-supported-targets-in-code">Discovering supported targets in code</a></li>
+<li><a class="reference internal" href="#troubleshooting-tips">Troubleshooting tips</a></li>
 </ul>
 </li>
 </ul>
