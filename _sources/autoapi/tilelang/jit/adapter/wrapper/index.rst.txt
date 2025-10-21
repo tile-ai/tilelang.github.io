@@ -18,6 +18,7 @@ Attributes
    tilelang.jit.adapter.wrapper.L2_PERSISTENT_MAP_INIT_FUNC
    tilelang.jit.adapter.wrapper.L2_PERSISTENT_MAP_RESET_HANDLE
    tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC
+   tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC
    tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC_PY
    tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_PY
    tilelang.jit.adapter.wrapper.logger
@@ -257,6 +258,50 @@ Module Contents
       
       	CUresult {0}_result = CUTLASS_CUDA_DRIVER_WRAPPER_CALL(cuTensorMapEncodeTiled)(
           &{0}, {0}_type, {0}_tensorRank, {0}_globalAddress, {0}_globalDim, {0}_globalStride + 1, {0}_boxDim, {0}_elementStrides, {0}_interleave, {0}_swizzle, {0}_l2Promotion, {0}_oobFill);
+      
+      	if ({0}_result != CUDA_SUCCESS) {{
+      		std::stringstream ss;
+      		ss << "Error: Failed to initialize the TMA descriptor {0}";
+      		snprintf(error_buf, ERROR_BUF_SIZE, "%s", ss.str().c_str());
+      		return -1;
+      	}}
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: TMA_IM2COL_DESC_INIT_FUNC
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      	CUtensorMap {0};
+      	CUtensorMapDataType {0}_type= (CUtensorMapDataType){1};
+      	cuuint32_t {0}_tensorRank= {2};
+      	void *{0}_globalAddress= {3};
+      	cuuint64_t {0}_globalDim[{2}]= {{{4}}};
+      	cuuint64_t {0}_globalStride[{2}]= {{{5}}};
+      	cuuint32_t {0}_elementStrides[{2}]= {{{6}}};
+      	int {0}_lowerCorner[{2} - 2]= {{{7}}};
+      	int {0}_upperCorner[{2} - 2]= {{{8}}};
+      	cuuint32_t {0}_channelsPerPixel= {9};
+      	cuuint32_t {0}_pixelsPerColumn= {10};
+      	CUtensorMapInterleave {0}_interleave= (CUtensorMapInterleave){11};
+      	CUtensorMapSwizzle {0}_swizzle= (CUtensorMapSwizzle){12};
+      	CUtensorMapL2promotion {0}_l2Promotion= (CUtensorMapL2promotion){13};
+      	CUtensorMapFloatOOBfill {0}_oobFill= (CUtensorMapFloatOOBfill){14};
+      
+      	CUresult {0}_result = CUTLASS_CUDA_DRIVER_WRAPPER_CALL(cuTensorMapEncodeIm2col)(
+          &{0}, {0}_type, {0}_tensorRank, {0}_globalAddress, {0}_globalDim, {0}_globalStride + 1,
+          {0}_lowerCorner, {0}_upperCorner, {0}_channelsPerPixel, {0}_pixelsPerColumn, {0}_elementStrides, {0}_interleave, {0}_swizzle, {0}_l2Promotion, {0}_oobFill);
       
       	if ({0}_result != CUDA_SUCCESS) {{
       		std::stringstream ss;

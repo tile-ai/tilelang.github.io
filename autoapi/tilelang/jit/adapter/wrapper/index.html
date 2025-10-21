@@ -513,13 +513,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC" title="tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TMA_DESC_INIT_FUNC</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC_PY" title="tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC_PY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TMA_DESC_INIT_FUNC_PY</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC" title="tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TMA_IM2COL_DESC_INIT_FUNC</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_PY" title="tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_PY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KERNEL_LAUNCH_FUNC_PY</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC_PY" title="tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC_PY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TMA_DESC_INIT_FUNC_PY</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.logger" title="tilelang.jit.adapter.wrapper.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_PY" title="tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_PY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KERNEL_LAUNCH_FUNC_PY</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.logger" title="tilelang.jit.adapter.wrapper.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -699,6 +702,41 @@
 
 <span class="sd">  CUresult {0}_result = CUTLASS_CUDA_DRIVER_WRAPPER_CALL(cuTensorMapEncodeTiled)(</span>
 <span class="sd">    &amp;{0}, {0}_type, {0}_tensorRank, {0}_globalAddress, {0}_globalDim, {0}_globalStride + 1, {0}_boxDim, {0}_elementStrides, {0}_interleave, {0}_swizzle, {0}_l2Promotion, {0}_oobFill);</span>
+
+<span class="sd">  if ({0}_result != CUDA_SUCCESS) {{</span>
+<span class="sd">          std::stringstream ss;</span>
+<span class="sd">          ss &lt;&lt; &quot;Error: Failed to initialize the TMA descriptor {0}&quot;;</span>
+<span class="sd">          snprintf(error_buf, ERROR_BUF_SIZE, &quot;%s&quot;, ss.str().c_str());</span>
+<span class="sd">          return -1;</span>
+<span class="sd">  }}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">TMA_IM2COL_DESC_INIT_FUNC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  CUtensorMap {0};</span>
+<span class="sd">  CUtensorMapDataType {0}_type= (CUtensorMapDataType){1};</span>
+<span class="sd">  cuuint32_t {0}_tensorRank= {2};</span>
+<span class="sd">  void *{0}_globalAddress= {3};</span>
+<span class="sd">  cuuint64_t {0}_globalDim[{2}]= {{{4}}};</span>
+<span class="sd">  cuuint64_t {0}_globalStride[{2}]= {{{5}}};</span>
+<span class="sd">  cuuint32_t {0}_elementStrides[{2}]= {{{6}}};</span>
+<span class="sd">  int {0}_lowerCorner[{2} - 2]= {{{7}}};</span>
+<span class="sd">  int {0}_upperCorner[{2} - 2]= {{{8}}};</span>
+<span class="sd">  cuuint32_t {0}_channelsPerPixel= {9};</span>
+<span class="sd">  cuuint32_t {0}_pixelsPerColumn= {10};</span>
+<span class="sd">  CUtensorMapInterleave {0}_interleave= (CUtensorMapInterleave){11};</span>
+<span class="sd">  CUtensorMapSwizzle {0}_swizzle= (CUtensorMapSwizzle){12};</span>
+<span class="sd">  CUtensorMapL2promotion {0}_l2Promotion= (CUtensorMapL2promotion){13};</span>
+<span class="sd">  CUtensorMapFloatOOBfill {0}_oobFill= (CUtensorMapFloatOOBfill){14};</span>
+
+<span class="sd">  CUresult {0}_result = CUTLASS_CUDA_DRIVER_WRAPPER_CALL(cuTensorMapEncodeIm2col)(</span>
+<span class="sd">    &amp;{0}, {0}_type, {0}_tensorRank, {0}_globalAddress, {0}_globalDim, {0}_globalStride + 1,</span>
+<span class="sd">    {0}_lowerCorner, {0}_upperCorner, {0}_channelsPerPixel, {0}_pixelsPerColumn, {0}_elementStrides, {0}_interleave, {0}_swizzle, {0}_l2Promotion, {0}_oobFill);</span>
 
 <span class="sd">  if ({0}_result != CUDA_SUCCESS) {{</span>
 <span class="sd">          std::stringstream ss;</span>
@@ -1457,6 +1495,7 @@ inheritance.</p>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.L2_PERSISTENT_MAP_INIT_FUNC"><code class="docutils literal notranslate"><span class="pre">L2_PERSISTENT_MAP_INIT_FUNC</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.L2_PERSISTENT_MAP_RESET_HANDLE"><code class="docutils literal notranslate"><span class="pre">L2_PERSISTENT_MAP_RESET_HANDLE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC"><code class="docutils literal notranslate"><span class="pre">TMA_DESC_INIT_FUNC</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC"><code class="docutils literal notranslate"><span class="pre">TMA_IM2COL_DESC_INIT_FUNC</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC_PY"><code class="docutils literal notranslate"><span class="pre">TMA_DESC_INIT_FUNC_PY</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_PY"><code class="docutils literal notranslate"><span class="pre">KERNEL_LAUNCH_FUNC_PY</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.BaseWrapper"><code class="docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a><ul>
