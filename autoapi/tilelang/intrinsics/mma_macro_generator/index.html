@@ -524,8 +524,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.mma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">TensorCoreIntrinEmitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_row_warps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_col_warps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_row_tiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_col_tiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_elems_per_byte</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_m_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>To eliminate Python syntax within TIR Macro.</p>
+<dd><p>To eliminate Python syntax within TIR Macro.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -541,8 +540,8 @@
 <li><p><strong>chunk</strong> (<em>int</em>)</p></li>
 <li><p><strong>reduce_k</strong> (<em>int</em>)</p></li>
 <li><p><strong>num_elems_per_byte</strong> (<em>int</em>)</p></li>
-<li><p><strong>is_m_first</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
-<li><p><strong>thread_var</strong> (<em>Optional</em><em>[</em><em>tvm.tir.Var</em><em>]</em>)</p></li>
+<li><p><strong>is_m_first</strong> (<em>bool</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>thread_var</strong> (<em>tvm.tir.Var</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -669,11 +668,11 @@ Otherwise, it is in the form of [warp_size, block_col_warps (split m), block_row
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>thread_id</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>is_m_first</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
+<li><p><strong>is_m_first</strong> (<em>bool</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Tuple[tvm.tir.PrimExpr, tvm.tir.PrimExpr, tvm.tir.PrimExpr]</p>
+<dd class="field-even"><p>tuple[tvm.tir.PrimExpr, tvm.tir.PrimExpr, tvm.tir.PrimExpr]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -687,7 +686,7 @@ Otherwise, it is in the form of [warp_size, block_col_warps (split m), block_row
 <li><p><strong>A_local_buf</strong> (<em>tvm.tir.Buffer</em>)</p></li>
 <li><p><strong>A_shared_buf</strong> (<em>tvm.tir.Buffer</em>)</p></li>
 <li><p><strong>ki</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>rk</strong> (<em>Optional</em><em>[</em><em>tvm.tir.PrimExpr</em><em>]</em>)</p></li>
+<li><p><strong>rk</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -702,7 +701,7 @@ Otherwise, it is in the form of [warp_size, block_col_warps (split m), block_row
 <li><p><strong>B_local_buf</strong> (<em>tvm.tir.Buffer</em>)</p></li>
 <li><p><strong>B_shared_buf</strong> (<em>tvm.tir.Buffer</em>)</p></li>
 <li><p><strong>ki</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>rk</strong> (<em>Optional</em><em>[</em><em>tvm.tir.PrimExpr</em><em>]</em>)</p></li>
+<li><p><strong>rk</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -717,7 +716,7 @@ Otherwise, it is in the form of [warp_size, block_col_warps (split m), block_row
 <li><p><strong>A_local_buf</strong> (<em>tvm.tir.Buffer</em>)</p></li>
 <li><p><strong>B_local_buf</strong> (<em>tvm.tir.Buffer</em>)</p></li>
 <li><p><strong>C_local_buf</strong> (<em>tvm.tir.Buffer</em>)</p></li>
-<li><p><strong>k_inner</strong> (<em>Optional</em><em>[</em><em>tvm.tir.PrimExpr</em><em>]</em>)</p></li>
+<li><p><strong>k_inner</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -800,9 +799,9 @@ With Ladder Transform Plugin.</p>
 <li><p><strong>chunk</strong> (<em>int</em>)</p></li>
 <li><p><strong>reduce_k</strong> (<em>int</em>)</p></li>
 <li><p><strong>num_elems_per_byte</strong> (<em>int</em>)</p></li>
-<li><p><strong>is_m_first</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
-<li><p><strong>transform_kind_a</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>tilelang.common.TransformKind</em><em>]</em>)</p></li>
-<li><p><strong>transform_kind_b</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>tilelang.common.TransformKind</em><em>]</em>)</p></li>
+<li><p><strong>is_m_first</strong> (<em>bool</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>transform_kind_a</strong> (<em>int</em><em> | </em><em>tilelang.common.TransformKind</em>)</p></li>
+<li><p><strong>transform_kind_b</strong> (<em>int</em><em> | </em><em>tilelang.common.TransformKind</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -843,8 +842,8 @@ With Ladder Transform Plugin.</p>
 <li><p><strong>chunk</strong> (<em>int</em>)</p></li>
 <li><p><strong>reduce_k</strong> (<em>int</em>)</p></li>
 <li><p><strong>num_elems_per_byte</strong> (<em>int</em>)</p></li>
-<li><p><strong>is_m_first</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
-<li><p><strong>thread_var</strong> (<em>Optional</em><em>[</em><em>tvm.tir.Var</em><em>]</em>)</p></li>
+<li><p><strong>is_m_first</strong> (<em>bool</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>thread_var</strong> (<em>tvm.tir.Var</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -876,9 +875,9 @@ With Ladder Transform Plugin.</p>
 <li><p><strong>chunk</strong> (<em>int</em>)</p></li>
 <li><p><strong>reduce_k</strong> (<em>int</em>)</p></li>
 <li><p><strong>num_elems_per_byte</strong> (<em>int</em>)</p></li>
-<li><p><strong>is_m_first</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>)</p></li>
-<li><p><strong>transform_kind_a</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>tilelang.common.TransformKind</em><em>]</em>)</p></li>
-<li><p><strong>transform_kind_b</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>tilelang.common.TransformKind</em><em>]</em>)</p></li>
+<li><p><strong>is_m_first</strong> (<em>bool</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>transform_kind_a</strong> (<em>int</em><em> | </em><em>tilelang.common.TransformKind</em>)</p></li>
+<li><p><strong>transform_kind_b</strong> (<em>int</em><em> | </em><em>tilelang.common.TransformKind</em>)</p></li>
 </ul>
 </dd>
 </dl>
