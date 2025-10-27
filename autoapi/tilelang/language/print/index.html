@@ -482,7 +482,7 @@
           <section id="module-tilelang.language.print">
 <span id="tilelang-language-print"></span><h1>tilelang.language.print<a class="headerlink" href="#module-tilelang.language.print" title="Link to this heading">¶</a></h1>
 <p>This module provides macros and utilities for debugging TileLang (tl) programs.
-It includes functionality to print variables, print values in buffers, and conditionally execute debug prints.</p>
+It includes functionality to print variables, print values in buffers, conditionally execute debug prints and assert.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -506,7 +506,10 @@ It includes functionality to print variables, print values in buffers, and condi
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.print.print_local_buffer_with_condition" title="tilelang.language.print.print_local_buffer_with_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_local_buffer_with_condition</span></code></a>(condition, buffer, elems)</p></td>
 <td><p>Conditionally prints the values of a flattened TIR buffer if the condition is True.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.print.print" title="tilelang.language.print.print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>(obj[, msg, warp_group_id, warp_id])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.print.device_assert" title="tilelang.language.print.device_assert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_assert</span></code></a>(condition[, msg])</p></td>
+<td><p>Device-side assert emulation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.print.print" title="tilelang.language.print.print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>(obj[, msg, warp_group_id, warp_id])</p></td>
 <td><p>A generic print function that handles both TIR buffers and primitive expressions.</p></td>
 </tr>
 </tbody>
@@ -642,6 +645,22 @@ It includes functionality to print variables, print values in buffers, and condi
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.print.device_assert">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.print.</span></span><span class="sig-name descname"><span class="pre">device_assert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.print.device_assert" title="Link to this definition">¶</a></dt>
+<dd><p>Device-side assert emulation.
+Emits a device-side assert call on CUDA targets when CUDA is available.
+The assert is always enabled and cannot be disabled at runtime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>condition</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>msg</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.print.print">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.print.</span></span><span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_group_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.print.print" title="Link to this definition">¶</a></dt>
 <dd><p>A generic print function that handles both TIR buffers and primitive expressions.</p>
@@ -738,6 +757,7 @@ It includes functionality to print variables, print values in buffers, and condi
 <li><a class="reference internal" href="#tilelang.language.print.print_shared_buffer_with_condition"><code class="docutils literal notranslate"><span class="pre">print_shared_buffer_with_condition()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.print.print_fragment_buffer_with_condition"><code class="docutils literal notranslate"><span class="pre">print_fragment_buffer_with_condition()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.print.print_local_buffer_with_condition"><code class="docutils literal notranslate"><span class="pre">print_local_buffer_with_condition()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.print.device_assert"><code class="docutils literal notranslate"><span class="pre">device_assert()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.print.print"><code class="docutils literal notranslate"><span class="pre">print()</span></code></a></li>
 </ul>
 </li>

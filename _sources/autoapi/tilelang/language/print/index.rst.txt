@@ -6,7 +6,7 @@ tilelang.language.print
 .. autoapi-nested-parse::
 
    This module provides macros and utilities for debugging TileLang (tl) programs.
-   It includes functionality to print variables, print values in buffers, and conditionally execute debug prints.
+   It includes functionality to print variables, print values in buffers, conditionally execute debug prints and assert.
 
 
 
@@ -21,6 +21,7 @@ Functions
    tilelang.language.print.print_shared_buffer_with_condition
    tilelang.language.print.print_fragment_buffer_with_condition
    tilelang.language.print.print_local_buffer_with_condition
+   tilelang.language.print.device_assert
    tilelang.language.print.print
 
 
@@ -99,6 +100,13 @@ Module Contents
 
    :returns: The TIR expression for the debug print operation.
    :rtype: tir.PrimExpr
+
+
+.. py:function:: device_assert(condition, msg = '')
+
+   Device-side assert emulation.
+   Emits a device-side assert call on CUDA targets when CUDA is available.
+   The assert is always enabled and cannot be disabled at runtime.
 
 
 .. py:function:: print(obj, msg = '', warp_group_id = 0, warp_id = 0)
