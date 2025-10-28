@@ -85,7 +85,8 @@ Module Contents
    :rtype: T.Buffer
 
 
-.. py:function:: alloc_var(dtype, *args, scope='local.var', init = None)
+.. py:function:: alloc_var(dtype: str, init: tvm.tir.PrimExpr | int | float, scope: str = 'local.var') -> tvm.tir.buffer.Buffer
+                 alloc_var(dtype: str, scope: str = 'local.var', *, init: tvm.tir.PrimExpr | int | float | None = None) -> tvm.tir.buffer.Buffer
 
    Allocate a single-element variable buffer.
 
@@ -103,6 +104,14 @@ Module Contents
                 the generated code will initialize the variable with this value instead
                 of defaulting to zero.
    :type init: PrimExpr, optional
+
+   .. rubric:: Examples
+
+   a = T.alloc_var('int32', 1) # var with init 1
+   a = T.alloc_var('int32', 'local.var') # var with local.var scope
+   a = T.alloc_var('int32', 1, 'local.var') # var with init 1 and local.var scope
+   a = T.alloc_var('int32', 'local.var', init=1) # var with init 1 and local.var scope
+   a = T.alloc_var('int32', init=1) # var with init 1 and local.var scope
 
    :returns: A TVM buffer object allocated as a single-element variable
    :rtype: T.Buffer

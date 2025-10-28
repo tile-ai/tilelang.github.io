@@ -511,7 +511,7 @@ with the appropriate memory scope.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_fragment" title="tilelang.language.allocate.alloc_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_fragment</span></code></a>(shape, dtype[, scope])</p></td>
 <td><p>Allocate a fragment memory buffer for specialized operations.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_var" title="tilelang.language.allocate.alloc_var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_var</span></code></a>(dtype, *args[, scope, init])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_var" title="tilelang.language.allocate.alloc_var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_var</span></code></a>(…)</p></td>
 <td><p>Allocate a single-element variable buffer.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_barrier" title="tilelang.language.allocate.alloc_barrier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_barrier</span></code></a>(arrive_count)</p></td>
@@ -597,7 +597,9 @@ with the appropriate memory scope.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.allocate.alloc_var">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'local.var'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_var" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tvm.tir.PrimExpr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'local.var'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tvm.tir.buffer.Buffer</span></span></span><a class="headerlink" href="#tilelang.language.allocate.alloc_var" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'local.var'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tvm.tir.PrimExpr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tvm.tir.buffer.Buffer</span></span></span></dt>
 <dd><p>Allocate a single-element variable buffer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -615,11 +617,19 @@ the generated code will initialize the variable with this value instead
 of defaulting to zero.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A TVM buffer object allocated as a single-element variable</p>
+</dl>
+<p class="rubric">Examples</p>
+<p>a = T.alloc_var(‘int32’, 1) # var with init 1
+a = T.alloc_var(‘int32’, ‘local.var’) # var with local.var scope
+a = T.alloc_var(‘int32’, 1, ‘local.var’) # var with init 1 and local.var scope
+a = T.alloc_var(‘int32’, ‘local.var’, init=1) # var with init 1 and local.var scope
+a = T.alloc_var(‘int32’, init=1) # var with init 1 and local.var scope</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A TVM buffer object allocated as a single-element variable</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>T.Buffer</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>T.Buffer</p>
 </dd>
 </dl>
 </dd></dl>
