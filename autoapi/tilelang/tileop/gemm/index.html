@@ -409,6 +409,7 @@
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">tilelang.tileop</a><input aria-label="Toggle navigation of tilelang.tileop" checked="" class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l3 current has-children current-page"><a class="current reference internal" href="#">tilelang.tileop.gemm</a><input aria-label="Toggle navigation of tilelang.tileop.gemm" checked="" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemm_mfma/index.html">tilelang.tileop.gemm.gemm_mfma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
@@ -486,6 +487,7 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gemm_mfma/index.html">tilelang.tileop.gemm.gemm_mfma</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
@@ -544,13 +546,18 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.WGMMMA">
-<span class="sig-name descname"><span class="pre">WGMMMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.WGMMMA" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.WGMMA">
+<span class="sig-name descname"><span class="pre">WGMMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.WGMMA" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.TCGEN5MMA">
+<span class="sig-name descname"><span class="pre">TCGEN5MMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.TCGEN5MMA" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.MFMA">
-<span class="sig-name descname"><span class="pre">MFMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.MFMA" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">MFMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.MFMA" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -566,6 +573,16 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.is_wgmma">
 <span class="sig-name descname"><span class="pre">is_wgmma</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.is_wgmma" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.GemmInst.is_tcgen5mma">
+<span class="sig-name descname"><span class="pre">is_tcgen5mma</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.GemmInst.is_tcgen5mma" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -783,10 +800,12 @@
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_py_lower"><code class="docutils literal notranslate"><span class="pre">gemm_py_lower()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst"><code class="docutils literal notranslate"><span class="pre">GemmInst</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.MMA"><code class="docutils literal notranslate"><span class="pre">GemmInst.MMA</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.WGMMMA"><code class="docutils literal notranslate"><span class="pre">GemmInst.WGMMMA</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.WGMMA"><code class="docutils literal notranslate"><span class="pre">GemmInst.WGMMA</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.TCGEN5MMA"><code class="docutils literal notranslate"><span class="pre">GemmInst.TCGEN5MMA</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.MFMA"><code class="docutils literal notranslate"><span class="pre">GemmInst.MFMA</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.is_mma"><code class="docutils literal notranslate"><span class="pre">GemmInst.is_mma()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.is_wgmma"><code class="docutils literal notranslate"><span class="pre">GemmInst.is_wgmma()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.is_tcgen5mma"><code class="docutils literal notranslate"><span class="pre">GemmInst.is_tcgen5mma()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.GemmInst.is_mfma"><code class="docutils literal notranslate"><span class="pre">GemmInst.is_mfma()</span></code></a></li>
 </ul>
 </li>

@@ -26,7 +26,7 @@ Module Contents
 
 .. py:data:: lift
 
-.. py:class:: MatrixCoreIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float16', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, k_pack = None, is_m_first = False, b_preshuffle = False)
+.. py:class:: MatrixCoreIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float16', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, k_pack = None, is_m_first = False, b_preshuffle = False, thread_var = None)
 
    To eliminate Python syntax within TIR Macro.
 
@@ -134,7 +134,18 @@ Module Contents
 
 
 
+   .. py:attribute:: thread_var
+      :value: None
+
+
+
    .. py:method:: get_ldmatrix_index_map(is_b=False)
+
+
+   .. py:method:: get_store_index_map(inverse = False)
+
+
+   .. py:method:: get_thread_binding()
 
 
    .. py:method:: extract_thread_binding(thread_id, is_m_first=None)
@@ -151,10 +162,40 @@ Module Contents
    .. py:method:: ldmatrix_b(B_local_buf, B_shared_buf, ki, rk=0)
 
 
-   .. py:method:: mfma(A_local_buf, B_local_buf, C_local_buf)
+   .. py:method:: mfma(A_local_buf, B_local_buf, C_local_buf, k_inner = 0)
 
 
    .. py:method:: stmatrix(C_local_buf, C_buf, pid_m=None, pid_n=None)
+
+
+   .. py:method:: make_mfma_load_layout(local_buf, matrix = 'A')
+
+      Create a layout function for storing MFMA results into a fragment buffer.
+
+      :param local_buf: The local buffer representing a fragment of a matrix.
+      :type local_buf: tir.Buffer
+
+      :returns: A fragment object that describes how threads and indices
+                in `local_buf` are laid out.
+      :rtype: T.Fragment
+
+      :raises AssertionError: If `local_buf` is not detected to be a fragment buffer.
+
+
+
+   .. py:method:: make_mfma_store_layout(local_buf)
+
+      Create a layout function for storing MFMA results into a fragment buffer.
+
+      :param local_buf: The local buffer representing a fragment of a matrix.
+      :type local_buf: tir.Buffer
+
+      :returns: A fragment object that describes how threads and indices
+                in `local_buf` are laid out.
+      :rtype: T.Fragment
+
+      :raises AssertionError: If `local_buf` is not detected to be a fragment buffer.
+
 
 
 .. py:class:: MatrixCorePreshuffleIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float16', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, k_pack = None, is_m_first = False, a_preshuffle = False, b_preshuffle = False)
