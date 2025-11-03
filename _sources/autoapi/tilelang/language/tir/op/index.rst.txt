@@ -61,6 +61,8 @@ Functions
    tilelang.language.tir.op.ptx_mma_sp
    tilelang.language.tir.op.ptx_wgmma_ss
    tilelang.language.tir.op.ptx_wgmma_rs
+   tilelang.language.tir.op.ptx_tcgen05_mma_ss
+   tilelang.language.tir.op.ptx_tcgen05_mma_ts
    tilelang.language.tir.op.mma_store
    tilelang.language.tir.op.mma_fill
    tilelang.language.tir.op.ptx_ldmatrix
@@ -867,7 +869,31 @@ Module Contents
    https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-for-wmma
 
 
-.. py:function:: ptx_wgmma_rs(dtype, wgmma_prefix, a_is_k_major, b_is_k_major, a_dtype_abbrv, b_dtype_abbrv, accum_dtype_abbrv, A_buf, A_offset, B_desc, B_offset, C_data, C_offset, scale_out, scale_in_a, scale_in_b)
+.. py:function:: ptx_wgmma_rs(dtype, wgmma_prefix, b_is_k_major, a_dtype_abbrv, b_dtype_abbrv, accum_dtype_abbrv, A_buf, A_offset, B_desc, B_offset, C_data, C_offset, scale_out, scale_in_a, scale_in_b)
+
+.. py:function:: ptx_tcgen05_mma_ss(kind_dtype, desc_a, A_offset, desc_b, B_offset, C_ptr, C_offset, desc_val, scale_out, mask0, mask1, mask2, mask3, enable_ws=False, ws=None, warp_specialized=None, variant=None)
+
+   TVM intrinsic for tcgen05.mma shared-memory × shared-memory instructions.
+
+   Expects 13 or 14 positional arguments:
+   (kind_dtype, desc_a, A_offset, desc_b, B_offset, C_ptr, C_offset,
+    desc_val, scale_out, mask0, mask1, mask2, mask3[, enable_ws]).
+   Aliases: you can also pass `ws` or `warp_specialized` (booleans) instead of `enable_ws`.
+   Alternatively, use `variant="ws"` (or "default").
+   - kind_dtype: instruction kind selector (e.g., "float16" for kind::f16,
+     "tf32" for kind::tf32, "int8" for kind::i8, "float8_e4m3" for kind::f8f6f4).
+
+
+.. py:function:: ptx_tcgen05_mma_ts(kind_dtype, A_ptr, A_offset, desc_b, B_offset, C_ptr, C_offset, desc_val, scale_out, mask0, mask1, mask2, mask3)
+
+   TVM intrinsic for tcgen05.mma tensor-memory × shared-memory instructions.
+
+   Expects 13 positional arguments:
+   (kind_dtype, A_ptr, A_offset, desc_b, B_offset, C_ptr, C_offset,
+    desc_val, scale_out, mask0, mask1, mask2, mask3).
+   - kind_dtype: instruction kind selector (e.g., "float16" for kind::f16,
+     "tf32" for kind::tf32, "int8" for kind::i8, "float8_e4m3" for kind::f8f6f4).
+
 
 .. py:function:: mma_store(dtype, m, n, dst_ptr, src_ptr, src_offset, dst_stride)
 

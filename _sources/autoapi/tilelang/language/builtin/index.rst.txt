@@ -39,6 +39,7 @@ Functions
    tilelang.language.builtin.get_warp_idx
    tilelang.language.builtin.get_warp_group_idx
    tilelang.language.builtin.shuffle_elect
+   tilelang.language.builtin.warpgroup_fence_operand
    tilelang.language.builtin.wait_wgmma
    tilelang.language.builtin.barrier_wait
    tilelang.language.builtin.barrier_arrive
@@ -48,10 +49,12 @@ Functions
    tilelang.language.builtin.sync_threads
    tilelang.language.builtin.sync_global
    tilelang.language.builtin.sync_grid
-   tilelang.language.builtin.initialize_descriptor
+   tilelang.language.builtin.initialize_wgmma_descriptor
+   tilelang.language.builtin.initialize_tcgen05_descriptor
    tilelang.language.builtin.increase_descriptor_offset
    tilelang.language.builtin.loop_break
    tilelang.language.builtin.cp_async_barrier_noinc
+   tilelang.language.builtin.tcgen05_mma_arrive
 
 
 Module Contents
@@ -372,6 +375,27 @@ Module Contents
    `__shfl_sync`) to pick one lane per group.
 
 
+.. py:function:: warpgroup_fence_operand(buffer_or_ptr, offset = 0, num_regs = None, dtype = None)
+
+   Insert a warpgroup fence for the destination accumulator registers.
+
+   This prevents NVCC from sinking uses of accumulator fragments past the corresponding
+   WGMMA operations by issuing an empty inline assembly barrier on every register.
+
+   :param buffer_or_ptr: Buffer | PrimExpr
+                         Either a buffer representing the accumulator fragment or a pointer expression.
+   :param offset: int | PrimExpr
+                  Element offset from the start of the accumulator fragment.
+   :param num_regs: int | PrimExpr | None
+                    Number of 32-bit registers to fence. If None and a Buffer is provided, it will be
+                    derived from the buffer shape and dtype.
+   :param dtype: str | None
+                 Data type string of the accumulator elements. Required when passing a pointer.
+
+   :returns: A handle to the warpgroup fence operation.
+   :rtype: tir.Call
+
+
 .. py:function:: wait_wgmma(id)
 
    Wait for WGMMA (Warp Group Matrix Multiply-Accumulate) operations to complete.
@@ -453,23 +477,14 @@ Module Contents
 
 
 
-.. py:function:: initialize_descriptor(descriptor, start_address, layout_type_ = 0, leading_byte_offset = 0, stride_byte_offset = 0)
+.. py:function:: initialize_wgmma_descriptor(descriptor, start_address, layout_type_ = 0, leading_byte_offset = 0, stride_byte_offset = 0)
 
-   Initialize a memory descriptor with the given parameters.
+   Initialize a WGMMA/UTCMMA shared-memory descriptor.
 
-   :param descriptor: The memory descriptor to initialize.
-   :type descriptor: Buffer
-   :param start_address: The starting address of the memory region.
-   :type start_address: PrimExpr
-   :param layout_type_: Layout type identifier. Defaults to 0.
-   :type layout_type_: int, optional
-   :param leading_byte_offset: Leading byte offset. Defaults to 0.
-   :type leading_byte_offset: int, optional
-   :param stride_byte_offset: Stride byte offset. Defaults to 0.
-   :type stride_byte_offset: int, optional
 
-   :returns: A handle representing the initialized descriptor.
-   :rtype: PrimExpr
+.. py:function:: initialize_tcgen05_descriptor(descriptor, start_address, leading_byte_offset, stride_byte_offset, base_offset = 0, leading_is_absolute = False, swizzle_mode = 0)
+
+   Initialize a TCGEN05 shared-memory descriptor.
 
 
 .. py:function:: increase_descriptor_offset(descriptor, offset)
@@ -495,5 +510,13 @@ Module Contents
 
    Perform a ptx async copy barrier using cp.async.mbarrier.arrive.noinc.
 
+
+
+.. py:function:: tcgen05_mma_arrive(mbar_ptr)
+
+   Signal UMMA (TCGEN05) barrier arrival for a shared-memory mbarrier pointer.
+
+   :param mbar_ptr: Pointer to the mbarrier object in shared memory (e.g., Barrier*).
+   :type mbar_ptr: PrimExpr
 
 

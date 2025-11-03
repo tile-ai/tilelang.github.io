@@ -22,6 +22,14 @@ tilelang.language.allocate
 
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.language.allocate.DescKind
+
+
 Functions
 ---------
 
@@ -35,6 +43,10 @@ Functions
    tilelang.language.allocate.alloc_tmem
    tilelang.language.allocate.alloc_reducer
    tilelang.language.allocate.alloc_descriptor
+   tilelang.language.allocate.alloc_wgmma_desc
+   tilelang.language.allocate.alloc_tcgen05_smem_desc
+   tilelang.language.allocate.alloc_tcgen05_instruction_desc
+   tilelang.language.allocate.alloc_tcgen05_instr_desc
 
 
 Module Contents
@@ -181,11 +193,23 @@ Module Contents
    :rtype: T.Buffer
 
 
-.. py:function:: alloc_descriptor(dtype='uint64', scope='local.descriptor')
+.. py:data:: DescKind
 
-   Allocate a descriptor buffer for wgmma and utcmma.
+.. py:function:: alloc_descriptor(kind = 'wgmma', dtype = 'uint64')
+
+   Allocate a descriptor buffer for WGMMA and TCGEN5.MMA.
+
+   :param kind: The descriptor kind, one of "wgmma", "tcgen05" ("utcmma" as alias).
 
    :returns: A TVM buffer object allocated as a descriptor
    :rtype: T.Buffer
 
+
+.. py:function:: alloc_wgmma_desc(dtype = 'uint64')
+
+.. py:function:: alloc_tcgen05_smem_desc(dtype = 'uint64')
+
+.. py:function:: alloc_tcgen05_instruction_desc(dtype = 'uint32')
+
+.. py:function:: alloc_tcgen05_instr_desc(dtype = 'uint32')
 

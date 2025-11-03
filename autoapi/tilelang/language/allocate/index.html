@@ -307,6 +307,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mfma_macro_generator/index.html">tilelang.intrinsics.mfma_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/tcgen05_macro_generator/index.html">tilelang.intrinsics.tcgen05_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
 </ul>
@@ -411,6 +412,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mfma/index.html">tilelang.tileop.gemm.gemm_mfma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_tcgen05/index.html">tilelang.tileop.gemm.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
 </li>
@@ -497,6 +499,18 @@ interfaces for different memory scopes.</p>
 </dl>
 <p>Each function takes shape and dtype parameters and returns a TVM buffer object
 with the appropriate memory scope.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.DescKind" title="tilelang.language.allocate.DescKind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DescKind</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -523,8 +537,20 @@ with the appropriate memory scope.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_reducer" title="tilelang.language.allocate.alloc_reducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_reducer</span></code></a>(shape, dtype[, op, replication])</p></td>
 <td><p>Allocate a reducer buffer.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_descriptor" title="tilelang.language.allocate.alloc_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_descriptor</span></code></a>([dtype, scope])</p></td>
-<td><p>Allocate a descriptor buffer for wgmma and utcmma.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_descriptor" title="tilelang.language.allocate.alloc_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_descriptor</span></code></a>([kind, dtype])</p></td>
+<td><p>Allocate a descriptor buffer for WGMMA and TCGEN5.MMA.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_wgmma_desc" title="tilelang.language.allocate.alloc_wgmma_desc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_wgmma_desc</span></code></a>([dtype])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_tcgen05_smem_desc" title="tilelang.language.allocate.alloc_tcgen05_smem_desc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_tcgen05_smem_desc</span></code></a>([dtype])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_tcgen05_instruction_desc" title="tilelang.language.allocate.alloc_tcgen05_instruction_desc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_tcgen05_instruction_desc</span></code></a>([dtype])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_tcgen05_instr_desc" title="tilelang.language.allocate.alloc_tcgen05_instr_desc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_tcgen05_instr_desc</span></code></a>([dtype])</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -716,16 +742,67 @@ You may want to use <cite>T.max_value</cite> for min and <cite>T.min_value</cite
 </dl>
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.language.allocate.DescKind">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">DescKind</span></span><a class="headerlink" href="#tilelang.language.allocate.DescKind" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.allocate.alloc_descriptor">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uint64'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'local.descriptor'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_descriptor" title="Link to this definition">¶</a></dt>
-<dd><p>Allocate a descriptor buffer for wgmma and utcmma.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'wgmma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uint64'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_descriptor" title="Link to this definition">¶</a></dt>
+<dd><p>Allocate a descriptor buffer for WGMMA and TCGEN5.MMA.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A TVM buffer object allocated as a descriptor</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> (<em>DescKind</em>) – The descriptor kind, one of “wgmma”, “tcgen05” (“utcmma” as alias).</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>)</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>T.Buffer</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A TVM buffer object allocated as a descriptor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>T.Buffer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.allocate.alloc_wgmma_desc">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_wgmma_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uint64'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_wgmma_desc" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dtype</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.allocate.alloc_tcgen05_smem_desc">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_tcgen05_smem_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uint64'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_tcgen05_smem_desc" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dtype</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.allocate.alloc_tcgen05_instruction_desc">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_tcgen05_instruction_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uint32'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_tcgen05_instruction_desc" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dtype</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.allocate.alloc_tcgen05_instr_desc">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_tcgen05_instr_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uint32'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_tcgen05_instr_desc" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dtype</strong> (<em>str</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -789,6 +866,7 @@ You may want to use <cite>T.max_value</cite> for min and <cite>T.min_value</cite
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.language.allocate</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.language.allocate.alloc_shared"><code class="docutils literal notranslate"><span class="pre">alloc_shared()</span></code></a></li>
@@ -798,7 +876,12 @@ You may want to use <cite>T.max_value</cite> for min and <cite>T.min_value</cite
 <li><a class="reference internal" href="#tilelang.language.allocate.alloc_barrier"><code class="docutils literal notranslate"><span class="pre">alloc_barrier()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.allocate.alloc_tmem"><code class="docutils literal notranslate"><span class="pre">alloc_tmem()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.allocate.alloc_reducer"><code class="docutils literal notranslate"><span class="pre">alloc_reducer()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.allocate.DescKind"><code class="docutils literal notranslate"><span class="pre">DescKind</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.allocate.alloc_descriptor"><code class="docutils literal notranslate"><span class="pre">alloc_descriptor()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.allocate.alloc_wgmma_desc"><code class="docutils literal notranslate"><span class="pre">alloc_wgmma_desc()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.allocate.alloc_tcgen05_smem_desc"><code class="docutils literal notranslate"><span class="pre">alloc_tcgen05_smem_desc()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.allocate.alloc_tcgen05_instruction_desc"><code class="docutils literal notranslate"><span class="pre">alloc_tcgen05_instruction_desc()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.allocate.alloc_tcgen05_instr_desc"><code class="docutils literal notranslate"><span class="pre">alloc_tcgen05_instr_desc()</span></code></a></li>
 </ul>
 </li>
 </ul>

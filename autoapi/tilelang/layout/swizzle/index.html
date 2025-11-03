@@ -307,6 +307,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mfma_macro_generator/index.html">tilelang.intrinsics.mfma_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/tcgen05_macro_generator/index.html">tilelang.intrinsics.tcgen05_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
 </ul>
@@ -411,6 +412,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mfma/index.html">tilelang.tileop.gemm.gemm_mfma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_tcgen05/index.html">tilelang.tileop.gemm.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
 </li>
@@ -494,16 +496,19 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_wgmma_swizzled_layout" title="tilelang.layout.swizzle.make_wgmma_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wgmma_swizzled_layout</span></code></a>(buffer[, continuity, k_major])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_full_bank_swizzled_layout" title="tilelang.layout.swizzle.make_full_bank_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_full_bank_swizzled_layout</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_tcgen05mma_swizzled_layout" title="tilelang.layout.swizzle.make_tcgen05mma_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_tcgen05mma_swizzled_layout</span></code></a>(buffer[, continuity, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_half_bank_swizzled_layout" title="tilelang.layout.swizzle.make_half_bank_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_half_bank_swizzled_layout</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_full_bank_swizzled_layout" title="tilelang.layout.swizzle.make_full_bank_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_full_bank_swizzled_layout</span></code></a>(*args)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_quarter_bank_swizzled_layout" title="tilelang.layout.swizzle.make_quarter_bank_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_quarter_bank_swizzled_layout</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_half_bank_swizzled_layout" title="tilelang.layout.swizzle.make_half_bank_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_half_bank_swizzled_layout</span></code></a>(*args)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_linear_layout" title="tilelang.layout.swizzle.make_linear_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_linear_layout</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_quarter_bank_swizzled_layout" title="tilelang.layout.swizzle.make_quarter_bank_swizzled_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_quarter_bank_swizzled_layout</span></code></a>(*args)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_linear_layout" title="tilelang.layout.swizzle.make_linear_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_linear_layout</span></code></a>(*args)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -529,6 +534,20 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.layout.swizzle.make_wgmma_swizzled_layout">
 <span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_wgmma_swizzled_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">continuity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_major</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_wgmma_swizzled_layout" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em>)</p></li>
+<li><p><strong>continuity</strong> (<em>int</em>)</p></li>
+<li><p><strong>k_major</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.swizzle.make_tcgen05mma_swizzled_layout">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_tcgen05mma_swizzled_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">continuity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_major</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_tcgen05mma_swizzled_layout" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -655,6 +674,7 @@ make_linear_layout(stride, continuous)</p>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_swizzled_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_wgmma_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_wgmma_swizzled_layout()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.swizzle.make_tcgen05mma_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_tcgen05mma_swizzled_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_full_bank_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_full_bank_swizzled_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_half_bank_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_half_bank_swizzled_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_quarter_bank_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_quarter_bank_swizzled_layout()</span></code></a></li>

@@ -1,0 +1,141 @@
+tilelang.intrinsics.tcgen05_macro_generator
+===========================================
+
+.. py:module:: tilelang.intrinsics.tcgen05_macro_generator
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.intrinsics.tcgen05_macro_generator.lift
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.intrinsics.tcgen05_macro_generator.SwizzleMode
+   tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter
+
+
+Module Contents
+---------------
+
+.. py:data:: lift
+
+.. py:class:: SwizzleMode
+
+   Bases: :py:obj:`enum.IntEnum`
+
+
+   Enum where members are also (and must be) ints
+
+
+   .. py:attribute:: NONE
+      :value: 0
+
+
+
+   .. py:attribute:: SWIZZLE_128B
+      :value: 2
+
+
+
+   .. py:attribute:: SWIZZLE_64B
+      :value: 4
+
+
+
+   .. py:attribute:: SWIZZLE_32B
+      :value: 6
+
+
+
+   .. py:method:: is_none()
+
+
+   .. py:method:: is_swizzle_32b()
+
+
+   .. py:method:: is_swizzle_64b()
+
+
+   .. py:method:: is_swizzle_128b()
+
+
+   .. py:method:: swizzle_byte_size()
+
+
+   .. py:method:: swizzle_atom_size()
+
+
+.. py:class:: TensorCoreIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float16', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, thread_var = None)
+
+   Bases: :py:obj:`tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter`
+
+
+   To eliminate Python syntax within TIR Macro.
+
+
+   .. py:attribute:: tcgen05_prefix
+      :type:  str
+
+
+   .. py:attribute:: a_shared_layout
+      :type:  tilelang.layout.Layout
+      :value: None
+
+
+
+   .. py:attribute:: b_shared_layout
+      :type:  tilelang.layout.Layout
+      :value: None
+
+
+
+   .. py:method:: tcgen05mma(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
+
+
+   .. py:method:: make_mma_load_layout(local_buf, matrix = 'A')
+      :abstractmethod:
+
+
+      Create a layout function for storing MMA results into a fragment buffer.
+      This layout is used in conjunction with `inverse_mma_store_layout` to
+      map fragment indices to threads and local indices.
+
+      :param local_buf: The local buffer representing a fragment of a matrix.
+      :type local_buf: tir.Buffer
+
+      :returns: A fragment object that describes how threads and indices
+                in `local_buf` are laid out.
+      :rtype: T.Fragment
+
+      :raises AssertionError: If `local_buf` is not detected to be a fragment buffer.
+
+
+
+   .. py:method:: make_mma_store_layout(tmem_buf)
+
+      Create the TCGEN5 tensor-memory layout used to store MMA accumulators.
+
+      :param tmem_buf: The local buffer representing tensormemory of a mma's output
+      :type tmem_buf: tir.Buffer
+
+      :returns: Layout object describing how logical (i, j) coordinates map to the
+                swizzled tensor-memory offsets required by TCGEN5MMA.
+      :rtype: Layout
+
+      :raises AssertionError: If `tmem_buf` is not detected to be a tensor-memory buffer.
+
+
+
+   .. py:method:: get_tcgen5_mma_meta(m, n, k)
+
+
+   .. py:method:: get_tcgen5_instr_desc(atom_m, atom_n, atom_k, a_is_k_major, b_is_k_major, scale_in_a, scale_in_b)
+
+

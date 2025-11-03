@@ -307,6 +307,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../intrinsics/mfma_macro_generator/index.html">tilelang.intrinsics.mfma_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../intrinsics/tcgen05_macro_generator/index.html">tilelang.intrinsics.tcgen05_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
 </ul>
@@ -411,6 +412,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm/gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm/gemm_mfma/index.html">tilelang.tileop.gemm.gemm_mfma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm/gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm/gemm_tcgen05/index.html">tilelang.tileop.gemm.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm/gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
 </li>
@@ -628,8 +630,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_ss" title="tilelang.language.tir.op.ptx_wgmma_ss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_wgmma_ss</span></code></a>(dtype, wgmma_prefix, a_is_k_major, ...)</p></td>
 <td><p>TVM intrinsic for ptx tensor core wmma instructions</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_rs" title="tilelang.language.tir.op.ptx_wgmma_rs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_wgmma_rs</span></code></a>(dtype, wgmma_prefix, a_is_k_major, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_rs" title="tilelang.language.tir.op.ptx_wgmma_rs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_wgmma_rs</span></code></a>(dtype, wgmma_prefix, b_is_k_major, ...)</p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_tcgen05_mma_ss" title="tilelang.language.tir.op.ptx_tcgen05_mma_ss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_tcgen05_mma_ss</span></code></a>(kind_dtype, desc_a, A_offset, ...)</p></td>
+<td><p>TVM intrinsic for tcgen05.mma shared-memory × shared-memory instructions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_tcgen05_mma_ts" title="tilelang.language.tir.op.ptx_tcgen05_mma_ts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_tcgen05_mma_ts</span></code></a>(kind_dtype, A_ptr, A_offset, ...)</p></td>
+<td><p>TVM intrinsic for tcgen05.mma tensor-memory × shared-memory instructions.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.mma_store" title="tilelang.language.tir.op.mma_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mma_store</span></code></a>(dtype, m, n, dst_ptr, src_ptr, src_offset, ...)</p></td>
 <td><p>TVM intrinsic for storing the result of PTX MMA into a destination pointer</p></td>
@@ -1824,8 +1832,40 @@ the intrinsic translation rule.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.tir.op.ptx_wgmma_rs">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_wgmma_rs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wgmma_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_wgmma_rs" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_wgmma_rs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wgmma_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_wgmma_rs" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.tir.op.ptx_tcgen05_mma_ss">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_tcgen05_mma_ss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_specialized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_tcgen05_mma_ss" title="Link to this definition">¶</a></dt>
+<dd><p>TVM intrinsic for tcgen05.mma shared-memory × shared-memory instructions.</p>
+<p>Expects 13 or 14 positional arguments:
+(kind_dtype, desc_a, A_offset, desc_b, B_offset, C_ptr, C_offset,</p>
+<blockquote>
+<div><p>desc_val, scale_out, mask0, mask1, mask2, mask3[, enable_ws]).</p>
+</div></blockquote>
+<p>Aliases: you can also pass <cite>ws</cite> or <cite>warp_specialized</cite> (booleans) instead of <cite>enable_ws</cite>.
+Alternatively, use <cite>variant=”ws”</cite> (or “default”).
+- kind_dtype: instruction kind selector (e.g., “float16” for kind::f16,</p>
+<blockquote>
+<div><p>“tf32” for kind::tf32, “int8” for kind::i8, “float8_e4m3” for kind::f8f6f4).</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.tir.op.ptx_tcgen05_mma_ts">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_tcgen05_mma_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_tcgen05_mma_ts" title="Link to this definition">¶</a></dt>
+<dd><p>TVM intrinsic for tcgen05.mma tensor-memory × shared-memory instructions.</p>
+<p>Expects 13 positional arguments:
+(kind_dtype, A_ptr, A_offset, desc_b, B_offset, C_ptr, C_offset,</p>
+<blockquote>
+<div><p>desc_val, scale_out, mask0, mask1, mask2, mask3).</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>kind_dtype: instruction kind selector (e.g., “float16” for kind::f16,
+“tf32” for kind::tf32, “int8” for kind::i8, “float8_e4m3” for kind::f8f6f4).</p></li>
+</ul>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.tir.op.mma_store">
@@ -3986,6 +4026,8 @@ list_handle: Var</p>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_mma_sp"><code class="docutils literal notranslate"><span class="pre">ptx_mma_sp()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_ss"><code class="docutils literal notranslate"><span class="pre">ptx_wgmma_ss()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_rs"><code class="docutils literal notranslate"><span class="pre">ptx_wgmma_rs()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.tir.op.ptx_tcgen05_mma_ss"><code class="docutils literal notranslate"><span class="pre">ptx_tcgen05_mma_ss()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.tir.op.ptx_tcgen05_mma_ts"><code class="docutils literal notranslate"><span class="pre">ptx_tcgen05_mma_ts()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.mma_store"><code class="docutils literal notranslate"><span class="pre">mma_store()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.mma_fill"><code class="docutils literal notranslate"><span class="pre">mma_fill()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_ldmatrix"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix()</span></code></a></li>

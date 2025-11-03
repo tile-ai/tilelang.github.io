@@ -307,6 +307,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mfma_macro_generator/index.html">tilelang.intrinsics.mfma_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/tcgen05_macro_generator/index.html">tilelang.intrinsics.tcgen05_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
 </ul>
@@ -411,6 +412,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_mfma/index.html">tilelang.tileop.gemm.gemm_mfma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_tcgen05/index.html">tilelang.tileop.gemm.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
 </li>
@@ -497,7 +499,7 @@
 <p>The pass is conservative: unknown extern calls are treated as async so that the fence is inserted rather than accidentally omitted.</p>
 <section id="timeline-view">
 <h3>Timeline View<a class="headerlink" href="#timeline-view" title="Link to this heading">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>generic initialize_descriptor → generic shared-store → async wgmma
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>generic initialize_wgmma_descriptor → generic shared-store → async wgmma
              │                           │                   │
              └─ generic proxy            ┴─ generic proxy    ┴─ async proxy
                          │        fence inserted here   ↑
@@ -531,7 +533,7 @@
     <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">&quot;uint64&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;local.descriptor&quot;</span><span class="p">)</span>
         <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;shared&quot;</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">initialize_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">initialize_wgmma_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
         <span class="n">smem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">T</span><span class="o">.</span><span class="n">ptx_wgmma_ss</span><span class="p">(</span>
             <span class="s2">&quot;float16&quot;</span><span class="p">,</span>
@@ -559,7 +561,7 @@
     <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">&quot;uint64&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;local.descriptor&quot;</span><span class="p">)</span>
         <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;shared&quot;</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">initialize_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">initialize_wgmma_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
         <span class="n">smem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">T</span><span class="o">.</span><span class="n">fence_proxy_async</span><span class="p">()</span>
         <span class="n">T</span><span class="o">.</span><span class="n">ptx_wgmma_ss</span><span class="p">(</span>

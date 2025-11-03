@@ -307,6 +307,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mfma_macro_generator/index.html">tilelang.intrinsics.mfma_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/tcgen05_macro_generator/index.html">tilelang.intrinsics.tcgen05_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
 </ul>
@@ -411,6 +412,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mfma/index.html">tilelang.tileop.gemm.gemm_mfma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_tcgen05/index.html">tilelang.tileop.gemm.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
 </li>
@@ -496,22 +498,25 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.is_shared_dynamic" title="tilelang.utils.language.is_shared_dynamic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_shared_dynamic</span></code></a>(buffer)</p></td>
 <td><p>Check if the buffer is in the dynamic shared memory scope.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.is_local" title="tilelang.utils.language.is_local"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_local</span></code></a>(buffer)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.is_tensor_memory" title="tilelang.utils.language.is_tensor_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_tensor_memory</span></code></a>(buffer)</p></td>
+<td><p>Check if the buffer is in tensor memory scope (e.g., shared.tmem).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.is_local" title="tilelang.utils.language.is_local"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_local</span></code></a>(buffer)</p></td>
 <td><p>Check if the buffer is in the local memory scope.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.is_fragment" title="tilelang.utils.language.is_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_fragment</span></code></a>(buffer)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.is_fragment" title="tilelang.utils.language.is_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_fragment</span></code></a>(buffer)</p></td>
 <td><p>Check if the buffer is a fragment (e.g., for matrix multiplication operations).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.get_buffer_elems" title="tilelang.utils.language.get_buffer_elems"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer_elems</span></code></a>(buffer)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.get_buffer_elems" title="tilelang.utils.language.get_buffer_elems"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer_elems</span></code></a>(buffer)</p></td>
 <td><p>Get the number of elements in the buffer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.array_reduce" title="tilelang.utils.language.array_reduce"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array_reduce</span></code></a>(array)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.array_reduce" title="tilelang.utils.language.array_reduce"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array_reduce</span></code></a>(array)</p></td>
 <td><p>Reduce an array of integers to a single integer.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.retrieve_func_from_module" title="tilelang.utils.language.retrieve_func_from_module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_func_from_module</span></code></a>(ir_module)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.retrieve_func_from_module" title="tilelang.utils.language.retrieve_func_from_module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_func_from_module</span></code></a>(ir_module)</p></td>
 <td><p>Retrieve the single PrimFunc from an IRModule.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.get_buffer_region_from_load" title="tilelang.utils.language.get_buffer_region_from_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer_region_from_load</span></code></a>(buffer_load)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.get_buffer_region_from_load" title="tilelang.utils.language.get_buffer_region_from_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer_region_from_load</span></code></a>(buffer_load)</p></td>
 <td><p>Get the buffer region from a buffer load.</p></td>
 </tr>
 </tbody>
@@ -567,6 +572,23 @@
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if the buffer is in dynamic shared memory, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.is_tensor_memory">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">is_tensor_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.is_tensor_memory" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the buffer is in tensor memory scope (e.g., shared.tmem).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>Buffer</em>) – The TVM buffer to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the buffer is in tensor memory, False otherwise.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -744,6 +766,7 @@ convert load to region</p>
 <li><a class="reference internal" href="#tilelang.utils.language.is_global"><code class="docutils literal notranslate"><span class="pre">is_global()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.is_shared"><code class="docutils literal notranslate"><span class="pre">is_shared()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.is_shared_dynamic"><code class="docutils literal notranslate"><span class="pre">is_shared_dynamic()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.is_tensor_memory"><code class="docutils literal notranslate"><span class="pre">is_tensor_memory()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.is_local"><code class="docutils literal notranslate"><span class="pre">is_local()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.is_fragment"><code class="docutils literal notranslate"><span class="pre">is_fragment()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.get_buffer_elems"><code class="docutils literal notranslate"><span class="pre">get_buffer_elems()</span></code></a></li>
