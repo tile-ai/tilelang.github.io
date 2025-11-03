@@ -31,12 +31,21 @@ Attributes
    tilelang.jit.logger
 
 
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.jit.JITImpl
+
+
 Functions
 ---------
 
 .. autoapisummary::
 
    tilelang.jit.compile
+   tilelang.jit.par_compile
    tilelang.jit.jit
 
 
@@ -65,7 +74,112 @@ Package Contents
    :type pass_configs: dict, optional
 
 
-.. py:function:: jit(func = None, *, out_idx = None, target = 'auto', target_host = None, execution_backend = 'cython', verbose = False, pass_configs = None, debug_root_path = None, compile_flags = None)
+.. py:function:: par_compile(funcs, out_idx = None, execution_backend = 'cython', target = 'auto', target_host = None, verbose = False, pass_configs = None, compile_flags = None, num_workers = None, ignore_error = False)
+
+   Parallel compile multiple TileLang PrimFunc with TVM and build JITKernels.
+   :param funcs: The TileLang TIR functions to compile and wrap.
+   :type funcs: Iterable[tvm.tir.PrimFunc]
+   :param out_idx: Index(es) of the output tensors to return (default: None).
+   :type out_idx: Union[List[int], int], optional
+   :param execution_backend: Execution backend to use for kernel execution (default: "cython").
+   :type execution_backend: Literal["dlpack", "ctypes", "cython", "nvrtc"], optional
+   :param target: Compilation target, either as a string or a TVM Target object (default: "auto").
+   :type target: Union[str, Target], optional
+   :param target_host: Target host for cross-compilation (default: None).
+   :type target_host: Union[str, Target], optional
+   :param verbose: Whether to enable verbose output (default: False).
+   :type verbose: bool, optional
+   :param pass_configs: Additional keyword arguments to pass to the Compiler PassContext.
+                        Refer to `tilelang.transform.PassConfigKey` for supported options.
+   :type pass_configs: dict, optional
+
+
+.. py:class:: JITImpl
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_KP`\ , :py:obj:`_T`\ ]
+
+
+   Abstract base class for generic types.
+
+   A generic type is typically declared by inheriting from
+   this class parameterized with one or more type variables.
+   For example, a generic mapping type might be defined as::
+
+     class Mapping(Generic[KT, VT]):
+         def __getitem__(self, key: KT) -> VT:
+             ...
+         # Etc.
+
+   This class can then be used as follows::
+
+     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
+         try:
+             return mapping[key]
+         except KeyError:
+             return default
+
+
+   .. py:attribute:: func
+      :type:  Callable[_P, _T] | tilelang.language.v2.PrimFunc[_KP, _T]
+
+
+   .. py:attribute:: out_idx
+      :type:  list[int] | int | None
+
+
+   .. py:attribute:: execution_backend
+      :type:  Literal['dlpack', 'ctypes', 'cython']
+
+
+   .. py:attribute:: target
+      :type:  str | tvm.target.Target
+
+
+   .. py:attribute:: target_host
+      :type:  str | tvm.target.Target
+
+
+   .. py:attribute:: verbose
+      :type:  bool
+
+
+   .. py:attribute:: pass_configs
+      :type:  dict[str, Any] | None
+
+
+   .. py:attribute:: debug_root_path
+      :type:  str | None
+
+
+   .. py:attribute:: compile_flags
+      :type:  list[str] | str | None
+
+
+   .. py:attribute:: func_source
+      :type:  str
+
+
+   .. py:attribute:: signature
+      :type:  inspect.Signature
+
+
+   .. py:method:: __post_init__()
+
+
+   .. py:method:: get_tir(*args, **kwargs)
+
+
+   .. py:method:: par_compile(configs, num_workers = None, ignore_error = False)
+
+
+   .. py:method:: compile(*args, **kwargs)
+
+
+   .. py:method:: __call__(*args, **kwargs)
+
+
+.. py:function:: jit(func: Callable[_P, tilelang.language.v2.PrimFunc[_KP, _T]]) -> JITImpl[_P, _KP, _T]
+                 jit(*, out_idx: Any = None, target: str | tvm.target.Target = 'auto', target_host: str | tvm.target.Target = None, execution_backend: Literal['dlpack', 'ctypes', 'cython', 'nvrtc'] = 'cython', verbose: bool = False, pass_configs: dict[str, Any] | None = None, debug_root_path: str | None = None, compile_flags: list[str] | str | None = None) -> Callable[[Callable[_P, tilelang.language.v2.PrimFunc[_KP, _T]]], JITImpl[_P, _KP, _T]]
 
    Just-In-Time (JIT) compiler decorator for TileLang functions.
 

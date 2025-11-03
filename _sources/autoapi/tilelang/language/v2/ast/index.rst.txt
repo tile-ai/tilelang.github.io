@@ -1,0 +1,370 @@
+tilelang.language.v2.ast
+========================
+
+.. py:module:: tilelang.language.v2.ast
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.language.v2.ast.Operator
+   tilelang.language.v2.ast.BoolOp
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.language.v2.ast.QuoteVisitor
+   tilelang.language.v2.ast.BaseBuilder
+   tilelang.language.v2.ast.DSLMutator
+   tilelang.language.v2.ast.IRGenerator
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.v2.ast.ast_has_span
+   tilelang.language.v2.ast.ast_get_span
+   tilelang.language.v2.ast.ast_set_span
+   tilelang.language.v2.ast.quote
+   tilelang.language.v2.ast.quote1
+   tilelang.language.v2.ast.quote_expr
+   tilelang.language.v2.ast.get_operator_name
+   tilelang.language.v2.ast.get_boolop_name
+   tilelang.language.v2.ast.eval_op
+   tilelang.language.v2.ast.eval_aug_assign
+   tilelang.language.v2.ast.mutate
+
+
+Module Contents
+---------------
+
+.. py:function:: ast_has_span(ast)
+
+.. py:function:: ast_get_span(ast)
+
+.. py:function:: ast_set_span(ast, span)
+
+.. py:class:: QuoteVisitor(names, passes = None, span=None)
+
+   Bases: :py:obj:`ast.NodeTransformer`
+
+
+   A :class:`NodeVisitor` subclass that walks the abstract syntax tree and
+   allows modification of nodes.
+
+   The `NodeTransformer` will walk the AST and use the return value of the
+   visitor methods to replace or remove the old node.  If the return value of
+   the visitor method is ``None``, the node will be removed from its location,
+   otherwise it is replaced with the return value.  The return value may be the
+   original node in which case no replacement takes place.
+
+   Here is an example transformer that rewrites all occurrences of name lookups
+   (``foo``) to ``data['foo']``::
+
+      class RewriteName(NodeTransformer):
+
+          def visit_Name(self, node):
+              return Subscript(
+                  value=Name(id='data', ctx=Load()),
+                  slice=Constant(value=node.id),
+                  ctx=node.ctx
+              )
+
+   Keep in mind that if the node you're operating on has child nodes you must
+   either transform the child nodes yourself or call the :meth:`generic_visit`
+   method for the node first.
+
+   For nodes that were part of a collection of statements (that applies to all
+   statement nodes), the visitor may also return a list of nodes rather than
+   just a single node.
+
+   Usually you use the transformer like this::
+
+      node = YourTransformer().visit(node)
+
+
+   .. py:attribute:: names
+
+
+   .. py:attribute:: passes
+      :value: []
+
+
+
+   .. py:attribute:: span
+      :value: None
+
+
+
+   .. py:method:: generic_visit(node)
+
+      Called if no explicit visitor function exists for a node.
+
+
+
+   .. py:method:: visit_Name(node)
+
+
+   .. py:method:: visit_Pass(node)
+
+
+.. py:function:: quote(expr, *, passes = None, span=None, **kws)
+
+.. py:function:: quote1(expr, *, passes = None, span=None, **kws)
+
+.. py:function:: quote_expr(expr, **kws)
+
+.. py:data:: Operator
+
+.. py:data:: BoolOp
+
+.. py:function:: get_operator_name(operator)
+
+.. py:function:: get_boolop_name(boolop)
+
+.. py:function:: eval_op(op, left, right)
+
+.. py:function:: eval_aug_assign(op, left, sl, right)
+
+.. py:class:: BaseBuilder
+
+   .. py:attribute:: empty
+
+
+   .. py:method:: get_parent_locals()
+
+
+   .. py:method:: ctx_if(cond)
+
+
+   .. py:method:: ctx_then(val)
+
+
+   .. py:method:: ctx_else(val)
+
+
+   .. py:method:: eval(val)
+
+
+   .. py:method:: ctx_for(range)
+
+
+   .. py:method:: ctx_continue()
+
+
+   .. py:method:: ctx_break()
+
+
+   .. py:method:: ctx_while(cond)
+
+
+   .. py:method:: bind(name, value, annot = empty)
+
+
+   .. py:method:: unwrap_value(value)
+
+
+   .. py:method:: assign_slice(lval, sl, value, annot = empty)
+
+
+   .. py:method:: aug_assign(op, target, aug_value)
+
+
+   .. py:method:: aug_assign_slice(op, target, sl, aug_value)
+
+
+   .. py:method:: boolop(op, left, right)
+
+
+   .. py:method:: ifexp(cond, then, otherwise)
+
+
+   .. py:method:: ret(value)
+
+
+   .. py:method:: ctx_with(ctx)
+
+
+   .. py:method:: assert_expr(cond, msg)
+
+
+   .. py:method:: rval(name, value)
+
+
+   .. py:method:: arg(name, value)
+
+
+   .. py:method:: override(name)
+
+
+.. py:class:: DSLMutator
+
+   Bases: :py:obj:`ast.NodeTransformer`
+
+
+   A :class:`NodeVisitor` subclass that walks the abstract syntax tree and
+   allows modification of nodes.
+
+   The `NodeTransformer` will walk the AST and use the return value of the
+   visitor methods to replace or remove the old node.  If the return value of
+   the visitor method is ``None``, the node will be removed from its location,
+   otherwise it is replaced with the return value.  The return value may be the
+   original node in which case no replacement takes place.
+
+   Here is an example transformer that rewrites all occurrences of name lookups
+   (``foo``) to ``data['foo']``::
+
+      class RewriteName(NodeTransformer):
+
+          def visit_Name(self, node):
+              return Subscript(
+                  value=Name(id='data', ctx=Load()),
+                  slice=Constant(value=node.id),
+                  ctx=node.ctx
+              )
+
+   Keep in mind that if the node you're operating on has child nodes you must
+   either transform the child nodes yourself or call the :meth:`generic_visit`
+   method for the node first.
+
+   For nodes that were part of a collection of statements (that applies to all
+   statement nodes), the visitor may also return a list of nodes rather than
+   just a single node.
+
+   Usually you use the transformer like this::
+
+      node = YourTransformer().visit(node)
+
+
+   .. py:attribute:: tmp_counter
+      :value: 0
+
+
+
+   .. py:method:: get_tmp()
+
+
+   .. py:method:: visit_If(node)
+
+
+   .. py:method:: visit_Expr(node)
+
+
+   .. py:method:: visit_For(node)
+
+
+   .. py:method:: visit_Continue(node)
+
+
+   .. py:method:: visit_Break(node)
+
+
+   .. py:method:: visit_Assign(node)
+
+
+   .. py:method:: visit_AugAssign(node)
+
+
+   .. py:method:: visit_AnnAssign(node)
+
+
+   .. py:method:: visit_While(node)
+
+
+   .. py:method:: visit_FunctionDef(node)
+
+
+   .. py:method:: visit_BoolOp(node)
+
+
+   .. py:method:: visit_Compare(node)
+
+
+   .. py:method:: visit_IfExp(node)
+
+
+   .. py:method:: visit_Return(node)
+
+
+   .. py:method:: visit_With(node)
+
+
+   .. py:method:: visit_Assert(node)
+
+
+   .. py:method:: visit_Name(node)
+
+
+.. py:class:: IRGenerator
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_T`\ ]
+
+
+   Abstract base class for generic types.
+
+   A generic type is typically declared by inheriting from
+   this class parameterized with one or more type variables.
+   For example, a generic mapping type might be defined as::
+
+     class Mapping(Generic[KT, VT]):
+         def __getitem__(self, key: KT) -> VT:
+             ...
+         # Etc.
+
+   This class can then be used as follows::
+
+     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
+         try:
+             return mapping[key]
+         except KeyError:
+             return default
+
+
+   .. py:attribute:: gen
+      :type:  Callable[[BaseBuilder], Callable[_P, _T]]
+
+
+   .. py:attribute:: source
+      :type:  str
+
+
+.. py:function:: mutate(func)
+
+   Transform a Python function into an IR (Intermediate Representation) generator.
+   This function takes a regular Python function and performs AST (Abstract Syntax Tree)
+   transformation to create an IRGenerator that can be used for code generation purposes.
+   :param func: The Python function to be transformed. This should be a
+                callable that will be analyzed and mutated at the AST level. The function's
+                signature is preserved through generic type parameters _P (parameters) and
+                _T (return type).
+   :type func: Callable[_P, _T]
+
+   :returns:
+
+             An IRGenerator instance wrapping the transformed function.
+                 The generator contains:
+                 - gen: The compiled and mutated version of the original function
+                 - source: The unparsed source code of the transformed AST as a string
+   :rtype: IRGenerator[_P, _T]
+
+   .. rubric:: Example
+
+   >>> @mutate
+   ... def my_function(x: int) -> int:
+   ...     return x * 2
+   >>> # my_function is now an IRGenerator that can be used for code generation
+
+   .. note::
+
+      - The original function's closure variables and captured context are preserved
+      - The transformation is performed at compile-time through AST manipulation
+      - The returned IRGenerator maintains type information from the original function
+
+

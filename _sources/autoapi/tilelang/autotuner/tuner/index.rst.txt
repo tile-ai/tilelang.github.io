@@ -34,6 +34,7 @@ Classes
 .. autoapisummary::
 
    tilelang.autotuner.tuner.AutoTuner
+   tilelang.autotuner.tuner.AutoTuneImpl
 
 
 Functions
@@ -199,6 +200,120 @@ Module Contents
       :returns: Results of the auto-tuning process.
       :rtype: AutotuneResult
 
+
+
+.. py:class:: AutoTuneImpl
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_T`\ ]
+
+
+   Abstract base class for generic types.
+
+   A generic type is typically declared by inheriting from
+   this class parameterized with one or more type variables.
+   For example, a generic mapping type might be defined as::
+
+     class Mapping(Generic[KT, VT]):
+         def __getitem__(self, key: KT) -> VT:
+             ...
+         # Etc.
+
+   This class can then be used as follows::
+
+     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
+         try:
+             return mapping[key]
+         except KeyError:
+             return default
+
+
+   .. py:attribute:: jit_impl
+      :type:  tilelang.jit.JITImpl
+
+
+   .. py:attribute:: warmup
+      :type:  int
+      :value: 25
+
+
+
+   .. py:attribute:: rep
+      :type:  int
+      :value: 100
+
+
+
+   .. py:attribute:: timeout
+      :type:  int
+      :value: 100
+
+
+
+   .. py:attribute:: configs
+      :type:  dict | Callable
+      :value: None
+
+
+
+   .. py:attribute:: supply_type
+      :type:  tilelang.TensorSupplyType
+
+
+   .. py:attribute:: ref_prog
+      :type:  Callable
+      :value: None
+
+
+
+   .. py:attribute:: supply_prog
+      :type:  Callable
+      :value: None
+
+
+
+   .. py:attribute:: rtol
+      :type:  float
+      :value: 0.01
+
+
+
+   .. py:attribute:: atol
+      :type:  float
+      :value: 0.01
+
+
+
+   .. py:attribute:: max_mismatched_ratio
+      :type:  float
+      :value: 0.01
+
+
+
+   .. py:attribute:: skip_check
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: manual_check_prog
+      :type:  Callable
+      :value: None
+
+
+
+   .. py:attribute:: cache_input_tensors
+      :type:  bool
+      :value: False
+
+
+
+   .. py:method:: __post_init__()
+
+
+   .. py:method:: get_tunner()
+
+
+   .. py:method:: __call__(*args, **kwargs)
 
 
 .. py:function:: autotune(func = None, *, configs, warmup = 25, rep = 100, timeout = 100, supply_type = tilelang.TensorSupplyType.Auto, ref_prog = None, supply_prog = None, rtol = 0.01, atol = 0.01, max_mismatched_ratio = 0.01, skip_check = False, manual_check_prog = None, cache_input_tensors = False)
