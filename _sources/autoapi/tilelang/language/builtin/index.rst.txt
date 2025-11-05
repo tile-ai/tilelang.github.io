@@ -55,6 +55,7 @@ Functions
    tilelang.language.builtin.loop_break
    tilelang.language.builtin.cp_async_barrier_noinc
    tilelang.language.builtin.tcgen05_mma_arrive
+   tilelang.language.builtin.ptx_mma_sm70
 
 
 Module Contents
@@ -518,5 +519,59 @@ Module Contents
 
    :param mbar_ptr: Pointer to the mbarrier object in shared memory (e.g., Barrier*).
    :type mbar_ptr: PrimExpr
+
+
+.. py:function:: ptx_mma_sm70(shape, A_layout, B_layout, A_dtype, B_dtype, C_dtype, multiplicand_a, a_index, multiplicand_b, b_index, accumulator, c_index)
+
+   TVM intrinsic for ptx tensor core mma instructions on SM70 (Volta).
+
+   This intrinsic provides SM70-specific MMA operations that support m16n16k4 shape
+   with FP16 inputs and FP16/FP32 accumulation.
+
+   :param shape: The shape of mma fragment (e.g., "m16n16k4").
+   :type shape: str
+   :param A_layout: The layout of multiplicand fragment A ("row" or "col").
+   :type A_layout: str
+   :param B_layout: The layout of multiplicand fragment B ("row" or "col").
+   :type B_layout: str
+   :param A_dtype: The data type of multiplicand fragment A (typically "fp16").
+   :type A_dtype: str
+   :param B_dtype: The data type of multiplicand fragment B (typically "fp16").
+   :type B_dtype: str
+   :param C_dtype: The data type of accumulator fragment C ("fp16" or "fp32").
+   :type C_dtype: str
+   :param multiplicand_a: The multiplicand fragment A variable.
+   :type multiplicand_a: Var
+   :param a_index: The index of multiplicand fragment A.
+   :type a_index: Expr
+   :param multiplicand_b: The multiplicand fragment B variable.
+   :type multiplicand_b: Var
+   :param b_index: The index of multiplicand fragment B.
+   :type b_index: Expr
+   :param accumulator: The accumulator fragment C variable.
+   :type accumulator: Var
+   :param c_index: The index of accumulator fragment C.
+   :type c_index: Expr
+
+   :returns: **call** -- The call expression.
+   :rtype: PrimExpr
+
+   .. rubric:: Examples
+
+   >>> T.ptx_mma_sm70(
+   ...     "float16",
+   ...     "m16n16k4",
+   ...     "row",
+   ...     "col",
+   ...     "fp16",
+   ...     "fp16",
+   ...     "fp16",
+   ...     A_local.data,
+   ...     0,
+   ...     B_local.data,
+   ...     0,
+   ...     C_local.data,
+   ...     0,
+   ... )
 
 

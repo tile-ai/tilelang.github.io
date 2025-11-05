@@ -307,6 +307,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mfma_macro_generator/index.html">tilelang.intrinsics.mfma_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_sm70_layout/index.html">tilelang.intrinsics.mma_sm70_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../intrinsics/mma_sm70_macro_generator/index.html">tilelang.intrinsics.mma_sm70_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/tcgen05_macro_generator/index.html">tilelang.intrinsics.tcgen05_macro_generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
@@ -419,6 +421,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mfma/index.html">tilelang.tileop.gemm.gemm_mfma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_mma_sm70/index.html">tilelang.tileop.gemm.gemm_mma_sm70</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_tcgen05/index.html">tilelang.tileop.gemm.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm/gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
 </ul>
@@ -619,6 +622,9 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.tcgen05_mma_arrive" title="tilelang.language.builtin.tcgen05_mma_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_mma_arrive</span></code></a>(mbar_ptr)</p></td>
 <td><p>Signal UMMA (TCGEN05) barrier arrival for a shared-memory mbarrier pointer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.ptx_mma_sm70" title="tilelang.language.builtin.ptx_mma_sm70"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_mma_sm70</span></code></a>(shape, A_layout, B_layout, A_dtype, ...)</p></td>
+<td><p>TVM intrinsic for ptx tensor core mma instructions on SM70 (Volta).</p></td>
 </tr>
 </tbody>
 </table>
@@ -1345,6 +1351,56 @@ The value to shuffle</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.ptx_mma_sm70">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ptx_mma_sm70</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiplicand_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiplicand_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ptx_mma_sm70" title="Link to this definition">¶</a></dt>
+<dd><p>TVM intrinsic for ptx tensor core mma instructions on SM70 (Volta).</p>
+<p>This intrinsic provides SM70-specific MMA operations that support m16n16k4 shape
+with FP16 inputs and FP16/FP32 accumulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shape</strong> (<em>str</em>) – The shape of mma fragment (e.g., “m16n16k4”).</p></li>
+<li><p><strong>A_layout</strong> (<em>str</em>) – The layout of multiplicand fragment A (“row” or “col”).</p></li>
+<li><p><strong>B_layout</strong> (<em>str</em>) – The layout of multiplicand fragment B (“row” or “col”).</p></li>
+<li><p><strong>A_dtype</strong> (<em>str</em>) – The data type of multiplicand fragment A (typically “fp16”).</p></li>
+<li><p><strong>B_dtype</strong> (<em>str</em>) – The data type of multiplicand fragment B (typically “fp16”).</p></li>
+<li><p><strong>C_dtype</strong> (<em>str</em>) – The data type of accumulator fragment C (“fp16” or “fp32”).</p></li>
+<li><p><strong>multiplicand_a</strong> (<em>Var</em>) – The multiplicand fragment A variable.</p></li>
+<li><p><strong>a_index</strong> (<em>Expr</em>) – The index of multiplicand fragment A.</p></li>
+<li><p><strong>multiplicand_b</strong> (<em>Var</em>) – The multiplicand fragment B variable.</p></li>
+<li><p><strong>b_index</strong> (<em>Expr</em>) – The index of multiplicand fragment B.</p></li>
+<li><p><strong>accumulator</strong> (<em>Var</em>) – The accumulator fragment C variable.</p></li>
+<li><p><strong>c_index</strong> (<em>Expr</em>) – The index of accumulator fragment C.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>call</strong> – The call expression.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">ptx_mma_sm70</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;float16&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;m16n16k4&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;row&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;col&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">A_local</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">B_local</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">C_local</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 </section>
 
@@ -1447,6 +1503,7 @@ The value to shuffle</p></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.loop_break"><code class="docutils literal notranslate"><span class="pre">loop_break()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc"><code class="docutils literal notranslate"><span class="pre">cp_async_barrier_noinc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_mma_arrive"><code class="docutils literal notranslate"><span class="pre">tcgen05_mma_arrive()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.ptx_mma_sm70"><code class="docutils literal notranslate"><span class="pre">ptx_mma_sm70()</span></code></a></li>
 </ul>
 </li>
 </ul>
