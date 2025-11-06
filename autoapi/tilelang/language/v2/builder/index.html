@@ -362,11 +362,9 @@
 <li class="toctree-l3"><a class="reference internal" href="../../gemm/index.html">tilelang.language.gemm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../kernel/index.html">tilelang.language.kernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../logical/index.html">tilelang.language.logical</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../loop/index.html">tilelang.language.loop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../math_intrinsics/index.html">tilelang.language.math_intrinsics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../overrides/index.html">tilelang.language.overrides</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../parallel/index.html">tilelang.language.parallel</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../persistent/index.html">tilelang.language.persistent</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../pipeline/index.html">tilelang.language.pipeline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../print/index.html">tilelang.language.print</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../proxy/index.html">tilelang.language.proxy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reduce/index.html">tilelang.language.reduce</a></li>
@@ -547,13 +545,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.BreakFrame" title="tilelang.language.v2.builder.BreakFrame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BreakFrame</span></code></a></p></td>
 <td><p>Frame are virtual context managers used in frontend only</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.Builder" title="tilelang.language.v2.builder.Builder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Builder</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.SerialForWithStep" title="tilelang.language.v2.builder.SerialForWithStep"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SerialForWithStep</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrimFunc</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.Builder" title="tilelang.language.v2.builder.Builder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Builder</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrimFunc</span></code></a></p></td>
 <td><p>Abstract base class for generic types.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.Macro" title="tilelang.language.v2.builder.Macro"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Macro</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.Macro" title="tilelang.language.v2.builder.Macro"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Macro</span></code></a></p></td>
 <td><p>Abstract base class for generic types.</p></td>
 </tr>
 </tbody>
@@ -679,6 +680,31 @@ They do not have any runtime representation in the generated TIR.</p>
 <dd><p>Bases: <a class="reference internal" href="#tilelang.language.v2.builder.Frame" title="tilelang.language.v2.builder.Frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Frame</span></code></a></p>
 <p>Frame are virtual context managers used in frontend only
 They do not have any runtime representation in the generated TIR.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.SerialForWithStep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.builder.</span></span><span class="sig-name descname"><span class="pre">SerialForWithStep</span></span><a class="headerlink" href="#tilelang.language.v2.builder.SerialForWithStep" title="Link to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.SerialForWithStep.start">
+<span class="sig-name descname"><span class="pre">start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tvm.tir.expr.PrimExpr</span></em><a class="headerlink" href="#tilelang.language.v2.builder.SerialForWithStep.start" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.SerialForWithStep.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tvm.tir.expr.PrimExpr</span></em><a class="headerlink" href="#tilelang.language.v2.builder.SerialForWithStep.stop" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.SerialForWithStep.step">
+<span class="sig-name descname"><span class="pre">step</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tvm.tir.expr.PrimExpr</span></em><a class="headerlink" href="#tilelang.language.v2.builder.SerialForWithStep.step" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.SerialForWithStep.annotations">
+<span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.v2.builder.SerialForWithStep.annotations" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py data">
@@ -1264,6 +1290,13 @@ With custom parameters:
 <li><a class="reference internal" href="#tilelang.language.v2.builder.BlockFrame"><code class="docutils literal notranslate"><span class="pre">BlockFrame</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.ContinueFrame"><code class="docutils literal notranslate"><span class="pre">ContinueFrame</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.BreakFrame"><code class="docutils literal notranslate"><span class="pre">BreakFrame</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.SerialForWithStep"><code class="docutils literal notranslate"><span class="pre">SerialForWithStep</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.SerialForWithStep.start"><code class="docutils literal notranslate"><span class="pre">SerialForWithStep.start</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.SerialForWithStep.stop"><code class="docutils literal notranslate"><span class="pre">SerialForWithStep.stop</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.SerialForWithStep.step"><code class="docutils literal notranslate"><span class="pre">SerialForWithStep.step</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.SerialForWithStep.annotations"><code class="docutils literal notranslate"><span class="pre">SerialForWithStep.annotations</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.ContinueOrBreak"><code class="docutils literal notranslate"><span class="pre">ContinueOrBreak</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.AnyFrame"><code class="docutils literal notranslate"><span class="pre">AnyFrame</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.TIR_CONTROL_FRAME"><code class="docutils literal notranslate"><span class="pre">TIR_CONTROL_FRAME</span></code></a></li>

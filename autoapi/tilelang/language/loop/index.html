@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="tilelang.language.pipeline" href="../pipeline/index.html"><link rel="prev" title="tilelang.language.parallel" href="../parallel/index.html">
+<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="tilelang.language.math_intrinsics" href="../math_intrinsics/index.html"><link rel="prev" title="tilelang.language.logical" href="../logical/index.html">
         <link rel="prefetch" href="../../../../_static/img/logo-row.svg" as="image">
         <link rel="prefetch" href="../../../../_static/img/logo-row.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>tilelang.language.persistent - Tile Language 0.1.6.post2 documentation</title>
+        <title>tilelang.language.loop - Tile Language 0.1.6.post2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -362,11 +362,9 @@
 <li class="toctree-l3"><a class="reference internal" href="../gemm/index.html">tilelang.language.gemm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../kernel/index.html">tilelang.language.kernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../logical/index.html">tilelang.language.logical</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">tilelang.language.loop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../math_intrinsics/index.html">tilelang.language.math_intrinsics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../overrides/index.html">tilelang.language.overrides</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../parallel/index.html">tilelang.language.parallel</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">tilelang.language.persistent</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../pipeline/index.html">tilelang.language.pipeline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../print/index.html">tilelang.language.print</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../proxy/index.html">tilelang.language.proxy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reduce/index.html">tilelang.language.reduce</a></li>
@@ -474,7 +472,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../../../../_sources/autoapi/tilelang/language/persistent/index.rst.txt" title="View this page">
+  <a class="muted-link" href="../../../../_sources/autoapi/tilelang/language/loop/index.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -492,16 +490,25 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-tilelang.language.persistent">
-<span id="tilelang-language-persistent"></span><h1>tilelang.language.persistent<a class="headerlink" href="#module-tilelang.language.persistent" title="Link to this heading">¶</a></h1>
+          <section id="module-tilelang.language.loop">
+<span id="tilelang-language-loop"></span><h1>tilelang.language.loop<a class="headerlink" href="#module-tilelang.language.loop" title="Link to this heading">¶</a></h1>
 <p>The language interface for tl programs.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.persistent.Persistent" title="tilelang.language.persistent.Persistent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Persistent</span></code></a>(domain, wave_size, index[, group_size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.Parallel" title="tilelang.language.loop.Parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parallel</span></code></a>(*extents[, coalesced_width])</p></td>
+<td><p>Tools to construct nested parallel for loop.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.loop.Persistent" title="tilelang.language.loop.Persistent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Persistent</span></code></a>(domain, wave_size, index[, group_size])</p></td>
 <td><p>Tools to construct persistent for loop.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.Pipelined" title="tilelang.language.loop.Pipelined"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pipelined</span></code></a>(start[, stop, num_stages, order, stage, ...])</p></td>
+<td><p>Tools to construct pipelined for loop.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.loop.serial" title="tilelang.language.loop.serial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serial</span></code></a>(start[, stop, step, annotations])</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -510,8 +517,31 @@
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.persistent.Persistent">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.persistent.</span></span><span class="sig-name descname"><span class="pre">Persistent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.persistent.Persistent" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.language.loop.Parallel">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">extents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Parallel" title="Link to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Tools to construct nested parallel for loop.</dt><dd><p>This can be used to create element-wise tensor expression.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extents</strong> (<em>PrimExpr</em>) – The extents of the iteration.</p></li>
+<li><p><strong>coalesced_width</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The coalesced width of the parallel loop.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>res</strong> – The ForFrame.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frame.ForFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.loop.Persistent">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Persistent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Persistent" title="Link to this definition">¶</a></dt>
 <dd><p>Tools to construct persistent for loop.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -525,6 +555,47 @@
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.loop.Pipelined">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Pipelined</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_stages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sync</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Pipelined" title="Link to this definition">¶</a></dt>
+<dd><p>Tools to construct pipelined for loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>PrimExpr</em>) – The minimum value of iteration.</p></li>
+<li><p><strong>stop</strong> (<em>PrimExpr</em>) – The maximum value of iteration.</p></li>
+<li><p><strong>num_stages</strong> (<em>int</em>) – The max number of buffer used between pipeline producers and consumers.
+if num_stages is 0, pipeline will not be enabled.</p></li>
+<li><p><strong>order</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>stage</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>sync</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>int</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>group</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>int</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>res</strong> – The ForFrame.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frame.ForFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.loop.serial">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">serial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.serial" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>stop</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>step</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -533,23 +604,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../pipeline/index.html">
+          <a class="next-page" href="../math_intrinsics/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">tilelang.language.pipeline</div>
+                <div class="title">tilelang.language.math_intrinsics</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../parallel/index.html">
+          <a class="prev-page" href="../logical/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">tilelang.language.parallel</div>
+                <div class="title">tilelang.language.logical</div>
                 
               </div>
             </a>
@@ -583,10 +654,13 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">tilelang.language.persistent</a><ul>
+<li><a class="reference internal" href="#">tilelang.language.loop</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#tilelang.language.persistent.Persistent"><code class="docutils literal notranslate"><span class="pre">Persistent()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.loop.Parallel"><code class="docutils literal notranslate"><span class="pre">Parallel()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.loop.Persistent"><code class="docutils literal notranslate"><span class="pre">Persistent()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.loop.Pipelined"><code class="docutils literal notranslate"><span class="pre">Pipelined()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.loop.serial"><code class="docutils literal notranslate"><span class="pre">serial()</span></code></a></li>
 </ul>
 </li>
 </ul>

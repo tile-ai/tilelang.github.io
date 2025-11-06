@@ -1,0 +1,71 @@
+tilelang.language.loop
+======================
+
+.. py:module:: tilelang.language.loop
+
+.. autoapi-nested-parse::
+
+   The language interface for tl programs.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.loop.Parallel
+   tilelang.language.loop.Persistent
+   tilelang.language.loop.Pipelined
+   tilelang.language.loop.serial
+
+
+Module Contents
+---------------
+
+.. py:function:: Parallel(*extents, coalesced_width = None)
+
+   Tools to construct nested parallel for loop.
+      This can be used to create element-wise tensor expression.
+
+   :param extents: The extents of the iteration.
+   :type extents: PrimExpr
+   :param coalesced_width: The coalesced width of the parallel loop.
+   :type coalesced_width: Optional[int]
+
+   :returns: **res** -- The ForFrame.
+   :rtype: frame.ForFrame
+
+
+.. py:function:: Persistent(domain, wave_size, index, group_size = 8)
+
+   Tools to construct persistent for loop.
+
+   :param domain: The list of dominators.
+   :type domain: List[tir.PrimExpr]
+   :param wave_size: The wave size.
+   :type wave_size: int
+   :param index: The tile index in one wave.
+   :type index: int
+   :param group_size: The group size.
+   :type group_size: tir.PrimExpr
+
+
+.. py:function:: Pipelined(start, stop = None, num_stages = 0, order = None, stage = None, sync = None, group = None)
+
+   Tools to construct pipelined for loop.
+
+   :param start: The minimum value of iteration.
+   :type start: PrimExpr
+   :param stop: The maximum value of iteration.
+   :type stop: PrimExpr
+   :param num_stages: The max number of buffer used between pipeline producers and consumers.
+                      if num_stages is 0, pipeline will not be enabled.
+   :type num_stages: int
+
+   :returns: **res** -- The ForFrame.
+   :rtype: frame.ForFrame
+
+
+.. py:function:: serial(start, stop = None, step = None, *, annotations = None)
+
