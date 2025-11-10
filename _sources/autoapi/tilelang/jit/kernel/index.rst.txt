@@ -191,6 +191,61 @@ Module Contents
    .. py:method:: run_once(func = None)
 
 
+   .. py:method:: show_source(which = 'kernel')
+
+      Print generated source code to stdout.
+
+      :param which: Select which source to print. Defaults to "kernel".
+      :type which: Literal["kernel", "host", "both"], optional
+
+      .. rubric:: Examples
+
+      >>> jit_kernel.show_source()            # print kernel source
+      >>> jit_kernel.show_source("host")      # print host source
+      >>> jit_kernel.show_source("both")      # print both sources
+
+
+
+   .. py:method:: export_sources(kernel_path = None, host_path = None)
+
+      Export generated source code to files.
+
+      :param kernel_path: Destination file path to write the kernel source. If None, skips writing kernel code.
+      :type kernel_path: Optional[str]
+      :param host_path: Destination file path to write the host source. If None, skips writing host code.
+      :type host_path: Optional[str]
+
+      .. rubric:: Examples
+
+      >>> jit_kernel.export_sources(kernel_path="/tmp/kernel.cu")
+      >>> jit_kernel.export_sources(host_path="/tmp/host.cc")
+      >>> jit_kernel.export_sources(
+      ...     kernel_path="/tmp/kernel.cu",
+      ...     host_path="/tmp/host.cc",
+      ... )
+
+
+
+   .. py:method:: print_source_code(which = 'kernel', file = None)
+
+      Deprecated: use show_source() or export_sources() instead.
+
+      :param which: Kept for backward compatibility with printing behavior.
+      :type which: Literal["kernel", "host", "both"], optional
+      :param file: If provided, behaves like export_sources(kernel_path=file).
+      :type file: Optional[str]
+
+      .. rubric:: Examples
+
+      >>> # New API (preferred)
+      >>> jit_kernel.show_source("both")
+      >>> jit_kernel.export_sources(kernel_path="/tmp/kernel.cu")
+
+      >>> # Old API (still works but deprecated)
+      >>> jit_kernel.print_source_code(file="/tmp/kernel.cu")
+
+
+
    .. py:method:: update_tuner_result(latency, config, ref_latency)
 
       Updates the tuning results for this kernel.
@@ -244,6 +299,52 @@ Module Contents
 
       :param kernel_file: The path to the shared library file to create.
       :type kernel_file: str
+
+
+
+   .. py:method:: show_ptx()
+
+      Print compiled PTX for the kernel (CUDA only).
+
+      .. rubric:: Examples
+
+      >>> jit_kernel.show_ptx()
+
+
+
+   .. py:method:: export_ptx(path)
+
+      Export compiled PTX to a file (CUDA only).
+
+      :param path: Destination file path to write PTX.
+      :type path: str
+
+      .. rubric:: Examples
+
+      >>> jit_kernel.export_ptx("/tmp/kernel.ptx")
+
+
+
+   .. py:method:: show_sass()
+
+      Print disassembled SASS for the kernel (CUDA only).
+
+      .. rubric:: Examples
+
+      >>> jit_kernel.show_sass()
+
+
+
+   .. py:method:: export_sass(path)
+
+      Export disassembled SASS to a file (CUDA only).
+
+      :param path: Destination file path to write SASS.
+      :type path: str
+
+      .. rubric:: Examples
+
+      >>> jit_kernel.export_sass("/tmp/kernel.sass")
 
 
 

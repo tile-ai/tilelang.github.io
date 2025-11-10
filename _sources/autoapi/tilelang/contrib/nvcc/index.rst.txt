@@ -15,6 +15,9 @@ Functions
 .. autoapisummary::
 
    tilelang.contrib.nvcc.compile_cuda
+   tilelang.contrib.nvcc.default_compile_options
+   tilelang.contrib.nvcc.get_ptx_from_source
+   tilelang.contrib.nvcc.get_sass_from_source
    tilelang.contrib.nvcc.find_cuda_path
    tilelang.contrib.nvcc.get_cuda_version
    tilelang.contrib.nvcc.tilelang_callback_cuda_compile
@@ -54,6 +57,52 @@ Module Contents
 
    :returns: **cubin** -- The bytearray of the cubin
    :rtype: bytearray
+
+
+.. py:function:: default_compile_options(compile_flags = None)
+
+   Build a set of default NVCC compile options for TileLang generated sources.
+
+   Includes C++ standard and common include paths (TileLang templates, CUTLASS,
+   CUDA include). Merges user-provided compile flags if given.
+
+   :param compile_flags: Additional flags to include. Items are split on whitespace.
+   :type compile_flags: Optional[List[str]]
+
+   :returns: A list of flags suitable for NVCC's command line.
+   :rtype: List[str]
+
+
+.. py:function:: get_ptx_from_source(code, compile_flags = None, verbose = False)
+
+   Compile CUDA C++ source to PTX using NVCC and return as text.
+
+   :param code: CUDA C++ kernel source code.
+   :type code: str
+   :param compile_flags: Additional flags merged with defaults.
+   :type compile_flags: Optional[List[str]]
+   :param verbose: Print NVCC output when True.
+   :type verbose: bool
+
+   :returns: PTX text.
+   :rtype: str
+
+
+.. py:function:: get_sass_from_source(code, compile_flags = None, verbose = False)
+
+   Compile CUDA C++ source to CUBIN and disassemble to SASS.
+
+   Uses nvdisasm if available; otherwise falls back to cuobjdump.
+
+   :param code: CUDA C++ kernel source code.
+   :type code: str
+   :param compile_flags: Additional flags merged with defaults.
+   :type compile_flags: Optional[List[str]]
+   :param verbose: Print tool outputs when True.
+   :type verbose: bool
+
+   :returns: SASS text.
+   :rtype: str
 
 
 .. py:function:: find_cuda_path()
