@@ -1151,8 +1151,24 @@ inheritance.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.INIT_FUNC">
-<span class="sig-name descname"><span class="pre">INIT_FUNC</span></span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.INIT_FUNC" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">INIT_FUNC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.INIT_FUNC" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">#define ERROR_BUF_SIZE 1024</span>
+<span class="sd">static char error_buf[ERROR_BUF_SIZE];</span>
+
+<span class="sd">extern &quot;C&quot; const char* get_last_error() {</span>
+<span class="sd">    return error_buf;</span>
+<span class="sd">}</span>
+
+<span class="sd">extern &quot;C&quot; int init() {</span>
+<span class="sd">    error_buf[0] = &#39;\0&#39;;</span>
+
+<span class="sd">    return 0;</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.CALL_PREFIX">
