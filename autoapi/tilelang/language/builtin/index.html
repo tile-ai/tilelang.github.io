@@ -1108,15 +1108,19 @@ WGMMA operations by issuing an empty inline assembly barrier on every register.<
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer_or_ptr</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Buffer | PrimExpr
-Either a buffer representing the accumulator fragment or a pointer expression.</p></li>
+<li><p><strong>buffer_or_ptr</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Buffer | BufferLoad | BufferRegion | PrimExpr
+A buffer representing the accumulator fragment, a buffer load/region
+that identifies a starting element within the fragment, or a pointer expression
+(e.g., tvm_access_ptr/address_of/typed Var).</p></li>
 <li><p><strong>offset</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>) – int | PrimExpr
 Element offset from the start of the accumulator fragment.</p></li>
 <li><p><strong>num_regs</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>) – int | PrimExpr | None
 Number of 32-bit registers to fence. If None and a Buffer is provided, it will be
 derived from the buffer shape and dtype.</p></li>
 <li><p><strong>dtype</strong> (<em>str</em><em> | </em><em>None</em>) – str | None
-Data type string of the accumulator elements. Required when passing a pointer.</p></li>
+Data type string of the accumulator elements. When passing a buffer or
+buffer-derived expression, dtype is inferred. It is required only when
+passing a raw pointer expression that cannot be inferred.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

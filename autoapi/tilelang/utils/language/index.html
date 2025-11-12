@@ -527,6 +527,30 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.get_buffer_region_from_load" title="tilelang.utils.language.get_buffer_region_from_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer_region_from_load</span></code></a>(buffer_load)</p></td>
 <td><p>Get the buffer region from a buffer load.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.to_buffer_region" title="tilelang.utils.language.to_buffer_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_buffer_region</span></code></a>(obj)</p></td>
+<td><p>Convert Buffer/BufferRegion/BufferLoad to a BufferRegion.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.retrieve_shape" title="tilelang.utils.language.retrieve_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_shape</span></code></a>(obj)</p></td>
+<td><p>Retrieve shape-like extents for a buffer-like object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.retrieve_stride" title="tilelang.utils.language.retrieve_stride"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_stride</span></code></a>(obj)</p></td>
+<td><p>Retrieve row-major strides for a buffer-like object based on its buffer.shape.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.retrive_ptr_from_buffer_region" title="tilelang.utils.language.retrive_ptr_from_buffer_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrive_ptr_from_buffer_region</span></code></a>(buffer_or_load_or_region)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.retrieve_ptr" title="tilelang.utils.language.retrieve_ptr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_ptr</span></code></a>(obj[, access_type, ignore_last_ndim])</p></td>
+<td><p>Retrieve a pointer to the start of a (possibly sliced) buffer region.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.retrieve_offset" title="tilelang.utils.language.retrieve_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_offset</span></code></a>(obj)</p></td>
+<td><p>Retrieve per-dimension minima offsets.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.prim_expr_equal" title="tilelang.utils.language.prim_expr_equal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prim_expr_equal</span></code></a>(lhs, rhs)</p></td>
+<td><p>Robust equality for PrimExpr shapes/extents.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.is_full_region" title="tilelang.utils.language.is_full_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_full_region</span></code></a>(buffer_region)</p></td>
+<td><p>Check whether a BufferRegion covers the full buffer region.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -539,7 +563,7 @@
 <dd><p>Check if the buffer is in the global memory scope.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>Buffer</em>) – The TVM buffer to check.</p>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em>) – The TVM buffer, BufferLoad, or BufferRegion to check.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if the buffer is in global memory, False otherwise.</p>
@@ -557,7 +581,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer</strong> (<em>Buffer</em>) – The TVM buffer to check.</p></li>
+<li><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em>) – The TVM buffer, BufferLoad, or BufferRegion to check.</p></li>
 <li><p><strong>allow_dynamic</strong> (<a class="reference internal" href="../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
@@ -576,7 +600,7 @@
 <dd><p>Check if the buffer is in the dynamic shared memory scope.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>Buffer</em>) – The TVM buffer to check.</p>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em>) – The TVM buffer, BufferLoad, or BufferRegion to check.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if the buffer is in dynamic shared memory, False otherwise.</p>
@@ -593,7 +617,7 @@
 <dd><p>Check if the buffer is in tensor memory scope (e.g., shared.tmem).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>Buffer</em>) – The TVM buffer to check.</p>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em>) – The TVM buffer, BufferLoad, or BufferRegion to check.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if the buffer is in tensor memory, False otherwise.</p>
@@ -610,7 +634,7 @@
 <dd><p>Check if the buffer is in the local memory scope.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>Buffer</em>) – The TVM buffer to check.</p>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em>) – The TVM buffer, BufferLoad, or BufferRegion to check.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if the buffer is in local memory, False otherwise.</p>
@@ -627,7 +651,7 @@
 <dd><p>Check if the buffer is a fragment (e.g., for matrix multiplication operations).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>Buffer</em>) – The TVM buffer to check.</p>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em>) – The TVM buffer, BufferLoad, or BufferRegion to check.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if the buffer is a fragment, False otherwise.</p>
@@ -710,6 +734,150 @@ convert load to region</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.to_buffer_region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">to_buffer_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.to_buffer_region" title="Link to this definition">¶</a></dt>
+<dd><p>Convert Buffer/BufferRegion/BufferLoad to a BufferRegion.</p>
+<ul class="simple">
+<li><p>Buffer -&gt; full-region BufferRegion covering entire shape</p></li>
+<li><p>BufferRegion -&gt; returned as-is</p></li>
+<li><p>BufferLoad -&gt; best-effort convert via get_buffer_region_from_load;
+if scalar, fall back to 1-sized ranges at given indices</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.BufferRegion</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.retrieve_shape">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">retrieve_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.retrieve_shape" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve shape-like extents for a buffer-like object.</p>
+<ul class="simple">
+<li><p>Buffer -&gt; its <cite>shape</cite></p></li>
+<li><p>BufferRegion -&gt; list of each range’s <cite>extent</cite></p></li>
+<li><p>BufferLoad -&gt; extents from <cite>get_buffer_region_from_load(obj)</cite></p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.retrieve_stride">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">retrieve_stride</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.retrieve_stride" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve row-major strides for a buffer-like object based on its buffer.shape.</p>
+<p>For BufferRegion and BufferLoad, uses the underlying buffer’s <cite>shape</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.retrive_ptr_from_buffer_region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">retrive_ptr_from_buffer_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_or_load_or_region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.retrive_ptr_from_buffer_region" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer_or_load_or_region</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em>)</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.retrieve_ptr">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">retrieve_ptr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_last_ndim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.retrieve_ptr" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve a pointer to the start of a (possibly sliced) buffer region.</p>
+<ul class="simple">
+<li><p>Buffer -&gt; base pointer</p></li>
+<li><p>BufferRegion -&gt; pointer with byte offset computed from region minima</p></li>
+<li><p>BufferLoad -&gt; pointer offset computed from indices or derived region</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer-like object</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>) – TVM Buffer access mask, e.g. “r”, “w”, “rw”</p></li>
+<li><p><strong>ignore_last_ndim</strong> (<em>int</em>) – do not offset the last N dimensions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.retrieve_offset">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">retrieve_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.retrieve_offset" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve per-dimension minima offsets.</p>
+<ul class="simple">
+<li><p>Buffer -&gt; [0, 0, …]</p></li>
+<li><p>BufferRegion -&gt; [r.min for r in region]</p></li>
+<li><p>BufferLoad -&gt; indices (or derived region minima)</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.prim_expr_equal">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">prim_expr_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.prim_expr_equal" title="Link to this definition">¶</a></dt>
+<dd><p>Robust equality for PrimExpr shapes/extents.</p>
+<p>Tries structural_equal first, then falls back to expr_deep_equal.
+Python ints are converted to IntImm for comparison.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.is_full_region">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">is_full_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_region</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.is_full_region" title="Link to this definition">¶</a></dt>
+<dd><p>Check whether a BufferRegion covers the full buffer region.</p>
+<p>A full region means each dimension has start 0 and extent equal to
+the corresponding dimension in the buffer’s shape.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>buffer_region</strong> (<em>tvm.tir.BufferRegion</em>) – The TVM BufferRegion to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the region is full; otherwise False.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -781,6 +949,14 @@ convert load to region</p>
 <li><a class="reference internal" href="#tilelang.utils.language.array_reduce"><code class="docutils literal notranslate"><span class="pre">array_reduce()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.retrieve_func_from_module"><code class="docutils literal notranslate"><span class="pre">retrieve_func_from_module()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.get_buffer_region_from_load"><code class="docutils literal notranslate"><span class="pre">get_buffer_region_from_load()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.to_buffer_region"><code class="docutils literal notranslate"><span class="pre">to_buffer_region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.retrieve_shape"><code class="docutils literal notranslate"><span class="pre">retrieve_shape()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.retrieve_stride"><code class="docutils literal notranslate"><span class="pre">retrieve_stride()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.retrive_ptr_from_buffer_region"><code class="docutils literal notranslate"><span class="pre">retrive_ptr_from_buffer_region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.retrieve_ptr"><code class="docutils literal notranslate"><span class="pre">retrieve_ptr()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.retrieve_offset"><code class="docutils literal notranslate"><span class="pre">retrieve_offset()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.prim_expr_equal"><code class="docutils literal notranslate"><span class="pre">prim_expr_equal()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.is_full_region"><code class="docutils literal notranslate"><span class="pre">is_full_region()</span></code></a></li>
 </ul>
 </li>
 </ul>

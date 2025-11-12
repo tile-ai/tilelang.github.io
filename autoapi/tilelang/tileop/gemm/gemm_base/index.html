@@ -692,34 +692,19 @@
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.APtr">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">APtr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tvm.tir.PrimExpr</span></em><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.APtr" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.ARegion">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ARegion</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.ARegion" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.BPtr">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BPtr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tvm.tir.PrimExpr</span></em><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.BPtr" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.BRegion">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BRegion</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.BRegion" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.CPtr">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CPtr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tvm.tir.PrimExpr</span></em><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.CPtr" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.CRegion">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CRegion</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.CRegion" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.stride_A">
@@ -816,6 +801,40 @@
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">C_coords</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.C_coords" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.get_region_base_offsets">
+<span class="sig-name descname"><span class="pre">get_region_base_offsets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.get_region_base_offsets" title="Link to this definition">¶</a></dt>
+<dd><p>Get the base offset (start index) for each dimension from a BufferRegion.</p>
+<p>For example, if region is A_shared[ko % 2, 0:128, 0:64],
+this returns [ko % 2, 0, 0]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>region</strong> – BufferRegion object</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of PrimExpr representing the base offset for each dimension</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.A_base_offsets">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">A_base_offsets</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.A_base_offsets" title="Link to this definition">¶</a></dt>
+<dd><p>Get base offsets for each dimension of A region</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.B_base_offsets">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">B_base_offsets</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.B_base_offsets" title="Link to this definition">¶</a></dt>
+<dd><p>Get base offsets for each dimension of B region</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.C_base_offsets">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">C_base_offsets</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.C_base_offsets" title="Link to this definition">¶</a></dt>
+<dd><p>Get base offsets for each dimension of C region</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -898,9 +917,9 @@
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.A"><code class="docutils literal notranslate"><span class="pre">GemmBase.A</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.B"><code class="docutils literal notranslate"><span class="pre">GemmBase.B</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.C"><code class="docutils literal notranslate"><span class="pre">GemmBase.C</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.APtr"><code class="docutils literal notranslate"><span class="pre">GemmBase.APtr</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.BPtr"><code class="docutils literal notranslate"><span class="pre">GemmBase.BPtr</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.CPtr"><code class="docutils literal notranslate"><span class="pre">GemmBase.CPtr</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.ARegion"><code class="docutils literal notranslate"><span class="pre">GemmBase.ARegion</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.BRegion"><code class="docutils literal notranslate"><span class="pre">GemmBase.BRegion</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.CRegion"><code class="docutils literal notranslate"><span class="pre">GemmBase.CRegion</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.stride_A"><code class="docutils literal notranslate"><span class="pre">GemmBase.stride_A</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.stride_B"><code class="docutils literal notranslate"><span class="pre">GemmBase.stride_B</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.offset_A"><code class="docutils literal notranslate"><span class="pre">GemmBase.offset_A</span></code></a></li>
@@ -911,6 +930,10 @@
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.policy"><code class="docutils literal notranslate"><span class="pre">GemmBase.policy</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.mbarptr"><code class="docutils literal notranslate"><span class="pre">GemmBase.mbarptr</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.C_coords"><code class="docutils literal notranslate"><span class="pre">GemmBase.C_coords</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.get_region_base_offsets"><code class="docutils literal notranslate"><span class="pre">GemmBase.get_region_base_offsets()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.A_base_offsets"><code class="docutils literal notranslate"><span class="pre">GemmBase.A_base_offsets</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.B_base_offsets"><code class="docutils literal notranslate"><span class="pre">GemmBase.B_base_offsets</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.C_base_offsets"><code class="docutils literal notranslate"><span class="pre">GemmBase.C_base_offsets</span></code></a></li>
 </ul>
 </li>
 </ul>

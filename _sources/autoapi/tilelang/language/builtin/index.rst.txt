@@ -383,15 +383,19 @@ Module Contents
    This prevents NVCC from sinking uses of accumulator fragments past the corresponding
    WGMMA operations by issuing an empty inline assembly barrier on every register.
 
-   :param buffer_or_ptr: Buffer | PrimExpr
-                         Either a buffer representing the accumulator fragment or a pointer expression.
+   :param buffer_or_ptr: Buffer | BufferLoad | BufferRegion | PrimExpr
+                         A buffer representing the accumulator fragment, a buffer load/region
+                         that identifies a starting element within the fragment, or a pointer expression
+                         (e.g., tvm_access_ptr/address_of/typed Var).
    :param offset: int | PrimExpr
                   Element offset from the start of the accumulator fragment.
    :param num_regs: int | PrimExpr | None
                     Number of 32-bit registers to fence. If None and a Buffer is provided, it will be
                     derived from the buffer shape and dtype.
    :param dtype: str | None
-                 Data type string of the accumulator elements. Required when passing a pointer.
+                 Data type string of the accumulator elements. When passing a buffer or
+                 buffer-derived expression, dtype is inferred. It is required only when
+                 passing a raw pointer expression that cannot be inferred.
 
    :returns: A handle to the warpgroup fence operation.
    :rtype: tir.Call
