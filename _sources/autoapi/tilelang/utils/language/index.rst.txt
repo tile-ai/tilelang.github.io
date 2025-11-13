@@ -26,6 +26,7 @@ Functions
    tilelang.utils.language.retrieve_ptr
    tilelang.utils.language.retrieve_offset
    tilelang.utils.language.prim_expr_equal
+   tilelang.utils.language.legalize_pairwise_extents
    tilelang.utils.language.is_full_region
 
 
@@ -188,6 +189,27 @@ Module Contents
 
    Tries structural_equal first, then falls back to expr_deep_equal.
    Python ints are converted to IntImm for comparison.
+
+
+.. py:function:: legalize_pairwise_extents(src_extents, dst_extents)
+
+   Right-align and broadcast two extent lists to be mutually compatible.
+
+   Early-exit rule:
+   - If the number of non-1 dimensions in `src_extents` equals that in `dst_extents`,
+     no adjustment is made; the original extents are returned unchanged. This
+     preserves the per-dimension iteration mapping (one loop var per non-1 dim)
+     and avoids creating extra varying axes on either side.
+
+   Otherwise, for each pair of tail-aligned dimensions (x, y):
+     - if x == y: keep both
+     - elif x == 1: set x = y
+     - elif y == 1: set y = x
+     - else: promote both to tir.max(x, y) to handle dynamic-vs-static safely
+
+   Leading unmatched dimensions are kept as-is.
+
+   Returns a tuple of new lists (src_new, dst_new).
 
 
 .. py:function:: is_full_region(buffer_region)

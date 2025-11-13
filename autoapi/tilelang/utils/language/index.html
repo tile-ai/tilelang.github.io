@@ -548,7 +548,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.prim_expr_equal" title="tilelang.utils.language.prim_expr_equal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prim_expr_equal</span></code></a>(lhs, rhs)</p></td>
 <td><p>Robust equality for PrimExpr shapes/extents.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.is_full_region" title="tilelang.utils.language.is_full_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_full_region</span></code></a>(buffer_region)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.legalize_pairwise_extents" title="tilelang.utils.language.legalize_pairwise_extents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">legalize_pairwise_extents</span></code></a>(src_extents, dst_extents)</p></td>
+<td><p>Right-align and broadcast two extent lists to be mutually compatible.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.is_full_region" title="tilelang.utils.language.is_full_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_full_region</span></code></a>(buffer_region)</p></td>
 <td><p>Check whether a BufferRegion covers the full buffer region.</p></td>
 </tr>
 </tbody>
@@ -860,6 +863,41 @@ Python ints are converted to IntImm for comparison.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.legalize_pairwise_extents">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">legalize_pairwise_extents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_extents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_extents</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.legalize_pairwise_extents" title="Link to this definition">¶</a></dt>
+<dd><p>Right-align and broadcast two extent lists to be mutually compatible.</p>
+<p>Early-exit rule:
+- If the number of non-1 dimensions in <cite>src_extents</cite> equals that in <cite>dst_extents</cite>,</p>
+<blockquote>
+<div><p>no adjustment is made; the original extents are returned unchanged. This
+preserves the per-dimension iteration mapping (one loop var per non-1 dim)
+and avoids creating extra varying axes on either side.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Otherwise, for each pair of tail-aligned dimensions (x, y):</dt><dd><ul class="simple">
+<li><p>if x == y: keep both</p></li>
+<li><p>elif x == 1: set x = y</p></li>
+<li><p>elif y == 1: set y = x</p></li>
+<li><p>else: promote both to tir.max(x, y) to handle dynamic-vs-static safely</p></li>
+</ul>
+</dd>
+</dl>
+<p>Leading unmatched dimensions are kept as-is.</p>
+<p>Returns a tuple of new lists (src_new, dst_new).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src_extents</strong> (<em>list</em>)</p></li>
+<li><p><strong>dst_extents</strong> (<em>list</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[list, list]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.utils.language.is_full_region">
 <span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">is_full_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_region</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.is_full_region" title="Link to this definition">¶</a></dt>
 <dd><p>Check whether a BufferRegion covers the full buffer region.</p>
@@ -956,6 +994,7 @@ the corresponding dimension in the buffer’s shape.</p>
 <li><a class="reference internal" href="#tilelang.utils.language.retrieve_ptr"><code class="docutils literal notranslate"><span class="pre">retrieve_ptr()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.retrieve_offset"><code class="docutils literal notranslate"><span class="pre">retrieve_offset()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.prim_expr_equal"><code class="docutils literal notranslate"><span class="pre">prim_expr_equal()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.legalize_pairwise_extents"><code class="docutils literal notranslate"><span class="pre">legalize_pairwise_extents()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.is_full_region"><code class="docutils literal notranslate"><span class="pre">is_full_region()</span></code></a></li>
 </ul>
 </li>
