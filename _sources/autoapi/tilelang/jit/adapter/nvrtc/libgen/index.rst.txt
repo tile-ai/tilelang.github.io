@@ -1,0 +1,183 @@
+tilelang.jit.adapter.nvrtc.libgen
+=================================
+
+.. py:module:: tilelang.jit.adapter.nvrtc.libgen
+
+.. autoapi-nested-parse::
+
+   NVRTC Library Generator for TileLang.
+
+   Compiles CUDA kernels at runtime using NVRTC and manages resulting binaries.
+
+   Why NVRTC instead of nvcc:
+   - No offline compilation step, enables true JIT workflows
+   - Works without CUDA toolkit installed (only requires driver)
+   - Allows kernel specialization based on runtime parameters
+
+   Key responsibilities:
+   - Compile CUDA source to cubin using NVRTC API
+   - Generate accompanying Python launcher code
+   - Load compiled cubin and extract kernel handles
+   - Manage library lifecycle (load/unload)
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.nvrtc.libgen.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.nvrtc.libgen.NVRTCLibraryGenerator
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: NVRTCLibraryGenerator(target, verbose = False)
+
+   Bases: :py:obj:`tilelang.jit.adapter.libgen.LibraryGenerator`
+
+
+   Runtime compiler and loader for NVRTC-compiled CUDA kernels.
+
+   Lifecycle:
+       1. compile_lib(): CUDA source → cubin + Python launcher
+       2. load_lib(): cubin → loaded library + kernel handles
+       3. pymodule.call(): Execute kernels via Python launcher
+       4. __del__: Cleanup (unload library)
+
+   Why three files (cu, cubin, py):
+       - .cu: Source for debugging, kept in temp directory
+       - .cubin: Compiled binary, loaded by CUDA driver
+       - .py: Launch code, imported as Python module
+
+   .. attribute:: host_func
+
+      Generated Python launch code (from wrapper)
+
+   .. attribute:: culib
+
+      CUDA library handle (CUlibrary)
+
+   .. attribute:: pymodule
+
+      Imported Python module containing call() function
+
+
+   .. py:attribute:: host_func
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: culib
+      :type:  cuda.bindings.driver.CUlibrary | None
+      :value: None
+
+
+
+   .. py:attribute:: pymodule
+      :type:  types.ModuleType | None
+      :value: None
+
+
+
+   .. py:attribute:: pypath
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:method:: import_from_file(module_name, file_path)
+      :staticmethod:
+
+
+      Dynamically import Python module from file path.
+
+      Standard importlib pattern for loading modules outside sys.path.
+      Used to import generated .py launcher code from temp directory.
+
+      :param module_name: Name to assign to imported module
+      :param file_path: Absolute path to .py file
+
+      :returns: Imported module object
+
+
+
+   .. py:method:: update_host_func(host_func)
+
+      Store generated Python launch code for later file write.
+
+      Called by adapter after wrapper generates the launch code.
+      This is the bridge between code generation and file output.
+
+      :param host_func: Python source code containing call() function
+
+
+
+   .. py:method:: load_lib(lib_path = None)
+
+      Load compiled cubin and Python launcher into memory.
+
+      Why two loads:
+          1. Import Python module for launch logic
+          2. Load cubin via CUDA Driver API for kernel handles
+
+      Context synchronization: CUDA context must be current before loading.
+      If not, use torch.cuda.synchronize() to establish context.
+
+      :param lib_path: Path to .cubin file (optional, uses self.libpath if None)
+
+      Side effects:
+          - Sets self.pymodule to imported Python module
+          - Sets self.culib to CUDA library handle
+
+
+
+   .. py:method:: compile_lib(timeout = None)
+
+      Compile CUDA source to cubin using NVRTC and write output files.
+
+      Output artifacts (all in temp directory):
+          - .cu: Source code (for debugging)
+          - .cubin: Compiled binary (for execution)
+          - .py: Python launcher (for calling kernels)
+
+      Include paths setup:
+          - TileLang templates: kernel primitives and utilities
+          - CUTLASS: optimized GEMM/tensor ops
+          - CUDA headers: driver/runtime APIs
+
+      Why architecture detection:
+          ARM64 servers (SBSA) have different header paths than x86_64.
+
+      :param timeout: Compilation timeout in seconds (currently unsupported by NVRTC compiler)
+
+      Side effects:
+          - Writes .cu, .cubin, .py files to temp directory
+          - Sets self.srcpath, self.libpath, self.pypath
+
+
+
+   .. py:method:: __del__()
+
+      Cleanup: unload CUDA library when object is destroyed.
+
+      Critical for resource management - CUDA libraries consume GPU memory.
+      Failure to unload is logged but not raised (destructor can't fail).
+
+      Why explicit unload:
+          Python GC doesn't know about GPU resources, must release manually.
+
+
+

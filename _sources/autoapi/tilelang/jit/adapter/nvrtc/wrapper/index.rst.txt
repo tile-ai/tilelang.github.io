@@ -1,0 +1,430 @@
+tilelang.jit.adapter.nvrtc.wrapper
+==================================
+
+.. py:module:: tilelang.jit.adapter.nvrtc.wrapper
+
+.. autoapi-nested-parse::
+
+   NVRTC Source Wrapper for TileLang.
+
+   Generates Python runtime code for launching CUDA kernels compiled via NVRTC.
+
+   Why this exists:
+   - NVRTC compiles kernels at runtime, needs Python launch code (not C++)
+   - TMA descriptors must be initialized once per unique buffer, not per kernel
+   - L2 cache policies require explicit CUDA Driver API setup/teardown
+
+   Key design:
+   - Two-pass generation: collect all descriptors first, then generate launches
+   - Dict-based deduplication ensures TMA descriptors created only once
+   - Generates pure Python using cuda.bindings.driver for zero C++ dependency
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.nvrtc.wrapper.PREDEF_HOST_FUNC_PY
+   tilelang.jit.adapter.nvrtc.wrapper.TMA_DESC_INIT_FUNC_PY
+   tilelang.jit.adapter.nvrtc.wrapper.TMA_IM2COL_DESC_INIT_FUNC_PY
+   tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_CREATE_HANDLE_PY
+   tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_INIT_FUNC_PY
+   tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_RESET_HANDLE_PY
+   tilelang.jit.adapter.nvrtc.wrapper.KERNEL_LAUNCH_FUNC_PY
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper
+
+
+Module Contents
+---------------
+
+.. py:data:: PREDEF_HOST_FUNC_PY
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      from cuda.bindings.driver import (
+          CUtensorMapDataType,
+          CUtensorMapInterleave,
+          CUtensorMapSwizzle,
+          CUtensorMapL2promotion,
+          CUtensorMapFloatOOBfill,
+          cuTensorMapEncodeTiled,
+          cuTensorMapEncodeIm2col,
+          CUresult,
+          cuKernelSetAttribute,
+          CUfunction_attribute,
+          CUdevice,
+          CUlaunchConfig,
+          cuLaunchKernelEx,
+          cuuint64_t,
+          cuuint32_t,
+          CUkernel,
+      )
+      import ctypes
+      
+      _function_names = {}
+      
+      def call({}):
+          {}
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: TMA_DESC_INIT_FUNC_PY
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+          {0}_type = CUtensorMapDataType({1})
+          {0}_tensorRank = {2}
+          {0}_globalAddress = {3}.data_ptr()
+          {0}_globalDim = [{4}]
+          {0}_globalStride = [{5}][1:]
+          {0}_boxDim = [{6}]
+          {0}_elementStrides = [{7}]
+          {0}_interleave = CUtensorMapInterleave({8})
+          {0}_swizzle = CUtensorMapSwizzle({9})
+          {0}_l2Promotion = CUtensorMapL2promotion({10})
+          {0}_oobFill = CUtensorMapFloatOOBfill({11})
+      
+          res, {0} = cuTensorMapEncodeTiled(
+              {0}_type,
+              {0}_tensorRank,
+              {0}_globalAddress,
+              {0}_globalDim,
+              {0}_globalStride,
+              {0}_boxDim,
+              {0}_elementStrides,
+              {0}_interleave,
+              {0}_swizzle,
+              {0}_l2Promotion,
+              {0}_oobFill,
+          )
+      
+          if res != CUresult.CUDA_SUCCESS:
+              raise RuntimeError(f"Failed to initialize the TMA descriptor {0}: {{res}}")
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: TMA_IM2COL_DESC_INIT_FUNC_PY
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+          {0}_type = CUtensorMapDataType({1})
+          {0}_tensorRank = {2}
+          {0}_globalAddress = {3}.data_ptr()
+          {0}_globalDim = [{4}]
+          {0}_globalStride = [{5}][1:]
+          {0}_elementStrides = [{6}]
+          {0}_lowerCorner = [{7}]
+          {0}_upperCorner = [{8}]
+          {0}_channelsPerPixel = {9}
+          {0}_pixelsPerColumn = {10}
+          {0}_interleave = CUtensorMapInterleave({11})
+          {0}_swizzle = CUtensorMapSwizzle({12})
+          {0}_l2Promotion = CUtensorMapL2promotion({13})
+          {0}_oobFill = CUtensorMapFloatOOBfill({14})
+      
+          res, {0} = cuTensorMapEncodeIm2col(
+              {0}_type,
+              {0}_tensorRank,
+              {0}_globalAddress,
+              {0}_globalDim,
+              {0}_globalStride,
+              {0}_lowerCorner,
+              {0}_upperCorner,
+              {0}_channelsPerPixel,
+              {0}_pixelsPerColumn,
+              {0}_elementStrides,
+              {0}_interleave,
+              {0}_swizzle,
+              {0}_l2Promotion,
+              {0}_oobFill,
+          )
+      
+          if res != CUresult.CUDA_SUCCESS:
+              raise RuntimeError(f"Failed to initialize the TMA descriptor {0}: {{res}}")
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: L2_PERSISTENT_MAP_CREATE_HANDLE_PY
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+          from cuda.bindings.driver import (
+              CUstreamAttrValue,
+              CUstreamAttrID,
+              CUlimit,
+              CUaccessProperty,
+              cuCtxGetLimit,
+              cuCtxSetLimit,
+              cuStreamSetAttribute,
+              cuCtxResetPersistingL2Cache,
+          )
+      
+          stream_attribute = CUstreamAttrValue()
+          res, init_persisting_l2_cache_size = cuCtxGetLimit(CUlimit.CU_LIMIT_PERSISTING_L2_CACHE_SIZE)
+          if res != CUresult.CUDA_SUCCESS:
+              raise RuntimeError(f"Failed to get L2 cache size limit: {{res}}")
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: L2_PERSISTENT_MAP_INIT_FUNC_PY
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+          stream_attribute.accessPolicyWindow.hitRatio = {1}
+          stream_attribute.accessPolicyWindow.hitProp = CUaccessProperty.CU_ACCESS_PROPERTY_PERSISTING
+          stream_attribute.accessPolicyWindow.missProp = CUaccessProperty.CU_ACCESS_PROPERTY_STREAMING
+      
+          res = cuCtxSetLimit(CUlimit.CU_LIMIT_PERSISTING_L2_CACHE_SIZE, {2})[0]
+          if res != CUresult.CUDA_SUCCESS:
+              raise RuntimeError(f"Failed to set L2 cache size limit: {{res}}")
+      
+          stream_attribute.accessPolicyWindow.base_ptr = {0}.data_ptr()
+          stream_attribute.accessPolicyWindow.num_bytes = {2}
+      
+          res = cuStreamSetAttribute(stream, CUstreamAttrID.CU_LAUNCH_ATTRIBUTE_ACCESS_POLICY_WINDOW, stream_attribute)[0]
+          if res != CUresult.CUDA_SUCCESS:
+              raise RuntimeError(f"Failed to set stream L2 access policy: {{res}}")
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: L2_PERSISTENT_MAP_RESET_HANDLE_PY
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+          stream_attribute.accessPolicyWindow.num_bytes = 0
+          res = cuStreamSetAttribute(stream, CUstreamAttrID.CU_LAUNCH_ATTRIBUTE_ACCESS_POLICY_WINDOW, stream_attribute)[0]
+          if res != CUresult.CUDA_SUCCESS:
+              raise RuntimeError(f"Failed to reset stream L2 access policy: {{res}}")
+      
+          res = cuCtxResetPersistingL2Cache()[0]
+          if res != CUresult.CUDA_SUCCESS:
+              raise RuntimeError(f"Failed to reset L2 cache: {{res}}")
+      
+          res = cuCtxSetLimit(CUlimit.CU_LIMIT_PERSISTING_L2_CACHE_SIZE, init_persisting_l2_cache_size)[0]
+          if res != CUresult.CUDA_SUCCESS:
+              raise RuntimeError(f"Failed to restore L2 cache size limit: {{res}}")
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: KERNEL_LAUNCH_FUNC_PY
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+          res = cuKernelSetAttribute(
+              CUfunction_attribute.CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES,
+              {7},
+              kernels["{0}"],
+              CUdevice({10})
+          )[0]
+          if res != CUresult.CUDA_SUCCESS:
+              raise RuntimeError(f"Failed to set max dynamic shared memory size to {7} for kernel {0}: {{res}}")
+      
+          config = CUlaunchConfig()
+          config.gridDimX = {1}
+          config.gridDimY = {2}
+          config.gridDimZ = {3}
+          config.blockDimX = {4}
+          config.blockDimY = {5}
+          config.blockDimZ = {6}
+          config.sharedMemBytes = {7}
+          config.hStream = stream
+      
+          arg_values = {8}
+          arg_types = {9}
+      
+          res = cuLaunchKernelEx(config, kernels["{0}"], (arg_values, arg_types), 0)[0]
+          if res != CUresult.CUDA_SUCCESS:
+              raise RuntimeError(f"Failed to launch kernel {0}: {{res}}")
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:class:: TLNVRTCSourceWrapper(scheduled_ir_module, source, target, device_mod = None, host_mod = None, pass_configs = None)
+
+   Bases: :py:obj:`tilelang.jit.adapter.wrapper.TLCUDASourceWrapper`
+
+
+   NVRTC backend wrapper: generates Python kernel launch code.
+
+   Core responsibility: transform TVM IRModule into executable Python function
+   that initializes resources (TMA descriptors, L2 cache) and launches kernels
+   via CUDA Driver API.
+
+   Data flow:
+       IRModule → collect kernel metadata → deduplicate resources →
+       generate Python code → executable function
+
+   Why Python generation instead of C++:
+       NVRTC workflow requires runtime compilation, Python is the natural host.
+       Using cuda.bindings.driver eliminates C++ wrapper complexity.
+
+
+   .. py:property:: host_func
+
+      Override parent's host_func to return generated Python code.
+
+
+   .. py:method:: create_dispatch_func(code, function_informations)
+
+      Generate Python dispatch function that launches multiple CUDA kernels.
+
+      Why two-pass design:
+          Pass 1: Collect TMA descriptors from all kernels into shared dicts
+          Pass 2: Generate code - descriptors first (deduplicated), then launches
+
+          Single-pass would create duplicate descriptors for each kernel.
+          Dict naturally deduplicates by descriptor name.
+
+      :param code: CUDA C++ source containing kernel declarations
+      :param function_informations: Dict mapping kernel names to metadata
+                                    (grid/block dims, params, shared memory size)
+
+      :returns:
+
+                1. Initializes L2 cache policies (if needed)
+                2. Creates TMA descriptors once per unique buffer
+                3. Launches each kernel with cuLaunchKernelEx
+                4. Resets L2 cache policies (if needed)
+      :rtype: Python source code defining a call() function that
+
+
+
+   .. py:method:: generate_l2_persistent_map(function_name)
+
+      Generate Python code to configure L2 cache persistence for a kernel.
+
+      L2 persistence pins frequently-accessed data in L2 cache to reduce
+      memory bandwidth. Requires explicit setup via CUDA stream attributes.
+
+      :param function_name: Kernel name to check for L2 persistence config
+
+      :returns: Python code that sets stream access policy window, or empty
+                string if no L2 persistence configured for this kernel.
+
+
+
+   .. py:method:: generate_tma_descriptor_args(desc_name_map, desc_name_var_map)
+
+      Generate Python code to initialize TMA descriptors.
+
+      TMA (Tensor Memory Accelerator) descriptors are opaque CUDA objects
+      that describe memory layout for async copies. Must be created on host
+      before kernel launch.
+
+      :param desc_name_map: Maps descriptor variable names to buffer names
+      :param desc_name_var_map: Maps descriptor names to TVM variables
+
+      :returns: Python code that calls cuTensorMapEncodeTiled/Im2col for each
+                unique descriptor. Empty string if no TMA descriptors needed.
+
+
+
+   .. py:method:: update_lib_code(code)
+
+      Update library code and generate host dispatch function.
+
+      Entry point for code generation. Walks the host IR to extract kernel
+      call sites, matches them with device kernels, then generates Python
+      dispatch code via create_dispatch_func().
+
+      :param code: CUDA C++ source code containing compiled kernels
+
+      :returns: sets self.host_func to generated Python dispatcher.
+      :rtype: The same code string (stored in self.lib_code). Side effect
+
+
+
+   .. py:method:: get_stream_type()
+
+      Return stream parameter spec for Python signature.
+
+      NVRTC backend uses raw int for stream handle (not cudaStream_t pointer).
+      Default to 0 (NULL stream) for convenience.
+
+
+

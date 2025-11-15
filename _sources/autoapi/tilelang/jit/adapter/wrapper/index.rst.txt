@@ -13,14 +13,11 @@ Attributes
    tilelang.jit.adapter.wrapper.PREDEF_ATTRIBUTE_SET_DYNAMIC_MEMORY_HIP
    tilelang.jit.adapter.wrapper.PREDEF_INIT_FUNC
    tilelang.jit.adapter.wrapper.PREDEF_HOST_FUNC
-   tilelang.jit.adapter.wrapper.PREDEF_HOST_FUNC_PY
    tilelang.jit.adapter.wrapper.L2_PERSISTENT_MAP_CREATE_HANDLE
    tilelang.jit.adapter.wrapper.L2_PERSISTENT_MAP_INIT_FUNC
    tilelang.jit.adapter.wrapper.L2_PERSISTENT_MAP_RESET_HANDLE
    tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC
    tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC
-   tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC_PY
-   tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_PY
    tilelang.jit.adapter.wrapper.logger
 
 
@@ -31,7 +28,6 @@ Classes
 
    tilelang.jit.adapter.wrapper.BaseWrapper
    tilelang.jit.adapter.wrapper.TLCUDASourceWrapper
-   tilelang.jit.adapter.wrapper.TLNVRTCSourceWrapper
    tilelang.jit.adapter.wrapper.TLHIPSourceWrapper
    tilelang.jit.adapter.wrapper.TLCPUSourceWrapper
    tilelang.jit.adapter.wrapper.TLMetalSourceWrapper
@@ -132,31 +128,6 @@ Module Contents
       {}
       	return 0;
       }}
-      """
-
-   .. raw:: html
-
-      </details>
-
-
-
-.. py:data:: PREDEF_HOST_FUNC_PY
-   :value: Multiline-String
-
-   .. raw:: html
-
-      <details><summary>Show Value</summary>
-
-   .. code-block:: python
-
-      """
-      import cuda.bindings.driver
-      import ctypes
-      
-      _function_names = {}
-      
-      def call({}):
-          {}
       """
 
    .. raw:: html
@@ -317,95 +288,6 @@ Module Contents
 
 
 
-.. py:data:: TMA_DESC_INIT_FUNC_PY
-   :value: Multiline-String
-
-   .. raw:: html
-
-      <details><summary>Show Value</summary>
-
-   .. code-block:: python
-
-      """
-      	{0}_type = cuda.bindings.driver.CUtensorMapDataType({1})
-      	{0}_tensorRank = {2}
-      	{0}_globalAddress = {3}.data_ptr()
-      	{0}_globalDim = [{4}]
-      	{0}_globalStride = [{5}][1:]
-      	{0}_boxDim = [{6}]
-      	{0}_elementStrides = [{7}]
-      	{0}_interleave = cuda.bindings.driver.CUtensorMapInterleave({8})
-      	{0}_swizzle = cuda.bindings.driver.CUtensorMapSwizzle({9})
-      	{0}_l2Promotion = cuda.bindings.driver.CUtensorMapL2promotion({10})
-      	{0}_oobFill = cuda.bindings.driver.CUtensorMapFloatOOBfill({11})
-      
-      	res, {0} = cuda.bindings.driver.cuTensorMapEncodeTiled(
-      		{0}_type,
-      		{0}_tensorRank,
-      		{0}_globalAddress,
-      		{0}_globalDim,
-      		{0}_globalStride,
-      		{0}_boxDim,
-      		{0}_elementStrides,
-      		{0}_interleave,
-      		{0}_swizzle,
-      		{0}_l2Promotion,
-      		{0}_oobFill,
-      	)
-      
-      	if res != cuda.bindings.driver.CUresult.CUDA_SUCCESS:
-      		raise RuntimeError(f"Failed to initialize the TMA descriptor {0}: {{res}}")
-      """
-
-   .. raw:: html
-
-      </details>
-
-
-
-.. py:data:: KERNEL_LAUNCH_FUNC_PY
-   :value: Multiline-String
-
-   .. raw:: html
-
-      <details><summary>Show Value</summary>
-
-   .. code-block:: python
-
-      """
-      	res = cuda.bindings.driver.cuKernelSetAttribute(
-      		cuda.bindings.driver.CUfunction_attribute.CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES,
-      		{7},
-      		kernels["{0}"],
-      		cuda.bindings.driver.CUdevice({10})
-      	)[0]
-      	if res != cuda.bindings.driver.CUresult.CUDA_SUCCESS:
-      		raise RuntimeError(f"Failed to set max dynamic shared memory size to {7} for kernel {0}: {{res}}")
-      
-      	config = cuda.bindings.driver.CUlaunchConfig()
-      	config.gridDimX = {1}
-      	config.gridDimY = {2}
-      	config.gridDimZ = {3}
-      	config.blockDimX = {4}
-      	config.blockDimY = {5}
-      	config.blockDimZ = {6}
-      	config.sharedMemBytes = {7}
-      	config.hStream = stream
-      
-      	arg_values = {8}
-      	arg_types = {9}
-      
-      	res = cuda.bindings.driver.cuLaunchKernelEx(config, kernels["{0}"], (arg_values, arg_types), 0)[0]
-      	if res != cuda.bindings.driver.CUresult.CUDA_SUCCESS:
-      		raise RuntimeError(f"Failed to launch kernel {0}: {{res}}")
-      """
-
-   .. raw:: html
-
-      </details>
-
-
-
 .. py:class:: BaseWrapper
 
    Bases: :py:obj:`abc.ABC`
@@ -540,26 +422,6 @@ Module Contents
 
 
    .. py:property:: host_func
-
-
-.. py:class:: TLNVRTCSourceWrapper(scheduled_ir_module, source, target, device_mod = None, host_mod = None, pass_configs = None)
-
-   Bases: :py:obj:`TLCUDASourceWrapper`
-
-
-   A wrapper class for the TileLang NVRTC backend.
-
-
-   .. py:method:: create_dispatch_func(code, function_informations)
-
-
-   .. py:method:: generate_tma_descriptor_args(desc_name_map)
-
-
-   .. py:method:: update_lib_code(code)
-
-
-   .. py:method:: get_stream_type()
 
 
 .. py:class:: TLHIPSourceWrapper(scheduled_ir_module, source, target, device_mod = None, host_mod = None, pass_configs = None)

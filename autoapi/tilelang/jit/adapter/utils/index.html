@@ -330,6 +330,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../libgen/index.html">tilelang.jit.adapter.libgen</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../nvrtc/index.html">tilelang.jit.adapter.nvrtc</a><input aria-label="Toggle navigation of tilelang.jit.adapter.nvrtc" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../nvrtc/adapter/index.html">tilelang.jit.adapter.nvrtc.adapter</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../nvrtc/libgen/index.html">tilelang.jit.adapter.nvrtc.libgen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../nvrtc/wrapper/index.html">tilelang.jit.adapter.nvrtc.wrapper</a></li>
 </ul>
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../torch/index.html">tilelang.jit.adapter.torch</a><input aria-label="Toggle navigation of tilelang.jit.adapter.torch" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -492,6 +494,18 @@
         <article role="main" id="furo-main-content">
           <section id="module-tilelang.jit.adapter.utils">
 <span id="tilelang-jit-adapter-utils"></span><h1>tilelang.jit.adapter.utils<a class="headerlink" href="#module-tilelang.jit.adapter.utils" title="Link to this heading">¶</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams" title="tilelang.jit.adapter.utils.TMADescriptorParams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TMADescriptorParams</span></code></a></p></td>
+<td><p>Parsed TMA descriptor parameters.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -521,8 +535,17 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.get_annotated_mod" title="tilelang.jit.adapter.utils.get_annotated_mod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_annotated_mod</span></code></a>(func_or_mod[, target, target_host, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.pythonic_expr" title="tilelang.jit.adapter.utils.pythonic_expr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pythonic_expr</span></code></a>(expr[, dtype_map])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.pythonic_expr" title="tilelang.jit.adapter.utils.pythonic_expr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pythonic_expr</span></code></a>(expr[, dtype_map, ignore_cast])</p></td>
 <td><p>Converts a TVM PrimExpr into a Python-style string, correctly handling operator precedence.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.maybe_desc_name" title="tilelang.jit.adapter.utils.maybe_desc_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maybe_desc_name</span></code></a>(name, matches, i[, desc_name_map])</p></td>
+<td><p>Check if a parameter name corresponds to a TMA descriptor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.parse_function_call_args" title="tilelang.jit.adapter.utils.parse_function_call_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_function_call_args</span></code></a>(declaration, function_args, ...)</p></td>
+<td><p>Parse function call arguments from a kernel declaration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.parse_tma_descriptor_args" title="tilelang.jit.adapter.utils.parse_tma_descriptor_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_tma_descriptor_args</span></code></a>(tma_descriptor_args, ...)</p></td>
+<td><p>Parse TMA descriptor arguments into structured parameters.</p></td>
 </tr>
 </tbody>
 </table>
@@ -650,13 +673,14 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.utils.pythonic_expr">
-<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.utils.</span></span><span class="sig-name descname"><span class="pre">pythonic_expr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.utils.pythonic_expr" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.utils.</span></span><span class="sig-name descname"><span class="pre">pythonic_expr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_cast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.utils.pythonic_expr" title="Link to this definition">¶</a></dt>
 <dd><p>Converts a TVM PrimExpr into a Python-style string, correctly handling operator precedence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>expr</strong> (<em>tilelang.tvm.tir.PrimExpr</em>) – The TVM PrimExpr to convert.</p></li>
-<li><p><strong>dtype_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>dtype_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>] </em><em>| </em><em>None</em>) – A dictionary mapping data types to their string representations.</p></li>
+<li><p><strong>ignore_cast</strong> (<a class="reference internal" href="../../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>) – Whether to ignore the cast operator and return the string representation of the value without the cast.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -664,6 +688,176 @@
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.maybe_desc_name">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.utils.</span></span><span class="sig-name descname"><span class="pre">maybe_desc_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_name_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.utils.maybe_desc_name" title="Link to this definition">¶</a></dt>
+<dd><p>Check if a parameter name corresponds to a TMA descriptor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The parameter name to check.</p></li>
+<li><p><strong>matches</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of all matched parameter names.</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – Index of the current match.</p></li>
+<li><p><strong>desc_name_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>] </em><em>| </em><em>None</em>) – Optional mapping to store descriptor name relationships.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the parameter is a TMA descriptor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.parse_function_call_args">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.utils.</span></span><span class="sig-name descname"><span class="pre">parse_function_call_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">declaration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_name_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_name_var_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_arg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.utils.parse_function_call_args" title="Link to this definition">¶</a></dt>
+<dd><p>Parse function call arguments from a kernel declaration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>declaration</strong> (<em>str</em>) – The kernel function declaration string.</p></li>
+<li><p><strong>function_args</strong> (<em>list</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>) – List of function argument specifications.</p></li>
+<li><p><strong>function_params</strong> (<em>list</em><em>[</em><em>Any</em><em>]</em>) – List of function parameters from TVM IR.</p></li>
+<li><p><strong>desc_name_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>] </em><em>| </em><em>None</em>) – Optional mapping for descriptor names.</p></li>
+<li><p><strong>desc_name_var_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>tilelang.tvm.tir.Var</em><em>] </em><em>| </em><em>None</em>) – Optional mapping from descriptor names to TVM variables.</p></li>
+<li><p><strong>transform_arg</strong> (<em>Callable</em><em>[</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>) – Optional function to transform each argument (name, type) -&gt; result.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of parsed call arguments.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.utils.</span></span><span class="sig-name descname"><span class="pre">TMADescriptorParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensor_rank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_img2col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams" title="Link to this definition">¶</a></dt>
+<dd><p>Parsed TMA descriptor parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handle_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>)</p></li>
+<li><p><strong>tensor_rank</strong> (<em>int</em>)</p></li>
+<li><p><strong>global_address</strong> (<em>Any</em>)</p></li>
+<li><p><strong>is_img2col</strong> (<a class="reference internal" href="../../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.handle_name">
+<span class="sig-name descname"><span class="pre">handle_name</span></span><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.handle_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.dtype" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.tensor_rank">
+<span class="sig-name descname"><span class="pre">tensor_rank</span></span><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.tensor_rank" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.global_address">
+<span class="sig-name descname"><span class="pre">global_address</span></span><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.global_address" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.is_img2col">
+<span class="sig-name descname"><span class="pre">is_img2col</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.is_img2col" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.global_dim">
+<span class="sig-name descname"><span class="pre">global_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.global_dim" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.global_stride">
+<span class="sig-name descname"><span class="pre">global_stride</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.global_stride" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.element_strides">
+<span class="sig-name descname"><span class="pre">element_strides</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.element_strides" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.interleave">
+<span class="sig-name descname"><span class="pre">interleave</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.interleave" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.swizzle">
+<span class="sig-name descname"><span class="pre">swizzle</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.swizzle" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.l2_promotion">
+<span class="sig-name descname"><span class="pre">l2_promotion</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.l2_promotion" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.oob_fill">
+<span class="sig-name descname"><span class="pre">oob_fill</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.oob_fill" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.box_dim">
+<span class="sig-name descname"><span class="pre">box_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.box_dim" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.lower_corner">
+<span class="sig-name descname"><span class="pre">lower_corner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.lower_corner" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.upper_corner">
+<span class="sig-name descname"><span class="pre">upper_corner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.upper_corner" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.smem_box_channel">
+<span class="sig-name descname"><span class="pre">smem_box_channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.smem_box_channel" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.TMADescriptorParams.smem_box_pixel">
+<span class="sig-name descname"><span class="pre">smem_box_pixel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#tilelang.jit.adapter.utils.TMADescriptorParams.smem_box_pixel" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.utils.parse_tma_descriptor_args">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.utils.</span></span><span class="sig-name descname"><span class="pre">parse_tma_descriptor_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tma_descriptor_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_name_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_name_var_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pythonic_expr_func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.utils.parse_tma_descriptor_args" title="Link to this definition">¶</a></dt>
+<dd><p>Parse TMA descriptor arguments into structured parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tma_descriptor_args</strong> (<em>dict</em><em>[</em><em>tilelang.tvm.tir.Var</em><em>, </em><em>list</em><em>[</em><em>Any</em><em>]</em><em>]</em>) – Dictionary mapping TMA descriptor variables to their arguments.</p></li>
+<li><p><strong>desc_name_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – Mapping from descriptor handles to parameter names.</p></li>
+<li><p><strong>desc_name_var_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>tilelang.tvm.tir.Var</em><em>]</em>) – Mapping from descriptor handles to TVM variables.</p></li>
+<li><p><strong>pythonic_expr_func</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>str</em><em>]</em>) – Function to convert TVM expressions to strings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of parsed TMA descriptor parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[<a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams" title="tilelang.jit.adapter.utils.TMADescriptorParams">TMADescriptorParams</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -727,6 +921,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.jit.adapter.utils</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.jit.adapter.utils.match_global_kernel"><code class="docutils literal notranslate"><span class="pre">match_global_kernel()</span></code></a></li>
@@ -738,6 +933,29 @@
 <li><a class="reference internal" href="#tilelang.jit.adapter.utils.is_metal_target"><code class="docutils literal notranslate"><span class="pre">is_metal_target()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.utils.get_annotated_mod"><code class="docutils literal notranslate"><span class="pre">get_annotated_mod()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.utils.pythonic_expr"><code class="docutils literal notranslate"><span class="pre">pythonic_expr()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.maybe_desc_name"><code class="docutils literal notranslate"><span class="pre">maybe_desc_name()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.parse_function_call_args"><code class="docutils literal notranslate"><span class="pre">parse_function_call_args()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.handle_name"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.handle_name</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.dtype"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.tensor_rank"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.tensor_rank</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.global_address"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.global_address</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.is_img2col"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.is_img2col</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.global_dim"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.global_dim</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.global_stride"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.global_stride</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.element_strides"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.element_strides</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.interleave"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.interleave</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.swizzle"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.swizzle</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.l2_promotion"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.l2_promotion</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.oob_fill"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.oob_fill</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.box_dim"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.box_dim</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.lower_corner"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.lower_corner</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.upper_corner"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.upper_corner</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.smem_box_channel"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.smem_box_channel</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.TMADescriptorParams.smem_box_pixel"><code class="docutils literal notranslate"><span class="pre">TMADescriptorParams.smem_box_pixel</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.utils.parse_tma_descriptor_args"><code class="docutils literal notranslate"><span class="pre">parse_tma_descriptor_args()</span></code></a></li>
 </ul>
 </li>
 </ul>

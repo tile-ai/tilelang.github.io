@@ -4,6 +4,14 @@ tilelang.jit.adapter.utils
 .. py:module:: tilelang.jit.adapter.utils
 
 
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.utils.TMADescriptorParams
+
+
 Functions
 ---------
 
@@ -18,6 +26,9 @@ Functions
    tilelang.jit.adapter.utils.is_metal_target
    tilelang.jit.adapter.utils.get_annotated_mod
    tilelang.jit.adapter.utils.pythonic_expr
+   tilelang.jit.adapter.utils.maybe_desc_name
+   tilelang.jit.adapter.utils.parse_function_call_args
+   tilelang.jit.adapter.utils.parse_tma_descriptor_args
 
 
 Module Contents
@@ -39,12 +50,146 @@ Module Contents
 
 .. py:function:: get_annotated_mod(func_or_mod, target = 'auto', target_host = None, model_type = 'all')
 
-.. py:function:: pythonic_expr(expr, dtype_map = None)
+.. py:function:: pythonic_expr(expr, dtype_map = None, ignore_cast = False)
 
    Converts a TVM PrimExpr into a Python-style string, correctly handling operator precedence.
 
    :param expr: The TVM PrimExpr to convert.
+   :param dtype_map: A dictionary mapping data types to their string representations.
+   :param ignore_cast: Whether to ignore the cast operator and return the string representation of the value without the cast.
 
    :returns: A string representation of the expression.
+
+
+.. py:function:: maybe_desc_name(name, matches, i, desc_name_map = None)
+
+   Check if a parameter name corresponds to a TMA descriptor.
+
+   :param name: The parameter name to check.
+   :param matches: List of all matched parameter names.
+   :param i: Index of the current match.
+   :param desc_name_map: Optional mapping to store descriptor name relationships.
+
+   :returns: True if the parameter is a TMA descriptor.
+
+
+.. py:function:: parse_function_call_args(declaration, function_args, function_params, desc_name_map = None, desc_name_var_map = None, transform_arg = None)
+
+   Parse function call arguments from a kernel declaration.
+
+   :param declaration: The kernel function declaration string.
+   :param function_args: List of function argument specifications.
+   :param function_params: List of function parameters from TVM IR.
+   :param desc_name_map: Optional mapping for descriptor names.
+   :param desc_name_var_map: Optional mapping from descriptor names to TVM variables.
+   :param transform_arg: Optional function to transform each argument (name, type) -> result.
+
+   :returns: List of parsed call arguments.
+
+
+.. py:class:: TMADescriptorParams(handle_name, dtype, tensor_rank, global_address, is_img2col = False)
+
+   Parsed TMA descriptor parameters.
+
+
+   .. py:attribute:: handle_name
+
+
+   .. py:attribute:: dtype
+
+
+   .. py:attribute:: tensor_rank
+
+
+   .. py:attribute:: global_address
+
+
+   .. py:attribute:: is_img2col
+      :value: False
+
+
+
+   .. py:attribute:: global_dim
+      :type:  list[str]
+      :value: []
+
+
+
+   .. py:attribute:: global_stride
+      :type:  list[str]
+      :value: []
+
+
+
+   .. py:attribute:: element_strides
+      :type:  list[str]
+      :value: []
+
+
+
+   .. py:attribute:: interleave
+      :type:  str
+      :value: ''
+
+
+
+   .. py:attribute:: swizzle
+      :type:  str
+      :value: ''
+
+
+
+   .. py:attribute:: l2_promotion
+      :type:  str
+      :value: ''
+
+
+
+   .. py:attribute:: oob_fill
+      :type:  str
+      :value: ''
+
+
+
+   .. py:attribute:: box_dim
+      :type:  list[str]
+      :value: []
+
+
+
+   .. py:attribute:: lower_corner
+      :type:  list[str]
+      :value: []
+
+
+
+   .. py:attribute:: upper_corner
+      :type:  list[str]
+      :value: []
+
+
+
+   .. py:attribute:: smem_box_channel
+      :type:  str
+      :value: ''
+
+
+
+   .. py:attribute:: smem_box_pixel
+      :type:  str
+      :value: ''
+
+
+
+.. py:function:: parse_tma_descriptor_args(tma_descriptor_args, desc_name_map, desc_name_var_map, pythonic_expr_func)
+
+   Parse TMA descriptor arguments into structured parameters.
+
+   :param tma_descriptor_args: Dictionary mapping TMA descriptor variables to their arguments.
+   :param desc_name_map: Mapping from descriptor handles to parameter names.
+   :param desc_name_var_map: Mapping from descriptor handles to TVM variables.
+   :param pythonic_expr_func: Function to convert TVM expressions to strings.
+
+   :returns: List of parsed TMA descriptor parameters.
 
 
