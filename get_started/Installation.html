@@ -502,19 +502,19 @@
 <li><p><strong>Python Version</strong>: &gt;= 3.8</p></li>
 <li><p><strong>CUDA Version</strong>: 12.0 &lt;= CUDA &lt; 13</p></li>
 </ul>
-<p>The easiest way to install <strong>tile-lang</strong> is directly from PyPI using pip. To install the latest version, run the following command in your terminal:</p>
+<p>The easiest way to install tilelang is directly from PyPI using pip. To install the latest version, run the following command in your terminal:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>tilelang
 </pre></div>
 </div>
-<p>Alternatively, you may choose to install <strong>tile-lang</strong> using prebuilt packages available on the Release Page:</p>
+<p>Alternatively, you may choose to install tilelang using prebuilt packages available on the Release Page:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>tilelang-0.0.0.dev0+ubuntu.20.4.cu120-py3-none-any.whl
 </pre></div>
 </div>
-<p>To install the latest version of <strong>tile-lang</strong> from the GitHub repository, you can run the following command:</p>
+<p>To install the latest version of tilelang from the GitHub repository, you can run the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/tile-ai/tilelang.git
 </pre></div>
 </div>
-<p>After installing <strong>tile-lang</strong>, you can verify the installation by running:</p>
+<p>After installing tilelang, you can verify the installation by running:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import tilelang; print(tilelang.__version__)&quot;</span>
 </pre></div>
 </div>
@@ -527,24 +527,30 @@
 <li><p><strong>Python Version</strong>: &gt;= 3.8</p></li>
 <li><p><strong>CUDA Version</strong>: &gt;= 10.0</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>--ipc<span class="o">=</span>host<span class="w"> </span>nvcr.io/nvidia/pytorch:23.01-py3
-</pre></div>
-</div>
-<p>To build and install <strong>tile-lang</strong> directly from source, follow these steps. This process requires certain pre-requisites from Apache TVM, which can be installed on Ubuntu/Debian-based systems using the following commands:</p>
+<p>If you prefer Docker, please skip to the <a class="reference internal" href="#install-using-docker">Install Using Docker</a> section. This section focuses on building from source on a native Linux environment.</p>
+<p>First, install the OS-level prerequisites on Ubuntu/Debian-based systems using the following commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>apt-get<span class="w"> </span>update
 apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>python3<span class="w"> </span>python3-dev<span class="w"> </span>python3-setuptools<span class="w"> </span>gcc<span class="w"> </span>zlib1g-dev<span class="w"> </span>build-essential<span class="w"> </span>cmake<span class="w"> </span>libedit-dev
 </pre></div>
 </div>
-<p>After installing the prerequisites, you can clone the <strong>tile-lang</strong> repository and install it using pip:</p>
+<p>Then, clone the tilelang repository and install it using pip. The <code class="docutils literal notranslate"><span class="pre">-v</span></code> flag enables verbose output during the build process.</p>
+<blockquote>
+<div><p><strong>Note</strong>: Use the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> flag to include necessary submodules. Tilelang currently depends on a customized version of TVM, which is included as a submodule. If you prefer <a class="reference internal" href="#using-existing-tvm">Building with Existing TVM Installation</a>, you can skip cloning the TVM submodule (but still need other dependencies).</p>
+</div></blockquote>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang.git
 <span class="nb">cd</span><span class="w"> </span>tilelang
 pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v
 </pre></div>
 </div>
-<p>If you want to install <strong>tile-lang</strong> in development mode, you can run the following command:</p>
+<p>If you want to install tilelang in development mode, you can use the <code class="docutils literal notranslate"><span class="pre">-e</span></code> flag so that any changes to the Python files will be reflected immediately without reinstallation.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="w"> </span>-v
 </pre></div>
 </div>
+<blockquote>
+<div><p><strong>Note</strong>: changes to C++ files require rebuilding the tilelang C++ library. See <a class="reference internal" href="#faster-rebuild-for-developers">Faster Rebuild for Developers</a> below. A default <code class="docutils literal notranslate"><span class="pre">build</span></code> directory will be created if you use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code>, so you can also directly run <code class="docutils literal notranslate"><span class="pre">make</span></code> in the <code class="docutils literal notranslate"><span class="pre">build</span></code> directory to rebuild it as <a class="reference internal" href="#working-from-source-via-pythonpath">Working from Source via PYTHONPATH</a> suggested below.</p>
+</div></blockquote>
+<section id="working-from-source-via-pythonpath">
+<span id="id1"></span><h3>Working from Source via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code><a class="headerlink" href="#working-from-source-via-pythonpath" title="Link to this heading">¶</a></h3>
 <p>If you prefer to work directly from the source tree via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, make sure the native extension is built first:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>build
 <span class="nb">cd</span><span class="w"> </span>build
@@ -563,15 +569,18 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 <li><p><code class="docutils literal notranslate"><span class="pre">-DUSE_ROCM=ON</span></code> selects ROCm support when building on AMD GPUs.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-DNO_VERSION_LABEL=ON</span></code> disables the backend/git suffix in <code class="docutils literal notranslate"><span class="pre">tilelang.__version__</span></code>.</p></li>
 </ul>
-<p>We currently provide four methods to install <strong>tile-lang</strong>:</p>
-<ol class="arabic simple">
-<li><p><a class="reference internal" href="#install-method-1">Install Using Docker</a> (Recommended)</p></li>
-<li><p><a class="reference internal" href="#install-method-2">Install from Source (using the bundled TVM submodule)</a></p></li>
-<li><p><a class="reference internal" href="#install-method-3">Install from Source (using your own TVM installation)</a></p></li>
-</ol>
-<section id="method-1-install-using-docker-recommended">
-<span id="install-method-1"></span><h3>Method 1: Install Using Docker (Recommended)<a class="headerlink" href="#method-1-install-using-docker-recommended" title="Link to this heading">¶</a></h3>
-<p>For users who prefer a containerized environment with all dependencies pre-configured, <strong>tile-lang</strong> provides Docker images for different CUDA versions. This method is particularly useful for ensuring consistent environments across different systems and is the <strong>recommended approach</strong> for most users.</p>
+</section>
+<section id="building-with-existing-tvm-installation">
+<span id="using-existing-tvm"></span><h3>Building with Existing TVM Installation<a class="headerlink" href="#building-with-existing-tvm-installation" title="Link to this heading">¶</a></h3>
+<p>If you already have a compatible TVM installation, use the <code class="docutils literal notranslate"><span class="pre">TVM_ROOT</span></code> environment variable to specify the location of your existing TVM repository when building tilelang:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">TVM_ROOT</span><span class="o">=</span>&lt;your-tvm-repo&gt;<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v
+</pre></div>
+</div>
+</section>
+</section>
+<section id="install-using-docker">
+<span id="id2"></span><h2>Install Using Docker<a class="headerlink" href="#install-using-docker" title="Link to this heading">¶</a></h2>
+<p>For users who prefer a containerized environment with all dependencies pre-configured, tilelang provides Docker images for different CUDA versions. This method is particularly useful for ensuring consistent environments across different systems.</p>
 <p><strong>Prerequisites:</strong></p>
 <ul class="simple">
 <li><p>Docker installed on your system</p></li>
@@ -619,69 +628,17 @@ docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </
 <li><p><code class="docutils literal notranslate"><span class="pre">/bin/zsh</span></code>: Uses zsh as the default shell</p></li>
 </ul>
 <ol class="arabic simple" start="4">
-<li><p><strong>Access the Container</strong>:</p></li>
+<li><p><strong>Access the Container and Verify Installation</strong>:</p></li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>tilelang_b200<span class="w"> </span>/bin/zsh
+<span class="c1"># Inside the container:</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import tilelang; print(tilelang.__version__)&quot;</span>
 </pre></div>
 </div>
-<ol class="arabic simple" start="5">
-<li><p><strong>Verify Installation</strong>:</p></li>
-</ol>
-<p>Once inside the container, verify that <strong>tile-lang</strong> is working correctly:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import tilelang; print(tilelang.__version__)&quot;</span>
-</pre></div>
-</div>
-<p>You can now run TileLang examples and develop your applications within the containerized environment. The Docker image comes with all necessary dependencies pre-installed, including CUDA toolkit, TVM, and TileLang itself.</p>
-<p><strong>Example Usage:</strong></p>
-<p>After accessing the container, you can run TileLang examples:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/home/tilelang/examples
-python<span class="w"> </span>elementwise/test_example_elementwise.py
-</pre></div>
-</div>
-<p>This Docker-based installation method provides a complete, isolated environment that works seamlessly on systems with compatible NVIDIA GPUs like the B200, ensuring optimal performance for TileLang applications.</p>
-</section>
-<section id="method-2-install-from-source-using-the-bundled-tvm-submodule">
-<span id="install-method-2"></span><h3>Method 2: Install from Source (Using the Bundled TVM Submodule)<a class="headerlink" href="#method-2-install-from-source-using-the-bundled-tvm-submodule" title="Link to this heading">¶</a></h3>
-<p>If you already have a compatible TVM installation, follow these steps:</p>
-<ol class="arabic simple">
-<li><p><strong>Clone the Repository</strong>:</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang
-<span class="nb">cd</span><span class="w"> </span>tilelang
-</pre></div>
-</div>
-<p><strong>Note</strong>: Use the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> flag to include necessary submodules.</p>
-<ol class="arabic simple" start="2">
-<li><p><strong>Configure Build Options</strong>:</p></li>
-</ol>
-<p>Create a build directory and specify your existing TVM path:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v
-</pre></div>
-</div>
-</section>
-<section id="method-3-install-from-source-using-your-own-tvm-installation">
-<span id="install-method-3"></span><h3>Method 3: Install from Source (Using Your Own TVM Installation)<a class="headerlink" href="#method-3-install-from-source-using-your-own-tvm-installation" title="Link to this heading">¶</a></h3>
-<p>If you prefer to use the built-in TVM version, follow these instructions:</p>
-<ol class="arabic simple">
-<li><p><strong>Clone the Repository</strong>:</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang
-<span class="nb">cd</span><span class="w"> </span>tilelang
-</pre></div>
-</div>
-<p><strong>Note</strong>: Ensure the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> flag is included to fetch submodules.</p>
-<ol class="arabic simple" start="2">
-<li><p><strong>Configure Build Options</strong>:</p></li>
-</ol>
-<p>Copy the configuration file and enable the desired backends (e.g., LLVM and CUDA):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">TVM_ROOT</span><span class="o">=</span>&lt;your-tvm-repo&gt;<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v
-</pre></div>
-</div>
-</section>
 </section>
 <section id="install-with-nightly-version">
 <h2>Install with Nightly Version<a class="headerlink" href="#install-with-nightly-version" title="Link to this heading">¶</a></h2>
-<p>For users who want access to the latest features and improvements before official releases, we provide nightly builds of <strong>tile-lang</strong>.</p>
+<p>For users who want access to the latest features and improvements before official releases, we provide nightly builds of tilelang.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>tilelang<span class="w"> </span>-f<span class="w"> </span>https://tile-ai.github.io/whl/nightly/cu121/
 <span class="c1"># or pip install tilelang --find-links https://tile-ai.github.io/whl/nightly/cu121/</span>
 </pre></div>
@@ -713,25 +670,28 @@ Set <code class="docutils literal notranslate"><span class="pre">NO_TOOLCHAIN_VE
 <section id="run-time-environment-variables">
 <h3>Run-time environment variables<a class="headerlink" href="#run-time-environment-variables" title="Link to this heading">¶</a></h3>
 <!-- TODO: tvm -->
+<p>TODO</p>
 </section>
 </section>
+<section id="other-tips">
+<h2>Other Tips<a class="headerlink" href="#other-tips" title="Link to this heading">¶</a></h2>
 <section id="ide-configs">
-<h2>IDE Configs<a class="headerlink" href="#ide-configs" title="Link to this heading">¶</a></h2>
-<p>Building tilelang locally will automatically <code class="docutils literal notranslate"><span class="pre">compile_commands.json</span></code> file in <code class="docutils literal notranslate"><span class="pre">build</span></code> dir.
+<h3>IDE Configs<a class="headerlink" href="#ide-configs" title="Link to this heading">¶</a></h3>
+<p>Building tilelang locally will automatically generate a <code class="docutils literal notranslate"><span class="pre">compile_commands.json</span></code> file in <code class="docutils literal notranslate"><span class="pre">build</span></code> dir.
 VSCode with clangd and <a class="reference external" href="https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd">clangd extension</a> should be able to index that without extra configuration.</p>
 </section>
 <section id="compile-cache">
-<h2>Compile cache<a class="headerlink" href="#compile-cache" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">ccache</span></code> will be automatically used if found.</p>
+<h3>Compile Cache<a class="headerlink" href="#compile-cache" title="Link to this heading">¶</a></h3>
+<p>The default path of the compile cache is <code class="docutils literal notranslate"><span class="pre">~/.tilelang/cache</span></code>. <code class="docutils literal notranslate"><span class="pre">ccache</span></code> will be automatically used if found.</p>
 </section>
 <section id="repairing-wheels">
-<h2>Repairing wheels<a class="headerlink" href="#repairing-wheels" title="Link to this heading">¶</a></h2>
+<h3>Repairing Wheels<a class="headerlink" href="#repairing-wheels" title="Link to this heading">¶</a></h3>
 <p>If you plan to use your wheel in other environment,
-it’s recommend to use auditwheel (on Linux) or delocate (on Darwin)
+it’s recommended to use auditwheel (on Linux) or delocate (on Darwin)
 to repair them.</p>
 </section>
 <section id="faster-rebuild-for-developers">
-<h2>Faster rebuild for developers<a class="headerlink" href="#faster-rebuild-for-developers" title="Link to this heading">¶</a></h2>
+<span id="id3"></span><h3>Faster Rebuild for Developers<a class="headerlink" href="#faster-rebuild-for-developers" title="Link to this heading">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> introduces extra [un]packaging and takes ~30 sec to complete,
 even if no source change.</p>
 <p>Developers who needs to recompile frequently could use:</p>
@@ -747,6 +707,7 @@ you’ll see logs like below:</p>
 <span class="go">2025-10-14 11:11:29  [TileLang:tilelang.env:WARNING]: Loading tilelang libs from dev root: /Users/yyc/repo/tilelang/build</span>
 </pre></div>
 </div>
+</section>
 </section>
 </section>
 
@@ -808,21 +769,24 @@ you’ll see logs like below:</p>
 <li><a class="reference internal" href="#">Installation Guide</a><ul>
 <li><a class="reference internal" href="#installing-with-pip">Installing with pip</a></li>
 <li><a class="reference internal" href="#building-from-source">Building from Source</a><ul>
-<li><a class="reference internal" href="#method-1-install-using-docker-recommended">Method 1: Install Using Docker (Recommended)</a></li>
-<li><a class="reference internal" href="#method-2-install-from-source-using-the-bundled-tvm-submodule">Method 2: Install from Source (Using the Bundled TVM Submodule)</a></li>
-<li><a class="reference internal" href="#method-3-install-from-source-using-your-own-tvm-installation">Method 3: Install from Source (Using Your Own TVM Installation)</a></li>
+<li><a class="reference internal" href="#working-from-source-via-pythonpath">Working from Source via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code></a></li>
+<li><a class="reference internal" href="#building-with-existing-tvm-installation">Building with Existing TVM Installation</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#install-using-docker">Install Using Docker</a></li>
 <li><a class="reference internal" href="#install-with-nightly-version">Install with Nightly Version</a></li>
 <li><a class="reference internal" href="#install-configs">Install Configs</a><ul>
 <li><a class="reference internal" href="#build-time-environment-variables">Build-time environment variables</a></li>
 <li><a class="reference internal" href="#run-time-environment-variables">Run-time environment variables</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#other-tips">Other Tips</a><ul>
 <li><a class="reference internal" href="#ide-configs">IDE Configs</a></li>
-<li><a class="reference internal" href="#compile-cache">Compile cache</a></li>
-<li><a class="reference internal" href="#repairing-wheels">Repairing wheels</a></li>
-<li><a class="reference internal" href="#faster-rebuild-for-developers">Faster rebuild for developers</a></li>
+<li><a class="reference internal" href="#compile-cache">Compile Cache</a></li>
+<li><a class="reference internal" href="#repairing-wheels">Repairing Wheels</a></li>
+<li><a class="reference internal" href="#faster-rebuild-for-developers">Faster Rebuild for Developers</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
