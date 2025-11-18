@@ -547,13 +547,16 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.retrieve_offset" title="tilelang.utils.language.retrieve_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_offset</span></code></a>(obj)</p></td>
 <td><p>Retrieve per-dimension minima offsets.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.prim_expr_equal" title="tilelang.utils.language.prim_expr_equal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prim_expr_equal</span></code></a>(lhs, rhs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.bits_product" title="tilelang.utils.language.bits_product"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bits_product</span></code></a>(shape, dtype)</p></td>
+<td><p>Compute the number of bits in a Buffer (shape with dtype).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.prim_expr_equal" title="tilelang.utils.language.prim_expr_equal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prim_expr_equal</span></code></a>(lhs, rhs)</p></td>
 <td><p>Robust equality for PrimExpr shapes/extents.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.legalize_pairwise_extents" title="tilelang.utils.language.legalize_pairwise_extents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">legalize_pairwise_extents</span></code></a>(src_extents, dst_extents)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.legalize_pairwise_extents" title="tilelang.utils.language.legalize_pairwise_extents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">legalize_pairwise_extents</span></code></a>(src_extents, dst_extents)</p></td>
 <td><p>Right-align and broadcast two extent lists to be mutually compatible.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.is_full_region" title="tilelang.utils.language.is_full_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_full_region</span></code></a>(buffer_region)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.is_full_region" title="tilelang.utils.language.is_full_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_full_region</span></code></a>(buffer_region)</p></td>
 <td><p>Check whether a BufferRegion covers the full buffer region.</p></td>
 </tr>
 </tbody>
@@ -852,6 +855,23 @@ if scalar, fall back to 1-sized ranges at given indices</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.bits_product">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">bits_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.bits_product" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the number of bits in a Buffer (shape with dtype).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shape</strong> (<em>list</em><em>[</em><em>tvm.tir.PrimExpr</em><em>]</em>)</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.utils.language.prim_expr_equal">
 <span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">prim_expr_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.prim_expr_equal" title="Link to this definition">¶</a></dt>
 <dd><p>Robust equality for PrimExpr shapes/extents.</p>
@@ -995,6 +1015,7 @@ the corresponding dimension in the buffer’s shape.</p>
 <li><a class="reference internal" href="#tilelang.utils.language.retrive_ptr_from_buffer_region"><code class="docutils literal notranslate"><span class="pre">retrive_ptr_from_buffer_region()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.retrieve_ptr"><code class="docutils literal notranslate"><span class="pre">retrieve_ptr()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.retrieve_offset"><code class="docutils literal notranslate"><span class="pre">retrieve_offset()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.bits_product"><code class="docutils literal notranslate"><span class="pre">bits_product()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.prim_expr_equal"><code class="docutils literal notranslate"><span class="pre">prim_expr_equal()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.legalize_pairwise_extents"><code class="docutils literal notranslate"><span class="pre">legalize_pairwise_extents()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.is_full_region"><code class="docutils literal notranslate"><span class="pre">is_full_region()</span></code></a></li>
