@@ -44,7 +44,7 @@ Module Contents
    A symbolic expression can be a simple tvm.Var, or an tvm.PrimExpr containing tvm.Var.
 
 
-.. py:class:: CythonKernelAdapter(params, result_idx, target, func_or_mod, host_mod = None, device_mod = None, kernel_global_source = None, verbose = False, pass_configs = None, compile_flags = None)
+.. py:class:: CythonKernelAdapter(params, result_idx, target, func_or_mod, host_mod = None, device_mod = None, device_kernel_source = None, verbose = False, pass_configs = None, compile_flags = None)
 
    Bases: :py:obj:`tilelang.jit.adapter.base.BaseKernelAdapter`
 
@@ -69,7 +69,13 @@ Module Contents
 
 
 
-   .. py:attribute:: kernel_global_source
+   .. py:attribute:: host_kernel_source
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: device_kernel_source
       :type:  str | None
       :value: None
 
@@ -77,12 +83,6 @@ Module Contents
 
    .. py:attribute:: lib
       :type:  ctypes.CDLL | None
-      :value: None
-
-
-
-   .. py:attribute:: wrapped_source
-      :type:  str | None
       :value: None
 
 
@@ -155,7 +155,7 @@ Module Contents
    .. py:attribute:: cython_wrapper
 
 
-   .. py:method:: from_database(params, result_idx, target, func_or_mod, kernel_global_source, kernel_lib_path, verbose = False, pass_configs = None, compile_flags = None)
+   .. py:method:: from_database(params, result_idx, target, func_or_mod, host_kernel_source, device_kernel_source, kernel_lib_path, verbose = False, pass_configs = None, compile_flags = None)
       :classmethod:
 
 

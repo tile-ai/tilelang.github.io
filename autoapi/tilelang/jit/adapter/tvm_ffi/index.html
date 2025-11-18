@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.jit.adapter.libgen" href="../libgen/index.html"><link rel="prev" title="tilelang.jit.adapter.cython.adapter" href="../cython/adapter/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.jit.adapter.utils" href="../utils/index.html"><link rel="prev" title="tilelang.jit.adapter.torch.metal" href="../torch/metal/index.html">
         <link rel="prefetch" href="../../../../../_static/img/logo-row.svg" as="image">
         <link rel="prefetch" href="../../../../../_static/img/logo-row.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>tilelang.jit.adapter.dlpack - Tile Language 0.1.6.post2 documentation</title>
+        <title>tilelang.jit.adapter.tvm_ffi - Tile Language 0.1.6.post2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -326,7 +326,6 @@
 <li class="toctree-l5"><a class="reference internal" href="../cython/adapter/index.html">tilelang.jit.adapter.cython.adapter</a></li>
 </ul>
 </li>
-<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.jit.adapter.dlpack</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../libgen/index.html">tilelang.jit.adapter.libgen</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../nvrtc/index.html">tilelang.jit.adapter.nvrtc</a><input aria-label="Toggle navigation of tilelang.jit.adapter.nvrtc" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../nvrtc/adapter/index.html">tilelang.jit.adapter.nvrtc.adapter</a></li>
@@ -338,11 +337,13 @@
 <li class="toctree-l5"><a class="reference internal" href="../torch/metal/index.html">tilelang.jit.adapter.torch.metal</a></li>
 </ul>
 </li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.jit.adapter.tvm_ffi</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../utils/index.html">tilelang.jit.adapter.utils</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../wrapper/index.html">tilelang.jit.adapter.wrapper</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../env/index.html">tilelang.jit.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../execution_backend/index.html">tilelang.jit.execution_backend</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../kernel/index.html">tilelang.jit.kernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../param/index.html">tilelang.jit.param</a></li>
 </ul>
@@ -474,7 +475,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../../../../../_sources/autoapi/tilelang/jit/adapter/dlpack/index.rst.txt" title="View this page">
+  <a class="muted-link" href="../../../../../_sources/autoapi/tilelang/jit/adapter/tvm_ffi/index.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -492,16 +493,20 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-tilelang.jit.adapter.dlpack">
-<span id="tilelang-jit-adapter-dlpack"></span><h1>tilelang.jit.adapter.dlpack<a class="headerlink" href="#module-tilelang.jit.adapter.dlpack" title="Link to this heading">¶</a></h1>
-<p>The profiler and convert to torch utils</p>
+          <section id="module-tilelang.jit.adapter.tvm_ffi">
+<span id="tilelang-jit-adapter-tvm-ffi"></span><h1>tilelang.jit.adapter.tvm_ffi<a class="headerlink" href="#module-tilelang.jit.adapter.tvm_ffi" title="Link to this heading">¶</a></h1>
+<p>Utilities to adapt TVM FFI kernels to Torch tensors.</p>
+<p>This adapter intentionally captures PyTorch’s current CUDA stream and device
+via light-weight callables so that, when the wrapped function is invoked,
+the execution observes the same stream context as the active Torch code.
+On non-CUDA builds, the stream/device fall back to 0/CPU semantics.</p>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.dlpack.TorchDLPackKernelAdapter" title="tilelang.jit.adapter.dlpack.TorchDLPackKernelAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TorchDLPackKernelAdapter</span></code></a></p></td>
-<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter" title="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter</span></code></a></p></td>
+<td><p>Adapter that runs a TVM runtime.Executable with Torch tensors.</p></td>
 </tr>
 </tbody>
 </table>
@@ -510,19 +515,164 @@
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="tilelang.jit.adapter.dlpack.TorchDLPackKernelAdapter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.dlpack.</span></span><span class="sig-name descname"><span class="pre">TorchDLPackKernelAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.dlpack.TorchDLPackKernelAdapter" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.tvm_ffi.</span></span><span class="sig-name descname"><span class="pre">TVMFFIKernelAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_or_mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_mod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_mod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rt_mod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_kernel_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_kernel_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../base/index.html#tilelang.jit.adapter.base.BaseKernelAdapter" title="tilelang.jit.adapter.base.BaseKernelAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.jit.adapter.base.BaseKernelAdapter</span></code></a></p>
-<p>Helper class that provides a standard way to create an ABC using
-inheritance.</p>
+<p>Adapter that runs a TVM runtime.Executable with Torch tensors.</p>
+<p>Notes
+- We capture the “current” PyTorch CUDA stream/device as thunks (callables)</p>
+<blockquote>
+<div><p>rather than materializing them at construction time. This ensures the
+actual stream/device is read just-in-time when the function runs, matching
+the user’s current Torch context (e.g., after a stream guard/switch).</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>The stream pointer returned is a raw CUDA stream handle compatible with
+TVM’s device API; on CPU or when CUDA is unavailable, we return 0.</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>params</strong> (<em>list</em><em>[</em><a class="reference internal" href="../../../engine/param/index.html#tilelang.engine.param.KernelParam" title="tilelang.engine.param.KernelParam"><em>tilelang.engine.param.KernelParam</em></a><em>]</em>)</p></li>
 <li><p><strong>result_idx</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>target</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em>)</p></li>
+<li><p><strong>func_or_mod</strong> (<em>tvm.tir.PrimFunc</em><em> | </em><em>tilelang.tvm.IRModule</em>)</p></li>
+<li><p><strong>host_mod</strong> (<em>tilelang.tvm.IRModule</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>device_mod</strong> (<em>tilelang.tvm.IRModule</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>rt_mod</strong> (<em>tilelang.tvm.runtime.Module</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>host_kernel_source</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>device_kernel_source</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference internal" href="../../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>pass_configs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>compile_flags</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.target">
+<span class="sig-name descname"><span class="pre">target</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cuda'</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.target" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.ir_module">
+<span class="sig-name descname"><span class="pre">ir_module</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tilelang.tvm.IRModule</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.ir_module" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.host_kernel_source">
+<span class="sig-name descname"><span class="pre">host_kernel_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.host_kernel_source" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.device_kernel_source">
+<span class="sig-name descname"><span class="pre">device_kernel_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.device_kernel_source" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.executable">
+<span class="sig-name descname"><span class="pre">executable</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tilelang.tvm.runtime.Executable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.executable" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.pass_configs">
+<span class="sig-name descname"><span class="pre">pass_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.pass_configs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.host_mod">
+<span class="sig-name descname"><span class="pre">host_mod</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tilelang.tvm.IRModule</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.host_mod" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.device_mod">
+<span class="sig-name descname"><span class="pre">device_mod</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tilelang.tvm.IRModule</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.device_mod" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.rt_mod">
+<span class="sig-name descname"><span class="pre">rt_mod</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tilelang.tvm.runtime.Module</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.rt_mod" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.dynamic_symbolic_map">
+<span class="sig-name descname"><span class="pre">dynamic_symbolic_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.tir.Var</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.dynamic_symbolic_map" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.params" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.result_idx">
+<span class="sig-name descname"><span class="pre">result_idx</span></span><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.result_idx" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.verbose">
+<span class="sig-name descname"><span class="pre">verbose</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.verbose" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.compile_flags">
+<span class="sig-name descname"><span class="pre">compile_flags</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.compile_flags" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.from_database">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_or_mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_kernel_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_kernel_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_lib_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.from_database" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>list</em><em>[</em><em>tvm.relax.TensorType</em><em>]</em>)</p></li>
+<li><p><strong>result_idx</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>target</strong> (<em>str</em>)</p></li>
+<li><p><strong>func_or_mod</strong> (<em>tvm.tir.PrimFunc</em><em> | </em><em>tilelang.tvm.IRModule</em>)</p></li>
+<li><p><strong>host_kernel_source</strong> (<em>str</em>)</p></li>
+<li><p><strong>device_kernel_source</strong> (<em>str</em>)</p></li>
+<li><p><strong>kernel_lib_path</strong> (<em>str</em>)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference internal" href="../../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>pass_configs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>compile_flags</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.get_host_source">
+<span class="sig-name descname"><span class="pre">get_host_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.get_host_source" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the source code of the host module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.get_device_source">
+<span class="sig-name descname"><span class="pre">get_device_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.get_device_source" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the source code of the device module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.get_kernel_source">
+<span class="sig-name descname"><span class="pre">get_kernel_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.get_kernel_source" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the source code of the compiled kernel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kernel_only</strong> (<a class="reference internal" href="../../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.prim_func">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prim_func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tvm.tir.PrimFunc</span></em><a class="headerlink" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.prim_func" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the primary TIR function from the IR module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tir.PrimFunc</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -533,23 +683,23 @@ inheritance.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../libgen/index.html">
+          <a class="next-page" href="../utils/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">tilelang.jit.adapter.libgen</div>
+                <div class="title">tilelang.jit.adapter.utils</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../cython/adapter/index.html">
+          <a class="prev-page" href="../torch/metal/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">tilelang.jit.adapter.cython.adapter</div>
+                <div class="title">tilelang.jit.adapter.torch.metal</div>
                 
               </div>
             </a>
@@ -583,10 +733,31 @@ inheritance.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">tilelang.jit.adapter.dlpack</a><ul>
+<li><a class="reference internal" href="#">tilelang.jit.adapter.tvm_ffi</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#tilelang.jit.adapter.dlpack.TorchDLPackKernelAdapter"><code class="docutils literal notranslate"><span class="pre">TorchDLPackKernelAdapter</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.target"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.target</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.ir_module"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.ir_module</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.host_kernel_source"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.host_kernel_source</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.device_kernel_source"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.device_kernel_source</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.executable"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.executable</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.pass_configs"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.pass_configs</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.host_mod"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.host_mod</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.device_mod"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.device_mod</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.rt_mod"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.rt_mod</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.dynamic_symbolic_map"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.dynamic_symbolic_map</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.params"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.params</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.result_idx"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.result_idx</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.verbose"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.verbose</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.compile_flags"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.compile_flags</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.from_database"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.from_database()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.get_host_source"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.get_host_source()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.get_device_source"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.get_device_source()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.get_kernel_source"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.get_kernel_source()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter.prim_func"><code class="docutils literal notranslate"><span class="pre">TVMFFIKernelAdapter.prim_func</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

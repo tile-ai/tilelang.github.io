@@ -1,0 +1,36 @@
+tilelang.jit.execution_backend
+==============================
+
+.. py:module:: tilelang.jit.execution_backend
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.jit.execution_backend.allowed_backends_for_target
+   tilelang.jit.execution_backend.resolve_execution_backend
+
+
+Module Contents
+---------------
+
+.. py:function:: allowed_backends_for_target(target, *, include_unavailable = True)
+
+   Return allowed execution backends for a given TVM target kind.
+
+   include_unavailable: if False, this will filter out backends that are known
+   to be unavailable at runtime (e.g., NVRTC without cuda-python installed).
+
+
+.. py:function:: resolve_execution_backend(requested, target)
+
+   Resolve an execution backend string to a concrete backend.
+
+   - Supports the alias "dlpack" -> "tvm_ffi".
+   - Supports the sentinel "auto" which selects a sensible default per target.
+   - Validates the combination (target, backend) and raises with helpful
+     alternatives when invalid.
+
+

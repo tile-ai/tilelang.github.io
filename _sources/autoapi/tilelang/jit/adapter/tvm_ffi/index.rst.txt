@@ -1,0 +1,149 @@
+tilelang.jit.adapter.tvm_ffi
+============================
+
+.. py:module:: tilelang.jit.adapter.tvm_ffi
+
+.. autoapi-nested-parse::
+
+   Utilities to adapt TVM FFI kernels to Torch tensors.
+
+   This adapter intentionally captures PyTorch's current CUDA stream and device
+   via light-weight callables so that, when the wrapped function is invoked,
+   the execution observes the same stream context as the active Torch code.
+   On non-CUDA builds, the stream/device fall back to 0/CPU semantics.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.tvm_ffi.TVMFFIKernelAdapter
+
+
+Module Contents
+---------------
+
+.. py:class:: TVMFFIKernelAdapter(params, result_idx, target, func_or_mod, host_mod = None, device_mod = None, rt_mod = None, host_kernel_source = None, device_kernel_source = None, verbose = False, pass_configs = None, compile_flags = None)
+
+   Bases: :py:obj:`tilelang.jit.adapter.base.BaseKernelAdapter`
+
+
+   Adapter that runs a TVM runtime.Executable with Torch tensors.
+
+   Notes
+   - We capture the "current" PyTorch CUDA stream/device as thunks (callables)
+     rather than materializing them at construction time. This ensures the
+     actual stream/device is read just-in-time when the function runs, matching
+     the user's current Torch context (e.g., after a stream guard/switch).
+   - The stream pointer returned is a raw CUDA stream handle compatible with
+     TVM's device API; on CPU or when CUDA is unavailable, we return 0.
+
+
+   .. py:attribute:: target
+      :type:  str | tvm.target.Target
+      :value: 'cuda'
+
+
+
+   .. py:attribute:: ir_module
+      :type:  tilelang.tvm.IRModule | None
+      :value: None
+
+
+
+   .. py:attribute:: host_kernel_source
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: device_kernel_source
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: executable
+      :type:  tilelang.tvm.runtime.Executable | None
+      :value: None
+
+
+
+   .. py:attribute:: pass_configs
+      :type:  dict[str, Any] | None
+      :value: None
+
+
+
+   .. py:attribute:: host_mod
+      :type:  tilelang.tvm.IRModule | None
+      :value: None
+
+
+
+   .. py:attribute:: device_mod
+      :type:  tilelang.tvm.IRModule | None
+      :value: None
+
+
+
+   .. py:attribute:: rt_mod
+      :type:  tilelang.tvm.runtime.Module | None
+      :value: None
+
+
+
+   .. py:attribute:: dynamic_symbolic_map
+      :type:  dict[tvm.tir.Var, tuple[int, int, int]] | None
+      :value: None
+
+
+
+   .. py:attribute:: params
+
+
+   .. py:attribute:: result_idx
+
+
+   .. py:attribute:: verbose
+      :value: False
+
+
+
+   .. py:attribute:: compile_flags
+      :value: None
+
+
+
+   .. py:method:: from_database(params, result_idx, target, func_or_mod, host_kernel_source, device_kernel_source, kernel_lib_path, verbose = False, pass_configs = None, compile_flags = None)
+      :classmethod:
+
+
+
+   .. py:method:: get_host_source()
+
+      Returns the source code of the host module.
+
+
+
+   .. py:method:: get_device_source()
+
+      Returns the source code of the device module.
+
+
+
+   .. py:method:: get_kernel_source(kernel_only = False)
+
+      Returns the source code of the compiled kernel.
+
+
+
+   .. py:property:: prim_func
+      :type: tvm.tir.PrimFunc
+
+
+      Returns the primary TIR function from the IR module.
+
+

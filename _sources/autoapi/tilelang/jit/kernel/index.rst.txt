@@ -25,7 +25,7 @@ Module Contents
 
 .. py:data:: logger
 
-.. py:class:: JITKernel(func = None, out_idx = None, execution_backend = 'cython', target = 'auto', target_host = None, verbose = False, pass_configs = None, from_database = False, compile_flags = None)
+.. py:class:: JITKernel(func = None, out_idx = None, execution_backend = 'tvm_ffi', target = 'auto', target_host = None, verbose = False, pass_configs = None, from_database = False, compile_flags = None)
 
    Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_T`\ ]
 
@@ -94,7 +94,7 @@ Module Contents
 
 
    .. py:attribute:: execution_backend
-      :value: 'cython'
+      :value: 'tvm_ffi'
 
 
 
@@ -123,7 +123,7 @@ Module Contents
 
 
 
-   .. py:method:: from_database(func, kernel_global_source, kernel_lib_path, params, target, target_host, out_idx, execution_backend, pass_configs = None, compile_flags = None)
+   .. py:method:: from_database(func, host_kernel_source, device_kernel_source, kernel_lib_path, params, target, target_host, out_idx, execution_backend, pass_configs = None, compile_flags = None)
       :classmethod:
 
 
@@ -173,7 +173,7 @@ Module Contents
 
 
 
-   .. py:method:: get_kernel_source()
+   .. py:method:: get_kernel_source(kernel_only = True)
 
       Returns the source code of the compiled kernel function.
 

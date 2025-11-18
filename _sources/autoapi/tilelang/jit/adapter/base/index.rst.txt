@@ -44,9 +44,34 @@ Module Contents
    .. py:attribute:: result_idx
 
 
+   .. py:method:: get_current_stream_functor()
+      :staticmethod:
+
+
+      Return a callable that reads Torch's current CUDA stream pointer.
+
+      The returned lambda yields the raw CUDA stream handle of the current
+      PyTorch stream on the active device. It's a thunk (evaluated at call
+      time) so that any upstream stream guards are respected. If CUDA is
+      unavailable, it returns a lambda that yields 0.
+
+
+
+   .. py:method:: get_current_device_functor()
+      :staticmethod:
+
+
+      Return a callable that yields Torch's current device.
+
+      Similar to the stream functor, we capture a callable that, when called,
+      fetches the current device according to PyTorch. On CPU or when CUDA is
+      unavailable, returns ``torch.device('cpu')``.
+
+
+
    .. py:method:: __call__(*args, **kwds)
 
 
-   .. py:method:: get_kernel_source()
+   .. py:method:: get_kernel_source(kernel_only = True)
 
 

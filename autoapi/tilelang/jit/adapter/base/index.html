@@ -326,7 +326,6 @@
 <li class="toctree-l5"><a class="reference internal" href="../cython/adapter/index.html">tilelang.jit.adapter.cython.adapter</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../dlpack/index.html">tilelang.jit.adapter.dlpack</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../libgen/index.html">tilelang.jit.adapter.libgen</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../nvrtc/index.html">tilelang.jit.adapter.nvrtc</a><input aria-label="Toggle navigation of tilelang.jit.adapter.nvrtc" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../nvrtc/adapter/index.html">tilelang.jit.adapter.nvrtc.adapter</a></li>
@@ -338,11 +337,13 @@
 <li class="toctree-l5"><a class="reference internal" href="../torch/metal/index.html">tilelang.jit.adapter.torch.metal</a></li>
 </ul>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="../tvm_ffi/index.html">tilelang.jit.adapter.tvm_ffi</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../utils/index.html">tilelang.jit.adapter.utils</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../wrapper/index.html">tilelang.jit.adapter.wrapper</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../env/index.html">tilelang.jit.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../execution_backend/index.html">tilelang.jit.execution_backend</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../kernel/index.html">tilelang.jit.kernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../param/index.html">tilelang.jit.param</a></li>
 </ul>
@@ -544,6 +545,35 @@ inheritance.</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.base.BaseKernelAdapter.get_current_stream_functor">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_current_stream_functor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.base.BaseKernelAdapter.get_current_stream_functor" title="Link to this definition">¶</a></dt>
+<dd><p>Return a callable that reads Torch’s current CUDA stream pointer.</p>
+<p>The returned lambda yields the raw CUDA stream handle of the current
+PyTorch stream on the active device. It’s a thunk (evaluated at call
+time) so that any upstream stream guards are respected. If CUDA is
+unavailable, it returns a lambda that yields 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable[[], int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.base.BaseKernelAdapter.get_current_device_functor">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_current_device_functor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.base.BaseKernelAdapter.get_current_device_functor" title="Link to this definition">¶</a></dt>
+<dd><p>Return a callable that yields Torch’s current device.</p>
+<p>Similar to the stream functor, we capture a callable that, when called,
+fetches the current device according to PyTorch. On CPU or when CUDA is
+unavailable, returns <code class="docutils literal notranslate"><span class="pre">torch.device('cpu')</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable[[], torch.device]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.base.BaseKernelAdapter.__call__">
 <span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.base.BaseKernelAdapter.__call__" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -561,10 +591,13 @@ inheritance.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.base.BaseKernelAdapter.get_kernel_source">
-<span class="sig-name descname"><span class="pre">get_kernel_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.base.BaseKernelAdapter.get_kernel_source" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_kernel_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.base.BaseKernelAdapter.get_kernel_source" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kernel_only</strong> (<a class="reference internal" href="../../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -637,6 +670,8 @@ inheritance.</p>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.BaseKernelAdapter.mod"><code class="docutils literal notranslate"><span class="pre">BaseKernelAdapter.mod</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.BaseKernelAdapter.params"><code class="docutils literal notranslate"><span class="pre">BaseKernelAdapter.params</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.BaseKernelAdapter.result_idx"><code class="docutils literal notranslate"><span class="pre">BaseKernelAdapter.result_idx</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.base.BaseKernelAdapter.get_current_stream_functor"><code class="docutils literal notranslate"><span class="pre">BaseKernelAdapter.get_current_stream_functor()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.base.BaseKernelAdapter.get_current_device_functor"><code class="docutils literal notranslate"><span class="pre">BaseKernelAdapter.get_current_device_functor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.BaseKernelAdapter.__call__"><code class="docutils literal notranslate"><span class="pre">BaseKernelAdapter.__call__()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.BaseKernelAdapter.get_kernel_source"><code class="docutils literal notranslate"><span class="pre">BaseKernelAdapter.get_kernel_source()</span></code></a></li>
 </ul>

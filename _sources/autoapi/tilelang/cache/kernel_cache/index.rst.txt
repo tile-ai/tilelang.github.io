@@ -14,8 +14,9 @@ Attributes
 
 .. autoapisummary::
 
-   tilelang.cache.kernel_cache.KERNEL_PATH
-   tilelang.cache.kernel_cache.WRAPPED_KERNEL_PATH
+   tilelang.cache.kernel_cache.DEVICE_KERNEL_PATH
+   tilelang.cache.kernel_cache.HOST_KERNEL_PATH
+   tilelang.cache.kernel_cache.EXECUTABLE_PATH
    tilelang.cache.kernel_cache.KERNEL_LIB_PATH
    tilelang.cache.kernel_cache.KERNEL_CUBIN_PATH
    tilelang.cache.kernel_cache.KERNEL_PY_PATH
@@ -33,12 +34,16 @@ Classes
 Module Contents
 ---------------
 
-.. py:data:: KERNEL_PATH
-   :value: 'kernel.cu'
+.. py:data:: DEVICE_KERNEL_PATH
+   :value: 'device_kernel.cu'
 
 
-.. py:data:: WRAPPED_KERNEL_PATH
-   :value: 'wrapped_kernel.cu'
+.. py:data:: HOST_KERNEL_PATH
+   :value: 'host_kernel.cu'
+
+
+.. py:data:: EXECUTABLE_PATH
+   :value: 'executable.so'
 
 
 .. py:data:: KERNEL_LIB_PATH
@@ -68,12 +73,12 @@ Module Contents
 
 
    .. py:attribute:: execution_backend
-      :type:  Literal['dlpack', 'ctypes', 'cython', 'nvrtc']
-      :value: 'cython'
+      :type:  Literal['tvm_ffi', 'ctypes', 'cython', 'nvrtc', 'torch']
+      :value: 'tvm_ffi'
 
 
 
-   .. py:method:: cached(func = None, out_idx = None, *args, target = 'auto', target_host = None, execution_backend = 'cython', verbose = False, pass_configs = None, compile_flags = None)
+   .. py:method:: cached(func = None, out_idx = None, *args, target = 'auto', target_host = None, execution_backend = 'auto', verbose = False, pass_configs = None, compile_flags = None)
 
       Caches and reuses compiled kernels to avoid redundant compilation.
 
