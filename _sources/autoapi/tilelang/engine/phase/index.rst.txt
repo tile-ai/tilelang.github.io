@@ -16,6 +16,7 @@ Functions
    tilelang.engine.phase.allow_global_thread_synchronization
    tilelang.engine.phase.should_enable_aggressive_merge
    tilelang.engine.phase.should_force_let_inline
+   tilelang.engine.phase.PreLowerSemanticCheck
    tilelang.engine.phase.LowerAndLegalize
    tilelang.engine.phase.OptimizeForTarget
 
@@ -36,6 +37,13 @@ Module Contents
 .. py:function:: should_enable_aggressive_merge(pass_ctx = None, target = None)
 
 .. py:function:: should_force_let_inline(pass_ctx = None)
+
+.. py:function:: PreLowerSemanticCheck(mod)
+
+   Check whether the module is valid before lowering. If not, raise a user-friendly error
+   in Python side instead of letting the error dive into the complicated TVM/C++ stack.
+   Note: This is a validation-only pipeline of passes and does not modify or return the module.
+
 
 .. py:function:: LowerAndLegalize(mod, target)
 
