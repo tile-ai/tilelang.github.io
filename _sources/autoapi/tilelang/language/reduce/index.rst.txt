@@ -26,6 +26,11 @@ Functions
    tilelang.language.reduce.cumsum_fragment
    tilelang.language.reduce.cumsum
    tilelang.language.reduce.finalize_reducer
+   tilelang.language.reduce.warp_reduce_sum
+   tilelang.language.reduce.warp_reduce_max
+   tilelang.language.reduce.warp_reduce_min
+   tilelang.language.reduce.warp_reduce_bitand
+   tilelang.language.reduce.warp_reduce_bitor
 
 
 Module Contents
@@ -234,5 +239,80 @@ Module Contents
 
    :returns: Handle to the finalize reducer intrinsic call.
    :rtype: tir.Call
+
+
+.. py:function:: warp_reduce_sum(value)
+
+   Perform warp reduction sum on a register value.
+
+   This function reduces a value across all threads in a warp using shuffle operations.
+   Each thread provides a  register `value`, and after the reduction, all threads
+   will have the sum of all values across the warp.
+
+   :param value: The input register value to reduce
+   :type value: tir.PrimExpr
+
+   :returns: The reduced sum value (same on all threads in the warp)
+   :rtype: tir.PrimExpr
+
+
+.. py:function:: warp_reduce_max(value)
+
+   Perform warp reduction max on a register value.
+
+   This function reduces a value across all threads in a warp using shuffle operations.
+   Each thread provides a  register `value`, and after the reduction, all threads
+   will have the max of all values across the warp.
+
+   :param value: The input register value to reduce
+   :type value: tir.PrimExpr
+
+   :returns: The reduced max value (same on all threads in the warp)
+   :rtype: tir.PrimExpr
+
+
+.. py:function:: warp_reduce_min(value)
+
+   Perform warp reduction min on a register value.
+
+   This function reduces a value across all threads in a warp using shuffle operations.
+   Each thread provides a  register `value`, and after the reduction, all threads
+   will have the min of all values across the warp.
+
+   :param value: The input register value to reduce
+   :type value: tir.PrimExpr
+
+   :returns: The reduced min value (same on all threads in the warp)
+   :rtype: tir.PrimExpr
+
+
+.. py:function:: warp_reduce_bitand(value)
+
+   Perform warp reduction bitwise-and on a register value.
+
+   This function reduces a value across all threads in a warp using shuffle operations.
+   Each thread provides a  register `value`, and after the reduction, all threads
+   will have the bitwise-and of all values across the warp.
+
+   :param value: The input register value to reduce
+   :type value: tir.PrimExpr
+
+   :returns: The reduced bitwise-and value (same on all threads in the warp)
+   :rtype: tir.PrimExpr
+
+
+.. py:function:: warp_reduce_bitor(value)
+
+   Perform warp reduction bitwise-or on a register value.
+
+   This function reduces a value across all threads in a warp using shuffle operations.
+   Each thread provides a  register `value`, and after the reduction, all threads
+   will have the bitwise-or of all values across the warp.
+
+   :param value: The input register value to reduce
+   :type value: tir.PrimExpr
+
+   :returns: The reduced bitwise-or value (same on all threads in the warp)
+   :rtype: tir.PrimExpr
 
 
