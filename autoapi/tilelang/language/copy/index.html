@@ -543,6 +543,25 @@
 <dd class="field-even"><p>tir.Call</p>
 </dd>
 </dl>
+<p>Range handling notes:
+- Accepts <cite>Buffer</cite>/<cite>BufferRegion</cite>/<cite>BufferLoad</cite> on either side. Extents are</p>
+<blockquote>
+<div><p>derived as follows: <cite>Buffer -&gt; shape</cite>, <cite>BufferRegion -&gt; [r.extent]</cite>,
+<cite>BufferLoad -&gt; extents from its inferred/encoded region</cite>.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>If both <cite>src</cite> and <cite>dst</cite> are scalar <cite>BufferLoad</cite> without region extents,
+lowers to a direct store: <cite>dst[…] = src</cite>.</p></li>
+<li><p>If one side is missing extents, it is treated as all-ones with the other
+side’s rank to enable broadcasting.</p></li>
+<li><p>Extents are right-aligned and legalized via <cite>legalize_pairwise_extents</cite>:
+per tail-dimension, equal keeps as-is, a <cite>1</cite> broadcasts to the other,
+otherwise a conservative <cite>tir.max</cite> is used to remain safe for dynamic
+shapes.</p></li>
+<li><p>The finalized extents are encoded with <cite>tl.region</cite> via <cite>to_buffer_region</cite>
+and passed through to the backend; low-level loop construction and any
+scope-specific decisions happen during lowering.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">

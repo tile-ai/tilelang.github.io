@@ -37,6 +37,22 @@ Module Contents
    :returns: A handle to the copy operation
    :rtype: tir.Call
 
+   Range handling notes:
+   - Accepts `Buffer`/`BufferRegion`/`BufferLoad` on either side. Extents are
+     derived as follows: `Buffer -> shape`, `BufferRegion -> [r.extent]`,
+     `BufferLoad -> extents from its inferred/encoded region`.
+   - If both `src` and `dst` are scalar `BufferLoad` without region extents,
+     lowers to a direct store: `dst[...] = src`.
+   - If one side is missing extents, it is treated as all-ones with the other
+     side's rank to enable broadcasting.
+   - Extents are right-aligned and legalized via `legalize_pairwise_extents`:
+     per tail-dimension, equal keeps as-is, a `1` broadcasts to the other,
+     otherwise a conservative `tir.max` is used to remain safe for dynamic
+     shapes.
+   - The finalized extents are encoded with `tl.region` via `to_buffer_region`
+     and passed through to the backend; low-level loop construction and any
+     scope-specific decisions happen during lowering.
+
 
 .. py:function:: c2d_im2col(img, col, nhw_step, c_step, kernel, stride, dilation, pad, eviction_policy = None)
 
