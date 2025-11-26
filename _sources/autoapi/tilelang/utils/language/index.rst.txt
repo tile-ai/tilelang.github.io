@@ -125,7 +125,7 @@ Module Contents
    :raises AssertionError: If the module contains more than one global function.
 
 
-.. py:function:: get_buffer_region_from_load(buffer_load)
+.. py:function:: get_buffer_region_from_load(buffer_load, extents = None)
 
    Get the buffer region from a buffer load.
 
@@ -134,14 +134,12 @@ Module Contents
    convert load to region
 
 
-.. py:function:: to_buffer_region(obj)
+.. py:function:: to_buffer_region(obj, access_type = 'rw', extents = None)
 
-   Convert Buffer/BufferRegion/BufferLoad to a BufferRegion.
+   Convert to/from the tl.region representation.
 
-   - Buffer -> full-region BufferRegion covering entire shape
-   - BufferRegion -> returned as-is
-   - BufferLoad -> best-effort convert via get_buffer_region_from_load;
-     if scalar, fall back to 1-sized ranges at given indices
+   - Buffer/BufferLoad/BufferRegion -> returns a tl.region call (PrimExpr)
+   - tl.region Call -> returns the decoded BufferRegion for analysis
 
 
 .. py:function:: retrieve_shape(obj)

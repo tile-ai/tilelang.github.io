@@ -533,11 +533,11 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.retrieve_func_from_module" title="tilelang.utils.language.retrieve_func_from_module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_func_from_module</span></code></a>(ir_module)</p></td>
 <td><p>Retrieve the single PrimFunc from an IRModule.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.get_buffer_region_from_load" title="tilelang.utils.language.get_buffer_region_from_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer_region_from_load</span></code></a>(buffer_load)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.get_buffer_region_from_load" title="tilelang.utils.language.get_buffer_region_from_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer_region_from_load</span></code></a>(buffer_load[, extents])</p></td>
 <td><p>Get the buffer region from a buffer load.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.to_buffer_region" title="tilelang.utils.language.to_buffer_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_buffer_region</span></code></a>(obj)</p></td>
-<td><p>Convert Buffer/BufferRegion/BufferLoad to a BufferRegion.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.to_buffer_region" title="tilelang.utils.language.to_buffer_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_buffer_region</span></code></a>(obj[, access_type, extents])</p></td>
+<td><p>Convert to/from the tl.region representation.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.retrieve_shape" title="tilelang.utils.language.retrieve_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_shape</span></code></a>(obj)</p></td>
 <td><p>Retrieve shape-like extents for a buffer-like object.</p></td>
@@ -734,14 +734,17 @@ The module should contain exactly one global function.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.utils.language.get_buffer_region_from_load">
-<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">get_buffer_region_from_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_load</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.get_buffer_region_from_load" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">get_buffer_region_from_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.get_buffer_region_from_load" title="Link to this definition">¶</a></dt>
 <dd><p>Get the buffer region from a buffer load.</p>
 <p>May encounter buffer load like C[0:128, 0:32], ref to pull request
 for buffer wise op: <a class="reference external" href="https://github.com/apache/tvm/pull/14693">https://github.com/apache/tvm/pull/14693</a>
 convert load to region</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer_load</strong> (<em>tvm.tir.BufferLoad</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer_load</strong> (<em>tvm.tir.BufferLoad</em>)</p></li>
+<li><p><strong>extents</strong> (<em>list</em><em>[</em><em>tvm.tir.PrimExpr</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>tvm.tir.BufferRegion | None</p>
@@ -751,20 +754,22 @@ convert load to region</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.utils.language.to_buffer_region">
-<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">to_buffer_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.to_buffer_region" title="Link to this definition">¶</a></dt>
-<dd><p>Convert Buffer/BufferRegion/BufferLoad to a BufferRegion.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">to_buffer_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rw'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.to_buffer_region" title="Link to this definition">¶</a></dt>
+<dd><p>Convert to/from the tl.region representation.</p>
 <ul class="simple">
-<li><p>Buffer -&gt; full-region BufferRegion covering entire shape</p></li>
-<li><p>BufferRegion -&gt; returned as-is</p></li>
-<li><p>BufferLoad -&gt; best-effort convert via get_buffer_region_from_load;
-if scalar, fall back to 1-sized ranges at given indices</p></li>
+<li><p>Buffer/BufferLoad/BufferRegion -&gt; returns a tl.region call (PrimExpr)</p></li>
+<li><p>tl.region Call -&gt; returns the decoded BufferRegion for analysis</p></li>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>obj</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.Var</em>)</p></li>
+<li><p><strong>access_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>extents</strong> (<em>list</em><em>[</em><em>tvm.tir.PrimExpr</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.BufferRegion</p>
+<dd class="field-even"><p>tvm.tir.PrimExpr | tvm.tir.BufferRegion</p>
 </dd>
 </dl>
 </dd></dl>
