@@ -1,0 +1,219 @@
+tilelang.intrinsics.mma_sp_macro_generator
+==========================================
+
+.. py:module:: tilelang.intrinsics.mma_sp_macro_generator
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.intrinsics.mma_sp_macro_generator.lift
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.intrinsics.mma_sp_macro_generator.SparseTensorCoreIntrinEmitter
+
+
+Module Contents
+---------------
+
+.. py:data:: lift
+
+.. py:class:: SparseTensorCoreIntrinEmitter(a_dtype = 'float16', e_dtype = 'uint8', b_dtype = 'float16', accum_dtype = 'float16', a_transposed = False, b_transposed = False, e_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, warp_k = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, thread_var = None)
+
+   To eliminate Python syntax within TIR Macro.
+
+
+   .. py:attribute:: M_DIM
+      :value: 16
+
+
+
+   .. py:attribute:: SPARSE_FACTOR
+      :value: 2
+
+
+
+   .. py:attribute:: SPARSE_SELECTOR
+      :value: 0
+
+
+
+   .. py:attribute:: n_dim
+      :value: 16
+
+
+
+   .. py:attribute:: WARP_SIZE
+      :value: 32
+
+
+
+   .. py:attribute:: dtype_abbrv
+
+
+   .. py:attribute:: E_FACTOR_MAP
+
+
+   .. py:attribute:: E_REPLICATE_FACTOR
+
+
+   .. py:attribute:: is_m_first
+      :value: False
+
+
+
+   .. py:attribute:: a_dtype
+      :value: 'float16'
+
+
+
+   .. py:attribute:: e_dtype
+      :value: 'uint8'
+
+
+
+   .. py:attribute:: b_dtype
+      :value: 'float16'
+
+
+
+   .. py:attribute:: accum_dtype
+      :value: 'float16'
+
+
+
+   .. py:attribute:: a_transposed
+      :value: False
+
+
+
+   .. py:attribute:: b_transposed
+      :value: False
+
+
+
+   .. py:attribute:: e_transposed
+      :value: False
+
+
+
+   .. py:attribute:: block_row_warps
+      :value: 2
+
+
+
+   .. py:attribute:: block_col_warps
+      :value: 2
+
+
+
+   .. py:attribute:: warp_row_tiles
+      :value: 8
+
+
+
+   .. py:attribute:: warp_col_tiles
+      :value: 8
+
+
+
+   .. py:attribute:: warp_k
+      :value: 16
+
+
+
+   .. py:attribute:: e_factor
+      :value: 8
+
+
+
+   .. py:attribute:: reduce_k
+      :value: 1
+
+
+
+   .. py:attribute:: threads
+      :value: 128
+
+
+
+   .. py:attribute:: num_elems_per_byte
+      :value: 1
+
+
+
+   .. py:attribute:: thread_var
+      :value: None
+
+
+
+   .. py:method:: get_thread_binding()
+
+
+   .. py:method:: get_store_index_map(inverse = False)
+
+
+   .. py:method:: extract_thread_binding(thread_id, is_m_first = None)
+
+      is_m_first: True if the thread binding is in the form of (tx, warp_n, warp_m)
+      which represents [warp_size, block_row_warps (split n), block_col_warps (split m)]
+      Otherwise, it is in the form of [warp_size, block_col_warps (split m), block_row_warps (split n)]
+
+
+
+   .. py:method:: ldmatrix_a(A_local_buf, A_shared_buf, ki, rk = 0)
+
+
+   .. py:method:: ldmatrix_e(E_local_buf, E_shared_buf, ki, rk = 0)
+
+
+   .. py:method:: ldmatrix_b(B_local_buf, B_shared_buf, ki, rk = 0)
+
+
+   .. py:method:: mma_sp(A_local_buf, E_local_buf, B_local_buf, C_local_buf, k_inner = 0)
+
+
+   .. py:method:: stmatrix(C_local_buf, C_buf, pid_m=None, pid_n=None)
+
+
+   .. py:method:: make_mma_load_layout(local_buf, matrix = 'A')
+
+      Create a layout function for storing MMA results into a fragment buffer.
+      This layout is used in conjunction with `inverse_mma_store_layout` to
+      map fragment indices to threads and local indices.
+
+      :param local_buf: The local buffer representing a fragment of a matrix.
+      :type local_buf: tir.Buffer
+
+      :returns: A fragment object that describes how threads and indices
+                in `local_buf` are laid out.
+      :rtype: T.Fragment
+
+      :raises AssertionError: If `local_buf` is not detected to be a fragment buffer.
+
+
+
+   .. py:method:: make_mma_store_layout(local_buf)
+
+      Create a layout function for storing MMA results into a fragment buffer.
+      This layout is used in conjunction with `inverse_mma_store_layout` to
+      map fragment indices to threads and local indices.
+
+      :param local_buf: The local buffer representing a fragment of a matrix.
+      :type local_buf: tir.Buffer
+
+      :returns: A fragment object that describes how threads and indices
+                in `local_buf` are laid out.
+      :rtype: T.Fragment
+
+      :raises AssertionError: If `local_buf` is not detected to be a fragment buffer.
+
+
+

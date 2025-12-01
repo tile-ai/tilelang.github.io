@@ -15,7 +15,9 @@ Functions
 .. autoapisummary::
 
    tilelang.layout.gemm_sp.decompose_col_major
-   tilelang.layout.gemm_sp.make_metadata_layout
+   tilelang.layout.gemm_sp.make_cutlass_metadata_layout_sm90
+   tilelang.layout.gemm_sp.make_cutlass_metadata_layout_sm8x
+   tilelang.layout.gemm_sp.make_cutlass_metadata_layout
 
 
 Module Contents
@@ -23,5 +25,21 @@ Module Contents
 
 .. py:function:: decompose_col_major(index_1d, basis)
 
-.. py:function:: make_metadata_layout(buffer, mma_dtype = 'float16', backend = 'cutlass', arch = None, **extra_args)
+.. py:function:: make_cutlass_metadata_layout_sm90(buffer, mma_dtype, block_k)
+
+   Make a layout of metadata that is compatible with cutlass sm90 compression kernel. Note that layout atom is the same for smem and gmem.
+
+   :param buffer: metadata buffer shape, for sm90 it should be a 8-bit type
+   :param mma_dtype: dtype of mma operand A, different dtypes result in different layout atom
+   :param block_k: tiling size along K dim, different block_ks results in different layout atom.
+
+
+.. py:function:: make_cutlass_metadata_layout_sm8x(buffer, mma_dtype)
+
+   Make a layout of metadata that is compatible with cutlass sm8x compression kernel. Note that layout atom is the same for smem and gmem.
+       ref: https://github.com/pytorch/pytorch/blob/d0c24b392cbb7b213d22e42c52c6c2d1ac2da1bd/torch/sparse/_semi_structured_conversions.py#L5
+   :param buffer: metadata buffer shape, for sm80 it should be a 16bit type
+
+
+.. py:function:: make_cutlass_metadata_layout(buffer, mma_dtype = 'float16', arch = None, **extra_args)
 

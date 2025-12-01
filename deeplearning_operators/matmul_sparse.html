@@ -1,0 +1,826 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="🚀 Write High Performance FlashMLA with TileLang on Hopper" href="deepseek_mla.html"><link rel="prev" title="General Matrix-Matrix Multiplication with Tile Library" href="matmul.html">
+        <link rel="prefetch" href="../_static/img/logo-row.svg" as="image">
+        <link rel="prefetch" href="../_static/img/logo-row.svg" as="image">
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+        <title>Sparse Matrix-Matrix Multiplication with Tile Library - Tile Language 0.1.6.post2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Tile Language <br> 0.1.6.post2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/img/logo-row.svg" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/img/logo-row.svg" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Tile Language <br> 0.1.6.post2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">GET STARTED</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/Installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/overview.html">The Tile Language: A Brief Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started/targets.html">Understanding Targets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/auto_tuning.html">Auto-Tuning Techniques for Performance Optimization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">DEEP LEARNING OPERATORS</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="elementwise.html">ElementWise Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gemv.html">General Matrix-Vector Multiplication (GEMV)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matmul.html">General Matrix-Matrix Multiplication with Tile Library</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Sparse Matrix-Matrix Multiplication with Tile Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deepseek_mla.html">🚀 Write High Performance FlashMLA with TileLang on Hopper</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">COMPILER INTERNALS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/tensor_checks.html">Tensor Checks (Host-Side Auto-Validation)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../autoapi/tilelang/index.html">tilelang</a><input aria-label="Toggle navigation of tilelang" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/analysis/index.html">tilelang.analysis</a><input aria-label="Toggle navigation of tilelang.analysis" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/analysis/ast_printer/index.html">tilelang.analysis.ast_printer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/analysis/fragment_loop_checker/index.html">tilelang.analysis.fragment_loop_checker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/analysis/nested_loop_checker/index.html">tilelang.analysis.nested_loop_checker</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/autotuner/index.html">tilelang.autotuner</a><input aria-label="Toggle navigation of tilelang.autotuner" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/capture/index.html">tilelang.autotuner.capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/param/index.html">tilelang.autotuner.param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/tuner/index.html">tilelang.autotuner.tuner</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/cache/index.html">tilelang.cache</a><input aria-label="Toggle navigation of tilelang.cache" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/cache/kernel_cache/index.html">tilelang.cache.kernel_cache</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/index.html">tilelang.carver</a><input aria-label="Toggle navigation of tilelang.carver" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/carver/analysis/index.html">tilelang.carver.analysis</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/arch/index.html">tilelang.carver.arch</a><input aria-label="Toggle navigation of tilelang.carver.arch" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/arch/arch_base/index.html">tilelang.carver.arch.arch_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/arch/cdna/index.html">tilelang.carver.arch.cdna</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/arch/cpu/index.html">tilelang.carver.arch.cpu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/arch/cuda/index.html">tilelang.carver.arch.cuda</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/arch/driver/index.html">tilelang.carver.arch.driver</a><input aria-label="Toggle navigation of tilelang.carver.arch.driver" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/arch/driver/cuda_driver/index.html">tilelang.carver.arch.driver.cuda_driver</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/arch/metal/index.html">tilelang.carver.arch.metal</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/carver/common_schedules/index.html">tilelang.carver.common_schedules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/carver/matmul_analysis/index.html">tilelang.carver.matmul_analysis</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/roller/index.html">tilelang.carver.roller</a><input aria-label="Toggle navigation of tilelang.carver.roller" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/roller/bestfit/index.html">tilelang.carver.roller.bestfit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/roller/hint/index.html">tilelang.carver.roller.hint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/roller/node/index.html">tilelang.carver.roller.node</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/roller/policy/index.html">tilelang.carver.roller.policy</a><input aria-label="Toggle navigation of tilelang.carver.roller.policy" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/roller/policy/common/index.html">tilelang.carver.roller.policy.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/roller/policy/default/index.html">tilelang.carver.roller.policy.default</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/roller/policy/tensorcore/index.html">tilelang.carver.roller.policy.tensorcore</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/roller/rasterization/index.html">tilelang.carver.roller.rasterization</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/roller/shape_inference/index.html">tilelang.carver.roller.shape_inference</a><input aria-label="Toggle navigation of tilelang.carver.roller.shape_inference" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/roller/shape_inference/common/index.html">tilelang.carver.roller.shape_inference.common</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/carver/roller/shape_inference/tir/index.html">tilelang.carver.roller.shape_inference.tir</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/carver/template/index.html">tilelang.carver.template</a><input aria-label="Toggle navigation of tilelang.carver.template" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/base/index.html">tilelang.carver.template.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/conv/index.html">tilelang.carver.template.conv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/elementwise/index.html">tilelang.carver.template.elementwise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/flashattention/index.html">tilelang.carver.template.flashattention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/gemv/index.html">tilelang.carver.template.gemv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/general_reduce/index.html">tilelang.carver.template.general_reduce</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/carver/template/matmul/index.html">tilelang.carver.template.matmul</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/carver/utils/index.html">tilelang.carver.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/common/index.html">tilelang.common</a><input aria-label="Toggle navigation of tilelang.common" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/common/transform_kind/index.html">tilelang.common.transform_kind</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/contrib/index.html">tilelang.contrib</a><input aria-label="Toggle navigation of tilelang.contrib" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/cc/index.html">tilelang.contrib.cc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/dlpack/index.html">tilelang.contrib.dlpack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/hipcc/index.html">tilelang.contrib.hipcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/nvcc/index.html">tilelang.contrib.nvcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/nvrtc/index.html">tilelang.contrib.nvrtc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/rocm/index.html">tilelang.contrib.rocm</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/engine/index.html">tilelang.engine</a><input aria-label="Toggle navigation of tilelang.engine" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/callback/index.html">tilelang.engine.callback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/lower/index.html">tilelang.engine.lower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/param/index.html">tilelang.engine.param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/phase/index.html">tilelang.engine.phase</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/tilelang/env/index.html">tilelang.env</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/intrinsics/index.html">tilelang.intrinsics</a><input aria-label="Toggle navigation of tilelang.intrinsics" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mfma_layout/index.html">tilelang.intrinsics.mfma_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mfma_macro_generator/index.html">tilelang.intrinsics.mfma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mma_layout/index.html">tilelang.intrinsics.mma_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mma_macro_generator/index.html">tilelang.intrinsics.mma_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mma_sm70_layout/index.html">tilelang.intrinsics.mma_sm70_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mma_sm70_macro_generator/index.html">tilelang.intrinsics.mma_sm70_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mma_sp_layout/index.html">tilelang.intrinsics.mma_sp_layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/mma_sp_macro_generator/index.html">tilelang.intrinsics.mma_sp_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/tcgen05_macro_generator/index.html">tilelang.intrinsics.tcgen05_macro_generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/utils/index.html">tilelang.intrinsics.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/intrinsics/wgmma_macro_generator/index.html">tilelang.intrinsics.wgmma_macro_generator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/tilelang/ir/index.html">tilelang.ir</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/index.html">tilelang.jit</a><input aria-label="Toggle navigation of tilelang.jit" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/index.html">tilelang.jit.adapter</a><input aria-label="Toggle navigation of tilelang.jit.adapter" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/base/index.html">tilelang.jit.adapter.base</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/ctypes/index.html">tilelang.jit.adapter.ctypes</a><input aria-label="Toggle navigation of tilelang.jit.adapter.ctypes" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/ctypes/adapter/index.html">tilelang.jit.adapter.ctypes.adapter</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/cython/index.html">tilelang.jit.adapter.cython</a><input aria-label="Toggle navigation of tilelang.jit.adapter.cython" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/cython/adapter/index.html">tilelang.jit.adapter.cython.adapter</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/libgen/index.html">tilelang.jit.adapter.libgen</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/nvrtc/index.html">tilelang.jit.adapter.nvrtc</a><input aria-label="Toggle navigation of tilelang.jit.adapter.nvrtc" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/nvrtc/adapter/index.html">tilelang.jit.adapter.nvrtc.adapter</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/nvrtc/libgen/index.html">tilelang.jit.adapter.nvrtc.libgen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/nvrtc/wrapper/index.html">tilelang.jit.adapter.nvrtc.wrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/torch/index.html">tilelang.jit.adapter.torch</a><input aria-label="Toggle navigation of tilelang.jit.adapter.torch" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/torch/metal/index.html">tilelang.jit.adapter.torch.metal</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/tvm_ffi/index.html">tilelang.jit.adapter.tvm_ffi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/utils/index.html">tilelang.jit.adapter.utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/jit/adapter/wrapper/index.html">tilelang.jit.adapter.wrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/jit/env/index.html">tilelang.jit.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/jit/execution_backend/index.html">tilelang.jit.execution_backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/jit/kernel/index.html">tilelang.jit.kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/jit/param/index.html">tilelang.jit.param</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/language/index.html">tilelang.language</a><input aria-label="Toggle navigation of tilelang.language" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/allocate/index.html">tilelang.language.allocate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/annotations/index.html">tilelang.language.annotations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/atomic/index.html">tilelang.language.atomic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/builtin/index.html">tilelang.language.builtin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/copy/index.html">tilelang.language.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/customize/index.html">tilelang.language.customize</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/language/experimental/index.html">tilelang.language.experimental</a><input aria-label="Toggle navigation of tilelang.language.experimental" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/experimental/gemm_sp/index.html">tilelang.language.experimental.gemm_sp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/fastmath/index.html">tilelang.language.fastmath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/fill/index.html">tilelang.language.fill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/frame/index.html">tilelang.language.frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/gemm/index.html">tilelang.language.gemm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/kernel/index.html">tilelang.language.kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/logical/index.html">tilelang.language.logical</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/loop/index.html">tilelang.language.loop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/math_intrinsics/index.html">tilelang.language.math_intrinsics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/overrides/index.html">tilelang.language.overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/print/index.html">tilelang.language.print</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/proxy/index.html">tilelang.language.proxy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/reduce/index.html">tilelang.language.reduce</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/symbolics/index.html">tilelang.language.symbolics</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/language/tir/index.html">tilelang.language.tir</a><input aria-label="Toggle navigation of tilelang.language.tir" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/tir/entry/index.html">tilelang.language.tir.entry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/tir/ir/index.html">tilelang.language.tir.ir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/tir/op/index.html">tilelang.language.tir.op</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/utils/index.html">tilelang.language.utils</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/language/v2/index.html">tilelang.language.v2</a><input aria-label="Toggle navigation of tilelang.language.v2" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/v2/ast/index.html">tilelang.language.v2.ast</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/v2/builder/index.html">tilelang.language.v2.builder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/v2/dtypes/index.html">tilelang.language.v2.dtypes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/v2/utils/index.html">tilelang.language.v2.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/warpgroup/index.html">tilelang.language.warpgroup</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/layout/index.html">tilelang.layout</a><input aria-label="Toggle navigation of tilelang.layout" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/fragment/index.html">tilelang.layout.fragment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/gemm_sp/index.html">tilelang.layout.gemm_sp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/layout/index.html">tilelang.layout.layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/swizzle/index.html">tilelang.layout.swizzle</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/tilelang/math/index.html">tilelang.math</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/primitives/index.html">tilelang.primitives</a><input aria-label="Toggle navigation of tilelang.primitives" class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/primitives/gemm/index.html">tilelang.primitives.gemm</a><input aria-label="Toggle navigation of tilelang.primitives.gemm" class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/primitives/gemm/base/index.html">tilelang.primitives.gemm.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/primitives/gemm/gemm_mma/index.html">tilelang.primitives.gemm.gemm_mma</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/profiler/index.html">tilelang.profiler</a><input aria-label="Toggle navigation of tilelang.profiler" class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/profiler/bench/index.html">tilelang.profiler.bench</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/quantize/index.html">tilelang.quantize</a><input aria-label="Toggle navigation of tilelang.quantize" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/quantize/lop3/index.html">tilelang.quantize.lop3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/quantize/mxfp/index.html">tilelang.quantize.mxfp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/quantize/quantization/index.html">tilelang.quantize.quantization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/quantize/utils/index.html">tilelang.quantize.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/tilelang/testing/index.html">tilelang.testing</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/tileop/index.html">tilelang.tileop</a><input aria-label="Toggle navigation of tilelang.tileop" class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/index.html">tilelang.tileop.gemm</a><input aria-label="Toggle navigation of tilelang.tileop.gemm" class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_base/index.html">tilelang.tileop.gemm.gemm_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_mfma/index.html">tilelang.tileop.gemm.gemm_mfma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_mma/index.html">tilelang.tileop.gemm.gemm_mma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_mma_sm70/index.html">tilelang.tileop.gemm.gemm_mma_sm70</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_tcgen05/index.html">tilelang.tileop.gemm.gemm_tcgen05</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm/gemm_wgmma/index.html">tilelang.tileop.gemm.gemm_wgmma</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm_sp/index.html">tilelang.tileop.gemm_sp</a><input aria-label="Toggle navigation of tilelang.tileop.gemm_sp" class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm_sp/gemm_sp_base/index.html">tilelang.tileop.gemm_sp.gemm_sp_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/tileop/gemm_sp/gemm_sp_mma/index.html">tilelang.tileop.gemm_sp.gemm_sp_mma</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/tools/index.html">tilelang.tools</a><input aria-label="Toggle navigation of tilelang.tools" class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/tools/Analyzer/index.html">tilelang.tools.Analyzer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/tools/plot_layout/index.html">tilelang.tools.plot_layout</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/transform/index.html">tilelang.transform</a><input aria-label="Toggle navigation of tilelang.transform" class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/transform/add_bufstore_wrapper/index.html">tilelang.transform.add_bufstore_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/transform/pass_config/index.html">tilelang.transform.pass_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/transform/simplify/index.html">tilelang.transform.simplify</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/utils/index.html">tilelang.utils</a><input aria-label="Toggle navigation of tilelang.utils" class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/deprecated/index.html">tilelang.utils.deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/device/index.html">tilelang.utils.device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/language/index.html">tilelang.utils.language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/sparse/index.html">tilelang.utils.sparse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/target/index.html">tilelang.utils.target</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/tensor/index.html">tilelang.utils.tensor</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Privacy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../privacy.html">Privacy</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/deeplearning_operators/matmul_sparse.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="sparse-matrix-matrix-multiplication-with-tile-library">
+<h1>Sparse Matrix-Matrix Multiplication with Tile Library<a class="headerlink" href="#sparse-matrix-matrix-multiplication-with-tile-library" title="Link to this heading">¶</a></h1>
+<div style="text-align: left;">
+    <em>Author:</em> <a href="https://github.com/botbw">botbw</a>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This document is still <strong>experimental</strong> and may be incomplete.</p>
+<p>This feature is still <strong>experimental</strong> and need further optimization.</p>
+<p>Suggestions and improvements are highly encouraged—please submit a PR!</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>It’s suggested to go through <code class="docutils literal notranslate"><span class="pre">docs/deeplearning_operators/matmul.md</span></code> first.</p>
+<p>Example code can be found at <code class="docutils literal notranslate"><span class="pre">examples/gemm_sp</span></code>.</p>
+</div>
+<section id="structured-sparsity-in-the-nvidia-ampere-architecture">
+<h2>Structured sparsity in the NVIDIA Ampere architecture<a class="headerlink" href="#structured-sparsity-in-the-nvidia-ampere-architecture" title="Link to this heading">¶</a></h2>
+<p>Since the Ampere architecture (sm80 and above), sparsity support has been integrated into Tensor Cores. This allows a 2:4 (or 1:2 for 32-bit data types) semi-structured matrix to be compressed into its non-zero values along with associated metadata, which can then be fed into the Tensor Core. This enables up to <strong>2x throughput</strong> compared to the equivalent dense computation.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This tutorial primarily focuses on CUDA, as this feature is not yet supported on ROCm. However, AMD provides a similar capability in the matrix cores of GPUs such as the MI300X.</p>
+</div>
+<figure class="align-center" id="id1">
+<img alt="../_images/sparse_mma_storage_example.png" src="../_images/sparse_mma_storage_example.png" />
+<figcaption>
+<p><span class="caption-text">Figure: Sparse MMA storage example (from PTX doc)</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="compress-a-dense-tensor">
+<h2>Compress a dense tensor<a class="headerlink" href="#compress-a-dense-tensor" title="Link to this heading">¶</a></h2>
+<p>To utilize sparse Tensor Cores, a dense tensor must first be <strong>compressed</strong> into its non-zero values along with the corresponding metadata.</p>
+<p>Both <code class="docutils literal notranslate"><span class="pre">PyTorch</span></code> and <code class="docutils literal notranslate"><span class="pre">vLLM</span></code> use <code class="docutils literal notranslate"><span class="pre">CUTLASS</span></code> as their computation backend (see references <a class="reference external" href="https://github.com/pytorch/pytorch/blob/a8d6afb511a69687bbb2b7e88a3cf67917e1697e/aten/src/ATen/native/sparse/cuda/SparseSemiStructuredOps.cu#L47">here</a> and <a class="reference external" href="https://github.com/vllm-project/vllm/blob/a5dd03c1ebc5e4f56f3c9d3dc0436e9c582c978f/csrc/sparse/cutlass/sparse_scaled_mm_c3x.cuh#L116">here</a>), leveraging <code class="docutils literal notranslate"><span class="pre">CUTLASS</span></code>’s built-in compressor (or reimplementing it in <code class="docutils literal notranslate"><span class="pre">PyTorch</span></code>).</p>
+<p>A set of <strong>CUTLASS-compatible</strong> compressors is provided in <code class="docutils literal notranslate"><span class="pre">tilelang.utils.sparse</span></code>, where a dense tensor—along with other required arguments (e.g., block_K for sm90, transpose options)—can be passed in to perform the compression.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.utils.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">compress</span>
+<span class="n">A_sparse</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="n">compress</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">transposed</span><span class="o">=</span><span class="n">trans_A</span><span class="p">,</span> <span class="n">block_k</span><span class="o">=</span><span class="n">block_K</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">A_sparse</span></code> contains all the non-zero elements of <code class="docutils literal notranslate"><span class="pre">A</span></code>, while <code class="docutils literal notranslate"><span class="pre">E</span></code> stores the corresponding metadata (indexing information) required to reconstruct the original sparse pattern.</p>
+<blockquote>
+<div><p>NOTE: When using CUTLASS compressor, there is no naive position correspondence between the positions in <code class="docutils literal notranslate"><span class="pre">A_sparse</span></code>/<code class="docutils literal notranslate"><span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">E</span></code>. (i.e. the 4-element group at [n, k] doesn’t match the 4-bit metadata at [n, k] if you consider metadata as int4 tensor)
+The metadata is reordered internally to optimize memory access patterns (e.g., for ldsm instructions and vectorized loads).
+For more information, see <strong>A note on <code class="docutils literal notranslate"><span class="pre">gemm_sp</span></code> and <code class="docutils literal notranslate"><span class="pre">gemm_sp_v2</span></code></strong>.</p>
+</div></blockquote>
+</section>
+<section id="t-gemm-sp-with-cutlass-s-compressor">
+<h2><code class="docutils literal notranslate"><span class="pre">T.gemm_sp</span></code> with CUTLASS’s compressor<a class="headerlink" href="#t-gemm-sp-with-cutlass-s-compressor" title="Link to this heading">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It is strongly recommended to use T.gemm_sp_v2 due to its greater flexibility and faster compilation time.</p>
+</div>
+<p>A 2:4 sparse GEMM kernel is similar to its dense counterpart, except that it also requires handling the associated metadata.</p>
+<p>Check comments in below kernel code for required modification.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">matmul_sp_sm80</span><span class="p">(</span>
+    <span class="n">M</span><span class="p">,</span>
+    <span class="n">N</span><span class="p">,</span>
+    <span class="n">K</span><span class="p">,</span>
+    <span class="n">block_M</span><span class="p">,</span>
+    <span class="n">block_N</span><span class="p">,</span>
+    <span class="n">block_K</span><span class="p">,</span>
+    <span class="n">in_dtype</span><span class="p">,</span>
+    <span class="n">out_dtype</span><span class="p">,</span>
+    <span class="n">accum_dtype</span><span class="p">,</span>
+    <span class="n">num_stages</span><span class="p">,</span>
+    <span class="n">threads</span><span class="p">,</span>
+    <span class="n">trans_A</span><span class="p">,</span>
+    <span class="n">trans_B</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">is_8_bit</span> <span class="o">=</span> <span class="s2">&quot;8&quot;</span> <span class="ow">in</span> <span class="n">in_dtype</span>
+    <span class="n">metadata_dtype</span> <span class="o">=</span> <span class="s1">&#39;int32&#39;</span> <span class="k">if</span> <span class="n">is_8_bit</span> <span class="k">else</span> <span class="s1">&#39;int16&#39;</span>
+    <span class="n">E_factor</span> <span class="o">=</span> <span class="n">SparseTensorCoreIntrinEmitter</span><span class="o">.</span><span class="n">E_FACTOR_MAP</span><span class="p">[</span><span class="n">in_dtype</span><span class="p">][</span><span class="n">metadata_dtype</span><span class="p">]</span>  <span class="c1"># Calculate shape for given datatypes</span>
+    <span class="n">A_sparse_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">trans_A</span> <span class="k">else</span> <span class="p">(</span><span class="n">K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+    <span class="n">B_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">trans_B</span> <span class="k">else</span> <span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>
+    <span class="n">A_shared_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">trans_A</span> <span class="k">else</span> <span class="p">(</span><span class="n">block_K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">block_M</span><span class="p">)</span>
+    <span class="n">B_shared_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">block_K</span><span class="p">,</span> <span class="n">block_N</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">trans_B</span> <span class="k">else</span> <span class="p">(</span><span class="n">block_N</span><span class="p">,</span> <span class="n">block_K</span><span class="p">)</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
+
+    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span>
+            <span class="n">A_sparse</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">A_sparse_shape</span><span class="p">,</span> <span class="n">in_dtype</span><span class="p">),</span>
+            <span class="n">E</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span> <span class="o">//</span> <span class="n">E_factor</span><span class="p">),</span> <span class="n">metadata_dtype</span><span class="p">),</span>
+            <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">B_shape</span><span class="p">,</span> <span class="n">in_dtype</span><span class="p">),</span>
+            <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">out_dtype</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">block_M</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span>
+            <span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">(</span><span class="n">A_shared_shape</span><span class="p">,</span> <span class="n">in_dtype</span><span class="p">)</span>
+            <span class="n">B_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">(</span><span class="n">B_shared_shape</span><span class="p">,</span> <span class="n">in_dtype</span><span class="p">)</span>
+            <span class="n">E_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span> <span class="o">//</span> <span class="n">E_factor</span><span class="p">),</span> <span class="n">metadata_dtype</span><span class="p">)</span>  <span class="c1"># Allocate smem for metadata</span>
+            <span class="n">C_frag</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">accum_dtype</span><span class="p">)</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">annotate_layout</span><span class="p">({</span>  <span class="c1"># Annotate reordered cutlass metadata layout</span>
+                <span class="n">E</span><span class="p">:</span>
+                    <span class="n">make_cutlass_metadata_layout</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">mma_dtype</span><span class="o">=</span><span class="n">in_dtype</span><span class="p">,</span> <span class="n">arch</span><span class="o">=</span><span class="s2">&quot;8.0&quot;</span><span class="p">),</span>
+                <span class="n">E_shared</span><span class="p">:</span>
+                    <span class="n">make_cutlass_metadata_layout</span><span class="p">(</span>
+                        <span class="n">E_shared</span><span class="p">,</span> <span class="n">mma_dtype</span><span class="o">=</span><span class="n">in_dtype</span><span class="p">,</span> <span class="n">arch</span><span class="o">=</span><span class="s2">&quot;8.0&quot;</span><span class="p">),</span>
+            <span class="p">})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">C_frag</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">num_stages</span><span class="o">=</span><span class="n">num_stages</span><span class="p">):</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">E</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">block_K</span> <span class="o">//</span> <span class="n">E_factor</span><span class="p">],</span> <span class="n">E_shared</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">trans_A</span><span class="p">:</span>
+                    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A_sparse</span><span class="p">[</span><span class="n">k</span> <span class="o">*</span> <span class="n">block_K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">by</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A_sparse</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">block_K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">trans_B</span><span class="p">:</span>
+                    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">block_K</span><span class="p">],</span> <span class="n">B_shared</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">k</span> <span class="o">*</span> <span class="n">block_K</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">],</span> <span class="n">B_shared</span><span class="p">)</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">gemm_sp</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">E_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_frag</span><span class="p">,</span> <span class="n">trans_A</span><span class="p">,</span> <span class="n">trans_B</span><span class="p">)</span>  <span class="c1"># Call gemm_sp with non-zero values and metadata</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">C_frag</span><span class="p">,</span> <span class="n">C</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">main</span>
+</pre></div>
+</div>
+<p>Under the hood, <code class="docutils literal notranslate"><span class="pre">gemm_sp</span></code> invokes templates adapted from <code class="docutils literal notranslate"><span class="pre">CUTLASS</span></code>, and a compatible metadata layout must be specified using <code class="docutils literal notranslate"><span class="pre">T.annotate_layout</span></code>.</p>
+</section>
+<section id="t-gemm-sp-v2-with-a-custom-compressor">
+<h2><code class="docutils literal notranslate"><span class="pre">T.gemm_sp_v2</span></code> with a custom compressor<a class="headerlink" href="#t-gemm-sp-v2-with-a-custom-compressor" title="Link to this heading">¶</a></h2>
+<p>To migrate to <code class="docutils literal notranslate"><span class="pre">gemm_sp_v2</span></code>, simply replace occurrences of <code class="docutils literal notranslate"><span class="pre">gemm_sp</span></code>.</p>
+<p>Unlike <code class="docutils literal notranslate"><span class="pre">gemm_sp</span></code>, <code class="docutils literal notranslate"><span class="pre">gemm_sp_v2</span></code> can operate without <code class="docutils literal notranslate"><span class="pre">T.annotate_layout</span></code>, and it also supports user-defined layouts and compressors.</p>
+<p>The metadata is stored in a <code class="docutils literal notranslate"><span class="pre">(u)int8</span></code>/<code class="docutils literal notranslate"><span class="pre">(u)int16</span></code>/<code class="docutils literal notranslate"><span class="pre">(u)int32</span></code> tensor, where <strong>each 4-bit chunk represents two 2-bit indices</strong> of non-zero elements within four consecutive elements. Here, we start with an <code class="docutils literal notranslate"><span class="pre">int16</span></code> example, which is the <strong>default dtype</strong> for <code class="docutils literal notranslate"><span class="pre">bf16</span></code> and <code class="docutils literal notranslate"><span class="pre">fp16</span></code> on Ampere GPUs.</p>
+<p>Suppose we have the following row vector:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The non-zero elements and their corresponding indices are:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t_sp</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">([[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">indices</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The corresponding uint16 metadata is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># metadata_bits = tensor([0b1101, 0b0100, 0b1110, 0b1000])</span>
+<span class="c1"># Note: storage uses little-endian order: tensor(0b1000111001001101, dtype=torch.int16)</span>
+<span class="c1"># Note: the above code is not runnable in python as the interpreter won&#39;t take the binary</span>
+<span class="c1">#       as 2&#39;s complement</span>
+<span class="n">metadata_int16</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">(</span><span class="o">-</span><span class="mi">29107</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can decode an int16 metadata tensor using the following utility:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">decode_metadata</span><span class="p">(</span><span class="n">meta</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">meta</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="n">torch</span><span class="o">.</span><span class="n">int16</span>
+    <span class="n">groups_per_meta</span> <span class="o">=</span> <span class="mi">16</span> <span class="o">//</span> <span class="mi">4</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">groups_per_meta</span><span class="p">):</span>
+        <span class="n">group_bits</span> <span class="o">=</span> <span class="p">(</span><span class="n">meta</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="mi">4</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0xF</span>
+        <span class="n">idx0</span> <span class="o">=</span> <span class="n">group_bits</span> <span class="o">&amp;</span> <span class="mh">0x3</span>
+        <span class="n">idx1</span> <span class="o">=</span> <span class="p">(</span><span class="n">group_bits</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x3</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">idx0</span><span class="p">,</span> <span class="n">idx1</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The compressor can be implement at either <code class="docutils literal notranslate"><span class="pre">PyTorch</span></code>/<code class="docutils literal notranslate"><span class="pre">NumPy</span></code> level or kernel level.</p>
+<p>For example, <code class="docutils literal notranslate"><span class="pre">PyTorch</span></code> provides an Ampere compressor <a class="reference external" href="https://github.com/pytorch/pytorch/blob/267d0197bfca0232488d51dd1ff735d619adc2cf/torch/sparse/_semi_structured_conversions.py#L47-L179">here</a>. Note that in this implementation, a <a class="reference external" href="https://github.com/pytorch/pytorch/blob/267d0197bfca0232488d51dd1ff735d619adc2cf/torch/sparse/_semi_structured_conversions.py#L173-L175">permutation</a> is applied to match CUTLASS’s metadata layout. If you do not annotate a metadata layout when using <code class="docutils literal notranslate"><span class="pre">gemm_sp_v2</span></code>, your compressor should replicate the same behavior as the PyTorch example—but without using the <code class="docutils literal notranslate"><span class="pre">_calculate_meta_reordering_scatter_offsets</span></code> function.</p>
+<p>If you want to use a custom metadata layout in your kernel, one approach is to define the layout in <code class="docutils literal notranslate"><span class="pre">TileLang</span></code> and then apply the same layout to both your compressor kernel and the matmul_sp kernel.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">pass_configs</span><span class="o">=</span><span class="p">{</span>
+    <span class="n">tilelang</span><span class="o">.</span><span class="n">PassConfigKey</span><span class="o">.</span><span class="n">TIR_DISABLE_VECTORIZE</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compress_kernel</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">use_cutlass_layout</span><span class="p">):</span>
+    <span class="n">e_factor</span><span class="p">,</span> <span class="n">e_dtype</span> <span class="o">=</span> <span class="n">ARCH_INFO</span><span class="p">[</span><span class="s2">&quot;8.0&quot;</span><span class="p">]</span>
+    <span class="n">e_K</span> <span class="o">=</span> <span class="n">K</span> <span class="o">//</span> <span class="n">e_factor</span>
+    <span class="n">elem</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span>
+
+    <span class="k">assert</span> <span class="n">M</span> <span class="o">%</span> <span class="n">block_M</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;M must be divisible by block_M&quot;</span>
+    <span class="k">assert</span> <span class="n">K</span> <span class="o">%</span> <span class="n">block_K</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;K must be divisible by block_K&quot;</span>
+    <span class="k">assert</span> <span class="n">K</span> <span class="o">%</span> <span class="n">e_factor</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;K must be divisible by e_factor&quot;</span>
+    <span class="k">assert</span> <span class="n">block_K</span> <span class="o">%</span> <span class="n">e_factor</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;block_K must be divisible by e_factor&quot;</span>
+
+    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span>
+        <span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
+        <span class="n">A_sp</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
+        <span class="n">E</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">e_K</span><span class="p">),</span> <span class="n">e_dtype</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">block_M</span><span class="p">),</span> <span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="n">block_M</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span>
+            <span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">A_sp_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">E_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span> <span class="o">//</span> <span class="n">e_factor</span><span class="p">),</span> <span class="n">e_dtype</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">use_cutlass_layout</span><span class="p">:</span>  <span class="c1"># NOTE: Make sure compressor metadata layout</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">annotate_layout</span><span class="p">({</span> <span class="c1"># is same with your computation kernel</span>
+                    <span class="n">E</span><span class="p">:</span>
+                        <span class="n">make_cutlass_metadata_layout</span><span class="p">(</span>
+                            <span class="n">E</span><span class="p">,</span> <span class="n">mma_dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">arch</span><span class="o">=</span><span class="s2">&quot;8.0&quot;</span><span class="p">,</span> <span class="n">block_k</span><span class="o">=</span><span class="n">block_K</span><span class="p">),</span>
+                    <span class="n">E_shared</span><span class="p">:</span>
+                        <span class="n">make_cutlass_metadata_layout</span><span class="p">(</span>
+                            <span class="n">E_shared</span><span class="p">,</span>
+                            <span class="n">mma_dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span>
+                            <span class="n">arch</span><span class="o">=</span><span class="s2">&quot;8.0&quot;</span><span class="p">,</span>
+                            <span class="n">block_k</span><span class="o">=</span><span class="n">block_K</span><span class="p">),</span>
+                <span class="p">})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">A_sp_shared</span><span class="p">)</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">E_shared</span><span class="p">)</span>
+            <span class="n">non_zero_cnt</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_local</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
+            <span class="n">non_zero_elt_log_idx</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_local</span><span class="p">((</span><span class="n">elem</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">bx</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">by</span> <span class="o">*</span> <span class="n">block_K</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">tm</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">block_M</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">g_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">block_K</span> <span class="o">//</span> <span class="n">group</span><span class="p">):</span>
+                    <span class="n">a_k</span> <span class="o">=</span> <span class="n">g_i</span> <span class="o">*</span> <span class="n">group</span>
+                    <span class="n">T</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">non_zero_cnt</span><span class="p">)</span>
+                    <span class="n">T</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">non_zero_elt_log_idx</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">A_shared</span><span class="p">[</span><span class="n">tm</span><span class="p">,</span> <span class="n">a_k</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">val</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                            <span class="n">non_zero_elt_log_idx</span><span class="p">[</span><span class="n">non_zero_cnt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
+                            <span class="n">A_sp_shared</span><span class="p">[</span><span class="n">tm</span><span class="p">,</span> <span class="n">a_k</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">non_zero_cnt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">val</span>
+                            <span class="n">non_zero_cnt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">non_zero_cnt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">non_zero_elt_log_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="n">non_zero_elt_log_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">non_zero_elt_log_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+                        <span class="n">A_sp_shared</span><span class="p">[</span><span class="n">tm</span><span class="p">,</span> <span class="n">a_k</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_sp_shared</span><span class="p">[</span><span class="n">tm</span><span class="p">,</span> <span class="n">a_k</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+                        <span class="n">A_sp_shared</span><span class="p">[</span><span class="n">tm</span><span class="p">,</span> <span class="n">a_k</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="k">elif</span> <span class="n">non_zero_cnt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">A_sp_shared</span><span class="p">[</span><span class="n">tm</span><span class="p">,</span> <span class="n">a_k</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">non_zero_elt_log_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">serial</span><span class="p">(</span><span class="n">elem</span><span class="p">):</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">non_zero_elt_log_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">E_shared</span><span class="p">[</span><span class="n">tm</span><span class="p">,</span> <span class="n">a_k</span> <span class="o">//</span> <span class="n">e_factor</span><span class="p">]</span> <span class="o">|=</span> <span class="n">T</span><span class="o">.</span><span class="n">shift_left</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">g_i</span> <span class="o">%</span> <span class="p">(</span><span class="n">e_factor</span> <span class="o">//</span> <span class="n">group</span><span class="p">))</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A_sp_shared</span><span class="p">,</span> <span class="n">A_sp</span><span class="p">[</span><span class="n">bx</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">by</span> <span class="o">*</span> <span class="n">block_K</span> <span class="o">//</span> <span class="mi">2</span><span class="p">])</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">E_shared</span><span class="p">,</span> <span class="n">E</span><span class="p">[</span><span class="n">bx</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">by</span> <span class="o">*</span> <span class="n">block_K</span> <span class="o">//</span> <span class="n">e_factor</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">kernel</span>
+</pre></div>
+</div>
+</section>
+<section id="a-note-on-gemm-sp-and-gemm-sp-v2">
+<h2>A note on <code class="docutils literal notranslate"><span class="pre">gemm_sp</span></code> and <code class="docutils literal notranslate"><span class="pre">gemm_sp_v2</span></code><a class="headerlink" href="#a-note-on-gemm-sp-and-gemm-sp-v2" title="Link to this heading">¶</a></h2>
+<p>Initially, <code class="docutils literal notranslate"><span class="pre">T.gemm_sp</span></code> followed the same design as <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code>, lowering to a <code class="docutils literal notranslate"><span class="pre">CUTLASS</span></code> template. This inherently requires metadata to be reordered offline following a predetermined layout.</p>
+<p>However, fixing a specific layout introduces several potential issues:</p>
+<ol class="arabic simple">
+<li><p>Painful debugging experience: Debugging a failed kernel becomes difficult due to the reordered indexing, including permutations and swizzling.</p></li>
+<li><p>Limited flexibility: For example, concatenating two compressed tensors, such as <code class="docutils literal notranslate"><span class="pre">A_sparse_0</span></code> and <code class="docutils literal notranslate"><span class="pre">A_sparse_1</span></code>, into a new <code class="docutils literal notranslate"><span class="pre">A_sparse</span></code> makes sense. However, concatenating their metadata <code class="docutils literal notranslate"><span class="pre">E_0</span></code> and <code class="docutils literal notranslate"><span class="pre">E_1</span></code> may not be valid unless the layout allows it mathematically.</p></li>
+<li><p>Alignment requirements: <code class="docutils literal notranslate"><span class="pre">CUTLASS</span></code> enforces strict alignment checks, and many hyperparameter configurations can lead to compilation errors. (For reference, sm8x was implemented in <code class="docutils literal notranslate"><span class="pre">CUTLASS</span> <span class="pre">2</span></code>.)</p></li>
+</ol>
+<p><code class="docutils literal notranslate"><span class="pre">T.gemm_sp_v2</span></code> was designed to address these limitations, following the approach of <code class="docutils literal notranslate"><span class="pre">T.gemm_v2</span></code>. It lowers directly to PTX, removing the need for a fixed metadata layout.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="deepseek_mla.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">🚀 Write High Performance FlashMLA with TileLang on Hopper</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="matmul.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">General Matrix-Matrix Multiplication with Tile Library</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025-2025, Tile Lang Contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Sparse Matrix-Matrix Multiplication with Tile Library</a><ul>
+<li><a class="reference internal" href="#structured-sparsity-in-the-nvidia-ampere-architecture">Structured sparsity in the NVIDIA Ampere architecture</a></li>
+<li><a class="reference internal" href="#compress-a-dense-tensor">Compress a dense tensor</a></li>
+<li><a class="reference internal" href="#t-gemm-sp-with-cutlass-s-compressor"><code class="docutils literal notranslate"><span class="pre">T.gemm_sp</span></code> with CUTLASS’s compressor</a></li>
+<li><a class="reference internal" href="#t-gemm-sp-v2-with-a-custom-compressor"><code class="docutils literal notranslate"><span class="pre">T.gemm_sp_v2</span></code> with a custom compressor</a></li>
+<li><a class="reference internal" href="#a-note-on-gemm-sp-and-gemm-sp-v2">A note on <code class="docutils literal notranslate"><span class="pre">gemm_sp</span></code> and <code class="docutils literal notranslate"><span class="pre">gemm_sp_v2</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=f2775066"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>
