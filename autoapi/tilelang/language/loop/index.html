@@ -511,6 +511,21 @@
           <section id="module-tilelang.language.loop">
 <span id="tilelang-language-loop"></span><h1>tilelang.language.loop<a class="headerlink" href="#module-tilelang.language.loop" title="Link to this heading">¶</a></h1>
 <p>The language interface for tl programs.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.Serial" title="tilelang.language.loop.Serial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Serial</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.loop.Unroll" title="tilelang.language.loop.Unroll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Unroll</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -527,6 +542,9 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.loop.serial" title="tilelang.language.loop.serial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serial</span></code></a>(start[, stop, step, annotations])</p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.unroll" title="tilelang.language.loop.unroll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unroll</span></code></a>(start[, stop, step, explicit, unroll_factor, ...])</p></td>
+<td><p>The unrolled For statement.</p></td>
 </tr>
 </tbody>
 </table>
@@ -611,8 +629,45 @@ if num_stages is 0, pipeline will not be enabled.</p></li>
 <li><p><strong>annotations</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.script.ir_builder.tir.frame.ForFrame</p>
+</dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.loop.unroll">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">unroll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unroll_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.unroll" title="Link to this definition">¶</a></dt>
+<dd><p>The unrolled For statement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>PrimExpr</em>) – The minimum value of iteration.</p></li>
+<li><p><strong>stop</strong> (<em>PrimExpr</em>) – The maximum value of iteration.</p></li>
+<li><p><strong>step</strong> (<em>PrimExpr</em>) – The step size of the iteration.</p></li>
+<li><p><strong>explicit</strong> (<a class="reference internal" href="../v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>) – Whether to explicitly unroll the loop.</p></li>
+<li><p><strong>unroll_factor</strong> (<em>int</em>) – The unroll factor of the loop.</p></li>
+<li><p><strong>annotations</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – The optional annotations of the For statement.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>res</strong> – The ForFrame.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frame.ForFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.language.loop.Serial">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Serial</span></span><a class="headerlink" href="#tilelang.language.loop.Serial" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.language.loop.Unroll">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Unroll</span></span><a class="headerlink" href="#tilelang.language.loop.Unroll" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </section>
 </section>
@@ -673,12 +728,16 @@ if num_stages is 0, pipeline will not be enabled.</p></li>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.language.loop</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.language.loop.Parallel"><code class="docutils literal notranslate"><span class="pre">Parallel()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.loop.Persistent"><code class="docutils literal notranslate"><span class="pre">Persistent()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.loop.Pipelined"><code class="docutils literal notranslate"><span class="pre">Pipelined()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.loop.serial"><code class="docutils literal notranslate"><span class="pre">serial()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.loop.unroll"><code class="docutils literal notranslate"><span class="pre">unroll()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.loop.Serial"><code class="docutils literal notranslate"><span class="pre">Serial</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.loop.Unroll"><code class="docutils literal notranslate"><span class="pre">Unroll</span></code></a></li>
 </ul>
 </li>
 </ul>
