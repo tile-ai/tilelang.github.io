@@ -31,8 +31,11 @@ Classes
    tilelang.language.v2.builder.ContinueFrame
    tilelang.language.v2.builder.BreakFrame
    tilelang.language.v2.builder.SerialForWithStep
+   tilelang.language.v2.builder.OutTensor
+   tilelang.language.v2.builder.Ref
    tilelang.language.v2.builder.UnrollForWithStep
    tilelang.language.v2.builder.Builder
+   tilelang.language.v2.builder.PrimFuncCreater
    tilelang.language.v2.builder.PrimFunc
    tilelang.language.v2.builder.Macro
 
@@ -162,6 +165,34 @@ Module Contents
 
 
 
+.. py:class:: OutTensor
+
+   .. py:attribute:: shape
+      :type:  collections.abc.Sequence[tvm.tir.expr.PrimExpr]
+
+
+   .. py:attribute:: dtype
+      :type:  tilelang.language.v2.dtypes.dtype
+
+
+   .. py:property:: strides
+
+
+.. py:class:: Ref
+
+   .. py:attribute:: bufload
+      :type:  tvm.tir.expr.BufferLoad
+
+
+   .. py:property:: buffer
+
+
+   .. py:method:: store(value)
+
+
+   .. py:method:: load()
+
+
 .. py:class:: UnrollForWithStep
 
    Bases: :py:obj:`SerialForWithStep`
@@ -177,7 +208,7 @@ Module Contents
 
 .. py:function:: is_var(v)
 
-.. py:class:: Builder
+.. py:class:: Builder(func_annot = None)
 
    Bases: :py:obj:`tilelang.language.v2.ast.BaseBuilder`
 
@@ -195,7 +226,25 @@ Module Contents
       :type:  dict[str, AnyFrame]
 
 
-   .. py:attribute:: arg_annotations
+   .. py:attribute:: macro_arg_annot
+
+
+   .. py:attribute:: func_annot
+      :value: None
+
+
+
+   .. py:attribute:: out_idx
+      :value: []
+
+
+
+   .. py:attribute:: out_tensor_cnt
+      :value: 0
+
+
+
+   .. py:attribute:: arg_vt
 
 
    .. py:method:: current()
@@ -253,8 +302,15 @@ Module Contents
 
    .. py:method:: unwrap_value(value)
 
+      Unwrap some tilelang objects to get their inner value
+
+
 
    .. py:method:: bind_immutable(name, value)
+
+      Bind an immutable tilelang objects.
+      The immutability means the result is usually not changed or re-assigned in a python block.
+
 
 
    .. py:method:: assign_slice(lval, sl, value, annot=BaseBuilder.empty)
@@ -272,13 +328,13 @@ Module Contents
    .. py:method:: ifexp(cond, then, otherwise)
 
 
-   .. py:method:: ret(value)
+   .. py:method:: ret(value=None)
 
 
    .. py:method:: ctx_with(ctx)
 
 
-   .. py:method:: assert_expr(cond, msg)
+   .. py:method:: assert_expr(cond, msg=None)
 
 
    .. py:method:: rval(name, value)
@@ -294,6 +350,54 @@ Module Contents
 
 
    .. py:method:: override(name)
+
+
+.. py:class:: PrimFuncCreater
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_T`\ ]
+
+
+   Abstract base class for generic types.
+
+   A generic type is typically declared by inheriting from
+   this class parameterized with one or more type variables.
+   For example, a generic mapping type might be defined as::
+
+     class Mapping(Generic[KT, VT]):
+         def __getitem__(self, key: KT) -> VT:
+             ...
+         # Etc.
+
+   This class can then be used as follows::
+
+     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
+         try:
+             return mapping[key]
+         except KeyError:
+             return default
+
+
+   .. py:attribute:: func_annot
+      :type:  tilelang.language.v2.annot.FuncAnnot
+
+
+   .. py:attribute:: ir_gen
+      :type:  tilelang.language.v2.ast.IRGenerator[_P, _T]
+
+
+   .. py:attribute:: orig_func
+      :type:  Callable[_P, _T]
+
+
+   .. py:property:: annot
+      :type: dict[str, tilelang.language.v2.annot.Annot]
+
+
+
+   .. py:method:: __call__(*args, **kwargs)
+
+
+   .. py:method:: __repr__()
 
 
 .. py:class:: PrimFunc
@@ -349,12 +453,16 @@ Module Contents
       :type:  tilelang.language.v2.ast.IRGenerator[_P, _T] | None
 
 
-   .. py:attribute:: source
-      :type:  str | None
-
-
    .. py:attribute:: orig_func
       :type:  Callable[_P, _T] | None
+
+
+   .. py:attribute:: func_annot
+      :type:  tilelang.language.v2.annot.FuncAnnot | None
+
+
+   .. py:attribute:: out_idx_override
+      :type:  list[int] | None
 
 
 .. py:class:: Macro
@@ -404,6 +512,12 @@ Module Contents
 
 
    .. py:method:: __call__(*args, **kwargs)
+
+
+   .. py:method:: __hash__()
+
+
+   .. py:method:: __eq__(other)
 
 
 .. py:function:: macro(func = None)

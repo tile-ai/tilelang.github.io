@@ -391,6 +391,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../language/utils/index.html">tilelang.language.utils</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../language/v2/index.html">tilelang.language.v2</a><input aria-label="Toggle navigation of tilelang.language.v2" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../language/v2/annot/index.html">tilelang.language.v2.annot</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../language/v2/ast/index.html">tilelang.language.v2.ast</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../language/v2/builder/index.html">tilelang.language.v2.builder</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../language/v2/dtypes/index.html">tilelang.language.v2.dtypes</a></li>
@@ -534,6 +535,9 @@ kernel adapter using TVM.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.logger" title="tilelang.jit.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.ExecutionBackend" title="tilelang.jit.ExecutionBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExecutionBackend</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -544,7 +548,7 @@ kernel adapter using TVM.</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.JITImpl" title="tilelang.jit.JITImpl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JITImpl</span></code></a></p></td>
-<td><p>Abstract base class for generic types.</p></td>
+<td><p>Detailed Just-In-Time wrapper for TileLang programs.</p></td>
 </tr>
 </tbody>
 </table>
@@ -563,6 +567,9 @@ kernel adapter using TVM.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.jit" title="tilelang.jit.jit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jit</span></code></a>(…)</p></td>
 <td><p>Just-In-Time (JIT) compiler decorator for TileLang functions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.lazy_jit" title="tilelang.jit.lazy_jit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lazy_jit</span></code></a>(…)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -644,79 +651,263 @@ Refer to <cite>tilelang.transform.PassConfigKey</cite> for supported options.</p
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.</span></span><span class="sig-name descname"><span class="pre">JITImpl</span></span><a class="headerlink" href="#tilelang.jit.JITImpl" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">_P</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_KP</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_T</span></code>]</p>
-<p>Abstract base class for generic types.</p>
-<p>A generic type is typically declared by inheriting from
-this class parameterized with one or more type variables.
-For example, a generic mapping type might be defined as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Mapping</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">]):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
-        <span class="o">...</span>
-    <span class="c1"># Etc.</span>
-</pre></div>
-</div>
-<p>This class can then be used as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">lookup_name</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">VT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">mapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">default</span>
-</pre></div>
-</div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.jit.JITImpl.func">
-<span class="sig-name descname"><span class="pre">func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tilelang.language.v2.PrimFunc</span><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.jit.JITImpl.func" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">_P</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_KP</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_T</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_Ret</span></code>]</p>
+<p>Detailed Just-In-Time wrapper for TileLang programs.</p>
+<p>This dataclass encapsulates the configuration and runtime helpers used by the
+top-level <cite>jit</cite> and <cite>jit2</cite> decorators. It represents a configured JIT
+“factory” that can (a) elaborate TileLang/PrimFunc creators into concrete
+TIR (PrimFunc), (b) compile those TIR functions into runnable kernels via
+the TVM bridge, (c) cache compiled kernels keyed by call-site arguments
+(and optional tuning parameters), and (d) provide parallel compilation
+helpers for batch autotuning workflows.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.out_idx">
-<span class="sig-name descname"><span class="pre">out_idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.JITImpl.out_idx" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">out_idx</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.out_idx" title="Link to this definition">¶</a></dt>
+<dd><p>Which output tensor(s) of the compiled kernel should be returned to the
+caller. Accepts a single index, a list of indices, or None to return all.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[int] | int | None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.execution_backend">
-<span class="sig-name descname"><span class="pre">execution_backend</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'auto'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dlpack'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tvm_ffi'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ctypes'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cython'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'nvrtc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'torch'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.jit.JITImpl.execution_backend" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">execution_backend</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.execution_backend" title="Link to this definition">¶</a></dt>
+<dd><p>Backend used for exchanging arguments and executing the generated kernel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Literal[“dlpack”, “ctypes”, “cython”]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.target">
-<span class="sig-name descname"><span class="pre">target</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></em><a class="headerlink" href="#tilelang.jit.JITImpl.target" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">target</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.target" title="Link to this definition">¶</a></dt>
+<dd><p>TVM compilation target (e.g. “cuda”, “llvm”, or “auto”).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | tvm.target.Target</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.target_host">
-<span class="sig-name descname"><span class="pre">target_host</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></em><a class="headerlink" href="#tilelang.jit.JITImpl.target_host" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">target_host</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.target_host" title="Link to this definition">¶</a></dt>
+<dd><p>Host target used for cross-compilation, or None to infer/default.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | tvm.target.Target | None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.verbose">
-<span class="sig-name descname"><span class="pre">verbose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><span class="pre">bool</span></a></em><a class="headerlink" href="#tilelang.jit.JITImpl.verbose" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">verbose</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.verbose" title="Link to this definition">¶</a></dt>
+<dd><p>Enable verbose messages during compilation/build.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.pass_configs">
-<span class="sig-name descname"><span class="pre">pass_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.JITImpl.pass_configs" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">pass_configs</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.pass_configs" title="Link to this definition">¶</a></dt>
+<dd><p>Extra TVM pass configuration options forwarded to the compiler’s
+PassContext.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, Any] | None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.debug_root_path">
-<span class="sig-name descname"><span class="pre">debug_root_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.JITImpl.debug_root_path" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">debug_root_path</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.debug_root_path" title="Link to this definition">¶</a></dt>
+<dd><p>If provided, compiled kernel source and the elaborated Python program
+are written to this directory to ease debugging and inspection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.compile_flags">
-<span class="sig-name descname"><span class="pre">compile_flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.JITImpl.compile_flags" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">compile_flags</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.compile_flags" title="Link to this definition">¶</a></dt>
+<dd><p>Additional flags passed to the compiler. A single string will be converted
+to a single-element list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str] | str | None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.func_source">
-<span class="sig-name descname"><span class="pre">func_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#tilelang.jit.JITImpl.func_source" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">func_source</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.func_source" title="Link to this definition">¶</a></dt>
+<dd><p>Original Python source string from which the PrimFunc or creator was
+derived. Used for diagnostics and debug dumps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.signature">
-<span class="sig-name descname"><span class="pre">signature</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">inspect.Signature</span></em><a class="headerlink" href="#tilelang.jit.JITImpl.signature" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">signature</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.signature" title="Link to this definition">¶</a></dt>
+<dd><p>Function signature of the original Python function (useful for tooling).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>inspect.Signature</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.JITImpl.v2">
+<span class="sig-name descname"><span class="pre">v2</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.v2" title="Link to this definition">¶</a></dt>
+<dd><p>Indicates whether the object wraps a “v2” PrimFunc creator (True) or a
+plain callable / PrimFunc (False). v2-mode enables argument conversion
+hooks and a distinct cache keying strategy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.JITImpl.func">
+<span class="sig-name descname"><span class="pre">func</span></span><a class="headerlink" href="#tilelang.jit.JITImpl.func" title="Link to this definition">¶</a></dt>
+<dd><p>The underlying object: either a user function that returns a PrimFunc
+(creator), a PrimFuncCreater, or an already-constructed PrimFunc.
+For presentation/readability the function is stored last in the dataclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable | <a class="reference internal" href="../language/v2/builder/index.html#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc">PrimFunc</a> | <a class="reference internal" href="../language/v2/builder/index.html#tilelang.language.v2.builder.PrimFuncCreater" title="tilelang.language.v2.builder.PrimFuncCreater">PrimFuncCreater</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Behavioral</span> <span class="pre">summary</span></span></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">------------------</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">get_tir(*args,</span> <span class="pre">\*\*kwargs)</span></span></dt>
+<dd><p>Converts provided call-site arguments into a concrete PrimFunc. If the
+wrapped object is a PrimFuncCreater or a user callable, it is invoked
+with the given arguments. If the wrapped object is already a PrimFunc,
+it is returned as-is.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">compile(...)</span></span></dt>
+<dd><p>A convenience wrapper that elaborates and immediately compiles a single
+PrimFunc into a JITKernel using the module-level <cite>compile</cite> function.
+When <cite>debug_root_path</cite> is set, the compiled C kernel and the source
+Python program are saved for inspection.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-</span> <span class="pre">par_compile(configs,</span> <span class="pre">...)</span></span></dt>
+<dd><p>Accepts an iterable of configs (either dicts mapping keyword args or
+tuples mapping to positional args). Each config is elaborated to a
+PrimFunc and the resulting set is compiled in parallel via the
+module-level <cite>par_compile</cite> helper. Returns a list of JITKernel objects
+in the same order as the provided configs.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">out_idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">execution_backend</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'auto'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dlpack'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tvm_ffi'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ctypes'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cython'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'nvrtc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'torch'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">target</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></em><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">target_host</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></em><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">verbose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><span class="pre">bool</span></a></em><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">pass_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">debug_root_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">compile_flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">func_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">signature</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">inspect.Signature</span></em><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.JITImpl.lazy_jit">
+<span class="sig-name descname"><span class="pre">lazy_jit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><span class="pre">bool</span></a></em><a class="headerlink" href="#tilelang.jit.JITImpl.lazy_jit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tilelang.language.v2.PrimFunc</span><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.jit.JITImpl.annot">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">annot</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../language/v2/annot/index.html#tilelang.language.v2.annot.Annot" title="tilelang.language.v2.annot.Annot"><span class="pre">tilelang.language.v2.annot.Annot</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.jit.JITImpl.annot" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, <a class="reference internal" href="../language/v2/annot/index.html#tilelang.language.v2.annot.Annot" title="tilelang.language.v2.annot.Annot">tilelang.language.v2.annot.Annot</a>]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.__post_init__">
@@ -726,7 +917,8 @@ For example, a generic mapping type might be defined as:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.get_tir">
 <span class="sig-name descname"><span class="pre">get_tir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.JITImpl.get_tir" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Retrieve a TIR (Tensor Intermediate Representation) PrimFunc from the stored callable or object.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> (<em>_P</em>)</p></li>
@@ -742,16 +934,28 @@ For example, a generic mapping type might be defined as:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.jit.JITImpl.par_compile">
 <span class="sig-name descname"><span class="pre">par_compile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.JITImpl.par_compile" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Parallel compile multiple TileLang PrimFunc with TVM and build JITKernels.
+:param configs: The configurations to elaborate and compile. Each config can be either</p>
+<blockquote>
+<div><p>a dictionary mapping keyword arguments to values, or a tuple of positional
+arguments.</p>
+</div></blockquote>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>configs</strong> (<em>collections.abc.Iterable</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>tuple</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>num_workers</strong> (<em>int</em>)</p></li>
-<li><p><strong>ignore_error</strong> (<a class="reference internal" href="../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>num_workers</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of parallel workers to use for compilation. Defaults to None,
+which lets the system decide.</p></li>
+<li><p><strong>ignore_error</strong> (<a class="reference internal" href="../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a><em>, </em><em>optional</em>) – If True, compilation errors for individual configs will be logged
+as warnings and the corresponding result will be None. If False,
+any compilation error will raise an exception. Defaults to False.</p></li>
+<li><p><strong>configs</strong> (<em>Iterable</em><em>[</em><em>Union</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>Any</em><em>, </em><em>...</em><em>]</em><em>]</em><em>]</em>)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list[<a class="reference internal" href="kernel/index.html#tilelang.jit.kernel.JITKernel" title="tilelang.jit.kernel.JITKernel">kernel.JITKernel</a>[_KP, _T]]</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of compiled JITKernel objects corresponding to the provided configs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="kernel/index.html#tilelang.jit.kernel.JITKernel" title="tilelang.jit.kernel.JITKernel">JITKernel</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -767,7 +971,33 @@ For example, a generic mapping type might be defined as:</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="kernel/index.html#tilelang.jit.kernel.JITKernel" title="tilelang.jit.kernel.JITKernel">kernel.JITKernel</a>[_KP, _T]</p>
+<dd class="field-even"><p>_Ret</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.JITImpl.parse_cache_key">
+<span class="sig-name descname"><span class="pre">parse_cache_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.JITImpl.parse_cache_key" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>_P</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>_P</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.JITImpl.convert_kernel_args">
+<span class="sig-name descname"><span class="pre">convert_kernel_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.JITImpl.convert_kernel_args" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>_P</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>_P</em>)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -783,18 +1013,23 @@ For example, a generic mapping type might be defined as:</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="kernel/index.html#tilelang.jit.kernel.JITKernel" title="tilelang.jit.kernel.JITKernel">kernel.JITKernel</a>[_KP, _T]</p>
+<dd class="field-even"><p>_Ret</p>
 </dd>
 </dl>
 </dd></dl>
 
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.jit.ExecutionBackend">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.</span></span><span class="sig-name descname"><span class="pre">ExecutionBackend</span></span><a class="headerlink" href="#tilelang.jit.ExecutionBackend" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.jit.jit">
-<span class="sig-prename descclassname"><span class="pre">tilelang.jit.</span></span><span class="sig-name descname"><span class="pre">jit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tilelang.language.v2.PrimFunc</span><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.jit.JITImpl" title="tilelang.jit.JITImpl"><span class="pre">JITImpl</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.jit.jit" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.</span></span><span class="sig-name descname"><span class="pre">jit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tilelang.language.v2.PrimFunc</span><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.jit.JITImpl" title="tilelang.jit.JITImpl"><span class="pre">JITImpl</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="kernel/index.html#tilelang.jit.kernel.JITKernel" title="tilelang.jit.kernel.JITKernel"><span class="pre">kernel.JITKernel</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.jit.jit" title="Link to this definition">¶</a></dt>
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">tilelang.jit.</span></span><span class="sig-name descname"><span class="pre">jit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'auto'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dlpack'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tvm_ffi'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ctypes'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cython'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'nvrtc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'torch'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_root_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tilelang.language.v2.PrimFunc</span><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#tilelang.jit.JITImpl" title="tilelang.jit.JITImpl"><span class="pre">JITImpl</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.</span></span><span class="sig-name descname"><span class="pre">jit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExecutionBackend</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_root_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tilelang.language.v2.PrimFunc</span><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#tilelang.jit.JITImpl" title="tilelang.jit.JITImpl"><span class="pre">JITImpl</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="kernel/index.html#tilelang.jit.kernel.JITKernel" title="tilelang.jit.kernel.JITKernel"><span class="pre">kernel.JITKernel</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span></dt>
 <dd><p>Just-In-Time (JIT) compiler decorator for TileLang functions.</p>
 <dl class="simple">
 <dt>This decorator can be used without arguments (e.g., <cite>&#64;tilelang.jit</cite>):</dt><dd><p>Applies JIT compilation with default settings.</p>
@@ -824,6 +1059,13 @@ instance that can then be applied to a function.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.jit.lazy_jit">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.</span></span><span class="sig-name descname"><span class="pre">lazy_jit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tilelang.jit.JITImpl" title="tilelang.jit.JITImpl"><span class="pre">JITImpl</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tilelang.jit.lazy_jit" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.</span></span><span class="sig-name descname"><span class="pre">lazy_jit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.target.Target</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExecutionBackend</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_root_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#tilelang.jit.JITImpl" title="tilelang.jit.JITImpl"><span class="pre">JITImpl</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_KP</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<dd></dd></dl>
 
 </section>
 </section>
@@ -893,7 +1135,6 @@ instance that can then be applied to a function.</p>
 <li><a class="reference internal" href="#tilelang.jit.compile"><code class="docutils literal notranslate"><span class="pre">compile()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.par_compile"><code class="docutils literal notranslate"><span class="pre">par_compile()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl"><code class="docutils literal notranslate"><span class="pre">JITImpl</span></code></a><ul>
-<li><a class="reference internal" href="#tilelang.jit.JITImpl.func"><code class="docutils literal notranslate"><span class="pre">JITImpl.func</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.out_idx"><code class="docutils literal notranslate"><span class="pre">JITImpl.out_idx</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.execution_backend"><code class="docutils literal notranslate"><span class="pre">JITImpl.execution_backend</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.target"><code class="docutils literal notranslate"><span class="pre">JITImpl.target</span></code></a></li>
@@ -904,14 +1145,33 @@ instance that can then be applied to a function.</p>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.compile_flags"><code class="docutils literal notranslate"><span class="pre">JITImpl.compile_flags</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.func_source"><code class="docutils literal notranslate"><span class="pre">JITImpl.func_source</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.signature"><code class="docutils literal notranslate"><span class="pre">JITImpl.signature</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.JITImpl.v2"><code class="docutils literal notranslate"><span class="pre">JITImpl.v2</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.JITImpl.func"><code class="docutils literal notranslate"><span class="pre">JITImpl.func</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">JITImpl.out_idx</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">JITImpl.execution_backend</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">JITImpl.target</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">JITImpl.target_host</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">JITImpl.verbose</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">JITImpl.pass_configs</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">JITImpl.debug_root_path</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">JITImpl.compile_flags</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">JITImpl.func_source</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">JITImpl.signature</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.JITImpl.lazy_jit"><code class="docutils literal notranslate"><span class="pre">JITImpl.lazy_jit</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">JITImpl.func</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.JITImpl.annot"><code class="docutils literal notranslate"><span class="pre">JITImpl.annot</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.__post_init__"><code class="docutils literal notranslate"><span class="pre">JITImpl.__post_init__()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.get_tir"><code class="docutils literal notranslate"><span class="pre">JITImpl.get_tir()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.par_compile"><code class="docutils literal notranslate"><span class="pre">JITImpl.par_compile()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.compile"><code class="docutils literal notranslate"><span class="pre">JITImpl.compile()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.JITImpl.parse_cache_key"><code class="docutils literal notranslate"><span class="pre">JITImpl.parse_cache_key()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.JITImpl.convert_kernel_args"><code class="docutils literal notranslate"><span class="pre">JITImpl.convert_kernel_args()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.JITImpl.__call__"><code class="docutils literal notranslate"><span class="pre">JITImpl.__call__()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#tilelang.jit.ExecutionBackend"><code class="docutils literal notranslate"><span class="pre">ExecutionBackend</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.jit"><code class="docutils literal notranslate"><span class="pre">jit()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.lazy_jit"><code class="docutils literal notranslate"><span class="pre">lazy_jit()</span></code></a></li>
 </ul>
 </li>
 </ul>

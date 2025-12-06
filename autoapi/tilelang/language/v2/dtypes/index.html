@@ -391,6 +391,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/index.html">tilelang.language.utils</a></li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html">tilelang.language.v2</a><input aria-label="Toggle navigation of tilelang.language.v2" checked="" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../annot/index.html">tilelang.language.v2.annot</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ast/index.html">tilelang.language.v2.ast</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../builder/index.html">tilelang.language.v2.builder</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.language.v2.dtypes</a></li>
@@ -516,16 +517,13 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.dtypes.dtype" title="tilelang.language.v2.dtypes.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.dtypes.AnyDType" title="tilelang.language.v2.dtypes.AnyDType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AnyDType</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.dtypes.AnyDType" title="tilelang.language.v2.dtypes.AnyDType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AnyDType</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.dtypes.int_" title="tilelang.language.v2.dtypes.int_"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int_</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.dtypes.int_" title="tilelang.language.v2.dtypes.int_"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int_</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.dtypes.__all__" title="tilelang.language.v2.dtypes.__all__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__all__</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.dtypes.__all__" title="tilelang.language.v2.dtypes.__all__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__all__</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -537,8 +535,11 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.dtypes.dtype" title="tilelang.language.v2.dtypes.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>Abstract base class for generic types.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p></td>
+<td><p>Abstract base class for generic types.</p></td>
 </tr>
 </tbody>
 </table>
@@ -564,10 +565,39 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py data">
+<dl class="py class">
 <dt class="sig sig-object py" id="tilelang.language.v2.dtypes.dtype">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.dtypes.</span></span><span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#tilelang.language.v2.dtypes.dtype" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.dtypes.</span></span><span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#tilelang.language.v2.dtypes.dtype" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">_T</span></code>]</p>
+<p>Abstract base class for generic types.</p>
+<p>A generic type is typically declared by inheriting from
+this class parameterized with one or more type variables.
+For example, a generic mapping type might be defined as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Mapping</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+        <span class="o">...</span>
+    <span class="c1"># Etc.</span>
+</pre></div>
+</div>
+<p>This class can then be used as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">lookup_name</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">VT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.v2.dtypes.dtype.torch">
+<span class="sig-name descname"><span class="pre">torch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.dtypes.dtype.torch" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.dtype</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="tilelang.language.v2.dtypes.AnyDType">
@@ -585,7 +615,7 @@
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>self</strong> (<em>dtype</em>)</p></li>
+<li><p><strong>self</strong> (<a class="reference internal" href="#tilelang.language.v2.dtypes.dtype" title="tilelang.language.v2.dtypes.dtype"><em>dtype</em></a>)</p></li>
 <li><p><strong>is_size_var</strong> (<a class="reference internal" href="#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
@@ -603,7 +633,7 @@
 <dd class="field-odd"><p><strong>value</strong> (<em>AnyDType</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dtype</p>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.language.v2.dtypes.dtype" title="tilelang.language.v2.dtypes.dtype">dtype</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -616,7 +646,7 @@
 <dd class="field-odd"><p><strong>value</strong> (<em>AnyDType</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dtype</p>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.language.v2.dtypes.dtype" title="tilelang.language.v2.dtypes.dtype">dtype</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -625,6 +655,24 @@
 <dt class="sig sig-object py" id="tilelang.language.v2.dtypes.bool">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.dtypes.</span></span><span class="sig-name descname"><span class="pre">bool</span></span><a class="headerlink" href="#tilelang.language.v2.dtypes.bool" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#tilelang.language.v2.dtypes.dtype" title="tilelang.language.v2.dtypes.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p>
+<p>Abstract base class for generic types.</p>
+<p>A generic type is typically declared by inheriting from
+this class parameterized with one or more type variables.
+For example, a generic mapping type might be defined as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Mapping</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+        <span class="o">...</span>
+    <span class="c1"># Etc.</span>
+</pre></div>
+</div>
+<p>This class can then be used as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">lookup_name</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">VT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py data">
@@ -695,7 +743,10 @@
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#tilelang.language.v2.dtypes.dtype"><code class="docutils literal notranslate"><span class="pre">dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.dtypes.dtype"><code class="docutils literal notranslate"><span class="pre">dtype</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.v2.dtypes.dtype.torch"><code class="docutils literal notranslate"><span class="pre">dtype.torch()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#tilelang.language.v2.dtypes.AnyDType"><code class="docutils literal notranslate"><span class="pre">AnyDType</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.dtypes.int_"><code class="docutils literal notranslate"><span class="pre">int_</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.dtypes.__dtype_call__"><code class="docutils literal notranslate"><span class="pre">__dtype_call__()</span></code></a></li>

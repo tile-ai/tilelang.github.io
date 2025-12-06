@@ -9,7 +9,6 @@ Attributes
 
 .. autoapisummary::
 
-   tilelang.language.v2.dtypes.dtype
    tilelang.language.v2.dtypes.AnyDType
    tilelang.language.v2.dtypes.int_
    tilelang.language.v2.dtypes.__all__
@@ -20,6 +19,7 @@ Classes
 
 .. autoapisummary::
 
+   tilelang.language.v2.dtypes.dtype
    tilelang.language.v2.dtypes.bool
 
 
@@ -36,7 +36,33 @@ Functions
 Module Contents
 ---------------
 
-.. py:data:: dtype
+.. py:class:: dtype
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`_T`\ ]
+
+
+   Abstract base class for generic types.
+
+   A generic type is typically declared by inheriting from
+   this class parameterized with one or more type variables.
+   For example, a generic mapping type might be defined as::
+
+     class Mapping(Generic[KT, VT]):
+         def __getitem__(self, key: KT) -> VT:
+             ...
+         # Etc.
+
+   This class can then be used as follows::
+
+     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
+         try:
+             return mapping[key]
+         except KeyError:
+             return default
+
+
+   .. py:method:: torch()
+
 
 .. py:data:: AnyDType
 
@@ -51,6 +77,26 @@ Module Contents
 .. py:class:: bool
 
    Bases: :py:obj:`dtype`
+
+
+   Abstract base class for generic types.
+
+   A generic type is typically declared by inheriting from
+   this class parameterized with one or more type variables.
+   For example, a generic mapping type might be defined as::
+
+     class Mapping(Generic[KT, VT]):
+         def __getitem__(self, key: KT) -> VT:
+             ...
+         # Etc.
+
+   This class can then be used as follows::
+
+     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
+         try:
+             return mapping[key]
+         except KeyError:
+             return default
 
 
 .. py:data:: __all__
