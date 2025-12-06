@@ -229,6 +229,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../analysis/index.html">tilelang.analysis</a><input aria-label="Toggle navigation of tilelang.analysis" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../analysis/ast_printer/index.html">tilelang.analysis.ast_printer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../analysis/fragment_loop_checker/index.html">tilelang.analysis.fragment_loop_checker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../analysis/layout_visual/index.html">tilelang.analysis.layout_visual</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../analysis/nested_loop_checker/index.html">tilelang.analysis.nested_loop_checker</a></li>
 </ul>
 </li>
@@ -536,13 +537,22 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.phase.should_force_let_inline" title="tilelang.engine.phase.should_force_let_inline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">should_force_let_inline</span></code></a>([pass_ctx])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.phase.PreLowerSemanticCheck" title="tilelang.engine.phase.PreLowerSemanticCheck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PreLowerSemanticCheck</span></code></a>(mod)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.phase.should_enable_layout_visual" title="tilelang.engine.phase.should_enable_layout_visual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">should_enable_layout_visual</span></code></a>([pass_ctx])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.phase.get_layout_visual_formats" title="tilelang.engine.phase.get_layout_visual_formats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_layout_visual_formats</span></code></a>([pass_ctx])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.phase.LayoutVisual" title="tilelang.engine.phase.LayoutVisual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LayoutVisual</span></code></a>(mod)</p></td>
+<td><p>Apply layout visualization pass if enabled.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.phase.PreLowerSemanticCheck" title="tilelang.engine.phase.PreLowerSemanticCheck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PreLowerSemanticCheck</span></code></a>(mod)</p></td>
 <td><p>Check whether the module is valid before lowering. If not, raise a user-friendly error</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.phase.LowerAndLegalize" title="tilelang.engine.phase.LowerAndLegalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerAndLegalize</span></code></a>(mod, target)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.phase.LowerAndLegalize" title="tilelang.engine.phase.LowerAndLegalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerAndLegalize</span></code></a>(mod, target)</p></td>
 <td><p>Bind target information and progressively legalize and lower frontend Tile IR into a form suitable for downstream optimization and codegen.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.phase.OptimizeForTarget" title="tilelang.engine.phase.OptimizeForTarget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OptimizeForTarget</span></code></a>(mod, target)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.phase.OptimizeForTarget" title="tilelang.engine.phase.OptimizeForTarget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OptimizeForTarget</span></code></a>(mod, target)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -647,6 +657,46 @@
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.engine.phase.should_enable_layout_visual">
+<span class="sig-prename descclassname"><span class="pre">tilelang.engine.phase.</span></span><span class="sig-name descname"><span class="pre">should_enable_layout_visual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pass_ctx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.phase.should_enable_layout_visual" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pass_ctx</strong> (<em>tilelang.transform.PassContext</em><em> | </em><em>None</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.engine.phase.get_layout_visual_formats">
+<span class="sig-prename descclassname"><span class="pre">tilelang.engine.phase.</span></span><span class="sig-name descname"><span class="pre">get_layout_visual_formats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pass_ctx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.phase.get_layout_visual_formats" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pass_ctx</strong> (<em>tilelang.transform.PassContext</em><em> | </em><em>None</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.engine.phase.LayoutVisual">
+<span class="sig-prename descclassname"><span class="pre">tilelang.engine.phase.</span></span><span class="sig-name descname"><span class="pre">LayoutVisual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mod</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.phase.LayoutVisual" title="Link to this definition">¶</a></dt>
+<dd><p>Apply layout visualization pass if enabled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mod</strong> (<em>tvm.IRModule</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -780,6 +830,9 @@ Note: This is a validation-only pipeline of passes and does not modify or return
 <li><a class="reference internal" href="#tilelang.engine.phase.allow_global_thread_synchronization"><code class="docutils literal notranslate"><span class="pre">allow_global_thread_synchronization()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.phase.should_enable_aggressive_merge"><code class="docutils literal notranslate"><span class="pre">should_enable_aggressive_merge()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.phase.should_force_let_inline"><code class="docutils literal notranslate"><span class="pre">should_force_let_inline()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.engine.phase.should_enable_layout_visual"><code class="docutils literal notranslate"><span class="pre">should_enable_layout_visual()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.engine.phase.get_layout_visual_formats"><code class="docutils literal notranslate"><span class="pre">get_layout_visual_formats()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.engine.phase.LayoutVisual"><code class="docutils literal notranslate"><span class="pre">LayoutVisual()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.phase.PreLowerSemanticCheck"><code class="docutils literal notranslate"><span class="pre">PreLowerSemanticCheck()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.phase.LowerAndLegalize"><code class="docutils literal notranslate"><span class="pre">LowerAndLegalize()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.phase.OptimizeForTarget"><code class="docutils literal notranslate"><span class="pre">OptimizeForTarget()</span></code></a></li>

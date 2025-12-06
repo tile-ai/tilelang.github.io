@@ -229,6 +229,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/analysis/index.html">tilelang.analysis</a><input aria-label="Toggle navigation of tilelang.analysis" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/analysis/ast_printer/index.html">tilelang.analysis.ast_printer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/analysis/fragment_loop_checker/index.html">tilelang.analysis.fragment_loop_checker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/analysis/layout_visual/index.html">tilelang.analysis.layout_visual</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/analysis/nested_loop_checker/index.html">tilelang.analysis.nested_loop_checker</a></li>
 </ul>
 </li>
@@ -658,6 +659,32 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 </pre></div>
 </div>
 </section>
+<section id="visual-layout-inference-for-tilelang">
+<h3>Visual Layout Inference For TileLang<a class="headerlink" href="#visual-layout-inference-for-tilelang" title="Link to this heading">¶</a></h3>
+<p>The <strong>Visual Layout Inference</strong> tool automatically generates visual diagrams that illustrate the mapping between logical indices, thread IDs, and register file locations.</p>
+<p>When TileLang performs layout inference, it determines how fragment buffers are distributed across threads. The visual layout tool captures this information and generates:</p>
+<ol class="arabic simple">
+<li><p><strong>Textual output</strong>: A human-readable description of the layout mapping</p></li>
+<li><p><strong>Visual diagrams</strong>: Color-coded plots showing the thread-to-data mapping</p></li>
+</ol>
+<p>The visual layout inference tool is controlled through the <code class="docutils literal notranslate"><span class="pre">TL_LAYOUT_VISUALIZATION_ENABLE</span></code> and <code class="docutils literal notranslate"><span class="pre">TL_LAYOUT_VISUALIZATION_FORMATS</span></code> pass configuration. By default, <code class="docutils literal notranslate"><span class="pre">TL_LAYOUT_VISUALIZATION_ENABLE</span></code> is <strong>disabled</strong> to avoid performance overhead during compilation.</p>
+<p>When enabled, <code class="docutils literal notranslate"><span class="pre">TL_LAYOUT_VISUALIZATION_FORMATS</span></code> accepts string values to control output formats:</p>
+<ul class="simple">
+<li><p>“txt”: Text output only (same as default)</p></li>
+<li><p>“all”: Generates all formats (TXT, PDF, PNG, SVG)</p></li>
+<li><p>“png”: Generate PNG format only</p></li>
+<li><p>“pdf”: Generate PDF format only</p></li>
+<li><p>“svg”: Generate SVG format only</p></li>
+<li><p>“txt,svg”: Generate multiple formats (comma-separated) in addition to text output</p></li>
+</ul>
+<p>The output messages of “txt” will include something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">C_local</span> <span class="n">inferenced</span> <span class="n">layout</span><span class="p">:</span>
+  <span class="n">Shape</span><span class="p">:</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+  <span class="n">Thread</span><span class="p">:</span> <span class="n">_j</span> <span class="o">//</span> <span class="mi">16</span> <span class="o">*</span> <span class="mi">64</span> <span class="o">+</span> <span class="n">_i</span> <span class="o">//</span> <span class="mi">16</span> <span class="o">*</span> <span class="mi">32</span> <span class="o">+</span> <span class="n">_i</span> <span class="o">%</span> <span class="mi">8</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">_j</span> <span class="o">%</span> <span class="mi">8</span> <span class="o">//</span> <span class="mi">2</span>
+  <span class="n">Index</span><span class="p">:</span>  <span class="p">[</span><span class="n">_j</span> <span class="o">%</span> <span class="mi">16</span> <span class="o">//</span> <span class="mi">8</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">_i</span> <span class="o">%</span> <span class="mi">16</span> <span class="o">//</span> <span class="mi">8</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">_j</span> <span class="o">%</span> <span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="conclusion">
 <h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">¶</a></h2>
@@ -728,6 +755,7 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 <li><a class="reference internal" href="#debugging-correctness-issues">Debugging Correctness Issues</a><ul>
 <li><a class="reference internal" href="#post-processing-callbacks-for-generated-source">Post-Processing Callbacks for Generated Source</a></li>
 <li><a class="reference internal" href="#runtime-debug-prints-with-t-print">Runtime Debug Prints with <code class="docutils literal notranslate"><span class="pre">T.print</span></code></a></li>
+<li><a class="reference internal" href="#visual-layout-inference-for-tilelang">Visual Layout Inference For TileLang</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#conclusion">Conclusion</a></li>
