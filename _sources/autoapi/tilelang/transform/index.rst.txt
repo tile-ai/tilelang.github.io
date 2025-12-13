@@ -51,6 +51,7 @@ Functions
    tilelang.transform.MakePackedAPI
    tilelang.transform.AnnotateDeviceRegions
    tilelang.transform.SplitHostDevice
+   tilelang.transform.AnnotateReadOnlyParams
    tilelang.transform.VectorizeLoop
    tilelang.transform.InjectPTXAsyncCopy
    tilelang.transform.LowerDeviceStorageAccessInfo
@@ -287,6 +288,18 @@ Package Contents
 .. py:function:: SplitHostDevice()
 
    Split host/device functions even for empty kernels.
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: AnnotateReadOnlyParams()
+
+   Annotate read-only handle parameters for PrimFuncs.
+
+   Adds attribute `tl.readonly_param_indices` listing param indices that are
+   never written, enabling CUDA codegen to emit `const` qualifiers to unlock
+   read-only cache loads.
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
