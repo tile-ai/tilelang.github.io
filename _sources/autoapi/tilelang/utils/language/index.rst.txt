@@ -29,6 +29,7 @@ Functions
    tilelang.utils.language.prim_expr_equal
    tilelang.utils.language.legalize_pairwise_extents
    tilelang.utils.language.is_full_region
+   tilelang.utils.language.get_prim_func_name
 
 
 Module Contents
@@ -227,5 +228,19 @@ Module Contents
 
    :returns: True if the region is full; otherwise False.
    :rtype: bool
+
+
+.. py:function:: get_prim_func_name(func, default = None)
+
+   Extract a human‑readable function name from a TVM PrimFunc.
+
+   Prefer the `global_symbol` attribute set on the PrimFunc. If it is missing
+   (e.g., private PrimFunc without a global symbol), return the provided
+   `default` value.
+
+   :param func: TVM PrimFunc instance or None.
+   :param default: Fallback name to return when no name can be determined.
+
+   :returns: The function name as a string, or `default` when unavailable.
 
 

@@ -581,6 +581,9 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.language.is_full_region" title="tilelang.utils.language.is_full_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_full_region</span></code></a>(buffer_region)</p></td>
 <td><p>Check whether a BufferRegion covers the full buffer region.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.language.get_prim_func_name" title="tilelang.utils.language.get_prim_func_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_prim_func_name</span></code></a>(func[, default])</p></td>
+<td><p>Extract a human‑readable function name from a TVM PrimFunc.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -965,6 +968,29 @@ the corresponding dimension in the buffer’s shape.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.language.get_prim_func_name">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.language.</span></span><span class="sig-name descname"><span class="pre">get_prim_func_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.language.get_prim_func_name" title="Link to this definition">¶</a></dt>
+<dd><p>Extract a human‑readable function name from a TVM PrimFunc.</p>
+<p>Prefer the <cite>global_symbol</cite> attribute set on the PrimFunc. If it is missing
+(e.g., private PrimFunc without a global symbol), return the provided
+<cite>default</cite> value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>tvm.tir.PrimFunc</em><em> | </em><em>None</em>) – TVM PrimFunc instance or None.</p></li>
+<li><p><strong>default</strong> (<em>str</em><em> | </em><em>None</em>) – Fallback name to return when no name can be determined.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The function name as a string, or <cite>default</cite> when unavailable.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -1046,6 +1072,7 @@ the corresponding dimension in the buffer’s shape.</p>
 <li><a class="reference internal" href="#tilelang.utils.language.prim_expr_equal"><code class="docutils literal notranslate"><span class="pre">prim_expr_equal()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.legalize_pairwise_extents"><code class="docutils literal notranslate"><span class="pre">legalize_pairwise_extents()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.language.is_full_region"><code class="docutils literal notranslate"><span class="pre">is_full_region()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.language.get_prim_func_name"><code class="docutils literal notranslate"><span class="pre">get_prim_func_name()</span></code></a></li>
 </ul>
 </li>
 </ul>
