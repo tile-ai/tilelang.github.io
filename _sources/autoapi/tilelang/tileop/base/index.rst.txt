@@ -1,7 +1,7 @@
-tilelang.primitives.gemm.base
-=============================
+tilelang.tileop.base
+====================
 
-.. py:module:: tilelang.primitives.gemm.base
+.. py:module:: tilelang.tileop.base
 
 
 Classes
@@ -9,8 +9,7 @@ Classes
 
 .. autoapisummary::
 
-   tilelang.primitives.gemm.base.GemmWarpPolicy
-   tilelang.primitives.gemm.base.GemmBaseParams
+   tilelang.tileop.base.GemmWarpPolicy
 
 
 Module Contents
@@ -122,100 +121,5 @@ Module Contents
       >>> GemmWarpPolicy.from_block_row_cols(2, 2)  # Balanced distribution
       GemmWarpPolicy.Square
 
-
-
-.. py:class:: GemmBaseParams
-
-   .. py:attribute:: A
-      :type:  tvm.tir.Buffer
-
-
-   .. py:attribute:: B
-      :type:  tvm.tir.Buffer
-
-
-   .. py:attribute:: C
-      :type:  tvm.tir.Buffer
-
-
-   .. py:attribute:: transpose_A
-      :type:  bool
-      :value: False
-
-
-
-   .. py:attribute:: transpose_B
-      :type:  bool
-      :value: False
-
-
-
-   .. py:attribute:: block_row_warps
-      :type:  int | None
-      :value: None
-
-
-
-   .. py:attribute:: block_col_warps
-      :type:  int | None
-      :value: None
-
-
-
-   .. py:attribute:: warp_row_tiles
-      :type:  int | None
-      :value: None
-
-
-
-   .. py:attribute:: warp_col_tiles
-      :type:  int | None
-      :value: None
-
-
-
-   .. py:attribute:: chunk
-      :type:  int | None
-      :value: None
-
-
-
-   .. py:attribute:: policy
-      :type:  GemmWarpPolicy
-
-
-   .. py:attribute:: k_pack
-      :type:  int
-      :value: 1
-
-
-
-   .. py:method:: get_warp_size()
-
-
-   .. py:method:: params_as_dict()
-
-
-   .. py:method:: infer_block_partition(threads)
-
-      Infer and set block partition parameters (e.g., block_row_warps,
-      block_col_warps, warp_row_tiles, warp_col_tiles, chunk) based on the
-      shape of A and B. If these parameters are not already specified, the
-      method will attempt to infer them automatically based on the given
-      `threads`.
-
-      :param threads: The total number of threads in a block. Must be provided
-                      if any block partition parameter is not already set.
-      :type threads: Optional[int]
-
-      :raises AssertionError: If `threads` is None but any block partition parameter is missing,
-          or if A and B have inconsistent shapes for GEMM.
-
-
-
-   .. py:property:: class_attributes
-
-
-   .. py:method:: __repr__()
 
 
