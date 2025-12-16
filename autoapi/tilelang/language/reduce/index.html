@@ -550,7 +550,7 @@
 <td><p>Perform reduce bitwise-xor on input buffer, store the result to output buffer.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce.cumsum_fragment" title="tilelang.language.reduce.cumsum_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum_fragment</span></code></a>(src, dst, dim, reverse)</p></td>
-<td><p></p></td>
+<td><p>Compute cumulative sum for fragment buffers by copying to shared memory first.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce.cumsum" title="tilelang.language.reduce.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a>(src[, dst, dim, reverse])</p></td>
 <td><p>Compute the cumulative sum of <cite>src</cite> along <cite>dim</cite>, writing results to <cite>dst</cite>.</p></td>
@@ -805,17 +805,23 @@ in the warp). Therefore, the implementation with clear=True follows these steps:
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.reduce.cumsum_fragment">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">cumsum_fragment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.cumsum_fragment" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Compute cumulative sum for fragment buffers by copying to shared memory first.</p>
+<p>This macro handles cumulative sum operations on fragment buffers by first copying
+the data to shared memory, performing the cumsum operation, and then copying back.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em>)</p></li>
-<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em>)</p></li>
-<li><p><strong>dim</strong> (<em>int</em>)</p></li>
-<li><p><strong>reverse</strong> (<a class="reference internal" href="../v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Source buffer (Buffer, BufferRegion, or BufferLoad) containing input data.</p></li>
+<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Destination buffer (Buffer, BufferRegion, or BufferLoad) for output data.</p></li>
+<li><p><strong>dim</strong> (<em>int</em>) – Dimension along which to compute cumulative sum.</p></li>
+<li><p><strong>reverse</strong> (<a class="reference internal" href="../v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>) – If True, compute cumulative sum in reverse order.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the cumulative sum operation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -825,6 +831,7 @@ in the warp). Therefore, the implementation with clear=True follows these steps:
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce.</span></span><span class="sig-name descname"><span class="pre">cumsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce.cumsum" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the cumulative sum of <cite>src</cite> along <cite>dim</cite>, writing results to <cite>dst</cite>.</p>
 <p>Negative <cite>dim</cite> indices are normalized (Python-style). If <cite>dst</cite> is None, the operation is performed in-place into <cite>src</cite>. Raises ValueError when <cite>dim</cite> is out of bounds for <cite>src.shape</cite>. When <cite>src.scope() == “local.fragment”</cite>, this delegates to <cite>cumsum_fragment</cite>; otherwise it emits the <cite>tl.cumsum</cite> intrinsic.</p>
+<p>Supports Buffer, BufferRegion, and BufferLoad inputs, allowing operations on buffer slices/regions.</p>
 <p class="rubric">Examples</p>
 <p>A 1D inclusive scan that writes the result into a separate shared-memory buffer:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
@@ -848,6 +855,15 @@ in the warp). Therefore, the implementation with clear=True follows these steps:
 <span class="gp">... </span>        <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tile</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Operating on a buffer region (slice):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">kernel_region</span><span class="p">(</span><span class="n">InputG_fragment</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">i</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="n">T</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">InputG_fragment</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">chunk_size</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">chunk_size</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A handle to the emitted cumulative-sum operation.</p>
@@ -857,8 +873,8 @@ in the warp). Therefore, the implementation with clear=True follows these steps:
 </dd>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em>)</p></li>
-<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>)</p></li>
+<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>dim</strong> (<em>int</em>)</p></li>
 <li><p><strong>reverse</strong> (<a class="reference internal" href="../v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>

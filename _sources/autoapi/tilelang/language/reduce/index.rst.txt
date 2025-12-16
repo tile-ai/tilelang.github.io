@@ -193,11 +193,27 @@ Module Contents
 
 .. py:function:: cumsum_fragment(src, dst, dim, reverse)
 
+   Compute cumulative sum for fragment buffers by copying to shared memory first.
+
+   This macro handles cumulative sum operations on fragment buffers by first copying
+   the data to shared memory, performing the cumsum operation, and then copying back.
+
+   :param src: Source buffer (Buffer, BufferRegion, or BufferLoad) containing input data.
+   :param dst: Destination buffer (Buffer, BufferRegion, or BufferLoad) for output data.
+   :param dim: Dimension along which to compute cumulative sum.
+   :param reverse: If True, compute cumulative sum in reverse order.
+
+   :returns: A handle to the cumulative sum operation.
+   :rtype: tir.PrimExpr
+
+
 .. py:function:: cumsum(src, dst = None, dim = 0, reverse = False)
 
    Compute the cumulative sum of `src` along `dim`, writing results to `dst`.
 
    Negative `dim` indices are normalized (Python-style). If `dst` is None, the operation is performed in-place into `src`. Raises ValueError when `dim` is out of bounds for `src.shape`. When `src.scope() == "local.fragment"`, this delegates to `cumsum_fragment`; otherwise it emits the `tl.cumsum` intrinsic.
+
+   Supports Buffer, BufferRegion, and BufferLoad inputs, allowing operations on buffer slices/regions.
 
    .. rubric:: Examples
 
@@ -222,6 +238,15 @@ Module Contents
    ...         T.copy(A, tile)
    ...         T.cumsum(src=tile, dim=1, reverse=True)
    ...         T.copy(tile, B)
+
+   Operating on a buffer region (slice):
+
+   >>> import tilelang.language as T
+   >>> @T.prim_func
+   ... def kernel_region(InputG_fragment: T.Tensor((128,), "float32"), chunk_size: T.int32):
+   ...     with T.Kernel(1, threads=128):
+   ...         i = T.int32(0)
+   ...         T.cumsum(InputG_fragment[i * chunk_size:(i + 1) * chunk_size], dim=0)
 
    :returns: A handle to the emitted cumulative-sum operation.
    :rtype: tir.Call
