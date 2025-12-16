@@ -571,13 +571,18 @@ pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </sp
 <blockquote>
 <div><p><strong>Note</strong>: changes to C++ files require rebuilding the tilelang C++ library. See <a class="reference internal" href="#faster-rebuild-for-developers">Faster Rebuild for Developers</a> below. A default <code class="docutils literal notranslate"><span class="pre">build</span></code> directory will be created if you use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code>, so you can also directly run <code class="docutils literal notranslate"><span class="pre">make</span></code> in the <code class="docutils literal notranslate"><span class="pre">build</span></code> directory to rebuild it as <a class="reference internal" href="#working-from-source-via-pythonpath">Working from Source via PYTHONPATH</a> suggested below.</p>
 </div></blockquote>
-<section id="working-from-source-via-pythonpath">
-<span id="id1"></span><h3>Working from Source via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code><a class="headerlink" href="#working-from-source-via-pythonpath" title="Link to this heading">¶</a></h3>
-<p>If you prefer to work directly from the source tree via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, make sure the native extension is built first:</p>
+<section id="working-from-source-via-pythonpath-recommended-for-developers">
+<span id="working-from-source-via-pythonpath"></span><h3>Working from Source via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> (Recommended for Developers)<a class="headerlink" href="#working-from-source-via-pythonpath-recommended-for-developers" title="Link to this heading">¶</a></h3>
+<p>If you prefer to work directly from the source tree via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> instead of using pip, make sure the native extension (<code class="docutils literal notranslate"><span class="pre">libtilelang.so</span></code>) is built first:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>build
 <span class="nb">cd</span><span class="w"> </span>build
 cmake<span class="w"> </span>..<span class="w"> </span>-DUSE_CUDA<span class="o">=</span>ON
 make<span class="w"> </span>-j
+</pre></div>
+</div>
+<p>We also recommend using <code class="docutils literal notranslate"><span class="pre">ninja</span></code> to speed up compilation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>..<span class="w"> </span>-DUSE_CUDA<span class="o">=</span>ON<span class="w"> </span>-G<span class="w"> </span>Ninja
+ninja
 </pre></div>
 </div>
 <p>Then add the repository root to <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> before importing <code class="docutils literal notranslate"><span class="pre">tilelang</span></code>, for example:</p>
@@ -604,7 +609,7 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 </section>
 </section>
 <section id="install-using-docker">
-<span id="id2"></span><h2>Install Using Docker<a class="headerlink" href="#install-using-docker" title="Link to this heading">¶</a></h2>
+<span id="id1"></span><h2>Install Using Docker<a class="headerlink" href="#install-using-docker" title="Link to this heading">¶</a></h2>
 <p>For users who prefer a containerized environment with all dependencies pre-configured, tilelang provides Docker images for different CUDA versions. This method is particularly useful for ensuring consistent environments across different systems.</p>
 <p><strong>Prerequisites:</strong></p>
 <ul class="simple">
@@ -715,13 +720,22 @@ it’s recommended to use auditwheel (on Linux) or delocate (on Darwin)
 to repair them.</p>
 </section>
 <section id="faster-rebuild-for-developers">
-<span id="id3"></span><h3>Faster Rebuild for Developers<a class="headerlink" href="#faster-rebuild-for-developers" title="Link to this heading">¶</a></h3>
+<span id="id2"></span><h3>Faster Rebuild for Developers<a class="headerlink" href="#faster-rebuild-for-developers" title="Link to this heading">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> introduces extra [un]packaging and takes ~30 sec to complete,
 even if no source change.</p>
 <p>Developers who needs to recompile frequently could use:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
+
+<span class="c1"># For first time compilation</span>
 pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="w"> </span>-v<span class="w"> </span>--no-build-isolation
 
+<span class="c1"># Or manually compile with cmake/ninja. Remember to set PYTHONPATH properly.</span>
+mkdir<span class="w"> </span>build
+<span class="nb">cd</span><span class="w"> </span>build
+cmake<span class="w"> </span>..<span class="w"> </span>-G<span class="w"> </span>Ninja
+ninja
+
+<span class="c1"># Rebuild when you change the cpp code</span>
 <span class="nb">cd</span><span class="w"> </span>build<span class="p">;</span><span class="w"> </span>ninja
 </pre></div>
 </div>
@@ -793,7 +807,7 @@ you’ll see logs like below:</p>
 <li><a class="reference internal" href="#">Installation Guide</a><ul>
 <li><a class="reference internal" href="#installing-with-pip">Installing with pip</a></li>
 <li><a class="reference internal" href="#building-from-source">Building from Source</a><ul>
-<li><a class="reference internal" href="#working-from-source-via-pythonpath">Working from Source via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code></a></li>
+<li><a class="reference internal" href="#working-from-source-via-pythonpath-recommended-for-developers">Working from Source via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> (Recommended for Developers)</a></li>
 <li><a class="reference internal" href="#building-with-customized-tvm-path">Building with Customized TVM Path</a></li>
 </ul>
 </li>
