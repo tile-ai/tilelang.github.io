@@ -541,7 +541,7 @@
 Used to describe tensor or scalar parameters in TVM/PyTorch interop.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.engine.param.KernelParam.dtype">
-<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.dtype</span></em><a class="headerlink" href="#tilelang.engine.param.KernelParam.dtype" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tilelang.tvm.DataType</span></em><a class="headerlink" href="#tilelang.engine.param.KernelParam.dtype" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -558,7 +558,7 @@ Used to describe tensor or scalar parameters in TVM/PyTorch interop.</p>
 <dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em>) – TVM Buffer object containing dtype and shape information</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>KernelParam instance with converted dtype and shape</p>
+<dd class="field-even"><p>KernelParam instance with dtype directly from buffer and shape</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If dimension type is not supported (not IntImm or Var)</p>
@@ -624,6 +624,20 @@ Used for scalar parameters.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.engine.param.KernelParam.is_float4">
+<span class="sig-name descname"><span class="pre">is_float4</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.param.KernelParam.is_float4" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if the parameter represents a float4 type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if parameter is a float4 type, False otherwise</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.engine.param.KernelParam.is_boolean">
 <span class="sig-name descname"><span class="pre">is_boolean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.param.KernelParam.is_boolean" title="Link to this definition">¶</a></dt>
 <dd><p>Checks if the parameter represents a boolean type.</p>
@@ -635,6 +649,27 @@ Used for scalar parameters.</p>
 <dd class="field-even"><p><a class="reference internal" href="../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool">bool</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.engine.param.KernelParam.torch_dtype">
+<span class="sig-name descname"><span class="pre">torch_dtype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.param.KernelParam.torch_dtype" title="Link to this definition">¶</a></dt>
+<dd><p>Converts the TVM DataType to PyTorch dtype.</p>
+<p>This method is used when creating PyTorch tensors from KernelParam,
+as PyTorch’s tensor creation functions require torch.dtype.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Corresponding PyTorch dtype</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>torch.dtype</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">param</span> <span class="o">=</span> <span class="n">KernelParam</span><span class="o">.</span><span class="n">from_buffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">torch_dtype</span><span class="p">())</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -740,7 +775,9 @@ Stores all necessary components for kernel execution in the TVM runtime.</p>
 <li><a class="reference internal" href="#tilelang.engine.param.KernelParam.is_scalar"><code class="docutils literal notranslate"><span class="pre">KernelParam.is_scalar()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.param.KernelParam.is_unsigned"><code class="docutils literal notranslate"><span class="pre">KernelParam.is_unsigned()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.param.KernelParam.is_float8"><code class="docutils literal notranslate"><span class="pre">KernelParam.is_float8()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.engine.param.KernelParam.is_float4"><code class="docutils literal notranslate"><span class="pre">KernelParam.is_float4()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.param.KernelParam.is_boolean"><code class="docutils literal notranslate"><span class="pre">KernelParam.is_boolean()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.engine.param.KernelParam.torch_dtype"><code class="docutils literal notranslate"><span class="pre">KernelParam.torch_dtype()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.engine.param.CompiledArtifact"><code class="docutils literal notranslate"><span class="pre">CompiledArtifact</span></code></a><ul>

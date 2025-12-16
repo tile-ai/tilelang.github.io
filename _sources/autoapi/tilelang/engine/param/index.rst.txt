@@ -28,7 +28,7 @@ Module Contents
 
 
    .. py:attribute:: dtype
-      :type:  torch.dtype
+      :type:  tilelang.tvm.DataType
 
 
    .. py:attribute:: shape
@@ -43,7 +43,7 @@ Module Contents
 
       :param buffer: TVM Buffer object containing dtype and shape information
 
-      :returns: KernelParam instance with converted dtype and shape
+      :returns: KernelParam instance with dtype directly from buffer and shape
 
       :raises ValueError: If dimension type is not supported (not IntImm or Var)
 
@@ -89,12 +89,38 @@ Module Contents
 
 
 
+   .. py:method:: is_float4()
+
+      Checks if the parameter represents a float4 type.
+
+      :returns: True if parameter is a float4 type, False otherwise
+      :rtype: bool
+
+
+
    .. py:method:: is_boolean()
 
       Checks if the parameter represents a boolean type.
 
       :returns: True if parameter is a boolean type, False otherwise
       :rtype: bool
+
+
+
+   .. py:method:: torch_dtype()
+
+      Converts the TVM DataType to PyTorch dtype.
+
+      This method is used when creating PyTorch tensors from KernelParam,
+      as PyTorch's tensor creation functions require torch.dtype.
+
+      :returns: Corresponding PyTorch dtype
+      :rtype: torch.dtype
+
+      .. rubric:: Example
+
+      >>> param = KernelParam.from_buffer(buffer)
+      >>> tensor = torch.empty(shape, dtype=param.torch_dtype())
 
 
 
