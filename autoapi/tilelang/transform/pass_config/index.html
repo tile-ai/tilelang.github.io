@@ -770,10 +770,10 @@ Acceptable values: “pdf”, “png”, “svg”, “all”</p>
 <p>When False (default) StorageRewrite keeps distinct temporaries for patterns
 such as <cite>dst[i] = f(src[i])</cite>, avoiding implicit aliasing:</p>
 <p><code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">read</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">&quot;local.var&quot;)</span>
-<span class="pre">write</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">&quot;local.var&quot;)</span>
-<span class="pre">read_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">data=read,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
-<span class="pre">write_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">data=write,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
+<span class="pre">read</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">T.int32,</span> <span class="pre">&quot;local.var&quot;)</span>
+<span class="pre">write</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">T.int32,</span> <span class="pre">&quot;local.var&quot;)</span>
+<span class="pre">read_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">T.int32,</span> <span class="pre">data=read,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
+<span class="pre">write_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">T.int32,</span> <span class="pre">data=write,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
 <span class="pre">write_buf[0]</span> <span class="pre">=</span> <span class="pre">read_buf[0]</span> <span class="pre">*</span> <span class="pre">2</span>
 <span class="pre">f(write_buf[0])</span>
 <span class="pre">`</span></code></p>
@@ -781,8 +781,8 @@ such as <cite>dst[i] = f(src[i])</cite>, avoiding implicit aliasing:</p>
 for the write when it can prove the update is safely inplace, producing IR
 like:</p>
 <p><code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">read</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">&quot;local.var&quot;)</span>
-<span class="pre">read_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">&quot;int32&quot;,</span> <span class="pre">data=read,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
+<span class="pre">read</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">T.int32,</span> <span class="pre">&quot;local.var&quot;)</span>
+<span class="pre">read_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">T.int32,</span> <span class="pre">data=read,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
 <span class="pre">read_buf[0]</span> <span class="pre">=</span> <span class="pre">read_buf[0]</span> <span class="pre">*</span> <span class="pre">2</span>
 <span class="pre">f(read_buf[0])</span>
 <span class="pre">`</span></code></p>
