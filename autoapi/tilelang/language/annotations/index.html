@@ -534,6 +534,9 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.annotations.annotate_l2_hit_ratio" title="tilelang.language.annotations.annotate_l2_hit_ratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_l2_hit_ratio</span></code></a>(l2_hit_ratio_map)</p></td>
 <td><p>Annotate the L2 hit ratio of the buffer.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.annotations.annotate_restrict_buffers" title="tilelang.language.annotations.annotate_restrict_buffers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_restrict_buffers</span></code></a>(*buffers)</p></td>
+<td><p>Mark the given buffer parameters as non-restrict.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -586,6 +589,24 @@
 <dd class="field-odd"><p><strong>l2_hit_ratio_map</strong> (<em>dict</em>)</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.annotations.annotate_restrict_buffers">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.annotations.</span></span><span class="sig-name descname"><span class="pre">annotate_restrict_buffers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">buffers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotations.annotate_restrict_buffers" title="Link to this definition">¶</a></dt>
+<dd><p>Mark the given buffer parameters as non-restrict.</p>
+<p>This annotation tells codegen to omit the <cite>__restrict__</cite> qualifier for the
+specified kernel buffer parameters. Use this when two (or more) buffers may
+alias, for example overlapping slices from the same base tensor.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">buggy_kernel</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">N</span><span class="p">,),</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+<span class="gp">... </span>                 <span class="n">y</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">N</span><span class="p">,),</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">)):</span>
+<span class="gp">... </span>    <span class="n">T</span><span class="o">.</span><span class="n">annotate_restrict_buffers</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span> <span class="k">as</span> <span class="n">pid</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">y</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -653,6 +674,7 @@
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_layout"><code class="docutils literal notranslate"><span class="pre">annotate_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_safe_value"><code class="docutils literal notranslate"><span class="pre">annotate_safe_value()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_l2_hit_ratio"><code class="docutils literal notranslate"><span class="pre">annotate_l2_hit_ratio()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.annotations.annotate_restrict_buffers"><code class="docutils literal notranslate"><span class="pre">annotate_restrict_buffers()</span></code></a></li>
 </ul>
 </li>
 </ul>
