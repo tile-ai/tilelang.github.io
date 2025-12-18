@@ -1,0 +1,122 @@
+tilelang.contrib.cutedsl.reduce
+===============================
+
+.. py:module:: tilelang.contrib.cutedsl.reduce
+
+.. autoapi-nested-parse::
+
+   Reduce operations for CuTeDSL backend.
+   Based on tl_templates/cuda/reduce.h
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.reduce.SumOp
+   tilelang.contrib.cutedsl.reduce.MaxOp
+   tilelang.contrib.cutedsl.reduce.MinOp
+   tilelang.contrib.cutedsl.reduce.BitAndOp
+   tilelang.contrib.cutedsl.reduce.BitOrOp
+   tilelang.contrib.cutedsl.reduce.BitXorOp
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.reduce.min
+   tilelang.contrib.cutedsl.reduce.max
+   tilelang.contrib.cutedsl.reduce.bar_sync
+   tilelang.contrib.cutedsl.reduce.bar_sync_ptx
+   tilelang.contrib.cutedsl.reduce.AllReduce
+
+
+Module Contents
+---------------
+
+.. py:function:: min(a, b, c = None, *, loc=None, ip=None)
+
+.. py:function:: max(a, b, c = None, *, loc=None, ip=None)
+
+.. py:class:: SumOp
+
+   Sum reduction operator
+
+
+   .. py:method:: __call__(x, y)
+      :staticmethod:
+
+
+
+.. py:class:: MaxOp
+
+   Max reduction operator
+
+
+   .. py:method:: __call__(x, y)
+      :staticmethod:
+
+
+
+.. py:class:: MinOp
+
+   Min reduction operator
+
+
+   .. py:method:: __call__(x, y)
+      :staticmethod:
+
+
+
+.. py:class:: BitAndOp
+
+   Bitwise AND reduction operator
+
+
+   .. py:method:: __call__(x, y)
+      :staticmethod:
+
+
+
+.. py:class:: BitOrOp
+
+   Bitwise OR reduction operator
+
+
+   .. py:method:: __call__(x, y)
+      :staticmethod:
+
+
+
+.. py:class:: BitXorOp
+
+   Bitwise XOR reduction operator
+
+
+   .. py:method:: __call__(x, y)
+      :staticmethod:
+
+
+
+.. py:function:: bar_sync(barrier_id, number_of_threads)
+
+.. py:function:: bar_sync_ptx(barrier_id, number_of_threads)
+
+.. py:function:: AllReduce(reducer, threads, scale, thread_offset, all_threads=None)
+
+   AllReduce operation implementing warp/block-level reduction.
+   Based on tl::AllReduce from reduce.h
+
+   :param reducer: Reducer operator class (SumOp, MaxOp, etc.)
+   :param threads: Number of threads participating in reduction
+   :param scale: Reduction scale factor
+   :param thread_offset: Thread ID offset
+   :param all_threads: Total number of threads in block
+
+   :returns: A callable object with run() and run_hopper() methods
+
+

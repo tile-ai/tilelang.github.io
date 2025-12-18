@@ -1,0 +1,73 @@
+tilelang.contrib.cutedsl
+========================
+
+.. py:module:: tilelang.contrib.cutedsl
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/tilelang/contrib/cutedsl/cpasync/index
+   /autoapi/tilelang/contrib/cutedsl/gemm_V1/index
+   /autoapi/tilelang/contrib/cutedsl/ldsm/index
+   /autoapi/tilelang/contrib/cutedsl/math/index
+   /autoapi/tilelang/contrib/cutedsl/mbar/index
+   /autoapi/tilelang/contrib/cutedsl/reduce/index
+   /autoapi/tilelang/contrib/cutedsl/threadblock_swizzle/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.BYTES_PER_TENSORMAP
+   tilelang.contrib.cutedsl.BYTES_PER_POINTER
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.make_filled_tensor
+   tilelang.contrib.cutedsl.make_tensor_at_offset
+   tilelang.contrib.cutedsl.shuffle_elect
+   tilelang.contrib.cutedsl.sync_thread_partial
+   tilelang.contrib.cutedsl.pack_half2
+   tilelang.contrib.cutedsl.AtomicAdd
+
+
+Package Contents
+----------------
+
+.. py:data:: BYTES_PER_TENSORMAP
+   :value: 128
+
+
+.. py:data:: BYTES_PER_POINTER
+   :value: 8
+
+
+.. py:function:: make_filled_tensor(shape, value)
+
+.. py:function:: make_tensor_at_offset(ptr, offset, shape, div_by=1)
+
+.. py:function:: shuffle_elect(thread_extent)
+
+.. py:function:: sync_thread_partial(barrier_id=None, thread_count=None)
+
+.. py:function:: pack_half2(x, y)
+
+   Pack two half-precision (fp16) values into a single 32-bit value.
+   Corresponds to CUDA's __pack_half2 intrinsic.
+
+   This packs two fp16 values into a single int32 by treating the fp16 bits
+   as raw data and concatenating them.
+
+
+.. py:function:: AtomicAdd(ptr, value, *, loc=None, ip=None)
+

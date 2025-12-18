@@ -19,11 +19,14 @@ Functions
 
    tilelang.jit.adapter.utils.match_global_kernel
    tilelang.jit.adapter.utils.match_declare_kernel
+   tilelang.jit.adapter.utils.match_declare_kernel_cutedsl
+   tilelang.jit.adapter.utils.extract_python_func_declaration
    tilelang.jit.adapter.utils.match_declare_kernel_cpu
    tilelang.jit.adapter.utils.is_cuda_target
    tilelang.jit.adapter.utils.is_hip_target
    tilelang.jit.adapter.utils.is_cpu_target
    tilelang.jit.adapter.utils.is_metal_target
+   tilelang.jit.adapter.utils.is_cutedsl_target
    tilelang.jit.adapter.utils.get_annotated_mod
    tilelang.jit.adapter.utils.pythonic_expr
    tilelang.jit.adapter.utils.maybe_desc_name
@@ -38,6 +41,27 @@ Module Contents
 
 .. py:function:: match_declare_kernel(source, annotation = '__global__')
 
+.. py:function:: match_declare_kernel_cutedsl(source, annotation = '@cute.kernel')
+
+.. py:function:: extract_python_func_declaration(source, func_name)
+
+   Extract the full Python function declaration from decorator to colon.
+
+   :param source: Source code containing the function
+   :param func_name: Name of the function to extract (can include '(' suffix)
+
+   :returns: ', including parameters
+   :rtype: The function declaration from 'def' to '
+
+   .. rubric:: Example
+
+   For code:
+       @cute.kernel
+       def kernel(arg1: cute.Tensor, arg2: int):
+           ...
+   Returns: "def kernel(arg1: cute.Tensor, arg2: int)"
+
+
 .. py:function:: match_declare_kernel_cpu(source, annotation = 'int32_t')
 
 .. py:function:: is_cuda_target(target)
@@ -48,15 +72,21 @@ Module Contents
 
 .. py:function:: is_metal_target(target)
 
+.. py:function:: is_cutedsl_target(target)
+
 .. py:function:: get_annotated_mod(func_or_mod, target = 'auto', target_host = None, model_type = 'all')
 
-.. py:function:: pythonic_expr(expr, dtype_map = None, ignore_cast = False)
+.. py:function:: pythonic_expr(expr, dtype_map = None, ignore_cast = False, floor_div_op = '/')
 
    Converts a TVM PrimExpr into a Python-style string, correctly handling operator precedence.
 
    :param expr: The TVM PrimExpr to convert.
    :param dtype_map: A dictionary mapping data types to their string representations.
    :param ignore_cast: Whether to ignore the cast operator and return the string representation of the value without the cast.
+   :param floor_div_op: Operator to use for tvm.tir.FloorDiv. Default '/' preserves prior
+                        behavior (suitable for generating C/C++ expressions). For generating
+                        Python code where integer division is required (e.g. grid/block),
+                        pass '//' explicitly.
 
    :returns: A string representation of the expression.
 

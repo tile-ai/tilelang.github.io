@@ -1,0 +1,116 @@
+tilelang.contrib.cutedsl.cpasync
+================================
+
+.. py:module:: tilelang.contrib.cutedsl.cpasync
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.cpasync.BYTES_PER_TENSORMAP
+   tilelang.contrib.cutedsl.cpasync.BYTES_PER_POINTER
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.cpasync.cp_async_gs
+   tilelang.contrib.cutedsl.cpasync.cp_async_gs_conditional
+   tilelang.contrib.cutedsl.cpasync.extract_tensormap_ptr
+   tilelang.contrib.cutedsl.cpasync.tma_load
+   tilelang.contrib.cutedsl.cpasync.tma_store
+   tilelang.contrib.cutedsl.cpasync.tma_store_arrive
+   tilelang.contrib.cutedsl.cpasync.tma_store_wait
+   tilelang.contrib.cutedsl.cpasync.cp_async_shared_global
+   tilelang.contrib.cutedsl.cpasync.prefetch_tma_descriptor
+
+
+Module Contents
+---------------
+
+.. py:data:: BYTES_PER_TENSORMAP
+   :value: 128
+
+
+.. py:data:: BYTES_PER_POINTER
+   :value: 8
+
+
+.. py:function:: cp_async_gs(size, dst, dst_offset, src, src_offset)
+
+.. py:function:: cp_async_gs_conditional(size, dst, dst_offset, src, src_offset, cond)
+
+.. py:function:: extract_tensormap_ptr(tma_atom, *, loc=None, ip=None)
+
+   extract the tensormap pointer from a TMA Copy Atom.
+   :param tma_atom:      The TMA Copy Atom
+   :type tma_atom:       CopyAtom
+
+
+.. py:function:: tma_load(tma_desc, mbar, smem_ptr, crd, *, loc=None, ip=None)
+
+   Load data from global memory to shared memory using TMA (Tensor Memory Access).
+
+   :param tma_desc:                 TMA descriptor for the tensor
+   :type tma_desc:                  CopyAtom or tensormap_ptr or Tensor of tensormap_ptr
+   :param mbar:                     Mbarrier pointer in shared memory
+   :type mbar:                      Pointer
+   :param smem_ptr:                 Destination pointer in shared memory
+   :type smem_ptr:                  Pointer
+   :param crd:                      Coordinates tuple for the tensor access
+   :type crd:                       tuple[Int, ...]
+
+
+.. py:function:: tma_store(tma_desc, smem_ptr, crd, *, loc=None, ip=None)
+
+   Store data from shared memory to global memory using TMA (Tensor Memory Access).
+
+   :param tma_desc:                 TMA descriptor for the tensor
+   :type tma_desc:                  TMA descriptor
+   :param smem_ptr:                 Source pointer in shared memory
+   :type smem_ptr:                  Pointer
+   :param crd:                      Coordinates tuple for the tensor access
+   :type crd:                       tuple[Int, ...]
+
+
+.. py:function:: tma_store_arrive(*, loc=None, ip=None)
+
+   Indicate arrival of warp issuing TMA_STORE.
+   Corresponds to PTX instruction: cp.async.bulk.commit_group;
+
+
+.. py:function:: tma_store_wait(count, *, read=None, loc=None, ip=None)
+
+   Wait for TMA_STORE operations to complete.
+   Corresponds to PTX instruction: cp.async.bulk.wait_group.read <count>;
+
+   :param count: The number of outstanding bulk async groups to wait for
+   :type count: Int
+
+
+.. py:function:: cp_async_shared_global(dst, src, cp_size, modifier, *, src_size = None, loc=None, ip=None)
+
+   Asynchronously copy data from global memory to shared memory.
+
+   :param dst: Destination pointer in shared memory
+   :type dst: Pointer
+   :param src: Source pointer in global memory
+   :type src: Pointer
+   :param size: Size of the copy in bytes
+   :type size: Int
+   :param modifier: Cache modifier
+   :type modifier: Int
+   :param cp_size: Optional copy size override
+   :type cp_size: Int
+
+
+.. py:function:: prefetch_tma_descriptor(tma_desc, *, loc=None, ip=None)
+
+   Prefetch a TMA descriptor.
+   Corresponds to PTX instruction: prefetch.tensormap;
+
+
