@@ -1,0 +1,74 @@
+tilelang.testing.perf_regression
+================================
+
+.. py:module:: tilelang.testing.perf_regression
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.testing.perf_regression.tabulate
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.testing.perf_regression.PerfResult
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.testing.perf_regression.tqdm
+   tilelang.testing.perf_regression.process_func
+   tilelang.testing.perf_regression.regression
+   tilelang.testing.perf_regression.regression_all
+
+
+Module Contents
+---------------
+
+.. py:data:: tabulate
+   :value: None
+
+
+.. py:function:: tqdm(iterable, **kwargs)
+
+.. py:class:: PerfResult
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: latency
+      :type:  float
+
+
+.. py:function:: process_func(func, name = None, /, **kwargs)
+
+   Execute a single perf function and record its latency.
+
+   `func` is expected to return a positive latency scalar (seconds or ms; we
+   treat it as an opaque number, only ratios matter for regression).
+
+
+.. py:function:: regression(prefixes = ('regression_', ))
+
+   Run entrypoints in the caller module and print a markdown table.
+
+   This is invoked by many example scripts.
+
+
+.. py:function:: regression_all(examples_root = None)
+
+   Run all example benchmark drivers and print a consolidated table.
+
+   Intended usage (CI): `python -c "import tilelang.testing.perf_regression as pr; pr.regression_all()"`
+
+
