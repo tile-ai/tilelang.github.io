@@ -538,18 +538,6 @@
           <section id="module-tilelang.language.gemm_op">
 <span id="tilelang-language-gemm-op"></span><h1>tilelang.language.gemm_op<a class="headerlink" href="#module-tilelang.language.gemm_op" title="Link to this heading">¶</a></h1>
 <p>GEMM (General Matrix Multiplication) operators exposed on the TileLang language surface.</p>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.gemm_op.gemm" title="tilelang.language.gemm_op.gemm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gemm</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -560,6 +548,9 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.gemm_op.gemm_v2" title="tilelang.language.gemm_op.gemm_v2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gemm_v2</span></code></a>(A, B, C[, transpose_A, transpose_B, policy, ...])</p></td>
 <td><p>GEMM v2: use op tl.gemm_py.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.gemm_op.gemm" title="tilelang.language.gemm_op.gemm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gemm</span></code></a>(A, B, C[, transpose_A, transpose_B, policy, ...])</p></td>
+<td><p>TileLang GEMM operator.</p></td>
 </tr>
 </tbody>
 </table>
@@ -611,10 +602,33 @@
 </dl>
 </dd></dl>
 
-<dl class="py data">
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.gemm_op.gemm">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm_op.</span></span><span class="sig-name descname"><span class="pre">gemm</span></span><a class="headerlink" href="#tilelang.language.gemm_op.gemm" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm_op.</span></span><span class="sig-name descname"><span class="pre">gemm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">GemmWarpPolicy.Square</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_pack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wg_wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.gemm_op.gemm" title="Link to this definition">¶</a></dt>
+<dd><p>TileLang GEMM operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>tir.Buffer</em><em> | </em><em>tir.Var</em>) – Input buffer A.</p></li>
+<li><p><strong>B</strong> (<em>tir.Buffer</em><em> | </em><em>tir.Var</em>) – Input buffer B.</p></li>
+<li><p><strong>C</strong> (<em>tir.Buffer</em><em> | </em><em>tir.Var</em>) – Output buffer C.</p></li>
+<li><p><strong>transpose_A</strong> (<a class="reference internal" href="../v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>) – Whether to transpose A. Defaults to False.</p></li>
+<li><p><strong>transpose_B</strong> (<a class="reference internal" href="../v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>) – Whether to transpose B. Defaults to False.</p></li>
+<li><p><strong>policy</strong> (<a class="reference internal" href="../../ir/index.html#tilelang.ir.GemmWarpPolicy" title="tilelang.ir.GemmWarpPolicy"><em>GemmWarpPolicy</em></a>) – GEMM warp partition policy.</p></li>
+<li><p><strong>clear_accum</strong> (<a class="reference internal" href="../v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>) – Whether to clear the accumulator.</p></li>
+<li><p><strong>k_pack</strong> (<em>int</em>) – Numbers of packed matrix cores, for ROCm only. Defaults to 1.</p></li>
+<li><p><strong>wg_wait</strong> (<em>int</em>) – Int identifier of the warpgroup MMA batch to wait on.. Defaults to 0.</p></li>
+<li><p><strong>mbar</strong> (<em>tir.Buffer</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Mbarrier in Blackwell. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the GEMM operation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>
@@ -675,12 +689,11 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.language.gemm_op</a><ul>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.language.gemm_op.gemm_v1"><code class="docutils literal notranslate"><span class="pre">gemm_v1()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.gemm_op.gemm_v2"><code class="docutils literal notranslate"><span class="pre">gemm_v2()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.gemm_op.gemm"><code class="docutils literal notranslate"><span class="pre">gemm</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.gemm_op.gemm"><code class="docutils literal notranslate"><span class="pre">gemm()</span></code></a></li>
 </ul>
 </li>
 </ul>

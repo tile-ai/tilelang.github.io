@@ -553,16 +553,16 @@
 <td><p>Tools to construct pipelined for loop.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.loop.serial" title="tilelang.language.loop.serial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serial</span></code></a>(start[, stop, step, annotations])</p></td>
-<td><p></p></td>
+<td><p>The serial For statement.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.unroll" title="tilelang.language.loop.unroll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unroll</span></code></a>(start[, stop, step, explicit, unroll_factor, ...])</p></td>
 <td><p>The unrolled For statement.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.loop.Serial" title="tilelang.language.loop.Serial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Serial</span></code></a>(*args, **kwargs)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.loop.Serial" title="tilelang.language.loop.Serial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Serial</span></code></a>(start[, stop, step, annotations])</p></td>
+<td><p>Alias of T.serial.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.Unroll" title="tilelang.language.loop.Unroll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Unroll</span></code></a>(*args, **kwargs)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.Unroll" title="tilelang.language.loop.Unroll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Unroll</span></code></a>(start[, stop, step, explicit, unroll_factor, ...])</p></td>
+<td><p>Alias of T.unroll.</p></td>
 </tr>
 </tbody>
 </table>
@@ -638,17 +638,21 @@ if num_stages is 0, pipeline will not be enabled.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.loop.serial">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">serial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.serial" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>The serial For statement.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>stop</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>step</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>annotations</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>start</strong> (<em>PrimExpr</em>) – The minimum value of iteration.</p></li>
+<li><p><strong>stop</strong> (<em>PrimExpr</em>) – The maximum value of iteration.</p></li>
+<li><p><strong>step</strong> (<em>PrimExpr</em>) – The step size of the iteration.</p></li>
+<li><p><strong>annotations</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – The optional annotations of the For statement.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.script.ir_builder.tir.frame.ForFrame</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>res</strong> – The ForFrame.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>frame.ForFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -679,13 +683,37 @@ if num_stages is 0, pipeline will not be enabled.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.loop.Serial">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Serial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Serial" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Serial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Serial" title="Link to this definition">¶</a></dt>
+<dd><p>Alias of T.serial.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>stop</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>step</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.loop.Unroll">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Unroll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Unroll" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Unroll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unroll_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Unroll" title="Link to this definition">¶</a></dt>
+<dd><p>Alias of T.unroll.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>stop</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>step</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>explicit</strong> (<a class="reference internal" href="../v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>unroll_factor</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>

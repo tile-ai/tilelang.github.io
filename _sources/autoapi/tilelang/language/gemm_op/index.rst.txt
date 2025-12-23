@@ -9,14 +9,6 @@ tilelang.language.gemm_op
 
 
 
-Attributes
-----------
-
-.. autoapisummary::
-
-   tilelang.language.gemm_op.gemm
-
-
 Functions
 ---------
 
@@ -24,6 +16,7 @@ Functions
 
    tilelang.language.gemm_op.gemm_v1
    tilelang.language.gemm_op.gemm_v2
+   tilelang.language.gemm_op.gemm
 
 
 Module Contents
@@ -39,5 +32,32 @@ Module Contents
    GEMM v2: use op tl.gemm_py.
 
 
-.. py:data:: gemm
+.. py:function:: gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, k_pack = 1, wg_wait = 0, mbar = None)
+
+   TileLang GEMM operator.
+
+   :param A: Input buffer A.
+   :type A: tir.Buffer | tir.Var
+   :param B: Input buffer B.
+   :type B: tir.Buffer | tir.Var
+   :param C: Output buffer C.
+   :type C: tir.Buffer | tir.Var
+   :param transpose_A: Whether to transpose A. Defaults to False.
+   :type transpose_A: bool
+   :param transpose_B: Whether to transpose B. Defaults to False.
+   :type transpose_B: bool
+   :param policy: GEMM warp partition policy.
+   :type policy: GemmWarpPolicy
+   :param clear_accum: Whether to clear the accumulator.
+   :type clear_accum: bool
+   :param k_pack: Numbers of packed matrix cores, for ROCm only. Defaults to 1.
+   :type k_pack: int
+   :param wg_wait: Int identifier of the warpgroup MMA batch to wait on.. Defaults to 0.
+   :type wg_wait: int
+   :param mbar: Mbarrier in Blackwell. Defaults to None.
+   :type mbar: tir.Buffer | None, optional
+
+   :returns: A handle to the GEMM operation.
+   :rtype: tir.Call
+
 
