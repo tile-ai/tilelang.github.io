@@ -695,18 +695,18 @@
 <dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.wrapper.CPP_KERNEL_INIT_TEMPLATE">
 <span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.cutedsl.wrapper.</span></span><span class="sig-name descname"><span class="pre">CPP_KERNEL_INIT_TEMPLATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.wrapper.CPP_KERNEL_INIT_TEMPLATE" title="Link to this definition">¶</a></dt>
 <dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;  // Find and configure kernel {kernel_idx}: {kernel_name}</span>
-<span class="sd">  result = find_kernel_by_pattern(g_module, &quot;{kernel_name}&quot;, &amp;g_kernels[{kernel_idx}]);</span>
+<span class="sd">  result = find_kernel_by_pattern(module, &quot;{kernel_name}&quot;, &amp;kernels[{kernel_idx}]);</span>
 <span class="sd">  if (result != CUDA_SUCCESS) {{</span>
-<span class="sd">    std::cerr &lt;&lt; &quot;Failed to find kernel {kernel_name}: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">    std::cerr &lt;&lt; &quot;Failed to find kernel {kernel_name} on device &quot; &lt;&lt; device_id &lt;&lt; &quot;: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
 <span class="sd">    return result;</span>
 <span class="sd">  }}</span>
 
 <span class="sd">  if ({smem_size} &gt; 0) {{</span>
-<span class="sd">    result = cuFuncSetAttribute(g_kernels[{kernel_idx}],</span>
+<span class="sd">    result = cuFuncSetAttribute(kernels[{kernel_idx}],</span>
 <span class="sd">                                CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES,</span>
 <span class="sd">                                {smem_size});</span>
 <span class="sd">    if (result != CUDA_SUCCESS) {{</span>
-<span class="sd">      std::cerr &lt;&lt; &quot;Failed to set smem for {kernel_name}: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">      std::cerr &lt;&lt; &quot;Failed to set smem for {kernel_name} on device &quot; &lt;&lt; device_id &lt;&lt; &quot;: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
 <span class="sd">      return result;</span>
 <span class="sd">    }}</span>
 <span class="sd">  }}</span>
@@ -740,9 +740,17 @@
 <span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.cutedsl.wrapper.</span></span><span class="sig-name descname"><span class="pre">CPP_KERNEL_LAUNCH_TEMPLATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.wrapper.CPP_KERNEL_LAUNCH_TEMPLATE" title="Link to this definition">¶</a></dt>
 <dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;  // Launch kernel {kernel_idx}: {kernel_name}</span>
 <span class="sd">  {{</span>
+<span class="sd">    // Get the kernel for current device</span>
+<span class="sd">    auto kernels_it = g_device_kernels.find(device_id);</span>
+<span class="sd">    if (kernels_it == g_device_kernels.end()) {{</span>
+<span class="sd">      std::cerr &lt;&lt; &quot;Kernels not initialized for device &quot; &lt;&lt; device_id &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">      return CUDA_ERROR_NOT_INITIALIZED;</span>
+<span class="sd">    }}</span>
+<span class="sd">    const std::vector&lt;CUfunction&gt;&amp; kernels = kernels_it-&gt;second;</span>
+
 <span class="sd">    void* args[] = {{{kernel_args}}};</span>
 <span class="sd">    result = cuLaunchKernel(</span>
-<span class="sd">        g_kernels[{kernel_idx}],</span>
+<span class="sd">        kernels[{kernel_idx}],</span>
 <span class="sd">        {grid_x}, {grid_y}, {grid_z},</span>
 <span class="sd">        {block_x}, {block_y}, {block_z},</span>
 <span class="sd">        {smem_size},</span>
@@ -751,7 +759,7 @@
 <span class="sd">        nullptr</span>
 <span class="sd">    );</span>
 <span class="sd">    if (result != CUDA_SUCCESS) {{</span>
-<span class="sd">      std::cerr &lt;&lt; &quot;Failed to launch kernel {kernel_name}: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">      std::cerr &lt;&lt; &quot;Failed to launch kernel {kernel_name} on device &quot; &lt;&lt; device_id &lt;&lt; &quot;: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
 <span class="sd">      return result;</span>
 <span class="sd">    }}</span>
 <span class="sd">  }}</span>
@@ -770,19 +778,20 @@
 <span class="sd">#include &lt;vector&gt;</span>
 <span class="sd">#include &lt;cstring&gt;</span>
 <span class="sd">#include &lt;string&gt;</span>
+<span class="sd">#include &lt;mutex&gt;</span>
+<span class="sd">#include &lt;unordered_map&gt;</span>
 
 <span class="sd">// TVM Headers</span>
 <span class="sd">#include &lt;tvm/ffi/container/tensor.h&gt;</span>
 <span class="sd">#include &lt;tvm/ffi/extra/c_env_api.h&gt;</span>
 <span class="sd">#include &lt;tvm/ffi/function.h&gt;</span>
 
-<span class="sd">// Cached module handle</span>
-<span class="sd">static CUmodule g_module = nullptr;</span>
-<span class="sd">static bool g_module_initialized = false;</span>
-
-<span class="sd">// Cached kernel functions</span>
-<span class="sd">static CUfunction g_kernels[{num_kernels}] = {{nullptr}};</span>
-<span class="sd">static bool g_kernels_initialized = false;</span>
+<span class="sd">// Per-device module and kernel storage for multi-GPU support</span>
+<span class="sd">// Each device needs its own CUmodule because modules are tied to CUDA contexts</span>
+<span class="sd">static std::unordered_map&lt;int, CUmodule&gt; g_device_modules;</span>
+<span class="sd">static std::unordered_map&lt;int, std::vector&lt;CUfunction&gt;&gt; g_device_kernels;</span>
+<span class="sd">static std::unordered_map&lt;int, CUcontext&gt; g_device_contexts;  // Track retained contexts for cleanup</span>
+<span class="sd">static std::mutex g_devices_mutex;</span>
 
 <span class="sd">// Find kernel by pattern (substring match, prefer base name over _N variants)</span>
 <span class="sd">CUresult find_kernel_by_pattern(CUmodule module, const char* pattern, CUfunction* out_func) {{</span>
@@ -877,14 +886,52 @@
 <span class="sd">}}</span>
 
 
-<span class="sd">// Initialize CUDA module (called once on first launch)</span>
-<span class="sd">static CUresult tilelang_init_cuda_module(const std::string&amp; cubin_path) {{</span>
-<span class="sd">  if (g_module_initialized) return CUDA_SUCCESS;</span>
+<span class="sd">// Initialize CUDA module for a specific device (called once per device)</span>
+<span class="sd">// Thread-safe and supports multi-GPU by tracking modules per device</span>
+<span class="sd">// device_id: PyTorch CUDA device ID (e.g., 0, 1, 2...)</span>
+<span class="sd">static CUresult tilelang_init_cuda_module(const std::string&amp; cubin_path, int device_id) {{</span>
+<span class="sd">  std::lock_guard&lt;std::mutex&gt; lock(g_devices_mutex);</span>
+
+<span class="sd">  // Fast path: module already initialized for this device</span>
+<span class="sd">  if (g_device_modules.find(device_id) != g_device_modules.end()) {{</span>
+<span class="sd">    return CUDA_SUCCESS;</span>
+<span class="sd">  }}</span>
 
 <span class="sd">  CUresult result;</span>
 <span class="sd">  result = cuInit(0);</span>
-<span class="sd">  if (result != CUDA_SUCCESS) return result;</span>
+<span class="sd">  if (result != CUDA_SUCCESS) {{</span>
+<span class="sd">    std::cerr &lt;&lt; &quot;Failed to initialize CUDA: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">    return result;</span>
+<span class="sd">  }}</span>
 
+<span class="sd">  // Get device handle for the requested device_id</span>
+<span class="sd">  CUdevice device;</span>
+<span class="sd">  result = cuDeviceGet(&amp;device, device_id);</span>
+<span class="sd">  if (result != CUDA_SUCCESS) {{</span>
+<span class="sd">    std::cerr &lt;&lt; &quot;Failed to get CUDA device &quot; &lt;&lt; device_id &lt;&lt; &quot;: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">    return result;</span>
+<span class="sd">  }}</span>
+
+<span class="sd">  // Retain and set the primary context for this device</span>
+<span class="sd">  // PyTorch (Runtime API) creates and activates the primary context</span>
+<span class="sd">  // We need to explicitly acquire it via Driver API and set it as current</span>
+<span class="sd">  CUcontext ctx;</span>
+<span class="sd">  result = cuDevicePrimaryCtxRetain(&amp;ctx, device);</span>
+<span class="sd">  if (result != CUDA_SUCCESS) {{</span>
+<span class="sd">    std::cerr &lt;&lt; &quot;Failed to retain primary context for device &quot; &lt;&lt; device_id &lt;&lt; &quot;: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">    return result;</span>
+<span class="sd">  }}</span>
+
+<span class="sd">  result = cuCtxSetCurrent(ctx);</span>
+<span class="sd">  if (result != CUDA_SUCCESS) {{</span>
+<span class="sd">    std::cerr &lt;&lt; &quot;Failed to set current context for device &quot; &lt;&lt; device_id &lt;&lt; &quot;: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">    return result;</span>
+<span class="sd">  }}</span>
+
+<span class="sd">  // Store the retained context for cleanup</span>
+<span class="sd">  g_device_contexts[device_id] = ctx;</span>
+
+<span class="sd">  // Read cubin file</span>
 <span class="sd">  std::ifstream cubin_file(cubin_path.c_str(), std::ios::binary);</span>
 <span class="sd">  if (!cubin_file) {{</span>
 <span class="sd">    std::cerr &lt;&lt; &quot;Failed to open cubin file: &quot; &lt;&lt; cubin_path &lt;&lt; &quot;\n&quot;;</span>
@@ -900,24 +947,47 @@
 <span class="sd">    return CUDA_ERROR_INVALID_IMAGE;</span>
 <span class="sd">  }}</span>
 
-<span class="sd">  result = cuModuleLoadData(&amp;g_module, cubin_data.data());</span>
+<span class="sd">  // Load module for this specific device</span>
+<span class="sd">  CUmodule module;</span>
+<span class="sd">  result = cuModuleLoadData(&amp;module, cubin_data.data());</span>
 <span class="sd">  if (result != CUDA_SUCCESS) {{</span>
-<span class="sd">    std::cerr &lt;&lt; &quot;Failed to load CUDA module: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">    std::cerr &lt;&lt; &quot;Failed to load CUDA module on device &quot; &lt;&lt; device_id &lt;&lt; &quot;: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
 <span class="sd">    return result;</span>
 <span class="sd">  }}</span>
 
-<span class="sd">  g_module_initialized = true;</span>
+<span class="sd">  // Store module for this device</span>
+<span class="sd">  g_device_modules[device_id] = module;</span>
+
 <span class="sd">  return CUDA_SUCCESS;</span>
 <span class="sd">}}</span>
 
-<span class="sd">// Initialize all kernel functions (called once after module load)</span>
-<span class="sd">static CUresult tilelang_init_kernels() {{</span>
-<span class="sd">  if (g_kernels_initialized) return CUDA_SUCCESS;</span>
+<span class="sd">// Initialize kernel functions for a specific device (called once per device)</span>
+<span class="sd">// Thread-safe and supports multi-GPU by tracking kernels per device</span>
+<span class="sd">static CUresult tilelang_init_kernels(int device_id) {{</span>
+<span class="sd">  std::lock_guard&lt;std::mutex&gt; lock(g_devices_mutex);</span>
+
+<span class="sd">  // Fast path: kernels already initialized for this device</span>
+<span class="sd">  if (g_device_kernels.find(device_id) != g_device_kernels.end()) {{</span>
+<span class="sd">    return CUDA_SUCCESS;</span>
+<span class="sd">  }}</span>
+
+<span class="sd">  // Get the module for this device</span>
+<span class="sd">  auto module_it = g_device_modules.find(device_id);</span>
+<span class="sd">  if (module_it == g_device_modules.end()) {{</span>
+<span class="sd">    std::cerr &lt;&lt; &quot;Module not initialized for device &quot; &lt;&lt; device_id &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">    return CUDA_ERROR_NOT_INITIALIZED;</span>
+<span class="sd">  }}</span>
+<span class="sd">  CUmodule module = module_it-&gt;second;</span>
+
+<span class="sd">  // Initialize kernel storage for this device</span>
+<span class="sd">  std::vector&lt;CUfunction&gt; kernels({num_kernels});</span>
 <span class="sd">  CUresult result;</span>
 
 <span class="sd">{kernel_inits}</span>
 
-<span class="sd">  g_kernels_initialized = true;</span>
+<span class="sd">  // Store kernels for this device</span>
+<span class="sd">  g_device_kernels[device_id] = kernels;</span>
+
 <span class="sd">  return CUDA_SUCCESS;</span>
 <span class="sd">}}</span>
 
@@ -925,14 +995,14 @@
 <span class="sd">{tma_init_func}</span>
 
 <span class="sd">// Main kernel launcher</span>
-<span class="sd">extern &quot;C&quot; CUresult launch_kernel({launch_func_sig}, uint64_t _stream, tvm::ffi::Bytes cubin_path) {{</span>
+<span class="sd">extern &quot;C&quot; CUresult launch_kernel({launch_func_sig}, uint64_t _stream, int device_id, tvm::ffi::Bytes cubin_path) {{</span>
 <span class="sd">  CUresult result;</span>
 
 <span class="sd">  std::string cubin_path_str(reinterpret_cast&lt;const char*&gt;(cubin_path.data()), cubin_path.size());</span>
-<span class="sd">  result = tilelang_init_cuda_module(cubin_path_str);</span>
+<span class="sd">  result = tilelang_init_cuda_module(cubin_path_str, device_id);</span>
 <span class="sd">  if (result != CUDA_SUCCESS) return result;</span>
 
-<span class="sd">  result = tilelang_init_kernels();</span>
+<span class="sd">  result = tilelang_init_kernels(device_id);</span>
 <span class="sd">  if (result != CUDA_SUCCESS) return result;</span>
 
 <span class="sd">{get_ptr_code}</span>
@@ -947,15 +1017,53 @@
 
 <span class="sd">// Cleanup function</span>
 <span class="sd">extern &quot;C&quot; CUresult cleanup_module() {{</span>
-<span class="sd">  if (g_module_initialized &amp;&amp; g_module != nullptr) {{</span>
-<span class="sd">    cuModuleUnload(g_module);</span>
-<span class="sd">    g_module = nullptr;</span>
-<span class="sd">    g_module_initialized = false;</span>
+<span class="sd">  std::lock_guard&lt;std::mutex&gt; lock(g_devices_mutex);</span>
+
+<span class="sd">  CUresult last_error = CUDA_SUCCESS;</span>
+
+<span class="sd">  // Step 1: Unload modules for all devices</span>
+<span class="sd">  for (auto&amp; pair : g_device_modules) {{</span>
+<span class="sd">    if (pair.second != nullptr) {{</span>
+<span class="sd">      CUresult result = cuModuleUnload(pair.second);</span>
+<span class="sd">      if (result != CUDA_SUCCESS) {{</span>
+<span class="sd">        std::cerr &lt;&lt; &quot;Failed to unload module for device &quot; &lt;&lt; pair.first</span>
+<span class="sd">                  &lt;&lt; &quot;: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">        last_error = result;</span>
+<span class="sd">        // Continue cleanup even if unload fails</span>
+<span class="sd">      }}</span>
+<span class="sd">    }}</span>
 <span class="sd">  }}</span>
 
-<span class="sd">  g_kernels_initialized = false;</span>
+<span class="sd">  // Step 2: Release primary contexts (must execute even if module unload failed)</span>
+<span class="sd">  // This ensures the reference count is decremented for every cuDevicePrimaryCtxRetain</span>
+<span class="sd">  for (auto&amp; pair : g_device_contexts) {{</span>
+<span class="sd">    int device_id = pair.first;</span>
+<span class="sd">    CUcontext ctx = pair.second;</span>
 
-<span class="sd">  return CUDA_SUCCESS;</span>
+<span class="sd">    if (ctx != nullptr) {{</span>
+<span class="sd">      CUdevice device;</span>
+<span class="sd">      CUresult result = cuDeviceGet(&amp;device, device_id);</span>
+<span class="sd">      if (result == CUDA_SUCCESS) {{</span>
+<span class="sd">        result = cuDevicePrimaryCtxRelease(device);</span>
+<span class="sd">        if (result != CUDA_SUCCESS) {{</span>
+<span class="sd">          std::cerr &lt;&lt; &quot;Failed to release primary context for device &quot;</span>
+<span class="sd">                    &lt;&lt; device_id &lt;&lt; &quot;: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">          last_error = result;</span>
+<span class="sd">        }}</span>
+<span class="sd">      }} else {{</span>
+<span class="sd">        std::cerr &lt;&lt; &quot;Failed to get device &quot; &lt;&lt; device_id</span>
+<span class="sd">                  &lt;&lt; &quot; for context release: &quot; &lt;&lt; result &lt;&lt; &quot;\n&quot;;</span>
+<span class="sd">        last_error = result;</span>
+<span class="sd">      }}</span>
+<span class="sd">    }}</span>
+<span class="sd">  }}</span>
+
+<span class="sd">  // Step 3: Clear all maps</span>
+<span class="sd">  g_device_modules.clear();</span>
+<span class="sd">  g_device_kernels.clear();</span>
+<span class="sd">  g_device_contexts.clear();</span>
+
+<span class="sd">  return last_error;</span>
 <span class="sd">}}</span>
 
 <span class="sd">TVM_FFI_DLL_EXPORT_TYPED_FUNC(launch_kernel, launch_kernel);</span>
@@ -1103,22 +1211,27 @@
 <span class="s2">  _cpp_launcher = _cpp_launcher_lib[&quot;launch_kernel&quot;]</span>
 <span class="s2">  return _cpp_launcher</span>
 
-<span class="s2">def call(</span><span class="si">{call_func_params}</span><span class="s2">, stream):</span>
-<span class="s2">  &quot;&quot;&quot;</span><span class="n">Kernel</span> <span class="n">dispatch</span> <span class="n">function</span><span class="o">.</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">  global _cubin_path_bytes, _cubin_needs_generation</span>
+<span class="s2">def call(</span><span class="si">{call_func_params}</span><span class="s2">, stream, device_id=0):</span>
+<span class="s2">  &quot;&quot;&quot;</span><span class="n">Kernel</span> <span class="n">dispatch</span> <span class="n">function</span><span class="o">.</span>
 
-<span class="s2">  if _cubin_needs_generation:</span>
-<span class="s2">    _generate_cubin_if_needed(</span><span class="si">{cubin_gen_call_args}</span><span class="s2">)</span>
-<span class="s2">    _cubin_needs_generation = False</span>
+  <span class="n">Args</span><span class="p">:</span>
+      <span class="n">stream</span><span class="p">:</span> <span class="n">CUDA</span> <span class="n">stream</span> <span class="n">handle</span>
+      <span class="n">device_id</span><span class="p">:</span> <span class="n">CUDA</span> <span class="n">device</span> <span class="n">ID</span> <span class="p">(</span><span class="n">should</span> <span class="n">be</span> <span class="n">passed</span> <span class="kn">from</span><span class="w"> </span><span class="nn">caller</span><span class="p">,</span> <span class="n">defaults</span> <span class="n">to</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">backward</span> <span class="n">compatibility</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  global _cubin_path_bytes, _cubin_needs_generation</span>
 
-<span class="si">{arg_prep_code}</span>
+<span class="sd">  if _cubin_needs_generation:</span>
+<span class="sd">    _generate_cubin_if_needed({cubin_gen_call_args})</span>
+<span class="sd">    _cubin_needs_generation = False</span>
 
-<span class="s2">  launcher = _load_cpp_launcher()</span>
-<span class="s2">  result = launcher(</span><span class="si">{launcher_call_args}</span><span class="s2">, stream, _cubin_path_bytes)</span>
+<span class="sd">{arg_prep_code}</span>
 
-<span class="s2">  if result != 0:</span>
-<span class="s2">    raise RuntimeError(f&quot;Kernel launch failed with CUDA error {{result}}&quot;)</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="sd">  launcher = _load_cpp_launcher()</span>
+<span class="sd">  result = launcher({launcher_call_args}, stream, device_id, _cubin_path_bytes)</span>
+
+<span class="sd">  if result != 0:</span>
+<span class="sd">    raise RuntimeError(f&quot;Kernel launch failed with CUDA error {{result}}&quot;)</span>
+<span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 </div>
 </details></dd></dl>
