@@ -93,18 +93,32 @@ Module Contents
 
 
 
-   .. py:method:: cached(func = None, out_idx = None, *args, target = 'auto', target_host = None, execution_backend = 'auto', verbose = False, pass_configs = None, compile_flags = None)
+   .. py:method:: cached(func = None, out_idx = None, *args, target = None, target_host = None, execution_backend = None, verbose = None, pass_configs = None, compile_flags = None)
 
       Caches and reuses compiled kernels to avoid redundant compilation.
 
+      This is the ONLY place where environment variable processing, target normalization,
+      and execution backend resolution should happen. All compilation paths go through here.
+
       :param func: Function to be compiled or a prepared PrimFunc
       :param out_idx: Indices specifying which outputs to return
-      :param target: Compilation target platform
+      :param target: Compilation target platform (None = read from TILELANG_TARGET env var)
       :param target_host: Host target platform
+      :param execution_backend: Execution backend (None = read from TILELANG_EXECUTION_BACKEND)
+      :param verbose: Enable verbose output (None = read from TILELANG_VERBOSE)
       :param \*args: Arguments passed to func
 
       :returns: The compiled kernel, either freshly compiled or from cache
       :rtype: JITKernel
+
+      Environment Variables
+      ---------------------
+      TILELANG_TARGET : str
+          Default compilation target (e.g., "cuda", "llvm"). Defaults to "auto".
+      TILELANG_EXECUTION_BACKEND : str
+          Default execution backend. Defaults to "auto".
+      TILELANG_VERBOSE : str
+          Set to "1", "true", "yes", or "on" to enable verbose compilation by default.
 
 
 

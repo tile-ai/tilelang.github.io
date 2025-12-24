@@ -655,18 +655,20 @@ params.pkl: The compiled kernel parameters</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.cached">
-<span class="sig-name descname"><span class="pre">cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.cached" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.cached" title="Link to this definition">¶</a></dt>
 <dd><p>Caches and reuses compiled kernels to avoid redundant compilation.</p>
+<p>This is the ONLY place where environment variable processing, target normalization,
+and execution backend resolution should happen. All compilation paths go through here.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>func</strong> (<em>tvm.tir.PrimFunc</em>) – Function to be compiled or a prepared PrimFunc</p></li>
 <li><p><strong>out_idx</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Indices specifying which outputs to return</p></li>
-<li><p><strong>target</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em>) – Compilation target platform</p></li>
-<li><p><strong>target_host</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em>) – Host target platform</p></li>
+<li><p><strong>target</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em><em> | </em><em>None</em>) – Compilation target platform (None = read from TILELANG_TARGET env var)</p></li>
+<li><p><strong>target_host</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em><em> | </em><em>None</em>) – Host target platform</p></li>
+<li><p><strong>execution_backend</strong> (<em>Literal</em><em>[</em><em>'auto'</em><em>, </em><em>'tvm_ffi'</em><em>, </em><em>'cython'</em><em>, </em><em>'nvrtc'</em><em>, </em><em>'torch'</em><em>, </em><em>'cutedsl'</em><em>] </em><em>| </em><em>None</em>) – Execution backend (None = read from TILELANG_EXECUTION_BACKEND)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference internal" href="../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a><em> | </em><em>None</em>) – Enable verbose output (None = read from TILELANG_VERBOSE)</p></li>
 <li><p><strong>*args</strong> – Arguments passed to func</p></li>
-<li><p><strong>execution_backend</strong> (<em>Literal</em><em>[</em><em>'auto'</em><em>, </em><em>'tvm_ffi'</em><em>, </em><em>'cython'</em><em>, </em><em>'nvrtc'</em><em>, </em><em>'torch'</em><em>, </em><em>'cutedsl'</em><em>]</em>)</p></li>
-<li><p><strong>verbose</strong> (<a class="reference internal" href="../../language/v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a>)</p></li>
 <li><p><strong>pass_configs</strong> (<em>dict</em>)</p></li>
 <li><p><strong>compile_flags</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>)</p></li>
 </ul>
@@ -678,6 +680,17 @@ params.pkl: The compiled kernel parameters</p>
 <dd class="field-odd"><p><a class="reference internal" href="../../jit/kernel/index.html#tilelang.jit.kernel.JITKernel" title="tilelang.jit.kernel.JITKernel">JITKernel</a></p>
 </dd>
 </dl>
+<section id="environment-variables">
+<h3>Environment Variables<a class="headerlink" href="#environment-variables" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>TILELANG_TARGET<span class="classifier">str</span></dt><dd><p>Default compilation target (e.g., “cuda”, “llvm”). Defaults to “auto”.</p>
+</dd>
+<dt>TILELANG_EXECUTION_BACKEND<span class="classifier">str</span></dt><dd><p>Default execution backend. Defaults to “auto”.</p>
+</dd>
+<dt>TILELANG_VERBOSE<span class="classifier">str</span></dt><dd><p>Set to “1”, “true”, “yes”, or “on” to enable verbose compilation by default.</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 <dl class="py method">

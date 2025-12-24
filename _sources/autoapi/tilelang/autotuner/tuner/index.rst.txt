@@ -131,16 +131,23 @@ Module Contents
 
 
 
-   .. py:method:: set_compile_args(out_idx = None, target = 'auto', execution_backend = 'auto', target_host = None, verbose = False, pass_configs = None)
+   .. py:method:: set_compile_args(out_idx = None, target = None, execution_backend = None, target_host = None, verbose = None, pass_configs = None)
 
       Set compilation arguments for the auto-tuner.
 
       :param out_idx: List of output tensor indices.
-      :param target: Target platform.
-      :param execution_backend: Execution backend to use for kernel execution.
+      :param target: Target platform. If None, reads from TILELANG_TARGET environment variable (defaults to "auto").
+      :param execution_backend: Execution backend to use for kernel execution. If None, reads from
+                                TILELANG_EXECUTION_BACKEND environment variable (defaults to "auto").
       :param target_host: Target host for cross-compilation.
-      :param verbose: Whether to enable verbose output.
+      :param verbose: Whether to enable verbose output. If None, reads from
+                      TILELANG_VERBOSE environment variable (defaults to False).
       :param pass_configs: Additional keyword arguments to pass to the Compiler PassContext.
+
+      Environment Variables:
+          TILELANG_TARGET: Default compilation target (e.g., "cuda", "llvm"). Defaults to "auto".
+          TILELANG_EXECUTION_BACKEND: Default execution backend. Defaults to "auto".
+          TILELANG_VERBOSE: Set to "1", "true", "yes", or "on" to enable verbose compilation by default.
 
       :returns: Self for method chaining.
       :rtype: AutoTuner
