@@ -1,0 +1,50 @@
+tilelang.tileop.gemm.gemm_cutedsl
+=================================
+
+.. py:module:: tilelang.tileop.gemm.gemm_cutedsl
+
+.. autoapi-nested-parse::
+
+   GEMM implementation for CuTeDSL backend - directly calls tl::gemm intrinsic.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.tileop.gemm.gemm_cutedsl.GemmCuTeDSL
+
+
+Module Contents
+---------------
+
+.. py:class:: GemmCuTeDSL
+
+   Bases: :py:obj:`tilelang.tileop.gemm.gemm_base.GemmBase`
+
+
+   GEMM implementation for CuTeDSL that directly calls tl::gemm intrinsic.
+
+   This implementation bypasses the complex lowering logic of MMA/WGMMA
+   and directly emits a call to tl::gemm, similar to gemm_v1 behavior.
+   This is necessary for CuTeDSL backend which requires simpler IR.
+
+
+   .. py:method:: infer_layout(target, thread_nums)
+
+      For CuTeDSL, we still need proper layout inference for A, B, C buffers.
+
+      CuTeDSL uses the same underlying hardware instructions (WGMMA/MMA),
+      so it needs the same layout information. We delegate to the appropriate
+      implementation based on the instruction type.
+
+
+
+   .. py:method:: lower(layout_map, target, thread_nums, thread_var)
+
+      Lower to a direct gemm_v1 call without complex MMA/WGMMA lowering.
+
+
+
