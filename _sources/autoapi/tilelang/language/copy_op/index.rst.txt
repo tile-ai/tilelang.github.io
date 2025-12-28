@@ -21,7 +21,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: copy(src, dst, coalesced_width = None, disable_tma = False, eviction_policy = None)
+.. py:function:: copy(src, dst, coalesced_width = None, disable_tma = False, eviction_policy = None, annotations = None)
 
    Copy data between memory regions.
 
@@ -31,6 +31,14 @@ Module Contents
    :type dst: Union[tir.Buffer, tir.BufferLoad, tir.BufferRegion]
    :param coalesced_width: Width for coalesced memory access. Defaults to None.
    :type coalesced_width: Optional[int], optional
+   :param disable_tma: Whether to disable TMA acceleration. Defaults to False.
+   :type disable_tma: bool, optional
+   :param eviction_policy: Cache eviction policy. Defaults to None.
+   :type eviction_policy: Optional[str], optional
+   :param annotations: Additional annotations dict. If provided,
+                       coalesced_width, disable_tma, and eviction_policy can also be specified here.
+                       Values in annotations take precedence over individual arguments.
+   :type annotations: Optional[dict], optional
 
    :raises TypeError: If copy extents cannot be deduced from arguments
 
