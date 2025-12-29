@@ -33,9 +33,10 @@ Classes
    tilelang.language.v2.builder.Ref
    tilelang.language.v2.builder.UnrollForWithStep
    tilelang.language.v2.builder.Builder
-   tilelang.language.v2.builder.PrimFuncCreater
    tilelang.language.v2.builder.PrimFunc
    tilelang.language.v2.builder.Macro
+   tilelang.language.v2.builder.TirTemplate
+   tilelang.language.v2.builder.LazyJITFunc
 
 
 Functions
@@ -48,6 +49,8 @@ Functions
    tilelang.language.v2.builder.is_var
    tilelang.language.v2.builder.macro
    tilelang.language.v2.builder.get_type_hints
+   tilelang.language.v2.builder.const
+   tilelang.language.v2.builder.substitute_primfunc
    tilelang.language.v2.builder.prim_func
 
 
@@ -188,7 +191,7 @@ Module Contents
 
 .. py:function:: is_var(v)
 
-.. py:class:: Builder(func_annot = None)
+.. py:class:: Builder
 
    Bases: :py:obj:`tilelang.language.v2.ast.BaseBuilder`
 
@@ -209,11 +212,6 @@ Module Contents
    .. py:attribute:: macro_arg_annot
 
 
-   .. py:attribute:: func_annot
-      :value: None
-
-
-
    .. py:attribute:: out_idx
       :value: []
 
@@ -224,7 +222,12 @@ Module Contents
 
 
 
-   .. py:attribute:: arg_vt
+   .. py:attribute:: constexpr_var
+
+
+   .. py:attribute:: lazy_jit
+      :value: False
+
 
 
    .. py:method:: current()
@@ -332,52 +335,7 @@ Module Contents
    .. py:method:: override(name)
 
 
-.. py:class:: PrimFuncCreater
-
-   Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_T`\ ]
-
-
-   Abstract base class for generic types.
-
-   A generic type is typically declared by inheriting from
-   this class parameterized with one or more type variables.
-   For example, a generic mapping type might be defined as::
-
-     class Mapping(Generic[KT, VT]):
-         def __getitem__(self, key: KT) -> VT:
-             ...
-         # Etc.
-
-   This class can then be used as follows::
-
-     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
-         try:
-             return mapping[key]
-         except KeyError:
-             return default
-
-
-   .. py:attribute:: func_annot
-      :type:  tilelang.language.v2.annot.FuncAnnot
-
-
-   .. py:attribute:: ir_gen
-      :type:  tilelang.language.v2.ast.IRGenerator[_P, _T]
-
-
-   .. py:attribute:: orig_func
-      :type:  Callable[_P, _T]
-
-
-   .. py:property:: annot
-      :type: dict[str, tilelang.language.v2.annot.Annot]
-
-
-
-   .. py:method:: __call__(*args, **kwargs)
-
-
-   .. py:method:: __repr__()
+   .. py:method:: constexpr(name, dtype = 'int32')
 
 
 .. py:class:: PrimFunc
@@ -435,10 +393,6 @@ Module Contents
 
    .. py:attribute:: orig_func
       :type:  Callable[_P, _T] | None
-
-
-   .. py:attribute:: func_annot
-      :type:  tilelang.language.v2.annot.FuncAnnot | None
 
 
    .. py:attribute:: out_idx_override
@@ -533,53 +487,107 @@ Module Contents
 
 .. py:function:: get_type_hints(func)
 
-.. py:function:: prim_func(func = None, *, generator = False)
+.. py:function:: const(name, dtype = 'int32')
 
-   Decorator to create a primitive function (PrimFunc) for TileLang IR generation.
-   This decorator transforms a Python function into a TileLang primitive function by analyzing
-   its type annotations and generating intermediate representation (IR) code. It supports both
-   immediate construction (when all parameters are statically annotated) and generator mode
-   (for dynamic construction).
-   :param func: The function to be decorated. Can be None when using decorator with arguments.
-   :type func: Callable[_P, _T], optional
-   :param generator: If True, returns a generator function that creates PrimFunc instances on demand.
-                     If False, attempts to create a PrimFunc immediately using type annotations.
-   :type generator: bool, default=False
+.. py:class:: TirTemplate
 
-   :returns:
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_T`\ ]
 
-             - If `generator=False` and all parameters are statically annotated: returns a PrimFunc instance
-             - If `generator=True`: returns a callable that generates PrimFunc instances when invoked
-             - If used without parentheses: returns the decorator implementation function
-   :rtype: PrimFunc[_P, _T] | Callable[_P, PrimFunc[_P, _T]]
 
-   .. rubric:: Examples
+   Abstract base class for generic types.
 
-   Static annotation mode (immediate construction):
-   >>> @prim_func
-   ... def add_kernel(A: T.Buffer((128,), T.float32),
-   ...                B: T.Buffer((128,), T.float32)):
-   ...     for i in T.grid(128):
-   ...         B[i] = A[i] + 1.0
-   Generator mode (dynamic construction):
-   >>> @prim_func(generator=True)
-   ... def dynamic_kernel(A=T.Tensor((128,), T.float32)):
-   ...     # function body
-   ...     pass
-   >>> kernel_instance = dynamic_kernel()
-   With custom parameters:
-   >>> @prim_func(generator=True)
-   ... def parameterized_kernel(size: int = 128):
-   ...     # function body using size parameter
-   ...     pass
-   >>> kernel = parameterized_kernel(size=256)
+   A generic type is typically declared by inheriting from
+   this class parameterized with one or more type variables.
+   For example, a generic mapping type might be defined as::
 
-   .. seealso::
+     class Mapping(Generic[KT, VT]):
+         def __getitem__(self, key: KT) -> VT:
+             ...
+         # Etc.
 
-      :obj:`Builder`
-          The IR builder class used for constructing primitive functions
+   This class can then be used as follows::
 
-      :obj:`mutate`
-          Function used to generate IR from the decorated function
+     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
+         try:
+             return mapping[key]
+         except KeyError:
+             return default
 
+
+   .. py:attribute:: prim_func
+      :type:  PrimFunc[_P, _T]
+
+
+   .. py:attribute:: matcher
+      :type:  dict[tvm.tir.expr.Var, tuple[tvm.tir.Var, str, int]]
+
+
+   .. py:method:: create(prim_func, constexpr)
+      :classmethod:
+
+
+
+   .. py:method:: get_tir(**kwargs)
+
+
+.. py:class:: LazyJITFunc
+
+   Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_T`\ ]
+
+
+   Abstract base class for generic types.
+
+   A generic type is typically declared by inheriting from
+   this class parameterized with one or more type variables.
+   For example, a generic mapping type might be defined as::
+
+     class Mapping(Generic[KT, VT]):
+         def __getitem__(self, key: KT) -> VT:
+             ...
+         # Etc.
+
+   This class can then be used as follows::
+
+     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
+         try:
+             return mapping[key]
+         except KeyError:
+             return default
+
+
+   .. py:attribute:: orig_func
+      :type:  Callable[_P, _T]
+
+
+   .. py:attribute:: arg_names
+      :type:  list[str]
+
+
+   .. py:attribute:: tensor_args
+      :type:  dict[str, tvm.tir.Buffer | tvm.tir.expr.Var]
+
+
+   .. py:attribute:: tensor_args_defaults
+      :type:  dict[str, Any]
+
+
+   .. py:attribute:: ir_gen
+      :type:  tilelang.language.v2.ast.IRGenerator[_P, _T]
+
+
+   .. py:method:: __post_init__()
+
+
+   .. py:method:: parse_args(*args, **kwargs)
+
+
+   .. py:method:: get_tir(*args, **kwargs)
+
+
+   .. py:method:: __call__(*args, **kwargs)
+
+
+.. py:function:: substitute_primfunc(prim_func, vmap)
+
+.. py:function:: prim_func(func = None, *, lazy_jit=False)
 

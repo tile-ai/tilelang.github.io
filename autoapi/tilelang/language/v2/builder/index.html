@@ -421,7 +421,6 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/index.html">tilelang.language.utils</a></li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html">tilelang.language.v2</a><input aria-label="Toggle navigation of tilelang.language.v2" checked="" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../annot/index.html">tilelang.language.v2.annot</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ast/index.html">tilelang.language.v2.ast</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.language.v2.builder</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../dtypes/index.html">tilelang.language.v2.dtypes</a></li>
@@ -604,13 +603,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.Builder" title="tilelang.language.v2.builder.Builder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Builder</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.PrimFuncCreater" title="tilelang.language.v2.builder.PrimFuncCreater"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrimFuncCreater</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrimFunc</span></code></a></p></td>
 <td><p>Abstract base class for generic types.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrimFunc</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.Macro" title="tilelang.language.v2.builder.Macro"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Macro</span></code></a></p></td>
 <td><p>Abstract base class for generic types.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.Macro" title="tilelang.language.v2.builder.Macro"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Macro</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.TirTemplate" title="tilelang.language.v2.builder.TirTemplate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TirTemplate</span></code></a></p></td>
+<td><p>Abstract base class for generic types.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc" title="tilelang.language.v2.builder.LazyJITFunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LazyJITFunc</span></code></a></p></td>
 <td><p>Abstract base class for generic types.</p></td>
 </tr>
 </tbody>
@@ -637,8 +639,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.get_type_hints" title="tilelang.language.v2.builder.get_type_hints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_type_hints</span></code></a>(func)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.prim_func" title="tilelang.language.v2.builder.prim_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prim_func</span></code></a>([func, generator])</p></td>
-<td><p>Decorator to create a primitive function (PrimFunc) for TileLang IR generation.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.const" title="tilelang.language.v2.builder.const"><code class="xref py py-obj docutils literal notranslate"><span class="pre">const</span></code></a>(name[, dtype])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.substitute_primfunc" title="tilelang.language.v2.builder.substitute_primfunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">substitute_primfunc</span></code></a>(prim_func, vmap)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.builder.prim_func" title="tilelang.language.v2.builder.prim_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prim_func</span></code></a>([func, lazy_jit])</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -841,13 +849,8 @@ They do not have any runtime representation in the generated TIR.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.language.v2.builder.Builder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.builder.</span></span><span class="sig-name descname"><span class="pre">Builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_annot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.Builder" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.builder.</span></span><span class="sig-name descname"><span class="pre">Builder</span></span><a class="headerlink" href="#tilelang.language.v2.builder.Builder" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../ast/index.html#tilelang.language.v2.ast.BaseBuilder" title="tilelang.language.v2.ast.BaseBuilder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.language.v2.ast.BaseBuilder</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>func_annot</strong> (<a class="reference internal" href="../annot/index.html#tilelang.language.v2.annot.FuncAnnot" title="tilelang.language.v2.annot.FuncAnnot"><em>tilelang.language.v2.annot.FuncAnnot</em></a>)</p>
-</dd>
-</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.v2.builder.Builder.frames">
 <span class="sig-name descname"><span class="pre">frames</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">AnyFrame</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.language.v2.builder.Builder.frames" title="Link to this definition">¶</a></dt>
@@ -869,11 +872,6 @@ They do not have any runtime representation in the generated TIR.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.Builder.func_annot">
-<span class="sig-name descname"><span class="pre">func_annot</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.v2.builder.Builder.func_annot" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.v2.builder.Builder.out_idx">
 <span class="sig-name descname"><span class="pre">out_idx</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.language.v2.builder.Builder.out_idx" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -884,8 +882,13 @@ They do not have any runtime representation in the generated TIR.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.Builder.arg_vt">
-<span class="sig-name descname"><span class="pre">arg_vt</span></span><a class="headerlink" href="#tilelang.language.v2.builder.Builder.arg_vt" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.Builder.constexpr_var">
+<span class="sig-name descname"><span class="pre">constexpr_var</span></span><a class="headerlink" href="#tilelang.language.v2.builder.Builder.constexpr_var" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.Builder.lazy_jit">
+<span class="sig-name descname"><span class="pre">lazy_jit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#tilelang.language.v2.builder.Builder.lazy_jit" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -911,7 +914,12 @@ They do not have any runtime representation in the generated TIR.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.language.v2.builder.Builder.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.Builder.get" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc">PrimFunc</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.language.v2.builder.Builder.find_frame_idx">
@@ -1104,75 +1112,21 @@ The immutability means the result is usually not changed or re-assigned in a pyt
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.PrimFuncCreater">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.builder.</span></span><span class="sig-name descname"><span class="pre">PrimFuncCreater</span></span><a class="headerlink" href="#tilelang.language.v2.builder.PrimFuncCreater" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">_P</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_T</span></code>]</p>
-<p>Abstract base class for generic types.</p>
-<p>A generic type is typically declared by inheriting from
-this class parameterized with one or more type variables.
-For example, a generic mapping type might be defined as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Mapping</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">]):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
-        <span class="o">...</span>
-    <span class="c1"># Etc.</span>
-</pre></div>
-</div>
-<p>This class can then be used as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">lookup_name</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">VT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">mapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">default</span>
-</pre></div>
-</div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.PrimFuncCreater.func_annot">
-<span class="sig-name descname"><span class="pre">func_annot</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../annot/index.html#tilelang.language.v2.annot.FuncAnnot" title="tilelang.language.v2.annot.FuncAnnot"><span class="pre">tilelang.language.v2.annot.FuncAnnot</span></a></em><a class="headerlink" href="#tilelang.language.v2.builder.PrimFuncCreater.func_annot" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.PrimFuncCreater.ir_gen">
-<span class="sig-name descname"><span class="pre">ir_gen</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../ast/index.html#tilelang.language.v2.ast.IRGenerator" title="tilelang.language.v2.ast.IRGenerator"><span class="pre">tilelang.language.v2.ast.IRGenerator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.builder.PrimFuncCreater.ir_gen" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.PrimFuncCreater.orig_func">
-<span class="sig-name descname"><span class="pre">orig_func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.builder.PrimFuncCreater.orig_func" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.PrimFuncCreater.annot">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">annot</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../annot/index.html#tilelang.language.v2.annot.Annot" title="tilelang.language.v2.annot.Annot"><span class="pre">tilelang.language.v2.annot.Annot</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.builder.PrimFuncCreater.annot" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict[str, <a class="reference internal" href="../annot/index.html#tilelang.language.v2.annot.Annot" title="tilelang.language.v2.annot.Annot">tilelang.language.v2.annot.Annot</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.PrimFuncCreater.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.PrimFuncCreater.__call__" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.Builder.constexpr">
+<span class="sig-name descname"><span class="pre">constexpr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'int32'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.Builder.constexpr" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>args</strong> (<em>_P</em>)</p></li>
-<li><p><strong>kwargs</strong> (<em>_P</em>)</p></li>
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc">PrimFunc</a>[_P, _T]</p>
+<dd class="field-even"><p>tvm.tir.expr.Var</p>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.PrimFuncCreater.__repr__">
-<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.PrimFuncCreater.__repr__" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -1236,11 +1190,6 @@ For example, a generic mapping type might be defined as:</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.v2.builder.PrimFunc.orig_func">
 <span class="sig-name descname"><span class="pre">orig_func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.v2.builder.PrimFunc.orig_func" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.PrimFunc.func_annot">
-<span class="sig-name descname"><span class="pre">func_annot</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../annot/index.html#tilelang.language.v2.annot.FuncAnnot" title="tilelang.language.v2.annot.FuncAnnot"><span class="pre">tilelang.language.v2.annot.FuncAnnot</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.v2.builder.PrimFunc.func_annot" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1382,66 +1331,161 @@ return type _T) while adding metaprogramming capabilities.</p></li>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.v2.builder.prim_func">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.builder.</span></span><span class="sig-name descname"><span class="pre">prim_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.prim_func" title="Link to this definition">¶</a></dt>
-<dd><p>Decorator to create a primitive function (PrimFunc) for TileLang IR generation.
-This decorator transforms a Python function into a TileLang primitive function by analyzing
-its type annotations and generating intermediate representation (IR) code. It supports both
-immediate construction (when all parameters are statically annotated) and generator mode
-(for dynamic construction).
-:param func: The function to be decorated. Can be None when using decorator with arguments.
-:type func: Callable[_P, _T], optional
-:param generator: If True, returns a generator function that creates PrimFunc instances on demand.</p>
-<blockquote>
-<div><p>If False, attempts to create a PrimFunc immediately using type annotations.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p>If <cite>generator=False</cite> and all parameters are statically annotated: returns a PrimFunc instance</p></li>
-<li><p>If <cite>generator=True</cite>: returns a callable that generates PrimFunc instances when invoked</p></li>
-<li><p>If used without parentheses: returns the decorator implementation function</p></li>
-</ul>
-</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc">PrimFunc</a>[_P, _T] | Callable[_P, <a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc">PrimFunc</a>[_P, _T]]</p>
-</dd>
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.const">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.builder.</span></span><span class="sig-name descname"><span class="pre">const</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'int32'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.const" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>func</strong> (<em>Callable</em><em>[</em><em>_P</em><em>, </em><em>_T</em><em>]</em>)</p></li>
-<li><p><strong>generator</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a><em>, </em><em>default=False</em>)</p></li>
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>)</p></li>
 </ul>
 </dd>
-</dl>
-<p class="rubric">Examples</p>
-<p>Static annotation mode (immediate construction):
-&gt;&gt;&gt; &#64;prim_func
-… def add_kernel(A: T.Buffer((128,), T.float32),
-…                B: T.Buffer((128,), T.float32)):
-…     for i in T.grid(128):
-…         B[i] = A[i] + 1.0
-Generator mode (dynamic construction):
-&gt;&gt;&gt; &#64;prim_func(generator=True)
-… def dynamic_kernel(A=T.Tensor((128,), T.float32)):
-…     # function body
-…     pass
-&gt;&gt;&gt; kernel_instance = dynamic_kernel()
-With custom parameters:
-&gt;&gt;&gt; &#64;prim_func(generator=True)
-… def parameterized_kernel(size: int = 128):
-…     # function body using size parameter
-…     pass
-&gt;&gt;&gt; kernel = parameterized_kernel(size=256)</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#tilelang.language.v2.builder.Builder" title="tilelang.language.v2.builder.Builder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Builder</span></code></a></dt><dd><p>The IR builder class used for constructing primitive functions</p>
-</dd>
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">mutate</span></code></dt><dd><p>Function used to generate IR from the decorated function</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[tvm.tir.expr.Var, Ellipsis]</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.TirTemplate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.builder.</span></span><span class="sig-name descname"><span class="pre">TirTemplate</span></span><a class="headerlink" href="#tilelang.language.v2.builder.TirTemplate" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">_P</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_T</span></code>]</p>
+<p>Abstract base class for generic types.</p>
+<p>A generic type is typically declared by inheriting from
+this class parameterized with one or more type variables.
+For example, a generic mapping type might be defined as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Mapping</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+        <span class="o">...</span>
+    <span class="c1"># Etc.</span>
+</pre></div>
 </div>
+<p>This class can then be used as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">lookup_name</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">VT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.TirTemplate.prim_func">
+<span class="sig-name descname"><span class="pre">prim_func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc"><span class="pre">PrimFunc</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.builder.TirTemplate.prim_func" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.TirTemplate.matcher">
+<span class="sig-name descname"><span class="pre">matcher</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.tir.expr.Var</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.tir.Var</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.builder.TirTemplate.matcher" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.TirTemplate.create">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constexpr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.TirTemplate.create" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prim_func</strong> (<a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc"><em>PrimFunc</em></a><em>[</em><em>_P</em><em>, </em><em>_T</em><em>]</em>)</p></li>
+<li><p><strong>constexpr</strong> (<em>set</em><em>[</em><em>tvm.tir.expr.Var</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.language.v2.builder.TirTemplate" title="tilelang.language.v2.builder.TirTemplate">TirTemplate</a>[_P, _T]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.TirTemplate.get_tir">
+<span class="sig-name descname"><span class="pre">get_tir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.TirTemplate.get_tir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.LazyJITFunc">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.builder.</span></span><span class="sig-name descname"><span class="pre">LazyJITFunc</span></span><a class="headerlink" href="#tilelang.language.v2.builder.LazyJITFunc" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">_P</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_T</span></code>]</p>
+<p>Abstract base class for generic types.</p>
+<p>A generic type is typically declared by inheriting from
+this class parameterized with one or more type variables.
+For example, a generic mapping type might be defined as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Mapping</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+        <span class="o">...</span>
+    <span class="c1"># Etc.</span>
+</pre></div>
+</div>
+<p>This class can then be used as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">lookup_name</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">KT</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">VT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.LazyJITFunc.orig_func">
+<span class="sig-name descname"><span class="pre">orig_func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.builder.LazyJITFunc.orig_func" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.LazyJITFunc.arg_names">
+<span class="sig-name descname"><span class="pre">arg_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.builder.LazyJITFunc.arg_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.LazyJITFunc.tensor_args">
+<span class="sig-name descname"><span class="pre">tensor_args</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tvm.tir.Buffer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tvm.tir.expr.Var</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.builder.LazyJITFunc.tensor_args" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.LazyJITFunc.tensor_args_defaults">
+<span class="sig-name descname"><span class="pre">tensor_args_defaults</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.builder.LazyJITFunc.tensor_args_defaults" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.LazyJITFunc.ir_gen">
+<span class="sig-name descname"><span class="pre">ir_gen</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../ast/index.html#tilelang.language.v2.ast.IRGenerator" title="tilelang.language.v2.ast.IRGenerator"><span class="pre">tilelang.language.v2.ast.IRGenerator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.builder.LazyJITFunc.ir_gen" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.LazyJITFunc.__post_init__">
+<span class="sig-name descname"><span class="pre">__post_init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.LazyJITFunc.__post_init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.LazyJITFunc.parse_args">
+<span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.LazyJITFunc.parse_args" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.LazyJITFunc.get_tir">
+<span class="sig-name descname"><span class="pre">get_tir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.LazyJITFunc.get_tir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.LazyJITFunc.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.LazyJITFunc.__call__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.substitute_primfunc">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.builder.</span></span><span class="sig-name descname"><span class="pre">substitute_primfunc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.substitute_primfunc" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.v2.builder.prim_func">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.builder.</span></span><span class="sig-name descname"><span class="pre">prim_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lazy_jit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.builder.prim_func" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em><em>[</em><em>_P</em><em>, </em><em>_T</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc" title="tilelang.language.v2.builder.PrimFunc">PrimFunc</a>[_P, _T] | <a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc" title="tilelang.language.v2.builder.LazyJITFunc">LazyJITFunc</a>[_P, _T]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -1552,10 +1596,10 @@ With custom parameters:
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.ir_builder"><code class="docutils literal notranslate"><span class="pre">Builder.ir_builder</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.name_inside_frame"><code class="docutils literal notranslate"><span class="pre">Builder.name_inside_frame</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.macro_arg_annot"><code class="docutils literal notranslate"><span class="pre">Builder.macro_arg_annot</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.func_annot"><code class="docutils literal notranslate"><span class="pre">Builder.func_annot</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.out_idx"><code class="docutils literal notranslate"><span class="pre">Builder.out_idx</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.out_tensor_cnt"><code class="docutils literal notranslate"><span class="pre">Builder.out_tensor_cnt</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.arg_vt"><code class="docutils literal notranslate"><span class="pre">Builder.arg_vt</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.constexpr_var"><code class="docutils literal notranslate"><span class="pre">Builder.constexpr_var</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.lazy_jit"><code class="docutils literal notranslate"><span class="pre">Builder.lazy_jit</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.current"><code class="docutils literal notranslate"><span class="pre">Builder.current()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.prim_func"><code class="docutils literal notranslate"><span class="pre">Builder.prim_func()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.macro"><code class="docutils literal notranslate"><span class="pre">Builder.macro()</span></code></a></li>
@@ -1588,15 +1632,7 @@ With custom parameters:
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.prim_func_arg"><code class="docutils literal notranslate"><span class="pre">Builder.prim_func_arg()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.arg"><code class="docutils literal notranslate"><span class="pre">Builder.arg()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.override"><code class="docutils literal notranslate"><span class="pre">Builder.override()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFuncCreater"><code class="docutils literal notranslate"><span class="pre">PrimFuncCreater</span></code></a><ul>
-<li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFuncCreater.func_annot"><code class="docutils literal notranslate"><span class="pre">PrimFuncCreater.func_annot</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFuncCreater.ir_gen"><code class="docutils literal notranslate"><span class="pre">PrimFuncCreater.ir_gen</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFuncCreater.orig_func"><code class="docutils literal notranslate"><span class="pre">PrimFuncCreater.orig_func</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFuncCreater.annot"><code class="docutils literal notranslate"><span class="pre">PrimFuncCreater.annot</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFuncCreater.__call__"><code class="docutils literal notranslate"><span class="pre">PrimFuncCreater.__call__()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFuncCreater.__repr__"><code class="docutils literal notranslate"><span class="pre">PrimFuncCreater.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.Builder.constexpr"><code class="docutils literal notranslate"><span class="pre">Builder.constexpr()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc"><code class="docutils literal notranslate"><span class="pre">PrimFunc</span></code></a><ul>
@@ -1608,7 +1644,6 @@ With custom parameters:
 <li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc.span"><code class="docutils literal notranslate"><span class="pre">PrimFunc.span</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc.ir_gen"><code class="docutils literal notranslate"><span class="pre">PrimFunc.ir_gen</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc.orig_func"><code class="docutils literal notranslate"><span class="pre">PrimFunc.orig_func</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc.func_annot"><code class="docutils literal notranslate"><span class="pre">PrimFunc.func_annot</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.PrimFunc.out_idx_override"><code class="docutils literal notranslate"><span class="pre">PrimFunc.out_idx_override</span></code></a></li>
 </ul>
 </li>
@@ -1625,6 +1660,27 @@ With custom parameters:
 </li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.macro"><code class="docutils literal notranslate"><span class="pre">macro()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.get_type_hints"><code class="docutils literal notranslate"><span class="pre">get_type_hints()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.const"><code class="docutils literal notranslate"><span class="pre">const()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.TirTemplate"><code class="docutils literal notranslate"><span class="pre">TirTemplate</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.TirTemplate.prim_func"><code class="docutils literal notranslate"><span class="pre">TirTemplate.prim_func</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.TirTemplate.matcher"><code class="docutils literal notranslate"><span class="pre">TirTemplate.matcher</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.TirTemplate.create"><code class="docutils literal notranslate"><span class="pre">TirTemplate.create()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.TirTemplate.get_tir"><code class="docutils literal notranslate"><span class="pre">TirTemplate.get_tir()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc"><code class="docutils literal notranslate"><span class="pre">LazyJITFunc</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc.orig_func"><code class="docutils literal notranslate"><span class="pre">LazyJITFunc.orig_func</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc.arg_names"><code class="docutils literal notranslate"><span class="pre">LazyJITFunc.arg_names</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc.tensor_args"><code class="docutils literal notranslate"><span class="pre">LazyJITFunc.tensor_args</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc.tensor_args_defaults"><code class="docutils literal notranslate"><span class="pre">LazyJITFunc.tensor_args_defaults</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc.ir_gen"><code class="docutils literal notranslate"><span class="pre">LazyJITFunc.ir_gen</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc.__post_init__"><code class="docutils literal notranslate"><span class="pre">LazyJITFunc.__post_init__()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc.parse_args"><code class="docutils literal notranslate"><span class="pre">LazyJITFunc.parse_args()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc.get_tir"><code class="docutils literal notranslate"><span class="pre">LazyJITFunc.get_tir()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.LazyJITFunc.__call__"><code class="docutils literal notranslate"><span class="pre">LazyJITFunc.__call__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.language.v2.builder.substitute_primfunc"><code class="docutils literal notranslate"><span class="pre">substitute_primfunc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.builder.prim_func"><code class="docutils literal notranslate"><span class="pre">prim_func()</span></code></a></li>
 </ul>
 </li>
