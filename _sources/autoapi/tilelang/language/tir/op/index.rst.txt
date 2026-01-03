@@ -961,26 +961,43 @@ Module Contents
    :rtype: PrimExpr
 
 
-.. py:function:: ptx_cp_async(dtype, shared_ptr, shared_offset, global_ptr, global_offset, bytes)
+.. py:function:: ptx_cp_async(dst_access_ptr, src_access_ptr, bytes, predicate=None)
 
    TVM intrinsic for ptx async copy from global to shared memory using cp.async
    https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cp-async
 
-   :param dtype: The data type of the result.
-   :type dtype: str
-   :param shared_ptr: The shared memory pointer variable.
-   :type shared_ptr: Var
-   :param shared_offset: The offset of shared memory pointer.
-   :type shared_offset: Expr
-   :param global_ptr: The global memory pointer variable.
-   :type global_ptr: Var
-   :param global_offset: The offset of global memory pointer.
-   :type global_offset: Expr
-   :param bytes: The data size to copy.
-   :type bytes: int
+   :param dst_access_ptr: The destination (shared memory) access pointer created by tvm_access_ptr.
+                          Should include pointer, offset, extent, and write access flag (rw_mask=2).
+   :type dst_access_ptr: PrimExpr
+   :param src_access_ptr: The source (global memory) access pointer created by tvm_access_ptr.
+                          Should include pointer, offset, extent, and read access flag (rw_mask=1).
+   :type src_access_ptr: PrimExpr
+   :param bytes: The number of bytes to copy (must be 4, 8, or 16).
+   :type bytes: int or PrimExpr
+   :param predicate: Optional predicate condition for conditional cp.async. When provided, the copy
+                     will only be performed if the predicate evaluates to true. Otherwise, the
+                     destination will be filled with zeros (default behavior of cp.async).
+   :type predicate: PrimExpr, optional
 
    :returns: **call** -- The call expression.
    :rtype: PrimExpr
+
+   .. rubric:: Examples
+
+   >>> # Copy 16 bytes from global to shared memory
+   >>> T.ptx_cp_async(
+   ...     T.tvm_access_ptr(T.type_annotation(T.uint8), A_shared.data, 0, 16, 2),  # dst
+   ...     T.tvm_access_ptr(T.type_annotation(T.uint8), B_global.data, 0, 16, 1),  # src
+   ...     16  # bytes
+   ... )
+   >>>
+   >>> # Predicated cp.async (only copy if condition is true)
+   >>> T.ptx_cp_async(
+   ...     T.tvm_access_ptr(T.type_annotation(T.uint8), A_shared.data, 0, 16, 2),
+   ...     T.tvm_access_ptr(T.type_annotation(T.uint8), B_global.data, 0, 16, 1),
+   ...     16,
+   ...     predicate=guard  # only copy if guard is true
+   ... )
 
 
 .. py:function:: ptx_cp_async_bulk(dtype, shared_ptr, shared_offset, global_ptr, global_offset, bytes, barrier_id)
