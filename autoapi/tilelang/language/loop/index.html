@@ -544,7 +544,7 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.Parallel" title="tilelang.language.loop.Parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parallel</span></code></a>(*extents[, coalesced_width])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.Parallel" title="tilelang.language.loop.Parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parallel</span></code></a>(*extents[, coalesced_width, loop_layout])</p></td>
 <td><p>Tools to construct nested parallel for loop.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.loop.Persistent" title="tilelang.language.loop.Persistent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Persistent</span></code></a>(domain, wave_size, index[, group_size])</p></td>
@@ -573,7 +573,7 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.loop.Parallel">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">extents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Parallel" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">extents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Parallel" title="Link to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Tools to construct nested parallel for loop.</dt><dd><p>This can be used to create element-wise tensor expression.</p>
 </dd>
@@ -583,6 +583,32 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>extents</strong> (<em>PrimExpr</em>) – The extents of the iteration.</p></li>
 <li><p><strong>coalesced_width</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The coalesced width of the parallel loop.</p></li>
+<li><p><strong>loop_layout</strong> (<em>to the outermost generated loop only. If you omit</em>) – A layout annotation for the parallel loop nest, expressed as a
+<code class="docutils literal notranslate"><span class="pre">T.Fragment</span></code>. When provided, it is attached as the
+<code class="docutils literal notranslate"><span class="pre">&quot;parallel_loop_layout&quot;</span></code> annotation on the outermost parallel loop.
+For a k-dimensional <code class="docutils literal notranslate"><span class="pre">T.Parallel(...)</span></code> nest, the fragment’s
+<code class="docutils literal notranslate"><span class="pre">InputDim</span></code> must equal <code class="docutils literal notranslate"><span class="pre">k</span></code>.</p></li>
+<li><p><strong>constraints</strong> (<em>Notes on layout</em>)</p></li>
+<li><p><strong>---------------------------</strong></p></li>
+<li><p><strong>during</strong> (<em>TileLang validates parallel loop layout annotations</em>)</p></li>
+<li><p><strong>ParallelLoopLayoutValidator.</strong> (<em>tl.transform.LayoutInference with</em>)</p></li>
+<li><p><strong>are</strong> (<em>The key constraints</em>)</p></li>
+<li><p><strong>after</strong> (<em>- Every parallel loop must be covered by a layout annotation</em>) – layout inference. For a nested parallel nest, this annotation must live
+on the outermost loop; inner parallel loops must not carry the layout
+annotation themselves.</p></li>
+<li><p><strong>k</strong> (<em>- For a nest depth of</em>) – <code class="docutils literal notranslate"><span class="pre">InputDim</span> <span class="pre">==</span> <span class="pre">k</span></code>.</p></li>
+<li><p><strong>satisfy</strong> (<em>the layout must</em>) – <code class="docutils literal notranslate"><span class="pre">InputDim</span> <span class="pre">==</span> <span class="pre">k</span></code>.</p></li>
+<li><p><strong>loop</strong> (<em>- Violations</em><em> (</em><em>missing annotation on the outermost</em>) – inner loops, or mismatched <code class="docutils literal notranslate"><span class="pre">InputDim</span></code>) cause a compilation error.</p></li>
+<li><p><strong>on</strong> (<em>outermost loop can manage its inner nest. Therefore the layout is placed</em>) – inner loops, or mismatched <code class="docutils literal notranslate"><span class="pre">InputDim</span></code>) cause a compilation error.</p></li>
+<li><p><strong>Rationale</strong> (<em>inner loops cannot control/annotate their outer loops</em><em>, </em><em>while the</em>)</p></li>
+<li><p><strong>on</strong></p></li>
+<li><p><strong>region.</strong> (<em>the outermost loop so lowering passes can rewrite the entire</em>)</p></li>
+<li><p><strong>easy</strong> (<em>To make this</em>)</p></li>
+<li><p><strong>loop_layout</strong></p></li>
+<li><p><strong>loop_layout</strong></p></li>
+<li><p><strong>the</strong> (<em>compiler will try to infer a valid layout and attach it during</em>)</p></li>
+<li><p><strong>the</strong></p></li>
+<li><p><strong>pass.</strong> (<em>LayoutInference</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

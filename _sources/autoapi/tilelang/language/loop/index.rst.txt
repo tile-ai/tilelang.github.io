@@ -26,7 +26,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: Parallel(*extents, coalesced_width = None)
+.. py:function:: Parallel(*extents, coalesced_width = None, loop_layout = None)
 
    Tools to construct nested parallel for loop.
       This can be used to create element-wise tensor expression.
@@ -35,6 +35,34 @@ Module Contents
    :type extents: PrimExpr
    :param coalesced_width: The coalesced width of the parallel loop.
    :type coalesced_width: Optional[int]
+   :param loop_layout: A layout annotation for the parallel loop nest, expressed as a
+                       ``T.Fragment``. When provided, it is attached as the
+                       ``"parallel_loop_layout"`` annotation on the outermost parallel loop.
+                       For a k-dimensional ``T.Parallel(...)`` nest, the fragment's
+                       ``InputDim`` must equal ``k``.
+   :type loop_layout: Optional[Fragment]
+   :param Notes on layout constraints:
+   :param ---------------------------:
+   :param TileLang validates parallel loop layout annotations during:
+   :param ``tl.transform.LayoutInference`` with ``ParallelLoopLayoutValidator``.:
+   :param The key constraints are:
+   :param - Every parallel loop must be covered by a layout annotation after: layout inference. For a nested parallel nest, this annotation must live
+                                                                              on the outermost loop; inner parallel loops must not carry the layout
+                                                                              annotation themselves.
+   :param - For a nest depth of ``k``: ``InputDim == k``.
+   :param the layout must satisfy: ``InputDim == k``.
+   :param - Violations (missing annotation on the outermost loop: inner loops, or mismatched ``InputDim``) cause a compilation error.
+   :param annotations on: inner loops, or mismatched ``InputDim``) cause a compilation error.
+   :param Rationale:
+   :type Rationale: inner loops cannot control/annotate their outer loops, while the
+   :param outermost loop can manage its inner nest. Therefore the layout is placed on:
+   :param the outermost loop so lowering passes can rewrite the entire region.:
+   :param To make this easy:
+   :param ``T.Parallel`` attaches any provided ``loop_layout``:
+   :param to the outermost generated loop only. If you omit ``loop_layout``:
+   :param the:
+   :param compiler will try to infer a valid layout and attach it during the:
+   :param LayoutInference pass.:
 
    :returns: **res** -- The ForFrame.
    :rtype: frame.ForFrame

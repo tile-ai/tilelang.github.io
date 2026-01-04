@@ -544,7 +544,7 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.copy" title="tilelang.language.copy_op.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>(src, dst[, coalesced_width, disable_tma, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.copy" title="tilelang.language.copy_op.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>(src, dst, *[, coalesced_width, disable_tma, ...])</p></td>
 <td><p>Copy data between memory regions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
@@ -558,19 +558,22 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.copy_op.copy">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_tma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.copy" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_tma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.copy" title="Link to this definition">¶</a></dt>
 <dd><p>Copy data between memory regions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>src</strong> (<em>Union</em><em>[</em><em>tir.Buffer</em><em>, </em><em>tir.BufferLoad</em><em>, </em><em>tir.BufferRegion</em><em>]</em>) – Source memory region</p></li>
 <li><p><strong>dst</strong> (<em>Union</em><em>[</em><em>tir.Buffer</em><em>, </em><em>tir.BufferLoad</em><em>, </em><em>tir.BufferRegion</em><em>]</em>) – Destination memory region</p></li>
-<li><p><strong>coalesced_width</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Width for coalesced memory access. Defaults to None.</p></li>
-<li><p><strong>disable_tma</strong> (<a class="reference internal" href="../v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to disable TMA acceleration. Defaults to False.</p></li>
-<li><p><strong>eviction_policy</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Cache eviction policy. Defaults to None.</p></li>
-<li><p><strong>annotations</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em><em>, </em><em>optional</em>) – Additional annotations dict. If provided,
+<li><p><strong>coalesced_width</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>keyword-only</em>) – Width for coalesced memory access. Defaults to None.</p></li>
+<li><p><strong>disable_tma</strong> (<a class="reference internal" href="../v2/dtypes/index.html#tilelang.language.v2.dtypes.bool" title="tilelang.language.v2.dtypes.bool"><em>bool</em></a><em>, </em><em>keyword-only</em>) – Whether to disable TMA acceleration. Defaults to False.</p></li>
+<li><p><strong>eviction_policy</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>keyword-only</em>) – Cache eviction policy. Defaults to None.</p></li>
+<li><p><strong>annotations</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em><em>, </em><em>keyword-only</em>) – Additional annotations dict. If provided,
 coalesced_width, disable_tma, and eviction_policy can also be specified here.
 Values in annotations take precedence over individual arguments.</p></li>
+<li><p><strong>loop_layout</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../../layout/fragment/index.html#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment"><em>Fragment</em></a><em>]</em><em>, </em><em>keyword-only</em>) – A parallel loop layout hint for the SIMT copy
+(only valid for normal SIMT copy; incompatible with TMA/LDSM/STSM/TMem). When provided,
+it is attached to the outermost parallel loop generated by this copy.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
