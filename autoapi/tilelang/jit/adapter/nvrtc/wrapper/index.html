@@ -408,6 +408,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../../language/loop/index.html">tilelang.language.loop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../language/math_intrinsics/index.html">tilelang.language.math_intrinsics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../language/overrides/index.html">tilelang.language.overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../language/pdl/index.html">tilelang.language.pdl</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../language/print_op/index.html">tilelang.language.print_op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../language/proxy/index.html">tilelang.language.proxy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../language/random/index.html">tilelang.language.random</a></li>
@@ -571,7 +572,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_RESET_HANDLE_PY" title="tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_RESET_HANDLE_PY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">L2_PERSISTENT_MAP_RESET_HANDLE_PY</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.KERNEL_LAUNCH_FUNC_PY" title="tilelang.jit.adapter.nvrtc.wrapper.KERNEL_LAUNCH_FUNC_PY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KERNEL_LAUNCH_FUNC_PY</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.PDL_SYNC_PY" title="tilelang.jit.adapter.nvrtc.wrapper.PDL_SYNC_PY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PDL_SYNC_PY</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.KERNEL_LAUNCH_FUNC_PY" title="tilelang.jit.adapter.nvrtc.wrapper.KERNEL_LAUNCH_FUNC_PY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KERNEL_LAUNCH_FUNC_PY</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -613,6 +617,8 @@
 <span class="sd">    cuuint64_t,</span>
 <span class="sd">    cuuint32_t,</span>
 <span class="sd">    CUkernel,</span>
+<span class="sd">    CUlaunchAttribute,</span>
+<span class="sd">    CUlaunchAttributeID,</span>
 <span class="sd">)</span>
 <span class="sd">import ctypes</span>
 
@@ -774,6 +780,22 @@
 </details></dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.nvrtc.wrapper.PDL_SYNC_PY">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.nvrtc.wrapper.</span></span><span class="sig-name descname"><span class="pre">PDL_SYNC_PY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.nvrtc.wrapper.PDL_SYNC_PY" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    num_attrs = 1</span>
+<span class="sd">    attrs = [CUlaunchAttribute()]</span>
+<span class="sd">    attrs[0].id = CUlaunchAttributeID.CU_LAUNCH_ATTRIBUTE_PROGRAMMATIC_STREAM_SERIALIZATION</span>
+<span class="sd">    attrs[0].value.programmaticStreamSerializationAllowed = 1</span>
+
+<span class="sd">    config.numAttrs = num_attrs</span>
+<span class="sd">    config.attrs = attrs</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.nvrtc.wrapper.KERNEL_LAUNCH_FUNC_PY">
 <span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.nvrtc.wrapper.</span></span><span class="sig-name descname"><span class="pre">KERNEL_LAUNCH_FUNC_PY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.nvrtc.wrapper.KERNEL_LAUNCH_FUNC_PY" title="Link to this definition">¶</a></dt>
 <dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
@@ -795,6 +817,7 @@
 <span class="sd">    config.blockDimZ = {6}</span>
 <span class="sd">    config.sharedMemBytes = {7}</span>
 <span class="sd">    config.hStream = stream</span>
+<span class="sd">    {11}</span>
 
 <span class="sd">    arg_values = {8}</span>
 <span class="sd">    arg_types = {9}</span>
@@ -891,6 +914,20 @@ string if no L2 persistence configured for this kernel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper.generate_pdl_sync_code">
+<span class="sig-name descname"><span class="pre">generate_pdl_sync_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper.generate_pdl_sync_code" title="Link to this definition">¶</a></dt>
+<dd><p>Generate Python code to insert PDL synchronization for a given kernel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>function_name</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1022,11 +1059,13 @@ Default to 0 (NULL stream) for convenience.</p>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_CREATE_HANDLE_PY"><code class="docutils literal notranslate"><span class="pre">L2_PERSISTENT_MAP_CREATE_HANDLE_PY</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_INIT_FUNC_PY"><code class="docutils literal notranslate"><span class="pre">L2_PERSISTENT_MAP_INIT_FUNC_PY</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_RESET_HANDLE_PY"><code class="docutils literal notranslate"><span class="pre">L2_PERSISTENT_MAP_RESET_HANDLE_PY</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.PDL_SYNC_PY"><code class="docutils literal notranslate"><span class="pre">PDL_SYNC_PY</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.KERNEL_LAUNCH_FUNC_PY"><code class="docutils literal notranslate"><span class="pre">KERNEL_LAUNCH_FUNC_PY</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper"><code class="docutils literal notranslate"><span class="pre">TLNVRTCSourceWrapper</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper.host_func"><code class="docutils literal notranslate"><span class="pre">TLNVRTCSourceWrapper.host_func</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper.create_dispatch_func"><code class="docutils literal notranslate"><span class="pre">TLNVRTCSourceWrapper.create_dispatch_func()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper.generate_l2_persistent_map"><code class="docutils literal notranslate"><span class="pre">TLNVRTCSourceWrapper.generate_l2_persistent_map()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper.generate_pdl_sync_code"><code class="docutils literal notranslate"><span class="pre">TLNVRTCSourceWrapper.generate_pdl_sync_code()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper.generate_tma_descriptor_args"><code class="docutils literal notranslate"><span class="pre">TLNVRTCSourceWrapper.generate_tma_descriptor_args()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper.update_lib_code"><code class="docutils literal notranslate"><span class="pre">TLNVRTCSourceWrapper.update_lib_code()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.nvrtc.wrapper.TLNVRTCSourceWrapper.get_stream_type"><code class="docutils literal notranslate"><span class="pre">TLNVRTCSourceWrapper.get_stream_type()</span></code></a></li>

@@ -18,6 +18,7 @@ Attributes
    tilelang.jit.adapter.wrapper.L2_PERSISTENT_MAP_RESET_HANDLE
    tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC
    tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC
+   tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_CODE
    tilelang.jit.adapter.wrapper.logger
 
 
@@ -288,6 +289,37 @@ Module Contents
 
 
 
+.. py:data:: KERNEL_LAUNCH_FUNC_CODE
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      	{{
+      		cudaLaunchConfig_t config;
+      		cudaLaunchAttribute attribute[1];
+      		attribute[0].id = cudaLaunchAttributeProgrammaticStreamSerialization;
+      		attribute[0].val.programmaticStreamSerializationAllowed = 1;
+      		config.attrs = attribute;
+      		config.numAttrs = 1;
+      		config.stream = stream;
+      		config.gridDim = {0};
+      		config.blockDim = {1};
+      		config.dynamicSmemBytes = {2};
+      		cudaLaunchKernelEx(&config, {4}, {3});
+      	}}
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
 .. py:class:: BaseWrapper
 
    Bases: :py:obj:`abc.ABC`
@@ -370,6 +402,10 @@ Module Contents
 
    .. py:attribute:: l2_persistent_map
       :type:  dict[str, dict] | None
+
+
+   .. py:attribute:: pdl_sync_map
+      :type:  dict[str, int] | None
 
 
    .. py:attribute:: srcpath

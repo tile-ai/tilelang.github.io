@@ -408,6 +408,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../language/loop/index.html">tilelang.language.loop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/math_intrinsics/index.html">tilelang.language.math_intrinsics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/overrides/index.html">tilelang.language.overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../language/pdl/index.html">tilelang.language.pdl</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/print_op/index.html">tilelang.language.print_op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/proxy/index.html">tilelang.language.proxy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/random/index.html">tilelang.language.random</a></li>
@@ -570,7 +571,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC" title="tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TMA_IM2COL_DESC_INIT_FUNC</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.logger" title="tilelang.jit.adapter.wrapper.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_CODE" title="tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_CODE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KERNEL_LAUNCH_FUNC_CODE</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.logger" title="tilelang.jit.adapter.wrapper.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -778,6 +782,28 @@
 </div>
 </details></dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_CODE">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">KERNEL_LAUNCH_FUNC_CODE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_CODE" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  {{</span>
+<span class="sd">          cudaLaunchConfig_t config;</span>
+<span class="sd">          cudaLaunchAttribute attribute[1];</span>
+<span class="sd">          attribute[0].id = cudaLaunchAttributeProgrammaticStreamSerialization;</span>
+<span class="sd">          attribute[0].val.programmaticStreamSerializationAllowed = 1;</span>
+<span class="sd">          config.attrs = attribute;</span>
+<span class="sd">          config.numAttrs = 1;</span>
+<span class="sd">          config.stream = stream;</span>
+<span class="sd">          config.gridDim = {0};</span>
+<span class="sd">          config.blockDim = {1};</span>
+<span class="sd">          config.dynamicSmemBytes = {2};</span>
+<span class="sd">          cudaLaunchKernelEx(&amp;config, {4}, {3});</span>
+<span class="sd">  }}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.BaseWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">BaseWrapper</span></span><a class="headerlink" href="#tilelang.jit.adapter.wrapper.BaseWrapper" title="Link to this definition">¶</a></dt>
@@ -874,6 +900,11 @@ inheritance.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.l2_persistent_map">
 <span class="sig-name descname"><span class="pre">l2_persistent_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.l2_persistent_map" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.pdl_sync_map">
+<span class="sig-name descname"><span class="pre">pdl_sync_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.pdl_sync_map" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1409,6 +1440,7 @@ inheritance.</p>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.L2_PERSISTENT_MAP_RESET_HANDLE"><code class="docutils literal notranslate"><span class="pre">L2_PERSISTENT_MAP_RESET_HANDLE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC"><code class="docutils literal notranslate"><span class="pre">TMA_DESC_INIT_FUNC</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC"><code class="docutils literal notranslate"><span class="pre">TMA_IM2COL_DESC_INIT_FUNC</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_CODE"><code class="docutils literal notranslate"><span class="pre">KERNEL_LAUNCH_FUNC_CODE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.BaseWrapper"><code class="docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.BaseWrapper.wrap"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.wrap()</span></code></a></li>
 </ul>
@@ -1428,6 +1460,7 @@ inheritance.</p>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.grid_info"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.grid_info</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.tma_descriptor_args"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.tma_descriptor_args</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.l2_persistent_map"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.l2_persistent_map</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.pdl_sync_map"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.pdl_sync_map</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.srcpath"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.srcpath</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.libpath"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.libpath</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TLCUDASourceWrapper.lib_code"><code class="docutils literal notranslate"><span class="pre">TLCUDASourceWrapper.lib_code</span></code></a></li>

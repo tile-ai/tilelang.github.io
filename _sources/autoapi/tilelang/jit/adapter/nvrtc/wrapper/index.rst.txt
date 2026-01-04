@@ -32,6 +32,7 @@ Attributes
    tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_CREATE_HANDLE_PY
    tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_INIT_FUNC_PY
    tilelang.jit.adapter.nvrtc.wrapper.L2_PERSISTENT_MAP_RESET_HANDLE_PY
+   tilelang.jit.adapter.nvrtc.wrapper.PDL_SYNC_PY
    tilelang.jit.adapter.nvrtc.wrapper.KERNEL_LAUNCH_FUNC_PY
 
 
@@ -73,6 +74,8 @@ Module Contents
           cuuint64_t,
           cuuint32_t,
           CUkernel,
+          CUlaunchAttribute,
+          CUlaunchAttributeID,
       )
       import ctypes
       
@@ -281,6 +284,31 @@ Module Contents
 
 
 
+.. py:data:: PDL_SYNC_PY
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+          num_attrs = 1
+          attrs = [CUlaunchAttribute()]
+          attrs[0].id = CUlaunchAttributeID.CU_LAUNCH_ATTRIBUTE_PROGRAMMATIC_STREAM_SERIALIZATION
+          attrs[0].value.programmaticStreamSerializationAllowed = 1
+      
+          config.numAttrs = num_attrs
+          config.attrs = attrs
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
 .. py:data:: KERNEL_LAUNCH_FUNC_PY
    :value: Multiline-String
 
@@ -309,6 +337,7 @@ Module Contents
           config.blockDimZ = {6}
           config.sharedMemBytes = {7}
           config.hStream = stream
+          {11}
       
           arg_values = {8}
           arg_types = {9}
@@ -385,6 +414,12 @@ Module Contents
 
       :returns: Python code that sets stream access policy window, or empty
                 string if no L2 persistence configured for this kernel.
+
+
+
+   .. py:method:: generate_pdl_sync_code(function_name)
+
+      Generate Python code to insert PDL synchronization for a given kernel.
 
 
 
