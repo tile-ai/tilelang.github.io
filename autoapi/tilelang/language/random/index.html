@@ -544,11 +544,14 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.random.rng_init" title="tilelang.language.random.rng_init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rng_init</span></code></a>(seed[, seq, off])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.random.rng_init" title="tilelang.language.random.rng_init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rng_init</span></code></a>(seed[, seq, off, generator])</p></td>
 <td><p>Initialize CUDA curand random number generator state</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.random.rng_rand" title="tilelang.language.random.rng_rand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rng_rand</span></code></a>()</p></td>
 <td><p>Generate a 32-bit unsigned random integer</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.random.rng_rand_float" title="tilelang.language.random.rng_rand_float"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rng_rand_float</span></code></a>([bit, dist])</p></td>
+<td><p>Generate a random float</p></td>
 </tr>
 </tbody>
 </table>
@@ -558,7 +561,7 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.random.rng_init">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.random.</span></span><span class="sig-name descname"><span class="pre">rng_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">off</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.random.rng_init" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.random.</span></span><span class="sig-name descname"><span class="pre">rng_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">off</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'curandStatePhilox4_32_10_t'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.random.rng_init" title="Link to this definition">¶</a></dt>
 <dd><p>Initialize CUDA curand random number generator state</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -566,6 +569,8 @@
 <li><p><strong>seed</strong> (<em>PrimExpr</em>) – Random seed value.</p></li>
 <li><p><strong>seq</strong> (<em>PrimExpr</em>) – Sequence number for parallel random number generation.</p></li>
 <li><p><strong>off</strong> (<em>PrimExpr</em>) – Offset number for parallel random number generation.</p></li>
+<li><p><strong>generator</strong> (<em>StringImm</em>) – Set random generator.
+See <a class="reference external" href="https://docs.nvidia.com/cuda/curand/group__DEVICE.html">https://docs.nvidia.com/cuda/curand/group__DEVICE.html</a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -587,6 +592,26 @@
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.random.rng_rand_float">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.random.</span></span><span class="sig-name descname"><span class="pre">rng_rand_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.random.rng_rand_float" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a random float</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bit</strong> (<em>int =</em><em> [</em><em>32</em><em>, </em><em>64</em><em>]</em>) – Bitwidth of random float.</p></li>
+<li><p><strong>dist</strong> (<em>StringImm =</em><em> [</em><em>&quot;uniform&quot;</em><em>, </em><em>&quot;normal&quot;</em><em>]</em>) – Random distribution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>random_value</strong> – A random float.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -654,6 +679,7 @@
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.language.random.rng_init"><code class="docutils literal notranslate"><span class="pre">rng_init()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.random.rng_rand"><code class="docutils literal notranslate"><span class="pre">rng_rand()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.random.rng_rand_float"><code class="docutils literal notranslate"><span class="pre">rng_rand_float()</span></code></a></li>
 </ul>
 </li>
 </ul>

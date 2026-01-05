@@ -11,12 +11,13 @@ Functions
 
    tilelang.language.random.rng_init
    tilelang.language.random.rng_rand
+   tilelang.language.random.rng_rand_float
 
 
 Module Contents
 ---------------
 
-.. py:function:: rng_init(seed, seq=None, off=0)
+.. py:function:: rng_init(seed, seq=None, off=0, generator='curandStatePhilox4_32_10_t')
 
    Initialize CUDA curand random number generator state
 
@@ -26,6 +27,9 @@ Module Contents
    :type seq: PrimExpr
    :param off: Offset number for parallel random number generation.
    :type off: PrimExpr
+   :param generator: Set random generator.
+                     See https://docs.nvidia.com/cuda/curand/group__DEVICE.html
+   :type generator: StringImm
 
    :returns: **state** -- The random number generator state handle.
    :rtype: PrimExpr
@@ -36,6 +40,19 @@ Module Contents
    Generate a 32-bit unsigned random integer
 
    :returns: **random_value** -- A 32-bit unsigned random integer.
+   :rtype: PrimExpr
+
+
+.. py:function:: rng_rand_float(bit=32, dist='uniform')
+
+   Generate a random float
+
+   :param bit: Bitwidth of random float.
+   :type bit: int = [32, 64]
+   :param dist: Random distribution.
+   :type dist: StringImm = ["uniform", "normal"]
+
+   :returns: **random_value** -- A random float.
    :rtype: PrimExpr
 
 
