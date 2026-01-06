@@ -644,6 +644,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_threads" title="tilelang.language.builtin.sync_threads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_threads</span></code></a>([barrier_id, arrive_count])</p></td>
 <td><p>Synchronize all threads in a block.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_warp" title="tilelang.language.builtin.sync_warp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_warp</span></code></a>([mask])</p></td>
+<td><p>Synchronize all threads in a warp.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_sync" title="tilelang.language.builtin.shfl_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_sync</span></code></a>(mask, value, srcLane[, width])</p></td>
+<td><p>Receives data from a thread in the same warp.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_global" title="tilelang.language.builtin.sync_global"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_global</span></code></a>()</p></td>
 <td><p>Synchronize all threads in the entire grid.</p></td>
 </tr>
@@ -1299,6 +1305,33 @@ The value to shuffle</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.sync_warp">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">sync_warp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.sync_warp" title="Link to this definition">¶</a></dt>
+<dd><p>Synchronize all threads in a warp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mask</strong> (<em>int</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.shfl_sync">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">srcLane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_sync" title="Link to this definition">¶</a></dt>
+<dd><p>Receives data from a thread in the same warp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>int</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>srcLane</strong> (<em>int</em>)</p></li>
+<li><p><strong>width</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.sync_global">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">sync_global</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.sync_global" title="Link to this definition">¶</a></dt>
 <dd><p>Synchronize all threads in the entire grid.</p>
@@ -1544,6 +1577,8 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <li><a class="reference internal" href="#tilelang.language.builtin.shfl_down"><code class="docutils literal notranslate"><span class="pre">shfl_down()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.shfl_up"><code class="docutils literal notranslate"><span class="pre">shfl_up()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.sync_threads"><code class="docutils literal notranslate"><span class="pre">sync_threads()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.sync_warp"><code class="docutils literal notranslate"><span class="pre">sync_warp()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.shfl_sync"><code class="docutils literal notranslate"><span class="pre">shfl_sync()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.sync_global"><code class="docutils literal notranslate"><span class="pre">sync_global()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.sync_grid"><code class="docutils literal notranslate"><span class="pre">sync_grid()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.initialize_wgmma_descriptor"><code class="docutils literal notranslate"><span class="pre">initialize_wgmma_descriptor()</span></code></a></li>
