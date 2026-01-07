@@ -569,7 +569,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator" title="tilelang.language.v2.ast.DSLMutator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DSLMutator</span></code></a></p></td>
 <td><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">NodeVisitor</span></code> subclass that walks the abstract syntax tree and</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.ast.IRGenerator" title="tilelang.language.v2.ast.IRGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IRGenerator</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.v2.ast.SpanAttacher" title="tilelang.language.v2.ast.SpanAttacher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpanAttacher</span></code></a></p></td>
+<td><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">NodeVisitor</span></code> subclass that walks the abstract syntax tree and</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.v2.ast.IRGenerator" title="tilelang.language.v2.ast.IRGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IRGenerator</span></code></a></p></td>
 <td><p>Abstract base class for generic types.</p></td>
 </tr>
 </tbody>
@@ -1157,7 +1160,7 @@ just a single node.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.language.v2.ast.DSLMutator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.ast.</span></span><span class="sig-name descname"><span class="pre">DSLMutator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nonlocals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">globals</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.ast.DSLMutator" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.ast.</span></span><span class="sig-name descname"><span class="pre">DSLMutator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nonlocals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">globals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.ast.DSLMutator" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">ast.NodeTransformer</span></code></p>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">NodeVisitor</span></code> subclass that walks the abstract syntax tree and
 allows modification of nodes.</p>
@@ -1193,6 +1196,7 @@ just a single node.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nonlocals</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
 <li><p><strong>globals</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1214,6 +1218,11 @@ just a single node.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.v2.ast.DSLMutator.extra_type_hints">
 <span class="sig-name descname"><span class="pre">extra_type_hints</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.v2.ast.DSLMutator.extra_type_hints" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.ast.DSLMutator.filename">
+<span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#tilelang.language.v2.ast.DSLMutator.filename" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1409,6 +1418,70 @@ just a single node.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.Name</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.v2.ast.SpanAttacher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.v2.ast.</span></span><span class="sig-name descname"><span class="pre">SpanAttacher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.ast.SpanAttacher" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">ast.NodeTransformer</span></code></p>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">NodeVisitor</span></code> subclass that walks the abstract syntax tree and
+allows modification of nodes.</p>
+<p>The <cite>NodeTransformer</cite> will walk the AST and use the return value of the
+visitor methods to replace or remove the old node.  If the return value of
+the visitor method is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the node will be removed from its location,
+otherwise it is replaced with the return value.  The return value may be the
+original node in which case no replacement takes place.</p>
+<p>Here is an example transformer that rewrites all occurrences of name lookups
+(<code class="docutils literal notranslate"><span class="pre">foo</span></code>) to <code class="docutils literal notranslate"><span class="pre">data['foo']</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">RewriteName</span><span class="p">(</span><span class="n">NodeTransformer</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">visit_Name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Subscript</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">Name</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">Load</span><span class="p">()),</span>
+            <span class="nb">slice</span><span class="o">=</span><span class="n">Constant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+            <span class="n">ctx</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">ctx</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>Keep in mind that if the node you’re operating on has child nodes you must
+either transform the child nodes yourself or call the <code class="xref py py-meth docutils literal notranslate"><span class="pre">generic_visit()</span></code>
+method for the node first.</p>
+<p>For nodes that were part of a collection of statements (that applies to all
+statement nodes), the visitor may also return a list of nodes rather than
+just a single node.</p>
+<p>Usually you use the transformer like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">node</span> <span class="o">=</span> <span class="n">YourTransformer</span><span class="p">()</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename_var</strong> (<em>str</em>)</p></li>
+<li><p><strong>func_name_var</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.ast.SpanAttacher.filename_var">
+<span class="sig-name descname"><span class="pre">filename_var</span></span><a class="headerlink" href="#tilelang.language.v2.ast.SpanAttacher.filename_var" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.v2.ast.SpanAttacher.func_name_var">
+<span class="sig-name descname"><span class="pre">func_name_var</span></span><a class="headerlink" href="#tilelang.language.v2.ast.SpanAttacher.func_name_var" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.v2.ast.SpanAttacher.visit">
+<span class="sig-name descname"><span class="pre">visit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.v2.ast.SpanAttacher.visit" title="Link to this definition">¶</a></dt>
+<dd><p>Visit a node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>ast.AST</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1615,6 +1688,7 @@ _T (return type).</p>
 <li><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator.nonlocals"><code class="docutils literal notranslate"><span class="pre">DSLMutator.nonlocals</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator.globals"><code class="docutils literal notranslate"><span class="pre">DSLMutator.globals</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator.extra_type_hints"><code class="docutils literal notranslate"><span class="pre">DSLMutator.extra_type_hints</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator.filename"><code class="docutils literal notranslate"><span class="pre">DSLMutator.filename</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator.get_tmp"><code class="docutils literal notranslate"><span class="pre">DSLMutator.get_tmp()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator.visit_If"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_If()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator.visit_Expr"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_Expr()</span></code></a></li>
@@ -1634,6 +1708,12 @@ _T (return type).</p>
 <li><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator.visit_With"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_With()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator.visit_Assert"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_Assert()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.v2.ast.DSLMutator.visit_Name"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_Name()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.language.v2.ast.SpanAttacher"><code class="docutils literal notranslate"><span class="pre">SpanAttacher</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.v2.ast.SpanAttacher.filename_var"><code class="docutils literal notranslate"><span class="pre">SpanAttacher.filename_var</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.ast.SpanAttacher.func_name_var"><code class="docutils literal notranslate"><span class="pre">SpanAttacher.func_name_var</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.v2.ast.SpanAttacher.visit"><code class="docutils literal notranslate"><span class="pre">SpanAttacher.visit()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.language.v2.ast.IRGenerator"><code class="docutils literal notranslate"><span class="pre">IRGenerator</span></code></a><ul>
