@@ -1,0 +1,60 @@
+tilelang.transform.hoist_broadcast_values
+=========================================
+
+.. py:module:: tilelang.transform.hoist_broadcast_values
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.transform.hoist_broadcast_values.HoistBroadcastValuesMutator
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.transform.hoist_broadcast_values.HoistBroadcastValues
+
+
+Module Contents
+---------------
+
+.. py:class:: HoistBroadcastValuesMutator
+
+   Bases: :py:obj:`tvm.tir.PyStmtExprMutator`
+
+
+   .. py:attribute:: pending_defs
+      :value: []
+
+
+
+   .. py:method:: visit_broadcast_(op)
+
+
+   .. py:method:: visit_buffer_store_(op)
+
+
+.. py:function:: HoistBroadcastValues()
+
+   TVM Pass: HoistBroadcastValues.
+
+   This pass scans the TIR for Broadcast operations involving immediate constants (IntImm, FloatImm).
+   It extracts these constants into variables defined via LetStmt immediately surrounding
+   the statement where the broadcast occurs.
+
+   Example Transformation:
+   -----------------------
+   Before:
+       A[i] = B[i] + T.Broadcast(3.14, 4) + T.Broadcast(3.14, 4)
+
+   After:
+       bv_3_14 = 3.14
+       bv_3_14_1 = 3.14
+       A[i] = B[i] + T.Broadcast(bv_3_14, 4) + T.Broadcast(bv_3_14_1, 4)
+
+
