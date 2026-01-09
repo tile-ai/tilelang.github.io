@@ -1,0 +1,46 @@
+tilelang.jit.exceptions
+=======================
+
+.. py:module:: tilelang.jit.exceptions
+
+.. autoapi-nested-parse::
+
+   Custom exceptions for TileLang JIT compilation.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   tilelang.jit.exceptions.JITNoBuilderError
+   tilelang.jit.exceptions.EagerJITBuildError
+
+
+Module Contents
+---------------
+
+.. py:exception:: JITNoBuilderError
+
+   Bases: :py:obj:`Exception`
+
+
+   Exception raised when JIT-related operations require a Builder but none exists.
+
+   In eager mode, TileLang constructs AST directly without an explicit prim_func,
+   so there must be a Builder available. This error is raised when eager-only
+   features like T.const() or T.Kernel() are called outside of a JIT/prim_func context.
+
+
+.. py:exception:: EagerJITBuildError
+
+   Bases: :py:obj:`Exception`
+
+
+   Exception raised for errors when building TileLang eager JIT kernels.
+
+   This error indicates that something went wrong during the eager-style
+   kernel construction process.
+
+

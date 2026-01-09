@@ -19,6 +19,7 @@ Submodules
 
    /autoapi/tilelang/jit/adapter/index
    /autoapi/tilelang/jit/env/index
+   /autoapi/tilelang/jit/exceptions/index
    /autoapi/tilelang/jit/execution_backend/index
    /autoapi/tilelang/jit/kernel/index
    /autoapi/tilelang/jit/param/index
@@ -49,7 +50,6 @@ Functions
    tilelang.jit.compile
    tilelang.jit.par_compile
    tilelang.jit.jit
-   tilelang.jit.lazy_jit
 
 
 Package Contents
@@ -126,126 +126,120 @@ Package Contents
    Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_KP`\ , :py:obj:`_T`\ , :py:obj:`_Ret`\ ]
 
 
-   Detailed Just-In-Time wrapper for TileLang programs.
+   Just-In-Time compilation wrapper for TileLang programs.
 
-   This dataclass encapsulates the configuration and runtime helpers used by the
-   top-level `jit` and `jit2` decorators. It represents a configured JIT
-   "factory" that can (a) elaborate TileLang/PrimFunc creators into concrete
-   TIR (PrimFunc), (b) compile those TIR functions into runnable kernels via
-   the TVM bridge, (c) cache compiled kernels keyed by call-site arguments
-   (and optional tuning parameters), and (d) provide parallel compilation
-   helpers for batch autotuning workflows.
+   This class provides a unified interface for compiling and executing TileLang
+   kernels. It supports two execution modes that are automatically inferred:
+
+   Execution Modes
+   ---------------
+   - **lazy**: The decorated function returns a PrimFunc explicitly. Calling the
+     JIT wrapper returns a compiled kernel object, which can be invoked separately.
+     This mode is useful when you want to inspect or reuse the kernel object.
+
+     Example (lazy mode)::
+
+         @tilelang.jit(out_idx=[-1])
+         def matmul(M, N, K, block_M, block_N, block_K):
+             @T.prim_func
+             def kernel(A: T.Tensor((M, K), dtype), ...):
+                 ...
+             return kernel  # explicitly return PrimFunc
+
+         kernel = matmul(1024, 1024, 1024, 128, 128, 32)  # returns kernel
+         result = kernel(a, b)  # execute separately
+
+   - **eager**: The decorated function uses the DSL builder pattern with tensor
+     type annotations. Calling the JIT wrapper compiles and immediately executes
+     the kernel, returning the result directly.
+
+     Example (eager mode)::
+
+         @tilelang.jit
+         def gemm(A, B, C, block_M: int = 64):
+             M, N, K = T.const("M N K")
+             A: T.Tensor[[M, K], dtype]  # tensor shape via annotation
+             B: T.Tensor[[K, N], dtype]
+             C: T.Tensor[[M, N], dtype]
+             with T.Kernel(...):
+                 ...
+
+         gemm(A, B, C)  # compiles and executes immediately
+
+   The mode is automatically inferred based on whether the function returns a
+   PrimFunc (lazy) or uses the builder pattern (eager).
 
    .. attribute:: out_idx
 
-      Which output tensor(s) of the compiled kernel should be returned to the
-      caller. Accepts a single index, a list of indices, or None to return all.
+      Index(es) of output tensor(s) to return (lazy mode only).
 
       :type: list[int] | int | None
 
    .. attribute:: execution_backend
 
-      Backend used for exchanging arguments and executing the generated kernel.
+      Backend for kernel execution ("auto", "dlpack", "tvm_ffi", etc.).
 
-      :type: Literal["auto", "dlpack", "tvm_ffi", "cython", "nvrtc", "torch", "cutedsl"]
+      :type: str | None
 
    .. attribute:: target
 
-      TVM compilation target (e.g. "cuda", "llvm", or "auto").
+      TVM compilation target (e.g., "cuda", "llvm", "auto").
 
-      :type: str | tvm.target.Target
+      :type: str | Target | None
 
    .. attribute:: target_host
 
-      Host target used for cross-compilation, or None to infer/default.
+      Host target for cross-compilation.
 
-      :type: str | tvm.target.Target | None
+      :type: str | Target | None
 
    .. attribute:: verbose
 
-      Enable verbose messages during compilation/build.
+      Enable verbose compilation output.
 
-      :type: bool
+      :type: bool | None
 
    .. attribute:: pass_configs
 
-      Extra TVM pass configuration options forwarded to the compiler's
-      PassContext.
+      TVM pass configuration options.
 
       :type: dict[str, Any] | None
 
    .. attribute:: debug_root_path
 
-      If provided, compiled kernel source and the elaborated Python program
-      are written to this directory to ease debugging and inspection.
+      Directory to save compiled kernel source for debugging.
 
       :type: str | None
 
    .. attribute:: compile_flags
 
-      Additional flags passed to the compiler. A single string will be converted
-      to a single-element list.
+      Additional compiler flags.
 
       :type: list[str] | str | None
 
    .. attribute:: func_source
 
-      Original Python source string from which the PrimFunc or creator was
-      derived. Used for diagnostics and debug dumps.
+      Original Python source code of the decorated function.
 
       :type: str
 
    .. attribute:: signature
 
-      Function signature of the original Python function (useful for tooling).
+      Function signature of the original function.
 
       :type: inspect.Signature
 
-   .. attribute:: v2
+   .. attribute:: mode
 
-      Indicates whether the object wraps a "v2" PrimFunc creator (True) or a
-      plain callable / PrimFunc (False). v2-mode enables argument conversion
-      hooks and a distinct cache keying strategy.
+      Execution mode. "auto" infers from function behavior.
 
-      :type: bool
+      :type: Literal["auto", "lazy", "eager"]
 
    .. attribute:: func
 
-      The underlying object: either a user function that returns a PrimFunc
-      (creator), a PrimFuncCreater, or an already-constructed PrimFunc.
-      For presentation/readability the function is stored last in the dataclass.
+      The wrapped function object.
 
-      :type: Callable | PrimFunc | PrimFuncCreater
-
-   .. attribute:: Behavioral summary
-
-
-
-   .. attribute:: ------------------
-
-
-
-   .. attribute:: - get_tir(*args, \*\*kwargs)
-
-      Converts provided call-site arguments into a concrete PrimFunc. If the
-      wrapped object is a PrimFuncCreater or a user callable, it is invoked
-      with the given arguments. If the wrapped object is already a PrimFunc,
-      it is returned as-is.
-
-   .. attribute:: - compile(...)
-
-      A convenience wrapper that elaborates and immediately compiles a single
-      PrimFunc into a JITKernel using the module-level `compile` function.
-      When `debug_root_path` is set, the compiled C kernel and the source
-      Python program are saved for inspection.
-
-   .. attribute:: - par_compile(configs, ...)
-
-      Accepts an iterable of configs (either dicts mapping keyword args or
-      tuples mapping to positional args). Each config is elaborated to a
-      PrimFunc and the resulting set is compiled in parallel via the
-      module-level `par_compile` helper. Returns a list of JITKernel objects
-      in the same order as the provided configs.
+      :type: JITFunc
 
 
    .. py:attribute:: out_idx
@@ -288,12 +282,12 @@ Package Contents
       :type:  inspect.Signature
 
 
-   .. py:attribute:: lazy_jit
-      :type:  bool
+   .. py:attribute:: mode
+      :type:  Literal['auto', 'lazy', 'eager']
 
 
    .. py:attribute:: func
-      :type:  Callable[_P, _T] | tilelang.language.v2.PrimFunc[_KP, _T] | tilelang.language.v2.LazyJITFunc[_KP, _T]
+      :type:  tilelang.language.eager.JITFunc[_KP, _T]
 
 
    .. py:method:: __post_init__()
@@ -303,6 +297,9 @@ Package Contents
 
       Retrieve a TIR (Tensor Intermediate Representation) PrimFunc from the stored callable or object.
 
+
+
+   .. py:method:: initialize_jit_mode(*args, **kwargs)
 
 
    .. py:method:: par_compile(configs, num_workers = None, ignore_error = False)
@@ -336,53 +333,30 @@ Package Contents
 
 .. py:data:: ExecutionBackend
 
-.. py:function:: jit(func: Callable[_P, tilelang.language.v2.PrimFunc[_KP, _T]]) -> JITImpl[_P, _KP, _T, kernel.JITKernel[_KP, _T]]
-                 jit(*, out_idx: Any = None, target: str | tvm.target.Target | None = None, target_host: str | tvm.target.Target | None = None, execution_backend: ExecutionBackend | None = None, verbose: bool | None = None, pass_configs: dict[str, Any] | None = None, debug_root_path: str | None = None, compile_flags: list[str] | str | None = None) -> Callable[[Callable[_P, tilelang.language.v2.PrimFunc[_KP, _T]]], JITImpl[_P, _KP, _T, kernel.JITKernel[_KP, _T]]]
+.. py:function:: jit(func: Callable[_KP, _T]) -> JITImpl[_KP, _KP, _T, _T]
+                 jit(*, out_idx: Any = None, target: str | tvm.target.Target | None = None, target_host: str | tvm.target.Target | None = None, execution_backend: ExecutionBackend | None = None, verbose: bool | None = None, pass_configs: dict[str, Any] | None = None, debug_root_path: str | None = None, compile_flags: list[str] | str | None = None) -> Callable[[Callable[_KP, _T]], JITImpl[_KP, _KP, _T, _T]]
 
-   Just-In-Time (JIT) compiler decorator for TileLang functions.
+   JIT compiler decorator for TileLang functions.
 
-   This decorator can be used without arguments (e.g., `@tilelang.jit`):
-      Applies JIT compilation with default settings.
+   Supports two execution modes (automatically inferred):
+   - **lazy**: Function returns PrimFunc explicitly. Returns compiled kernel object.
+   - **eager**: Function uses DSL builder pattern. Executes kernel immediately.
 
-   :param func_or_out_idx: If using `@tilelang.jit(...)` to configure, this is the `out_idx` parameter.
-                           If using `@tilelang.jit` directly on a function, this argument is implicitly
-                           the function to be decorated (and `out_idx` will be `None`).
-   :type func_or_out_idx: Any, optional
-   :param target: Compilation target for TVM (e.g., "cuda", "llvm"). If None, reads from
-                  TILELANG_TARGET environment variable (defaults to "auto").
-   :type target: Union[str, Target], optional
-   :param target_host: Target host for cross-compilation. Defaults to None.
-   :type target_host: Union[str, Target], optional
-   :param execution_backend: Backend for kernel execution and argument passing. If None, reads from
-                             TILELANG_EXECUTION_BACKEND environment variable (defaults to "auto").
-   :type execution_backend: Literal["auto", "dlpack", "tvm_ffi", "cython", "nvrtc", "torch", "cutedsl"], optional
-   :param verbose: Enables verbose logging during compilation. If None, reads from
-                   TILELANG_VERBOSE environment variable (defaults to False).
-   :type verbose: bool, optional
-   :param pass_configs: Configurations for TVM's pass context. Defaults to None.
-   :type pass_configs: Optional[Dict[str, Any]], optional
-   :param debug_root_path: Directory to save compiled kernel source for debugging. Defaults to None.
-   :type debug_root_path: Optional[str], optional
-   :param Environment Variables:
-   :param ---------------------:
-   :param TILELANG_TARGET: Default compilation target (e.g., "cuda", "llvm"). Defaults to "auto".
-   :type TILELANG_TARGET: str
-   :param TILELANG_EXECUTION_BACKEND: Default execution backend. Defaults to "auto".
-   :type TILELANG_EXECUTION_BACKEND: str
-   :param TILELANG_VERBOSE: Set to "1", "true", "yes", or "on" to enable verbose compilation by default.
-   :type TILELANG_VERBOSE: str
-
-   :returns: Either a JIT-compiled wrapper around the input function, or a configured decorator
-             instance that can then be applied to a function.
-   :rtype: Callable
-
-
-.. py:function:: lazy_jit(func: Callable[_KP, _T]) -> JITImpl[_KP, _KP, _T, _T]
-                 lazy_jit(*, out_idx: Any = None, target: str | tvm.target.Target | None = None, target_host: str | tvm.target.Target | None = None, execution_backend: ExecutionBackend | None = None, verbose: bool | None = None, pass_configs: dict[str, Any] | None = None, debug_root_path: str | None = None, compile_flags: list[str] | str | None = None) -> Callable[[Callable[_KP, _T]], JITImpl[_KP, _KP, _T, _T]]
-
-   Lazy JIT compiler decorator - returns the kernel object on first call, then executes it.
-
-   Supports environment variable defaults for target, execution_backend, and verbose.
-   See `jit` documentation for parameter details and environment variables.
+   :param out_idx: Output tensor index(es). Only supported in lazy mode.
+   :type out_idx: list[int] | int | None
+   :param target: TVM compilation target (e.g., "cuda", "llvm", "auto").
+   :type target: str | Target | None
+   :param target_host: Host target for cross-compilation.
+   :type target_host: str | Target | None
+   :param execution_backend: Backend for kernel execution.
+   :type execution_backend: ExecutionBackend | None
+   :param verbose: Enable verbose compilation output.
+   :type verbose: bool | None
+   :param pass_configs: TVM pass configuration options.
+   :type pass_configs: dict[str, Any] | None
+   :param debug_root_path: Directory to save compiled kernel source for debugging.
+   :type debug_root_path: str | None
+   :param compile_flags: Additional compiler flags.
+   :type compile_flags: list[str] | str | None
 
 

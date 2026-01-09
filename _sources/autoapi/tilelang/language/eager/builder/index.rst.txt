@@ -1,7 +1,7 @@
-tilelang.language.v2.builder
-============================
+tilelang.language.eager.builder
+===============================
 
-.. py:module:: tilelang.language.v2.builder
+.. py:module:: tilelang.language.eager.builder
 
 
 Attributes
@@ -9,12 +9,12 @@ Attributes
 
 .. autoapisummary::
 
-   tilelang.language.v2.builder.logger
-   tilelang.language.v2.builder.thread_local_storage
-   tilelang.language.v2.builder.ContinueOrBreak
-   tilelang.language.v2.builder.AnyFrame
-   tilelang.language.v2.builder.TIR_CONTROL_FRAME
-   tilelang.language.v2.builder.TIR_VAR_SCOPE_FRAME
+   tilelang.language.eager.builder.logger
+   tilelang.language.eager.builder.thread_local_storage
+   tilelang.language.eager.builder.ContinueOrBreak
+   tilelang.language.eager.builder.AnyFrame
+   tilelang.language.eager.builder.TIR_CONTROL_FRAME
+   tilelang.language.eager.builder.TIR_VAR_SCOPE_FRAME
 
 
 Classes
@@ -22,21 +22,21 @@ Classes
 
 .. autoapisummary::
 
-   tilelang.language.v2.builder.Frame
-   tilelang.language.v2.builder.MacroFrame
-   tilelang.language.v2.builder.ExitedMacroFrame
-   tilelang.language.v2.builder.BoolOpFrame
-   tilelang.language.v2.builder.ContinueFrame
-   tilelang.language.v2.builder.BreakFrame
-   tilelang.language.v2.builder.SerialForWithStep
-   tilelang.language.v2.builder.OutTensor
-   tilelang.language.v2.builder.Ref
-   tilelang.language.v2.builder.UnrollForWithStep
-   tilelang.language.v2.builder.Builder
-   tilelang.language.v2.builder.PrimFunc
-   tilelang.language.v2.builder.Macro
-   tilelang.language.v2.builder.TirTemplate
-   tilelang.language.v2.builder.LazyJITFunc
+   tilelang.language.eager.builder.Frame
+   tilelang.language.eager.builder.MacroFrame
+   tilelang.language.eager.builder.ExitedMacroFrame
+   tilelang.language.eager.builder.BoolOpFrame
+   tilelang.language.eager.builder.ContinueFrame
+   tilelang.language.eager.builder.BreakFrame
+   tilelang.language.eager.builder.SerialForWithStep
+   tilelang.language.eager.builder.OutTensor
+   tilelang.language.eager.builder.Ref
+   tilelang.language.eager.builder.UnrollForWithStep
+   tilelang.language.eager.builder.Builder
+   tilelang.language.eager.builder.PrimFunc
+   tilelang.language.eager.builder.Macro
+   tilelang.language.eager.builder.TirTemplate
+   tilelang.language.eager.builder.JITFunc
 
 
 Functions
@@ -44,14 +44,14 @@ Functions
 
 .. autoapisummary::
 
-   tilelang.language.v2.builder.unwrap_expr
-   tilelang.language.v2.builder.unwrap_cond
-   tilelang.language.v2.builder.is_var
-   tilelang.language.v2.builder.macro
-   tilelang.language.v2.builder.get_type_hints
-   tilelang.language.v2.builder.const
-   tilelang.language.v2.builder.substitute_primfunc
-   tilelang.language.v2.builder.prim_func
+   tilelang.language.eager.builder.unwrap_expr
+   tilelang.language.eager.builder.unwrap_cond
+   tilelang.language.eager.builder.is_var
+   tilelang.language.eager.builder.macro
+   tilelang.language.eager.builder.get_type_hints
+   tilelang.language.eager.builder.const
+   tilelang.language.eager.builder.substitute_primfunc
+   tilelang.language.eager.builder.prim_func
 
 
 Module Contents
@@ -155,7 +155,7 @@ Module Contents
 
 
    .. py:attribute:: dtype
-      :type:  tilelang.language.v2.dtypes.dtype
+      :type:  tilelang.language.eager.dtypes.dtype
 
 
    .. py:property:: strides
@@ -193,7 +193,7 @@ Module Contents
 
 .. py:class:: Builder
 
-   Bases: :py:obj:`tilelang.language.v2.ast.BaseBuilder`
+   Bases: :py:obj:`tilelang.language.eager.ast.BaseBuilder`
 
 
    .. py:attribute:: frames
@@ -225,7 +225,7 @@ Module Contents
    .. py:attribute:: constexpr_var
 
 
-   .. py:attribute:: lazy_jit
+   .. py:attribute:: eager_jit
       :value: False
 
 
@@ -415,7 +415,7 @@ Module Contents
 
 
    .. py:attribute:: ir_gen
-      :type:  tilelang.language.v2.ast.IRGenerator[_P, _T] | None
+      :type:  tilelang.language.eager.ast.IRGenerator[_P, _T] | None
 
 
    .. py:attribute:: orig_func
@@ -460,7 +460,7 @@ Module Contents
 
 
    .. py:attribute:: ir_gen
-      :type:  tilelang.language.v2.ast.IRGenerator[_P, _T]
+      :type:  tilelang.language.eager.ast.IRGenerator[_P, _T]
 
 
    .. py:attribute:: annotations
@@ -516,29 +516,30 @@ Module Contents
 
 .. py:function:: const(name, dtype = 'int32')
 
+   Declare constexpr variables for dynamic tensor dimensions (eager mode only).
+
+   In eager mode, use T.const() to declare shape dimensions that will be
+   inferred from actual tensor arguments at runtime.
+
+   Example::
+
+       @tilelang.jit
+       def kernel(A, B):
+           M, N = T.const("M, N")
+           A: T.Tensor[[M, N], T.float32]
+           ...
+
+
 .. py:class:: TirTemplate
 
    Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_T`\ ]
 
 
-   Abstract base class for generic types.
+   Template for generating TIR PrimFunc with dynamic shape substitution.
 
-   A generic type is typically declared by inheriting from
-   this class parameterized with one or more type variables.
-   For example, a generic mapping type might be defined as::
-
-     class Mapping(Generic[KT, VT]):
-         def __getitem__(self, key: KT) -> VT:
-             ...
-         # Etc.
-
-   This class can then be used as follows::
-
-     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
-         try:
-             return mapping[key]
-         except KeyError:
-             return default
+   For lazy-style functions, the PrimFunc is used directly without substitution.
+   For eager-style functions, constexpr variables are substituted based on
+   actual tensor shapes at runtime.
 
 
    .. py:attribute:: prim_func
@@ -546,7 +547,15 @@ Module Contents
 
 
    .. py:attribute:: matcher
-      :type:  dict[tvm.tir.expr.Var, tuple[tvm.tir.Var, str, int]]
+      :type:  dict[tvm.tir.expr.Var, tuple[tvm.tir.Var, str, int]] | None
+      :value: None
+
+
+
+   .. py:attribute:: is_lazy_style
+      :type:  bool
+      :value: False
+
 
 
    .. py:method:: create(prim_func, constexpr)
@@ -554,32 +563,35 @@ Module Contents
 
 
 
+   .. py:method:: from_lazy_style(prim_func)
+      :classmethod:
+
+
+      Create template from lazy-style function that returns PrimFunc directly.
+
+
+
    .. py:method:: get_tir(**kwargs)
 
 
-.. py:class:: LazyJITFunc
+.. py:class:: JITFunc
 
    Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_T`\ ]
 
 
-   Abstract base class for generic types.
+   Internal wrapper for JIT-compiled functions.
 
-   A generic type is typically declared by inheriting from
-   this class parameterized with one or more type variables.
-   For example, a generic mapping type might be defined as::
+   This class handles both lazy and eager execution styles:
 
-     class Mapping(Generic[KT, VT]):
-         def __getitem__(self, key: KT) -> VT:
-             ...
-         # Etc.
+   - **lazy style**: Function explicitly returns a PrimFunc. The original function
+     is called directly to obtain the TIR.
 
-   This class can then be used as follows::
+   - **eager style**: Function uses the DSL builder pattern with tensor type
+     annotations. The TIR is constructed by tracing the function body through
+     the Builder.
 
-     def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -> VT:
-         try:
-             return mapping[key]
-         except KeyError:
-             return default
+   The style is determined by `_is_lazy_style()` which checks if calling the
+   original function returns a PrimFunc directly.
 
 
    .. py:attribute:: orig_func
@@ -599,13 +611,22 @@ Module Contents
 
 
    .. py:attribute:: ir_gen
-      :type:  tilelang.language.v2.ast.IRGenerator[_P, _T]
+      :type:  tilelang.language.eager.ast.IRGenerator[_P, _T]
+
+
+   .. py:attribute:: mode
+      :type:  Literal['auto', 'lazy', 'eager']
+      :value: 'auto'
+
 
 
    .. py:method:: __post_init__()
 
 
    .. py:method:: parse_args(*args, **kwargs)
+
+      Parse arguments and return cache key and tensor args.
+
 
 
    .. py:method:: get_tir(*args, **kwargs)
@@ -614,7 +635,16 @@ Module Contents
    .. py:method:: __call__(*args, **kwargs)
 
 
+   .. py:method:: set_mode(mode)
+
+      Set the JIT execution mode (internal use only).
+
+
+
+   .. py:method:: __getattr__(name)
+
+
 .. py:function:: substitute_primfunc(prim_func, vmap)
 
-.. py:function:: prim_func(func = None, *, lazy_jit=False)
+.. py:function:: prim_func(func = None, *, eager_jit = False)
 
