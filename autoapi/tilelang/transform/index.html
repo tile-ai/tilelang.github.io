@@ -706,6 +706,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.transform.LayoutReducer" title="tilelang.transform.LayoutReducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LayoutReducer</span></code></a>()</p></td>
 <td><p>Return a TVM transform pass that performs layout reduction/normalization.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.transform.UnrollLoop" title="tilelang.transform.UnrollLoop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnrollLoop</span></code></a>()</p></td>
+<td><p>Unroll loops as in Halide pipeline.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1337,6 +1340,26 @@ IR suitable for backend code generation and device-side lowering.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.transform.UnrollLoop">
+<span class="sig-prename descclassname"><span class="pre">tilelang.transform.</span></span><span class="sig-name descname"><span class="pre">UnrollLoop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.UnrollLoop" title="Link to this definition">¶</a></dt>
+<dd><p>Unroll loops as in Halide pipeline.</p>
+<p>This pass unrolls loops based on configuration options including:
+- auto_max_step: Threshold of number of steps to be automatically unrolled
+- auto_max_depth: Maximum nested level of loops that can be automatically unrolled
+- auto_max_extent: Maximum extent of loop that will be unrolled
+- explicit_unroll: Whether to explicitly unroll instead of setting a pragma
+- unroll_local_access: Whether to always unroll local access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fpass</strong> – The result pass</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.transform.Pass</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -1448,6 +1471,7 @@ IR suitable for backend code generation and device-side lowering.</p>
 <li><a class="reference internal" href="#tilelang.transform.LowerDeviceKernelLaunch"><code class="docutils literal notranslate"><span class="pre">LowerDeviceKernelLaunch()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.LowerSharedTmem"><code class="docutils literal notranslate"><span class="pre">LowerSharedTmem()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.LayoutReducer"><code class="docutils literal notranslate"><span class="pre">LayoutReducer()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.transform.UnrollLoop"><code class="docutils literal notranslate"><span class="pre">UnrollLoop()</span></code></a></li>
 </ul>
 </li>
 </ul>

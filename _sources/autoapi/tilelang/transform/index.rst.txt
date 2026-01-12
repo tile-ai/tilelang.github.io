@@ -75,6 +75,7 @@ Functions
    tilelang.transform.LowerDeviceKernelLaunch
    tilelang.transform.LowerSharedTmem
    tilelang.transform.LayoutReducer
+   tilelang.transform.UnrollLoop
 
 
 Package Contents
@@ -457,5 +458,20 @@ Package Contents
    This wrapper delegates to the underlying FFI implementation and returns a pass object suitable for use in a PassContext or pass pipeline. The pass is intended to simplify or reduce tensor/layout-related representations during relay/tile transformations.
 
    :returns: The transform pass object produced by the FFI backend.
+
+
+.. py:function:: UnrollLoop()
+
+   Unroll loops as in Halide pipeline.
+
+   This pass unrolls loops based on configuration options including:
+   - auto_max_step: Threshold of number of steps to be automatically unrolled
+   - auto_max_depth: Maximum nested level of loops that can be automatically unrolled
+   - auto_max_extent: Maximum extent of loop that will be unrolled
+   - explicit_unroll: Whether to explicitly unroll instead of setting a pragma
+   - unroll_local_access: Whether to always unroll local access
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
 
 
