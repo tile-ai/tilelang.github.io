@@ -244,6 +244,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/analysis/nested_loop_checker/index.html">tilelang.analysis.nested_loop_checker</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/tilelang/autodd/index.html">tilelang.autodd</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/autotuner/index.html">tilelang.autotuner</a><input aria-label="Toggle navigation of tilelang.autotuner" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/capture/index.html">tilelang.autotuner.capture</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/param/index.html">tilelang.autotuner.param</a></li>
@@ -717,9 +718,136 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 </div>
 </section>
 </section>
+<section id="autodd-automatic-delta-debugging">
+<h2>AutoDD: Automatic Delta Debugging<a class="headerlink" href="#autodd-automatic-delta-debugging" title="Link to this heading">¶</a></h2>
+<p>When dealing with complex TileLang programs that produce errors, manually isolating the bug can be tedious. <strong>AutoDD</strong> (Automatic Delta Debugging) is a built-in tool that automatically simplifies your program to the minimal code needed to reproduce a specific error.</p>
+<section id="what-is-delta-debugging">
+<h3>What is Delta Debugging?<a class="headerlink" href="#what-is-delta-debugging" title="Link to this heading">¶</a></h3>
+<p>Delta Debugging is an automated debugging technique that:</p>
+<ol class="arabic simple">
+<li><p>Takes a program that triggers a bug</p></li>
+<li><p>Systematically removes code fragments</p></li>
+<li><p>Checks if the simplified program still triggers the same bug</p></li>
+<li><p>Produces the minimal code that reproduces the bug</p></li>
+</ol>
+<p>AutoDD uses a Probability Distribution Driven Delta Debugging (PDD) algorithm for efficient minimization.</p>
+</section>
+<section id="why-use-autodd">
+<h3>Why Use AutoDD?<a class="headerlink" href="#why-use-autodd" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Large codebases</strong>: Real projects often have hundreds of lines of configuration, helper functions, and logging</p></li>
+<li><p><strong>Hard-to-locate errors</strong>: Error messages may point to TVM/CUDA internals rather than your TileLang code</p></li>
+<li><p><strong>Time-saving</strong>: Manually deleting code to isolate bugs is very time-consuming</p></li>
+</ul>
+<p>AutoDD can reduce a 200+ line program to just 30 lines, directly exposing the root cause.</p>
+</section>
+<section id="basic-usage">
+<h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>tilelang.autodd<span class="w"> </span>&lt;source_file&gt;<span class="w"> </span>--err-msg<span class="w"> </span><span class="s2">&quot;&lt;error_message&gt;&quot;</span><span class="w"> </span>-o<span class="w"> </span>&lt;output_file&gt;
+</pre></div>
+</div>
+</section>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">source</span></code></p></td>
+<td><p>Path to the input Python source file</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--err-msg</span></code></p></td>
+<td><p>Error message to match (searched in stdout or stderr)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code></p></td>
+<td><p>Path to the minimized output file</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span></code></p></td>
+<td><p>Execution backend: <code class="docutils literal notranslate"><span class="pre">runner</span></code> (faster) or <code class="docutils literal notranslate"><span class="pre">subproc</span></code> (more stable), default <code class="docutils literal notranslate"><span class="pre">runner</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--timeout</span></code></p></td>
+<td><p>Timeout for each task in seconds, default 60</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-j,</span> <span class="pre">--jobs</span></code></p></td>
+<td><p>Number of parallel jobs, default 1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h3>
+<p>Suppose you have a complex TileLang program with a GEMM shape mismatch bug:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># buggy_matmul.py (200+ lines)</span>
+<span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">buggy_matmul</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">,</span> <span class="n">block_K</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">matmul_kernel</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="o">...</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span>
+            <span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">B_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>  <span class="c1"># Bug: should be (block_K, block_N)</span>
+            <span class="n">C_local</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">accum_dtype</span><span class="p">)</span>
+            <span class="c1"># ... lots of other code ...</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>  <span class="c1"># Error here</span>
+    <span class="k">return</span> <span class="n">matmul_kernel</span>
+</pre></div>
+</div>
+<p>Run AutoDD to minimize:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>tilelang.autodd<span class="w"> </span>buggy_matmul.py<span class="w"> </span>--err-msg<span class="w"> </span><span class="s2">&quot;Dimension mismatch&quot;</span><span class="w"> </span>-o<span class="w"> </span>minimized.py<span class="w"> </span>-j<span class="w"> </span><span class="m">4</span>
+</pre></div>
+</div>
+<p>AutoDD will produce a minimal reproduction:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># minimized.py (~30 lines)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">buggy_matmul</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">,</span> <span class="n">block_K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">accum_dtype</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">matmul_kernel</span><span class="p">():</span>
+        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">():</span>
+            <span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">B_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>  <span class="c1"># Bug exposed!</span>
+            <span class="n">C_local</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">accum_dtype</span><span class="p">)</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="how-autodd-works">
+<h3>How AutoDD Works<a class="headerlink" href="#how-autodd-works" title="Link to this heading">¶</a></h3>
+<p>AutoDD uses AST (Abstract Syntax Tree) analysis with multiple rewrite rules:</p>
+<ol class="arabic simple">
+<li><p><strong>Fast Reducers</strong>: Remove statements, simplify if/for constructs</p></li>
+<li><p><strong>Canonicalizers</strong>: Expand with statements, add <code class="docutils literal notranslate"><span class="pre">*args,</span> <span class="pre">**kwargs</span></code> for compatibility</p></li>
+<li><p><strong>Simplifiers</strong>: Replace expressions with constants, simplify function calls</p></li>
+<li><p><strong>Slow Reducers</strong>: Remove arbitrary expressions, reduce integer constants</p></li>
+</ol>
+</section>
+<section id="tips">
+<h3>Tips<a class="headerlink" href="#tips" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Error message matching</strong>: Use a unique substring from the error output</p></li>
+<li><p><strong>Timeout</strong>: Increase <code class="docutils literal notranslate"><span class="pre">--timeout</span></code> for programs with long compilation times</p></li>
+<li><p><strong>Parallel jobs</strong>: Use <code class="docutils literal notranslate"><span class="pre">-j</span> <span class="pre">4</span></code> or higher to speed up minimization</p></li>
+<li><p><strong>Backend</strong>: Try <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">subproc</span></code> if <code class="docutils literal notranslate"><span class="pre">runner</span></code> is unstable</p></li>
+</ul>
+</section>
+<section id="complete-example">
+<h3>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading">¶</a></h3>
+<p>A complete example is available in <code class="docutils literal notranslate"><span class="pre">examples/autodd/</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tilelang_buggy.py</span></code>: A complex program with a bug (~200 lines)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tilelang_minimized_expected.py</span></code>: Expected output after AutoDD (~30 lines)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">README.md</span></code>: Detailed documentation</p></li>
+</ul>
+</section>
+</section>
 <section id="conclusion">
 <h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">¶</a></h2>
 <p>By carefully examining intermediate representations (IR) before final code generation—and by leveraging runtime printing through <code class="docutils literal notranslate"><span class="pre">T.print</span></code>—one can quickly diagnose where index calculations, copy logic, or other kernel operations deviate from the intended behavior. This two-pronged approach (inspecting IR transformations and using runtime prints) is often sufficient for resolving generation and correctness issues in TileLang programs.</p>
+<p>For complex programs where manual debugging is tedious, <strong>AutoDD</strong> provides automated delta debugging to quickly isolate the minimal code that reproduces a bug.</p>
 <p>For advanced performance tuning (e.g., analyzing memory bandwidth or occupancy), more specialized profiling tools such as <strong>Nsight Compute</strong>, <strong>rocProf</strong>, or vendor-specific profilers may be required. Those aspects will be covered in future documents.</p>
 </section>
 </section>
@@ -787,6 +915,17 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 <li><a class="reference internal" href="#post-processing-callbacks-for-generated-source">Post-Processing Callbacks for Generated Source</a></li>
 <li><a class="reference internal" href="#runtime-debug-prints-with-t-print">Runtime Debug Prints with <code class="docutils literal notranslate"><span class="pre">T.print</span></code></a></li>
 <li><a class="reference internal" href="#visual-layout-inference-for-tilelang">Visual Layout Inference For TileLang</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#autodd-automatic-delta-debugging">AutoDD: Automatic Delta Debugging</a><ul>
+<li><a class="reference internal" href="#what-is-delta-debugging">What is Delta Debugging?</a></li>
+<li><a class="reference internal" href="#why-use-autodd">Why Use AutoDD?</a></li>
+<li><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#how-autodd-works">How AutoDD Works</a></li>
+<li><a class="reference internal" href="#tips">Tips</a></li>
+<li><a class="reference internal" href="#complete-example">Complete Example</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#conclusion">Conclusion</a></li>

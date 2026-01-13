@@ -1,0 +1,688 @@
+tilelang.autodd
+===============
+
+.. py:module:: tilelang.autodd
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.autodd.ASTPatKind
+   tilelang.autodd.JobBackend
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.autodd.ASTRewrite
+   tilelang.autodd.GeneralRemove
+   tilelang.autodd.CallFwdArg1
+   tilelang.autodd.AttachFullFuncArgs
+   tilelang.autodd.IntConstApply
+   tilelang.autodd.BinOpFwdArg
+   tilelang.autodd.ASTPat
+   tilelang.autodd.ASTPatRewrite
+   tilelang.autodd.ASTMutator
+   tilelang.autodd.LabeledRewrite
+   tilelang.autodd.RewriteAttacher
+   tilelang.autodd.RewriteApplier
+   tilelang.autodd.Task
+   tilelang.autodd.PDD
+   tilelang.autodd.TaskManager
+   tilelang.autodd.ASTPDD
+   tilelang.autodd.LinePDD
+   tilelang.autodd.Ruff
+   tilelang.autodd.AsyncPythonRunner
+   tilelang.autodd.SubProcRunner
+   tilelang.autodd.ParTaskManager
+   tilelang.autodd.Args
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.autodd.ast_replace
+   tilelang.autodd.parse_stmts
+   tilelang.autodd.parse_expr
+   tilelang.autodd.expr_to_zeros
+   tilelang.autodd.attach_rewrites
+   tilelang.autodd.apply_rewrites
+   tilelang.autodd.test_rewrite
+   tilelang.autodd.ruff_fix_code
+   tilelang.autodd.clean_empty_pass
+   tilelang.autodd.main
+   tilelang.autodd.cli_main
+
+
+Module Contents
+---------------
+
+.. py:function:: ast_replace(node, **changes)
+
+.. py:function:: parse_stmts(s)
+
+.. py:function:: parse_expr(s)
+
+.. py:class:: ASTRewrite
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:method:: get_name()
+      :abstractmethod:
+
+
+
+   .. py:method:: match(node, parent, field, inside_list)
+      :abstractmethod:
+
+
+
+   .. py:method:: rewrite(node, parent, field, inside_list)
+      :abstractmethod:
+
+
+
+.. py:class:: GeneralRemove
+
+   Bases: :py:obj:`ASTRewrite`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: target_type
+      :type:  type[ast.AST]
+
+
+   .. py:attribute:: inside_list
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: replace_with
+      :type:  ast.AST | list[ast.AST] | None
+      :value: None
+
+
+
+   .. py:method:: get_name()
+
+
+   .. py:method:: match(node, parent, field, inside_list)
+
+
+   .. py:method:: rewrite(node, parent, field, inside_list)
+
+
+.. py:function:: expr_to_zeros(target)
+
+.. py:class:: CallFwdArg1
+
+   Bases: :py:obj:`ASTRewrite`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:method:: get_name()
+
+
+   .. py:method:: match(node, parent, field, inside_list)
+
+
+   .. py:method:: rewrite(node, parent, field, inside_list)
+
+
+.. py:class:: AttachFullFuncArgs
+
+   Bases: :py:obj:`ASTRewrite`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:method:: get_name()
+
+
+   .. py:method:: match(node, parent, field, inside_list)
+
+
+   .. py:method:: rewrite(node, parent, field, inside_list)
+
+
+.. py:class:: IntConstApply
+
+   Bases: :py:obj:`ASTRewrite`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: matcher
+      :type:  Callable[[int], bool]
+
+
+   .. py:attribute:: apply
+      :type:  Callable[[int], ast.AST]
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:method:: get_name()
+
+
+   .. py:method:: match(node, parent, field, inside_list)
+
+
+   .. py:method:: rewrite(node, parent, field, inside_list)
+
+
+.. py:class:: BinOpFwdArg
+
+   Bases: :py:obj:`ASTRewrite`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: forward
+      :type:  Literal['left', 'right']
+      :value: 'left'
+
+
+
+   .. py:method:: get_name()
+
+
+   .. py:method:: match(node, parent, field, inside_list)
+
+
+   .. py:method:: rewrite(node, parent, field, inside_list)
+
+
+.. py:data:: ASTPatKind
+
+.. py:class:: ASTPat
+
+   .. py:attribute:: tree
+      :type:  ast.expr | list[ast.stmt]
+
+
+   .. py:attribute:: placeholders
+      :type:  set[str]
+
+
+   .. py:method:: from_code(kind, code, placeholders)
+      :classmethod:
+
+
+
+   .. py:method:: match_placeholders(node)
+
+
+   .. py:method:: match(node)
+
+
+   .. py:method:: replace(repl)
+
+
+.. py:class:: ASTPatRewrite
+
+   Bases: :py:obj:`ASTRewrite`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: match_pat
+      :type:  ASTPat
+
+
+   .. py:attribute:: rewrite_pat
+      :type:  ASTPat
+
+
+   .. py:attribute:: checker
+      :type:  Callable[[dict[str, ast.AST]], bool] | dict[str, Callable[[ast.AST], bool]] | None
+      :value: None
+
+
+
+   .. py:attribute:: derived
+      :type:  dict[str, Callable[[dict[str, ast.AST]], ast.AST]] | None
+      :value: None
+
+
+
+   .. py:method:: from_code(name, kind, match, rewrite, placeholders, checker = None, derived = None)
+      :classmethod:
+
+
+
+   .. py:method:: get_name()
+
+
+   .. py:method:: match_placeholders(node)
+
+
+   .. py:method:: match(node, parent, field, inside_list)
+
+
+   .. py:method:: rewrite(node, parent, field, inside_list)
+
+
+.. py:class:: ASTMutator
+
+   .. py:method:: generic_visit(node)
+
+
+   .. py:method:: visit(node, parent, field, inside_list)
+
+
+.. py:class:: LabeledRewrite
+
+   .. py:attribute:: label
+      :type:  int
+
+
+   .. py:attribute:: rewrite
+      :type:  ASTRewrite
+
+
+.. py:class:: RewriteAttacher(rewrites)
+
+   Bases: :py:obj:`ASTMutator`
+
+
+   .. py:attribute:: rewrites
+
+
+   .. py:attribute:: uid_counter
+      :value: 0
+
+
+
+   .. py:attribute:: rewrite_counter
+      :value: 0
+
+
+
+   .. py:attribute:: rewrite_names
+
+
+   .. py:method:: visit(node, parent, field, inside_list)
+
+
+.. py:function:: attach_rewrites(tree, rewrites)
+
+.. py:class:: RewriteApplier(target_labels)
+
+   Bases: :py:obj:`ASTMutator`
+
+
+   .. py:attribute:: target_labels
+
+
+   .. py:attribute:: applied_rewrites
+      :type:  set[int]
+
+
+   .. py:attribute:: visited
+      :type:  set[int]
+
+
+   .. py:method:: visit(node, parent, field, inside_list)
+
+
+.. py:function:: apply_rewrites(tree, target_labels)
+
+.. py:function:: test_rewrite(rewrite, code)
+
+.. py:class:: Task
+
+   .. py:attribute:: source
+      :type:  str
+
+
+   .. py:attribute:: applied
+      :type:  list[int]
+
+
+   .. py:attribute:: masked
+      :type:  list[int]
+
+
+   .. py:method:: with_source(source)
+
+
+.. py:class:: PDD(all_labels, init_proba = 0.93)
+
+   .. py:attribute:: all_labels
+
+
+   .. py:attribute:: probas
+
+
+   .. py:method:: apply(target_labels)
+
+
+   .. py:method:: generator()
+
+
+   .. py:method:: update(task, is_interesting)
+
+
+.. py:class:: TaskManager
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:method:: task_generator()
+      :abstractmethod:
+
+
+
+   .. py:method:: task_update(task, is_interesting)
+      :abstractmethod:
+
+
+
+   .. py:method:: from_source(source, *args, **kwargs)
+      :classmethod:
+
+      :abstractmethod:
+
+
+
+.. py:class:: ASTPDD(tree, rewrites, init_proba = 0.93)
+
+   Bases: :py:obj:`TaskManager`, :py:obj:`PDD`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:method:: from_source(source, *args, **kwargs)
+      :classmethod:
+
+
+
+   .. py:method:: apply(target_labels)
+
+
+   .. py:method:: task_generator()
+
+
+   .. py:method:: task_update(task, is_interesting)
+
+
+.. py:function:: ruff_fix_code(code_string, fix_lint = True, format_code = True)
+
+.. py:class:: LinePDD(source, init_proba = 0.93)
+
+   Bases: :py:obj:`TaskManager`, :py:obj:`PDD`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: lines
+
+
+   .. py:method:: from_source(source, *args, **kwargs)
+      :classmethod:
+
+
+
+   .. py:method:: task_generator()
+
+
+   .. py:method:: task_update(task, is_interesting)
+
+
+.. py:class:: Ruff(source, fix_lint = True, format_code = True)
+
+   Bases: :py:obj:`TaskManager`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:attribute:: source
+
+
+   .. py:attribute:: fix_lint
+      :value: True
+
+
+
+   .. py:attribute:: format_code
+      :value: True
+
+
+
+   .. py:attribute:: finished
+      :value: False
+
+
+
+   .. py:method:: from_source(source, *args, **kwargs)
+      :classmethod:
+
+
+
+   .. py:method:: task_generator()
+
+
+   .. py:method:: task_update(task, is_interesting)
+
+
+.. py:class:: AsyncPythonRunner
+
+   .. py:attribute:: process
+      :value: None
+
+
+
+   .. py:attribute:: input_queue
+      :value: None
+
+
+
+   .. py:attribute:: output_queue
+      :value: None
+
+
+
+   .. py:attribute:: lock
+
+
+   .. py:method:: start_proc()
+
+
+   .. py:method:: stop_proc()
+
+
+   .. py:method:: __enter__()
+
+
+   .. py:method:: __exit__(exc_type, exc_value, traceback)
+
+
+   .. py:method:: run(code, timeout = 5.0)
+      :async:
+
+
+
+.. py:class:: SubProcRunner
+
+   .. py:method:: __enter__()
+
+
+   .. py:method:: __exit__(exc_type, exc_value, traceback)
+
+
+   .. py:method:: run(code, timeout = 5.0)
+      :async:
+
+
+
+.. py:function:: clean_empty_pass(code)
+
+.. py:data:: JobBackend
+
+.. py:class:: ParTaskManager
+
+   .. py:attribute:: err_msg
+      :type:  str
+
+
+   .. py:attribute:: text
+      :type:  str
+
+
+   .. py:attribute:: output_file
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: timeout
+      :type:  int
+      :value: 60
+
+
+
+   .. py:attribute:: num_workers
+      :type:  int
+      :value: 1
+
+
+
+   .. py:attribute:: backend
+      :type:  JobBackend
+      :value: 'runner'
+
+
+
+   .. py:attribute:: allow_larger
+      :type:  bool
+      :value: False
+
+
+
+   .. py:method:: __post_init__()
+
+
+   .. py:property:: text_len
+
+
+   .. py:method:: reset(task_manager)
+
+
+   .. py:method:: get_next_task()
+      :async:
+
+
+
+   .. py:method:: submit_result(task, is_interested)
+      :async:
+
+
+
+   .. py:method:: post_proc(text)
+
+
+   .. py:method:: worker(wid)
+      :async:
+
+
+
+   .. py:method:: start_workers()
+      :async:
+
+
+
+   .. py:method:: stop_workers()
+      :async:
+
+
+
+   .. py:method:: run_async(task_manager)
+      :async:
+
+
+
+   .. py:method:: run_with(cls, *args, **kwargs)
+      :async:
+
+
+
+.. py:class:: Args
+
+   Bases: :py:obj:`NamedTuple`
+
+
+   .. py:attribute:: source
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: err_msg
+      :type:  str
+
+
+   .. py:attribute:: output
+      :type:  pathlib.Path
+
+
+   .. py:attribute:: backend
+      :type:  JobBackend
+
+
+   .. py:attribute:: timeout
+      :type:  int
+
+
+   .. py:attribute:: jobs
+      :type:  int
+
+
+.. py:function:: main(args)
+   :async:
+
+
+.. py:function:: cli_main(argv = None)
+
