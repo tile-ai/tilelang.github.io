@@ -30,7 +30,7 @@ Module Contents
 
    Perform an atomic maximum on the value stored at dst with an optional memory-order.
 
-   If memory_order is None the runtime extern "AtomicMax" is called without an explicit memory-order id; otherwise the provided memory_order string is mapped to a numeric id using the module's memory-order map and passed to the extern.
+   Supports scalar/addressed extern atomic max when neither argument exposes extents, or tile-region-based atomic max for Buffer/BufferRegion/BufferLoad inputs. If both arguments are plain Buffers their shapes must be structurally equal. If at least one side exposes extents, extents are aligned (missing dimensions are treated as size 1); an assertion is raised if extents cannot be deduced. The optional `memory_order` (one of "relaxed","consume","acquire","release","acq_rel","seq_cst") is used only for the direct extern `AtomicMax` path when no extents are available — otherwise the tile-region path ignores `memory_order`.
 
    :param dst: Destination buffer/address to apply the atomic max.
    :type dst: Buffer
@@ -64,14 +64,17 @@ Module Contents
    >>>     for i in T.thread_binding(128, "threadIdx.x"):
    >>>         atomic_max(result, data[i])
 
+   >>> # Tensor-to-tensor atomic max (tile-region based)
+   >>> src_tensor = T.Tensor([128, 64], "float32", name="src")
+   >>> dst_tensor = T.Tensor([128, 64], "float32", name="dst")
+   >>> atomic_max(dst_tensor, src_tensor)  # Max entire tensors atomically
+
 
 .. py:function:: atomic_min(dst, value, memory_order = None, return_prev = False)
 
    Atomically update the value at dst to the minimum of its current value and value.
 
-   If memory_order is provided, it selects the memory-order semantic used by the underlying extern call;
-   allowed names are "relaxed", "consume", "acquire", "release", "acq_rel", and "seq_cst" (mapped internally
-   to integer IDs). If memory_order is None, the extern is invoked without an explicit memory-order argument.
+   Supports scalar/addressed extern atomic min when neither argument exposes extents, or tile-region-based atomic min for Buffer/BufferRegion/BufferLoad inputs. If both arguments are plain Buffers their shapes must be structurally equal. If at least one side exposes extents, extents are aligned (missing dimensions are treated as size 1); an assertion is raised if extents cannot be deduced. The optional `memory_order` (one of "relaxed","consume","acquire","release","acq_rel","seq_cst") is used only for the direct extern `AtomicMin` path when no extents are available — otherwise the tile-region path ignores `memory_order`.
 
    :param dst: Destination buffer/address to apply the atomic min.
    :type dst: Buffer
@@ -104,6 +107,11 @@ Module Contents
 
    >>> # With relaxed memory ordering for performance
    >>> atomic_min(min_val, 5, memory_order="relaxed")
+
+   >>> # Tensor-to-tensor atomic min (tile-region based)
+   >>> src_tensor = T.Tensor([128, 64], "float32", name="src")
+   >>> dst_tensor = T.Tensor([128, 64], "float32", name="dst")
+   >>> atomic_min(dst_tensor, src_tensor)  # Min entire tensors atomically
 
 
 .. py:function:: atomic_add(dst, value, memory_order = None, return_prev = False, use_tma = False)
