@@ -1,0 +1,292 @@
+tilelang.transform.decouple_type_cast
+=====================================
+
+.. py:module:: tilelang.transform.decouple_type_cast
+
+.. autoapi-nested-parse::
+
+   Decouple type cast vectorization constraints.
+
+   When a vectorized loop has mixed-precision operations between local and memory
+   buffers, the vectorization length would be constrained by the GCD of all
+   involved dtypes.
+
+   This pass decouples the constraints by inserting a local buffer as an
+   intermediate stage, allowing optimal vectorization for both computation and
+   memory access.
+
+   Two cases are handled:
+
+   Case 1: local → memory (store to memory with mixed types)
+   ---------------------------------------------------------
+   Before:
+       for vec in T.vectorized(16):
+           b[vec] = T.cast(a_frag[vec], "float4_e2m1fn")
+
+   After:
+       for vec in T.vectorized(16):
+           cast_buf[vec] = T.cast(a_frag[vec], "float4_e2m1fn")  # compute
+       for vec_copy in T.vectorized(16):
+           b[vec_copy] = cast_buf[vec_copy]                      # copy to memory
+
+   Case 2: memory → local (load from memory with different dtype)
+   --------------------------------------------------------------
+   Before:
+       for vec in T.vectorized(16):
+           a_frag[vec] = T.cast(b[vec], "float32")
+
+   After:
+       for vec_copy in T.vectorized(16):
+           cast_buf[vec_copy] = b[vec_copy]                      # copy from memory
+       for vec in T.vectorized(16):
+           a_frag[vec] = T.cast(cast_buf[vec], "float32")        # compute
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.transform.decouple_type_cast.CastBufferMap
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.transform.decouple_type_cast.MixedTypeChecker
+   tilelang.transform.decouple_type_cast.GlobalSharedBufferLoadCollector
+   tilelang.transform.decouple_type_cast.StoreCollector
+   tilelang.transform.decouple_type_cast.DecoupleTypeCastMutator
+   tilelang.transform.decouple_type_cast.StoreReplacer
+   tilelang.transform.decouple_type_cast.LoadReplacer
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.transform.decouple_type_cast.is_local_buffer
+   tilelang.transform.decouple_type_cast.is_global_or_shared_buffer
+   tilelang.transform.decouple_type_cast.validate_buffer_scope
+   tilelang.transform.decouple_type_cast.has_mixed_types
+   tilelang.transform.decouple_type_cast.get_global_or_shared_buffer_loads
+   tilelang.transform.decouple_type_cast.has_global_or_shared_load_with_different_dtype
+   tilelang.transform.decouple_type_cast.contains_seq_stmt
+   tilelang.transform.decouple_type_cast.extract_if_condition
+   tilelang.transform.decouple_type_cast.DecoupleTypeCast
+
+
+Module Contents
+---------------
+
+.. py:function:: is_local_buffer(buffer)
+
+   Check if a buffer is local (register-level), including local.var.
+
+
+.. py:function:: is_global_or_shared_buffer(buffer)
+
+   Check if a buffer is a global or shared buffer.
+
+
+.. py:function:: validate_buffer_scope(buffer)
+
+   Validate that buffer has a known scope.
+
+   :raises ValueError: If buffer scope is unknown or empty.
+
+
+.. py:class:: MixedTypeChecker(target_dtype)
+
+   Bases: :py:obj:`tvm.tir.PyStmtExprVisitor`
+
+
+   Check if expression contains BufferLoads with different dtypes, skipping indices.
+
+
+   .. py:attribute:: target_dtype
+      :value: ''
+
+
+
+   .. py:attribute:: found_different
+      :value: False
+
+
+
+   .. py:method:: visit_buffer_load_(op)
+
+
+.. py:function:: has_mixed_types(expr, target_dtype)
+
+   Check if expression contains BufferLoads with different dtypes than target.
+
+   If any BufferLoad in the expression has a different dtype than the target
+   (store buffer's dtype), vectorization may be constrained by GCD of all dtypes.
+
+
+.. py:class:: GlobalSharedBufferLoadCollector(skip_if_then_else_cond = False)
+
+   Bases: :py:obj:`tvm.tir.PyStmtExprVisitor`
+
+
+   Collect BufferLoads from global/shared buffers, skipping if_then_else conditions.
+
+   The condition part of if_then_else doesn't participate in type casting,
+   so we skip collecting BufferLoads from there.
+
+
+   .. py:attribute:: result
+      :type:  list[tvm.tir.BufferLoad]
+      :value: []
+
+
+
+   .. py:attribute:: skip_if_then_else_cond
+      :value: False
+
+
+
+   .. py:method:: visit_buffer_load_(op)
+
+
+   .. py:method:: visit_call_(op)
+
+
+.. py:function:: get_global_or_shared_buffer_loads(expr, skip_if_then_else_cond = False)
+
+   Get BufferLoads from global/shared buffers in the expression.
+
+   :param expr: The expression to search.
+   :param skip_if_then_else_cond: If True, skip BufferLoads in if_then_else conditions,
+                                  since they don't participate in type casting.
+
+
+.. py:function:: has_global_or_shared_load_with_different_dtype(expr, target_dtype)
+
+   Check if expression has global/shared BufferLoad with different dtype than target.
+
+   Used to detect memory→local cases where we need to insert cast buffer.
+   Skips if_then_else condition since it doesn't participate in type casting.
+
+
+.. py:class:: StoreCollector
+
+   Bases: :py:obj:`tvm.tir.PyStmtExprVisitor`
+
+
+   Collect BufferStore nodes that need transformation, skipping indices traversal.
+
+   This avoids visiting BufferLoad/BufferStore nodes inside indices, which don't
+   participate in the type casting transformation.
+
+
+   .. py:attribute:: local_to_memory
+      :type:  list[tvm.tir.BufferStore]
+      :value: []
+
+
+
+   .. py:attribute:: memory_to_local
+      :type:  list[tvm.tir.BufferStore]
+      :value: []
+
+
+
+   .. py:method:: visit_buffer_store_(op)
+
+
+   .. py:method:: visit_buffer_load_(op)
+
+
+.. py:function:: contains_seq_stmt(stmt)
+
+   Check if statement contains SeqStmt (multiple statements).
+
+   When the For body has SeqStmt, the transformation is more complex
+   and we skip the optimization for now.
+
+
+.. py:function:: extract_if_condition(stmt)
+
+   Extract IfThenElse condition from statement if present.
+
+   :returns: A tuple of (condition, inner_body). If no IfThenElse, returns (None, stmt).
+
+
+.. py:data:: CastBufferMap
+
+.. py:class:: DecoupleTypeCastMutator
+
+   Bases: :py:obj:`tvm.tir.PyStmtExprMutator`
+
+
+   Mutator that decouples type cast vectorization constraints.
+
+   This mutator transforms vectorized loops that store to memory buffers
+   (global/shared) with mixed-precision expressions by inserting local
+   cache buffers as intermediate stages.
+
+
+   .. py:method:: visit_for_(op)
+
+      Visit For nodes, transforming vectorized loops with mixed-type stores.
+
+
+
+.. py:class:: StoreReplacer(cast_buffers, loop_var)
+
+   Bases: :py:obj:`tvm.tir.PyStmtExprMutator`
+
+
+   Mutator to replace memory BufferStores with cast buffer BufferStores.
+
+
+   .. py:attribute:: cast_buffers
+
+
+   .. py:attribute:: loop_var
+
+
+   .. py:method:: visit_buffer_store_(op)
+
+
+.. py:class:: LoadReplacer(cast_buffers, loop_var)
+
+   Bases: :py:obj:`tvm.tir.PyStmtExprMutator`
+
+
+   Mutator to replace memory BufferLoads with cast buffer BufferLoads.
+
+
+   .. py:attribute:: cast_buffers
+
+
+   .. py:attribute:: loop_var
+
+
+   .. py:method:: visit_buffer_load_(op)
+
+
+.. py:function:: DecoupleTypeCast()
+
+   Create a TVM pass that decouples type cast vectorization constraints.
+
+   This pass inserts a local buffer as an intermediate stage for vectorized
+   stores to non-local buffers (global/shared) where the store value contains
+   expressions with different dtypes.
+
+   This allows optimal vectorization for both computation and memory access.
+
+   .. note::
+
+      This pass must be applied before VectorizeLoop and StorageRewrite passes,
+      while the IR still uses BufferLoad/BufferStore (not tvm_access_ptr).
+
+   :returns: A TVM PrimFunc pass.
+
+
