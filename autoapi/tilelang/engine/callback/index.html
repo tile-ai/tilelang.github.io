@@ -485,11 +485,15 @@
 <li class="toctree-l3"><a class="reference internal" href="../../transform/add_bufstore_wrapper/index.html">tilelang.transform.add_bufstore_wrapper</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../transform/decouple_type_cast/index.html">tilelang.transform.decouple_type_cast</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../transform/hoist_broadcast_values/index.html">tilelang.transform.hoist_broadcast_values</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../transform/metal/index.html">tilelang.transform.metal</a><input aria-label="Toggle navigation of tilelang.transform.metal" class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../transform/metal/mark_host_metal_context/index.html">tilelang.transform.metal.mark_host_metal_context</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../transform/pass_config/index.html">tilelang.transform.pass_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../transform/simplify/index.html">tilelang.transform.simplify</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../utils/index.html">tilelang.utils</a><input aria-label="Toggle navigation of tilelang.utils" class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../utils/index.html">tilelang.utils</a><input aria-label="Toggle navigation of tilelang.utils" class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/deprecated/index.html">tilelang.utils.deprecated</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/device/index.html">tilelang.utils.device</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/language/index.html">tilelang.utils.language</a></li>
@@ -558,14 +562,20 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.callback.register_c_postproc" title="tilelang.engine.callback.register_c_postproc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_c_postproc</span></code></a>(func[, override])</p></td>
 <td><p>Register a post-processing function for C host code generation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.callback.register_cuda_postproc_callback" title="tilelang.engine.callback.register_cuda_postproc_callback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_cuda_postproc_callback</span></code></a>([func, override])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.callback.register_metal_postproc" title="tilelang.engine.callback.register_metal_postproc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_metal_postproc</span></code></a>(func[, override])</p></td>
+<td><p>Register a post-processing function for Metal code generation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.callback.register_cuda_postproc_callback" title="tilelang.engine.callback.register_cuda_postproc_callback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_cuda_postproc_callback</span></code></a>([func, override])</p></td>
 <td><p>Decorator for registering CUDA post-processing callback function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.callback.register_hip_postproc_callback" title="tilelang.engine.callback.register_hip_postproc_callback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_hip_postproc_callback</span></code></a>([func, override])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.callback.register_hip_postproc_callback" title="tilelang.engine.callback.register_hip_postproc_callback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_hip_postproc_callback</span></code></a>([func, override])</p></td>
 <td><p>Decorator for registering HIP post-processing callback function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.callback.register_c_postproc_callback" title="tilelang.engine.callback.register_c_postproc_callback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_c_postproc_callback</span></code></a>([func, override])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.callback.register_c_postproc_callback" title="tilelang.engine.callback.register_c_postproc_callback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_c_postproc_callback</span></code></a>([func, override])</p></td>
 <td><p>Decorator for registering C host post-processing callback function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.callback.register_metal_postproc_callback" title="tilelang.engine.callback.register_metal_postproc_callback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_metal_postproc_callback</span></code></a>([func, override])</p></td>
+<td><p>Decorator for registering Metal post-processing callback function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -610,6 +620,21 @@ and returns the processed code (str).</p></li>
 <p>This callback intercepts C host code emitted by TileLang just before it
 is wrapped into a CSourceModule. It should take the generated code string
 and the <cite>Target</cite> as inputs, and return the (possibly) modified code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><em>str</em><em>, </em><em>tvm.target.Target</em><em>]</em><em>, </em><em>str</em><em>]</em>) – A callable that takes generated code (str) and target (Target) as input,
+and returns the processed code (str).</p></li>
+<li><p><strong>override</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether to override existing registered function. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.engine.callback.register_metal_postproc">
+<span class="sig-prename descclassname"><span class="pre">tilelang.engine.callback.</span></span><span class="sig-name descname"><span class="pre">register_metal_postproc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.callback.register_metal_postproc" title="Link to this definition">¶</a></dt>
+<dd><p>Register a post-processing function for Metal code generation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -690,6 +715,29 @@ def func(code, target): …</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.engine.callback.register_metal_postproc_callback">
+<span class="sig-prename descclassname"><span class="pre">tilelang.engine.callback.</span></span><span class="sig-name descname"><span class="pre">register_metal_postproc_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.callback.register_metal_postproc_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Decorator for registering Metal post-processing callback function.</p>
+<dl>
+<dt>Can be used with or without parentheses:</dt><dd><p>&#64;register_metal_postproc_callback
+def func(code, target): …</p>
+<p>&#64;register_metal_postproc_callback()
+def func(code, target): …</p>
+<p>&#64;register_metal_postproc_callback(override=False)
+def func(code, target): …</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>Callable</em><em> | </em><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – The function to be decorated or a boolean override flag</p></li>
+<li><p><strong>override</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether to override existing registered function. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -754,9 +802,11 @@ def func(code, target): …</p>
 <li><a class="reference internal" href="#tilelang.engine.callback.register_cuda_postproc"><code class="docutils literal notranslate"><span class="pre">register_cuda_postproc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.callback.register_hip_postproc"><code class="docutils literal notranslate"><span class="pre">register_hip_postproc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.callback.register_c_postproc"><code class="docutils literal notranslate"><span class="pre">register_c_postproc()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.engine.callback.register_metal_postproc"><code class="docutils literal notranslate"><span class="pre">register_metal_postproc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.callback.register_cuda_postproc_callback"><code class="docutils literal notranslate"><span class="pre">register_cuda_postproc_callback()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.callback.register_hip_postproc_callback"><code class="docutils literal notranslate"><span class="pre">register_hip_postproc_callback()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.callback.register_c_postproc_callback"><code class="docutils literal notranslate"><span class="pre">register_c_postproc_callback()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.engine.callback.register_metal_postproc_callback"><code class="docutils literal notranslate"><span class="pre">register_metal_postproc_callback()</span></code></a></li>
 </ul>
 </li>
 </ul>

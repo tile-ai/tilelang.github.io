@@ -12,9 +12,11 @@ Functions
    tilelang.engine.callback.register_cuda_postproc
    tilelang.engine.callback.register_hip_postproc
    tilelang.engine.callback.register_c_postproc
+   tilelang.engine.callback.register_metal_postproc
    tilelang.engine.callback.register_cuda_postproc_callback
    tilelang.engine.callback.register_hip_postproc_callback
    tilelang.engine.callback.register_c_postproc_callback
+   tilelang.engine.callback.register_metal_postproc_callback
 
 
 Module Contents
@@ -45,6 +47,15 @@ Module Contents
    This callback intercepts C host code emitted by TileLang just before it
    is wrapped into a CSourceModule. It should take the generated code string
    and the `Target` as inputs, and return the (possibly) modified code.
+
+   :param func: A callable that takes generated code (str) and target (Target) as input,
+                and returns the processed code (str).
+   :param override: Whether to override existing registered function. Defaults to True.
+
+
+.. py:function:: register_metal_postproc(func, override = True)
+
+   Register a post-processing function for Metal code generation.
 
    :param func: A callable that takes generated code (str) and target (Target) as input,
                 and returns the processed code (str).
@@ -99,6 +110,24 @@ Module Contents
        def func(code, target): ...
 
        @register_c_postproc_callback(override=False)
+       def func(code, target): ...
+
+   :param func: The function to be decorated or a boolean override flag
+   :param override: Whether to override existing registered function. Defaults to True.
+
+
+.. py:function:: register_metal_postproc_callback(func = None, override = True)
+
+   Decorator for registering Metal post-processing callback function.
+
+   Can be used with or without parentheses:
+       @register_metal_postproc_callback
+       def func(code, target): ...
+
+       @register_metal_postproc_callback()
+       def func(code, target): ...
+
+       @register_metal_postproc_callback(override=False)
        def func(code, target): ...
 
    :param func: The function to be decorated or a boolean override flag
