@@ -572,6 +572,9 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.eager.builder.TIR_VAR_SCOPE_FRAME" title="tilelang.language.eager.builder.TIR_VAR_SCOPE_FRAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TIR_VAR_SCOPE_FRAME</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.eager.builder.EagerJITStage" title="tilelang.language.eager.builder.EagerJITStage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EagerJITStage</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -858,6 +861,11 @@ They do not have any runtime representation in the generated TIR.</p>
 </dl>
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.language.eager.builder.EagerJITStage">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.builder.</span></span><span class="sig-name descname"><span class="pre">EagerJITStage</span></span><a class="headerlink" href="#tilelang.language.eager.builder.EagerJITStage" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.language.eager.builder.Builder">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.builder.</span></span><span class="sig-name descname"><span class="pre">Builder</span></span><a class="headerlink" href="#tilelang.language.eager.builder.Builder" title="Link to this definition">¶</a></dt>
@@ -899,7 +907,12 @@ They do not have any runtime representation in the generated TIR.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.eager.builder.Builder.eager_jit">
-<span class="sig-name descname"><span class="pre">eager_jit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#tilelang.language.eager.builder.Builder.eager_jit" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">eager_jit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">EagerJITStage</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'none'</span></em><a class="headerlink" href="#tilelang.language.eager.builder.Builder.eager_jit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.builder.Builder.eager_jit_subs">
+<span class="sig-name descname"><span class="pre">eager_jit_subs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tvm.tir.expr.PrimExpr</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.eager.builder.Builder.eager_jit_subs" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1178,6 +1191,11 @@ The immutability means the result is usually not changed or re-assigned in a pyt
 <span class="sig-name descname"><span class="pre">get_fileline_stack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stacklevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.builder.Builder.get_fileline_stack" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.builder.Builder.skip_kernel_ctx">
+<span class="sig-name descname"><span class="pre">skip_kernel_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.builder.Builder.skip_kernel_ctx" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1416,6 +1434,11 @@ inferred from actual tensor arguments at runtime.</p>
 For eager-style functions, constexpr variables are substituted based on
 actual tensor shapes at runtime.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.builder.TirTemplate.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.eager.builder.TirTemplate.prim_func">
 <span class="sig-name descname"><span class="pre">prim_func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#tilelang.language.eager.builder.PrimFunc" title="tilelang.language.eager.builder.PrimFunc"><span class="pre">PrimFunc</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.prim_func" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1426,18 +1449,30 @@ actual tensor shapes at runtime.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.builder.TirTemplate.constexprs">
+<span class="sig-name descname"><span class="pre">constexprs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.tir.expr.Var</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.constexprs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.eager.builder.TirTemplate.is_lazy_style">
 <span class="sig-name descname"><span class="pre">is_lazy_style</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.is_lazy_style" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.builder.TirTemplate.ir_gen">
+<span class="sig-name descname"><span class="pre">ir_gen</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../ast/index.html#tilelang.language.eager.ast.IRGenerator" title="tilelang.language.eager.ast.IRGenerator"><span class="pre">tilelang.language.eager.ast.IRGenerator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.ir_gen" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.language.eager.builder.TirTemplate.create">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constexpr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.create" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prim_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constexpr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ir_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.create" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
 <li><p><strong>prim_func</strong> (<a class="reference internal" href="#tilelang.language.eager.builder.PrimFunc" title="tilelang.language.eager.builder.PrimFunc"><em>PrimFunc</em></a><em>[</em><em>_P</em><em>, </em><em>_T</em><em>]</em>)</p></li>
 <li><p><strong>constexpr</strong> (<em>set</em><em>[</em><em>tvm.tir.expr.Var</em><em>]</em>)</p></li>
+<li><p><strong>ir_gen</strong> (<a class="reference internal" href="../ast/index.html#tilelang.language.eager.ast.IRGenerator" title="tilelang.language.eager.ast.IRGenerator"><em>tilelang.language.eager.ast.IRGenerator</em></a><em>[</em><em>_P</em><em>, </em><em>_T</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1448,11 +1483,14 @@ actual tensor shapes at runtime.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.language.eager.builder.TirTemplate.from_lazy_style">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_lazy_style</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim_func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.from_lazy_style" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_lazy_style</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prim_func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.from_lazy_style" title="Link to this definition">¶</a></dt>
 <dd><p>Create template from lazy-style function that returns PrimFunc directly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>prim_func</strong> (<a class="reference internal" href="#tilelang.language.eager.builder.PrimFunc" title="tilelang.language.eager.builder.PrimFunc"><em>PrimFunc</em></a><em>[</em><em>_P</em><em>, </em><em>_T</em><em>]</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>prim_func</strong> (<a class="reference internal" href="#tilelang.language.eager.builder.PrimFunc" title="tilelang.language.eager.builder.PrimFunc"><em>PrimFunc</em></a><em>[</em><em>_P</em><em>, </em><em>_T</em><em>]</em>)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate" title="tilelang.language.eager.builder.TirTemplate">TirTemplate</a>[_P, _T]</p>
@@ -1462,7 +1500,7 @@ actual tensor shapes at runtime.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.language.eager.builder.TirTemplate.get_tir">
-<span class="sig-name descname"><span class="pre">get_tir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.get_tir" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_tir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">given_tensor_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.builder.TirTemplate.get_tir" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1675,6 +1713,7 @@ original function returns a PrimFunc directly.</p>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TIR_CONTROL_FRAME"><code class="docutils literal notranslate"><span class="pre">TIR_CONTROL_FRAME</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TIR_VAR_SCOPE_FRAME"><code class="docutils literal notranslate"><span class="pre">TIR_VAR_SCOPE_FRAME</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.is_var"><code class="docutils literal notranslate"><span class="pre">is_var()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.builder.EagerJITStage"><code class="docutils literal notranslate"><span class="pre">EagerJITStage</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder"><code class="docutils literal notranslate"><span class="pre">Builder</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.frames"><code class="docutils literal notranslate"><span class="pre">Builder.frames</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.ir_builder"><code class="docutils literal notranslate"><span class="pre">Builder.ir_builder</span></code></a></li>
@@ -1684,6 +1723,7 @@ original function returns a PrimFunc directly.</p>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.out_tensor_cnt"><code class="docutils literal notranslate"><span class="pre">Builder.out_tensor_cnt</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.constexpr_var"><code class="docutils literal notranslate"><span class="pre">Builder.constexpr_var</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.eager_jit"><code class="docutils literal notranslate"><span class="pre">Builder.eager_jit</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.eager_jit_subs"><code class="docutils literal notranslate"><span class="pre">Builder.eager_jit_subs</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.current_file"><code class="docutils literal notranslate"><span class="pre">Builder.current_file</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.current_line"><code class="docutils literal notranslate"><span class="pre">Builder.current_line</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.current_macro_name"><code class="docutils literal notranslate"><span class="pre">Builder.current_macro_name</span></code></a></li>
@@ -1723,6 +1763,7 @@ original function returns a PrimFunc directly.</p>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.constexpr"><code class="docutils literal notranslate"><span class="pre">Builder.constexpr()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.set_fileline"><code class="docutils literal notranslate"><span class="pre">Builder.set_fileline()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.get_fileline_stack"><code class="docutils literal notranslate"><span class="pre">Builder.get_fileline_stack()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.skip_kernel_ctx"><code class="docutils literal notranslate"><span class="pre">Builder.skip_kernel_ctx()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.PrimFunc"><code class="docutils literal notranslate"><span class="pre">PrimFunc</span></code></a><ul>
@@ -1752,9 +1793,12 @@ original function returns a PrimFunc directly.</p>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.get_type_hints"><code class="docutils literal notranslate"><span class="pre">get_type_hints()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.const"><code class="docutils literal notranslate"><span class="pre">const()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate"><code class="docutils literal notranslate"><span class="pre">TirTemplate</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.name"><code class="docutils literal notranslate"><span class="pre">TirTemplate.name</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.prim_func"><code class="docutils literal notranslate"><span class="pre">TirTemplate.prim_func</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.matcher"><code class="docutils literal notranslate"><span class="pre">TirTemplate.matcher</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.constexprs"><code class="docutils literal notranslate"><span class="pre">TirTemplate.constexprs</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.is_lazy_style"><code class="docutils literal notranslate"><span class="pre">TirTemplate.is_lazy_style</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.ir_gen"><code class="docutils literal notranslate"><span class="pre">TirTemplate.ir_gen</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.create"><code class="docutils literal notranslate"><span class="pre">TirTemplate.create()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.from_lazy_style"><code class="docutils literal notranslate"><span class="pre">TirTemplate.from_lazy_style()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.get_tir"><code class="docutils literal notranslate"><span class="pre">TirTemplate.get_tir()</span></code></a></li>

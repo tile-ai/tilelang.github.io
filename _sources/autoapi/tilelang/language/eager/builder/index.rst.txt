@@ -15,6 +15,7 @@ Attributes
    tilelang.language.eager.builder.AnyFrame
    tilelang.language.eager.builder.TIR_CONTROL_FRAME
    tilelang.language.eager.builder.TIR_VAR_SCOPE_FRAME
+   tilelang.language.eager.builder.EagerJITStage
 
 
 Classes
@@ -191,6 +192,8 @@ Module Contents
 
 .. py:function:: is_var(v)
 
+.. py:data:: EagerJITStage
+
 .. py:class:: Builder
 
    Bases: :py:obj:`tilelang.language.eager.ast.BaseBuilder`
@@ -226,8 +229,13 @@ Module Contents
 
 
    .. py:attribute:: eager_jit
-      :value: False
+      :type:  EagerJITStage
+      :value: 'none'
 
+
+
+   .. py:attribute:: eager_jit_subs
+      :type:  dict[str, tvm.tir.expr.PrimExpr]
 
 
    .. py:attribute:: current_file
@@ -363,6 +371,9 @@ Module Contents
 
 
    .. py:method:: get_fileline_stack(stacklevel=1)
+
+
+   .. py:method:: skip_kernel_ctx()
 
 
 .. py:class:: PrimFunc
@@ -542,6 +553,10 @@ Module Contents
    actual tensor shapes at runtime.
 
 
+   .. py:attribute:: name
+      :type:  str
+
+
    .. py:attribute:: prim_func
       :type:  PrimFunc[_P, _T]
 
@@ -552,18 +567,30 @@ Module Contents
 
 
 
+   .. py:attribute:: constexprs
+      :type:  set[tvm.tir.expr.Var]
+      :value: None
+
+
+
    .. py:attribute:: is_lazy_style
       :type:  bool
       :value: False
 
 
 
-   .. py:method:: create(prim_func, constexpr)
+   .. py:attribute:: ir_gen
+      :type:  tilelang.language.eager.ast.IRGenerator[_P, _T] | None
+      :value: None
+
+
+
+   .. py:method:: create(name, prim_func, constexpr, ir_gen = None)
       :classmethod:
 
 
 
-   .. py:method:: from_lazy_style(prim_func)
+   .. py:method:: from_lazy_style(name, prim_func)
       :classmethod:
 
 
@@ -571,7 +598,7 @@ Module Contents
 
 
 
-   .. py:method:: get_tir(**kwargs)
+   .. py:method:: get_tir(tensor_args, given_tensor_args, kwargs)
 
 
 .. py:class:: JITFunc
