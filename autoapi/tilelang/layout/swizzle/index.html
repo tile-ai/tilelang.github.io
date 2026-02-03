@@ -579,6 +579,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_linear_layout" title="tilelang.layout.swizzle.make_linear_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_linear_layout</span></code></a>(buffer_or_load_or_region)</p></td>
 <td><p>Create a row-major linear layout for any dimension.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_gemm_fragment_8x8" title="tilelang.layout.swizzle.make_gemm_fragment_8x8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_gemm_fragment_8x8</span></code></a>()</p></td>
+<td><p>Create a standard 8x8 GEMM fragment layout for ldmatrix/stmatrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_gemm_fragment_8x8_transposed" title="tilelang.layout.swizzle.make_gemm_fragment_8x8_transposed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_gemm_fragment_8x8_transposed</span></code></a>()</p></td>
+<td><p>Create a transposed 8x8 GEMM fragment layout for ldmatrix/stmatrix.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -697,6 +703,37 @@ make_quarter_bank_swizzled_layout(stride, continuous, element_size)</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.swizzle.make_gemm_fragment_8x8">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_gemm_fragment_8x8</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_gemm_fragment_8x8" title="Link to this definition">¶</a></dt>
+<dd><p>Create a standard 8x8 GEMM fragment layout for ldmatrix/stmatrix.</p>
+<p>This layout matches the warp-level matrix multiplication pattern used in tensor cores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An 8x8 fragment layout</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../fragment/index.html#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment">Fragment</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.swizzle.make_gemm_fragment_8x8_transposed">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_gemm_fragment_8x8_transposed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_gemm_fragment_8x8_transposed" title="Link to this definition">¶</a></dt>
+<dd><p>Create a transposed 8x8 GEMM fragment layout for ldmatrix/stmatrix.</p>
+<p>This layout is the transposed version of make_gemm_fragment_8x8, useful for
+different access patterns in matrix operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A transposed 8x8 fragment layout</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../fragment/index.html#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment">Fragment</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -766,6 +803,8 @@ make_quarter_bank_swizzled_layout(stride, continuous, element_size)</p>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_half_bank_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_half_bank_swizzled_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_quarter_bank_swizzled_layout"><code class="docutils literal notranslate"><span class="pre">make_quarter_bank_swizzled_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_linear_layout"><code class="docutils literal notranslate"><span class="pre">make_linear_layout()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.swizzle.make_gemm_fragment_8x8"><code class="docutils literal notranslate"><span class="pre">make_gemm_fragment_8x8()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.swizzle.make_gemm_fragment_8x8_transposed"><code class="docutils literal notranslate"><span class="pre">make_gemm_fragment_8x8_transposed()</span></code></a></li>
 </ul>
 </li>
 </ul>

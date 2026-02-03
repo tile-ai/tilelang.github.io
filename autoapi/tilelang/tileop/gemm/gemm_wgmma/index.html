@@ -568,6 +568,32 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.tileop.gemm.gemm_wgmma.</span></span><span class="sig-name descname"><span class="pre">GemmWGMMA</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_wgmma.GemmWGMMA" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gemm_base/index.html#tilelang.tileop.gemm.gemm_base.GemmBase" title="tilelang.tileop.gemm.gemm_base.GemmBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.tileop.gemm.gemm_base.GemmBase</span></code></a></p>
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_wgmma.GemmWGMMA.infer_shared_layout">
+<span class="sig-name descname"><span class="pre">infer_shared_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">continuity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_wgmma.GemmWGMMA.infer_shared_layout" title="Link to this definition">¶</a></dt>
+<dd><p>Infer the swizzle layout for shared memory based on continuity.</p>
+<p>WGMMA can directly use shared memory as input, so the swizzle layout must
+match the tensor core’s access pattern. The swizzle granularity is determined
+by the continuous dimension size:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>128B swizzle (Full):    continuity % (vectorized_size * 8) == 0</p></li>
+<li><p>64B swizzle (Half):     continuity % (vectorized_size * 4) == 0</p></li>
+<li><p>32B swizzle (Quarter):  continuity % (vectorized_size * 2) == 0</p></li>
+<li><p>Linear (no swizzle):    otherwise</p></li>
+</ul>
+</div></blockquote>
+<p>See: <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__TENSOR__MEMORY.html">https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__TENSOR__MEMORY.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>continuity</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable[[tvm.tir.Buffer], tilelang.layout.Layout]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_wgmma.GemmWGMMA.infer_layout">
 <span class="sig-name descname"><span class="pre">infer_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_nums</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_wgmma.GemmWGMMA.infer_layout" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -699,6 +725,7 @@
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_wgmma.GemmWGMMA"><code class="docutils literal notranslate"><span class="pre">GemmWGMMA</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_wgmma.GemmWGMMA.infer_shared_layout"><code class="docutils literal notranslate"><span class="pre">GemmWGMMA.infer_shared_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_wgmma.GemmWGMMA.infer_layout"><code class="docutils literal notranslate"><span class="pre">GemmWGMMA.infer_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_wgmma.GemmWGMMA.lower"><code class="docutils literal notranslate"><span class="pre">GemmWGMMA.lower()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_wgmma.GemmWGMMA.is_gemm_ss"><code class="docutils literal notranslate"><span class="pre">GemmWGMMA.is_gemm_ss()</span></code></a></li>

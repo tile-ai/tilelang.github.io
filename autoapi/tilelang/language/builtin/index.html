@@ -555,12 +555,6 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.create_list_of_mbarrier" title="tilelang.language.builtin.create_list_of_mbarrier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_list_of_mbarrier</span></code></a>(*args)</p></td>
-<td><p>Create a list of memory barrier handles.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.get_mbarrier" title="tilelang.language.builtin.get_mbarrier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mbarrier</span></code></a>(*args)</p></td>
-<td><p>Retrieve a memory barrier operation.</p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.create_tma_descriptor" title="tilelang.language.builtin.create_tma_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_tma_descriptor</span></code></a>(*args)</p></td>
 <td><p>Create a Tensor Memory Access (TMA) descriptor.</p></td>
 </tr>
@@ -603,7 +597,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.mbarrier_arrive" title="tilelang.language.builtin.mbarrier_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mbarrier_arrive</span></code></a>(mbarrier)</p></td>
 <td><p>Arrive at memory barrier.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.mbarrier_expect_tx" title="tilelang.language.builtin.mbarrier_expect_tx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mbarrier_expect_tx</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.mbarrier_expect_tx" title="tilelang.language.builtin.mbarrier_expect_tx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mbarrier_expect_tx</span></code></a>(mbarrier, tx)</p></td>
 <td><p>Set expected transaction count for memory barrier.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.warpgroup_arrive" title="tilelang.language.builtin.warpgroup_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warpgroup_arrive</span></code></a>()</p></td>
@@ -636,10 +630,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.wait_wgmma" title="tilelang.language.builtin.wait_wgmma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wait_wgmma</span></code></a>(id)</p></td>
 <td><p>Wait for WGMMA (Warp Group Matrix Multiply-Accumulate) operations to complete.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_wait" title="tilelang.language.builtin.barrier_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_wait</span></code></a>(barrier_id[, parity])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_wait" title="tilelang.language.builtin.barrier_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_wait</span></code></a>(mbarrier, parity)</p></td>
 <td><p>Wait for a memory barrier to complete.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_arrive" title="tilelang.language.builtin.barrier_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_arrive</span></code></a>(barrier_id)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_arrive" title="tilelang.language.builtin.barrier_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_arrive</span></code></a>(mbarrier)</p></td>
 <td><p>Arrive at a memory barrier.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_xor" title="tilelang.language.builtin.shfl_xor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_xor</span></code></a>(value, offset)</p></td>
@@ -678,7 +672,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.loop_break" title="tilelang.language.builtin.loop_break"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loop_break</span></code></a>()</p></td>
 <td><p>Break out of the innermost loop.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc" title="tilelang.language.builtin.cp_async_barrier_noinc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cp_async_barrier_noinc</span></code></a>(barrier_id)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc" title="tilelang.language.builtin.cp_async_barrier_noinc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cp_async_barrier_noinc</span></code></a>(barrier)</p></td>
 <td><p>Perform a ptx async copy barrier using cp.async.mbarrier.arrive.noinc.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.tcgen05_mma_arrive" title="tilelang.language.builtin.tcgen05_mma_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_mma_arrive</span></code></a>(mbar_ptr)</p></td>
@@ -687,54 +681,36 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.ptx_mma_sm70" title="tilelang.language.builtin.ptx_mma_sm70"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_mma_sm70</span></code></a>(shape, A_layout, B_layout, A_dtype, ...)</p></td>
 <td><p>TVM intrinsic for ptx tensor core mma instructions on SM70 (Volta).</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.ldg32" title="tilelang.language.builtin.ldg32"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldg32</span></code></a>(src[, pred])</p></td>
+<td><p>Load 32 bits (4 bytes) from global memory using explicit PTX instructions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.ldg64" title="tilelang.language.builtin.ldg64"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldg64</span></code></a>(src[, pred])</p></td>
+<td><p>Load 64 bits (8 bytes) from global memory using explicit PTX instructions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.ldg128" title="tilelang.language.builtin.ldg128"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldg128</span></code></a>(src[, pred])</p></td>
+<td><p>Load 128 bits (16 bytes) from global memory using explicit PTX instructions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.ldg256" title="tilelang.language.builtin.ldg256"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldg256</span></code></a>(src[, pred])</p></td>
+<td><p>Load 256 bits (32 bytes) from global memory using explicit PTX instructions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.stg32" title="tilelang.language.builtin.stg32"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stg32</span></code></a>(dst, value[, pred])</p></td>
+<td><p>Store 32 bits (4 bytes) to global memory using explicit PTX instructions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.stg64" title="tilelang.language.builtin.stg64"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stg64</span></code></a>(dst, value[, pred])</p></td>
+<td><p>Store 64 bits (8 bytes) to global memory using explicit PTX instructions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.stg128" title="tilelang.language.builtin.stg128"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stg128</span></code></a>(dst, value[, pred])</p></td>
+<td><p>Store 128 bits (16 bytes) to global memory using explicit PTX instructions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.stg256" title="tilelang.language.builtin.stg256"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stg256</span></code></a>(dst, value[, pred])</p></td>
+<td><p>Store 256 bits (32 bytes) to global memory using explicit PTX instructions.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.builtin.create_list_of_mbarrier">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">create_list_of_mbarrier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.create_list_of_mbarrier" title="Link to this definition">¶</a></dt>
-<dd><p>Create a list of memory barrier handles.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> (<em>list</em><em> or </em><em>Any</em>) – Either a single list of arguments, or multiple arguments directly.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the created list of memory barriers.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tvm.tir.Call</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> – If the input is not a list or variadic arguments.</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_list_of_mbarrier</span><span class="p">([</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">create_list_of_mbarrier</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.builtin.get_mbarrier">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">get_mbarrier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.get_mbarrier" title="Link to this definition">¶</a></dt>
-<dd><p>Retrieve a memory barrier operation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> – Variable arguments to specify which memory barrier to retrieve</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A handle to the requested memory barrier</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.create_tma_descriptor">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">create_tma_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.create_tma_descriptor" title="Link to this definition">¶</a></dt>
@@ -908,39 +884,40 @@ Whether to increment or decrement the register count
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mbarrier</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>) – Optional[int, PrimExpr]
-The memory barrier to wait on</p></li>
-<li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em>) – Optional[int, Var]
-The parity value to wait for</p></li>
+<li><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer | BufferLoad</p></li>
+<li><p><strong>on</strong> (<em>The memory barrier to wait</em>) – <dl class="simple">
+<dt>parity: int | Var</dt><dd><p>The parity value to wait for</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em>)</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Wait for parity 0 on barrier 0</span>
-<span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mbar</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_barrier</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Wait for parity 0 on a single mbarrier</span>
+<span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="n">mbar</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-<span class="c1"># Wait for parity value in variable ko on barrier 1</span>
-<span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ko</span><span class="p">)</span>
-
-<span class="c1"># Wait using barrier handle</span>
-<span class="n">barrier</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">get_mbarrier</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="n">barrier</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">mbars</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_barrier</span><span class="p">([</span><span class="mi">128</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+<span class="c1"># Wait for parity value on one of the mbarriers</span>
+<span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="n">mbars</span><span class="p">[</span><span class="n">ko</span><span class="p">],</span> <span class="n">ko</span><span class="p">)</span>
 
 <span class="c1"># Common usage in pipelined kernels:</span>
 <span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_stages</span><span class="p">):</span>
     <span class="c1"># Producer waits for consumer to finish previous iteration</span>
-    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ko</span> <span class="o">^</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="n">mbars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ko</span> <span class="o">^</span> <span class="mi">1</span><span class="p">)</span>
     <span class="c1"># Producer copies data</span>
     <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A_global</span><span class="p">,</span> <span class="n">A_shared</span><span class="p">)</span>
     <span class="c1"># Producer signals data ready</span>
-    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="n">mbars</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="c1"># Consumer waits for producer data</span>
-    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ko</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_wait_parity</span><span class="p">(</span><span class="n">mbars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ko</span><span class="p">)</span>
     <span class="c1"># Consumer computes</span>
     <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
     <span class="c1"># Consumer signals completion</span>
-    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="n">mbars</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -952,7 +929,7 @@ The parity value to wait for</p></li>
 </dd>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mbarrier</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
+<li><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>)</p></li>
 <li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em>)</p></li>
 </ul>
 </dd>
@@ -965,7 +942,7 @@ The parity value to wait for</p></li>
 <dd><p>Arrive at memory barrier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mbarrier</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>) – Optional[int, PrimExpr]
+<dd class="field-odd"><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer | BufferLoad
 The memory barrier to arrive at</p>
 </dd>
 </dl>
@@ -973,11 +950,16 @@ The memory barrier to arrive at</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.mbarrier_expect_tx">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">mbarrier_expect_tx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.mbarrier_expect_tx" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">mbarrier_expect_tx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.mbarrier_expect_tx" title="Link to this definition">¶</a></dt>
 <dd><p>Set expected transaction count for memory barrier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> – Variable arguments specifying the expected transaction count</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer | BufferLoad
+The memory barrier to expect transaction count for</p></li>
+<li><p><strong>tx</strong> (<em>int</em>) – int
+The expected transaction count</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A handle to the barrier expectation operation</p>
@@ -1215,14 +1197,14 @@ The id of the WGMMA operation to wait for</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.barrier_wait">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">barrier_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barrier_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.barrier_wait" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">barrier_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.barrier_wait" title="Link to this definition">¶</a></dt>
 <dd><p>Wait for a memory barrier to complete.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>barrier_id</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>) – Optional[int, PrimExpr]
+<li><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer | BufferLoad
 The memory barrier to wait on</p></li>
-<li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em><em> | </em><em>None</em>) – Optional[int, Var]
+<li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em>) – int | Var
 The parity value to wait for</p></li>
 </ul>
 </dd>
@@ -1238,11 +1220,11 @@ The parity value to wait for</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.barrier_arrive">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">barrier_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barrier_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.barrier_arrive" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">barrier_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.barrier_arrive" title="Link to this definition">¶</a></dt>
 <dd><p>Arrive at a memory barrier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>barrier_id</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>) – Optional[int, PrimExpr]
+<dd class="field-odd"><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer | BufferLoad
 The memory barrier to arrive at</p>
 </dd>
 </dl>
@@ -1423,11 +1405,11 @@ The value to shuffle</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.cp_async_barrier_noinc">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">cp_async_barrier_noinc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barrier_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.cp_async_barrier_noinc" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">cp_async_barrier_noinc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barrier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.cp_async_barrier_noinc" title="Link to this definition">¶</a></dt>
 <dd><p>Perform a ptx async copy barrier using cp.async.mbarrier.arrive.noinc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>barrier_id</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p>
+<dd class="field-odd"><p><strong>barrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1493,6 +1475,210 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 </div>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.ldg32">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ldg32</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ldg32" title="Link to this definition">¶</a></dt>
+<dd><p>Load 32 bits (4 bytes) from global memory using explicit PTX instructions.</p>
+<p>Usage: <cite>T.ldg32(x[i])</cite> or <cite>T.ldg32(x[i:i+2])</cite> emits <cite>tl::ldg32(ptr)</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loaded 32-bit value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg32</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg32</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># load 2 x fp16</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg32</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">pred</span><span class="o">=</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># predicated load</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.ldg64">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ldg64</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ldg64" title="Link to this definition">¶</a></dt>
+<dd><p>Load 64 bits (8 bytes) from global memory using explicit PTX instructions.</p>
+<p>Usage: <cite>T.ldg64(x[i])</cite> or <cite>T.ldg64(x[i:i+4])</cite> emits <cite>tl::ldg64(ptr)</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loaded 64-bit value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg64</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg64</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">])</span>  <span class="c1"># load 4 x fp16</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg64</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">pred</span><span class="o">=</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># predicated load</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.ldg128">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ldg128</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ldg128" title="Link to this definition">¶</a></dt>
+<dd><p>Load 128 bits (16 bytes) from global memory using explicit PTX instructions.</p>
+<p>Usage: <cite>T.ldg128(x[i])</cite> or <cite>T.ldg128(x[i:i+8])</cite> emits <cite>tl::ldg128(ptr)</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loaded 128-bit value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg128</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg128</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">8</span><span class="p">])</span>  <span class="c1"># load 8 x fp16</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg128</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">pred</span><span class="o">=</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># predicated load</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.ldg256">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ldg256</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ldg256" title="Link to this definition">¶</a></dt>
+<dd><p>Load 256 bits (32 bytes) from global memory using explicit PTX instructions.</p>
+<p>Usage: <cite>T.ldg256(x[i])</cite> or <cite>T.ldg256(x[i:i+16])</cite> emits <cite>tl::ldg256(ptr)</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loaded 256-bit value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg256</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg256</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">16</span><span class="p">])</span>  <span class="c1"># load 16 x fp16</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ldg256</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">pred</span><span class="o">=</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># predicated load</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.stg32">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">stg32</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.stg32" title="Link to this definition">¶</a></dt>
+<dd><p>Store 32 bits (4 bytes) to global memory using explicit PTX instructions.</p>
+<p>Usage: <cite>T.stg32(y[i], value)</cite> emits <cite>tl::stg32(ptr, value)</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
+<li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 32-bit value to store.</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">stg32</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">val</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">stg32</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">val</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># predicated store</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.stg64">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">stg64</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.stg64" title="Link to this definition">¶</a></dt>
+<dd><p>Store 64 bits (8 bytes) to global memory using explicit PTX instructions.</p>
+<p>Usage: <cite>T.stg64(y[i:i+2], value)</cite> emits <cite>tl::stg64(ptr, value)</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
+<li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 64-bit value to store (e.g., uint2).</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">stg64</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="n">val</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">stg64</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="n">val</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># predicated store</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.stg128">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">stg128</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.stg128" title="Link to this definition">¶</a></dt>
+<dd><p>Store 128 bits (16 bytes) to global memory using explicit PTX instructions.</p>
+<p>Usage: <cite>T.stg128(y[i:i+4], value)</cite> emits <cite>tl::stg128(ptr, value)</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
+<li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 128-bit value to store (e.g., uint4).</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">stg128</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">],</span> <span class="n">val</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">stg128</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">],</span> <span class="n">val</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># predicated store</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.stg256">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">stg256</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.stg256" title="Link to this definition">¶</a></dt>
+<dd><p>Store 256 bits (32 bytes) to global memory using explicit PTX instructions.</p>
+<p>Usage: <cite>T.stg256(y[i:i+8], value)</cite> emits <cite>tl::stg256(ptr, value)</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
+<li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 256-bit value to store (e.g., ulonglong4).</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">stg256</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">8</span><span class="p">],</span> <span class="n">val</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">stg256</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">8</span><span class="p">],</span> <span class="n">val</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>  <span class="c1"># predicated store</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 </section>
 
@@ -1554,8 +1740,6 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <li><a class="reference internal" href="#">tilelang.language.builtin</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#tilelang.language.builtin.create_list_of_mbarrier"><code class="docutils literal notranslate"><span class="pre">create_list_of_mbarrier()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.builtin.get_mbarrier"><code class="docutils literal notranslate"><span class="pre">get_mbarrier()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.create_tma_descriptor"><code class="docutils literal notranslate"><span class="pre">create_tma_descriptor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.tma_load"><code class="docutils literal notranslate"><span class="pre">tma_load()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.fence_proxy_async"><code class="docutils literal notranslate"><span class="pre">fence_proxy_async()</span></code></a></li>
@@ -1598,6 +1782,14 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <li><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc"><code class="docutils literal notranslate"><span class="pre">cp_async_barrier_noinc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_mma_arrive"><code class="docutils literal notranslate"><span class="pre">tcgen05_mma_arrive()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.ptx_mma_sm70"><code class="docutils literal notranslate"><span class="pre">ptx_mma_sm70()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.ldg32"><code class="docutils literal notranslate"><span class="pre">ldg32()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.ldg64"><code class="docutils literal notranslate"><span class="pre">ldg64()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.ldg128"><code class="docutils literal notranslate"><span class="pre">ldg128()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.ldg256"><code class="docutils literal notranslate"><span class="pre">ldg256()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.stg32"><code class="docutils literal notranslate"><span class="pre">stg32()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.stg64"><code class="docutils literal notranslate"><span class="pre">stg64()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.stg128"><code class="docutils literal notranslate"><span class="pre">stg128()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.stg256"><code class="docutils literal notranslate"><span class="pre">stg256()</span></code></a></li>
 </ul>
 </li>
 </ul>

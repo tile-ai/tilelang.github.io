@@ -21,6 +21,8 @@ Functions
    tilelang.utils.target.check_cuda_availability
    tilelang.utils.target.check_hip_availability
    tilelang.utils.target.check_metal_availability
+   tilelang.utils.target.determine_fp8_type
+   tilelang.utils.target.determine_torch_fp8_type
    tilelang.utils.target.normalize_cutedsl_target
    tilelang.utils.target.determine_target
    tilelang.utils.target.target_is_cuda
@@ -65,6 +67,15 @@ Module Contents
 
 
 .. py:function:: check_metal_availability()
+
+.. py:function:: determine_fp8_type(fp8_format = 'e4m3')
+
+   Select the correct FP8 dtype string for the current platform.
+   - CUDA defaults to FP8 E4M3FN / E5M2.
+   - ROCm uses FNUZ except gfx950 (OCP), which prefers non-FNUZ when available.
+
+
+.. py:function:: determine_torch_fp8_type(fp8_format = 'e4m3')
 
 .. py:function:: normalize_cutedsl_target(target)
 

@@ -571,16 +571,19 @@ It includes functionality to print variables, print values in buffers, condition
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.print_op.print_fragment_buffer_with_condition" title="tilelang.language.print_op.print_fragment_buffer_with_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_fragment_buffer_with_condition</span></code></a>(condition, ...[, msg])</p></td>
 <td><p>Conditionally prints the values of a flattened TIR buffer if the condition is True.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.print_op.print_local_buffer_with_condition" title="tilelang.language.print_op.print_local_buffer_with_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_local_buffer_with_condition</span></code></a>(condition, buffer, elems)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.print_op.print_msg" title="tilelang.language.print_op.print_msg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_msg</span></code></a>(msg)</p></td>
+<td><p>Prints a message string.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.print_op.print_local_buffer_with_condition" title="tilelang.language.print_op.print_local_buffer_with_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_local_buffer_with_condition</span></code></a>(condition, buffer, elems)</p></td>
 <td><p>Conditionally prints the values of a flattened TIR buffer if the condition is True.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.print_op.get_stack_str" title="tilelang.language.print_op.get_stack_str"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_stack_str</span></code></a>(msg[, stacklevel])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.print_op.get_stack_str" title="tilelang.language.print_op.get_stack_str"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_stack_str</span></code></a>(msg[, stacklevel])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.print_op.device_assert" title="tilelang.language.print_op.device_assert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_assert</span></code></a>(condition[, msg, no_stack_info])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.print_op.device_assert" title="tilelang.language.print_op.device_assert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_assert</span></code></a>(condition[, msg, no_stack_info])</p></td>
 <td><p>Device-side assert emulation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.print_op.print" title="tilelang.language.print_op.print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>(obj[, msg, warp_group_id, warp_id])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.print_op.print" title="tilelang.language.print_op.print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>([obj, msg, warp_group_id, warp_id])</p></td>
 <td><p>A generic print function that handles both TIR buffers and primitive expressions.</p></td>
 </tr>
 </tbody>
@@ -694,6 +697,20 @@ It includes functionality to print variables, print values in buffers, condition
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.print_op.print_msg">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.print_op.</span></span><span class="sig-name descname"><span class="pre">print_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.print_op.print_msg" title="Link to this definition">¶</a></dt>
+<dd><p>Prints a message string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>msg</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.print_op.print_local_buffer_with_condition">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.print_op.</span></span><span class="sig-name descname"><span class="pre">print_local_buffer_with_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elems</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.print_op.print_local_buffer_with_condition" title="Link to this definition">¶</a></dt>
 <dd><p>Conditionally prints the values of a flattened TIR buffer if the condition is True.</p>
@@ -738,7 +755,7 @@ The assert is always enabled and cannot be disabled at runtime.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.print_op.print">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.print_op.</span></span><span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_group_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.print_op.print" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.print_op.</span></span><span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_group_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.print_op.print" title="Link to this definition">¶</a></dt>
 <dd><p>A generic print function that handles both TIR buffers and primitive expressions.</p>
 <ul class="simple">
 <li><p>If the input is a TIR buffer, it prints its values, but only on the first thread (tx=0, ty=0, tz=0).</p></li>
@@ -747,7 +764,7 @@ The assert is always enabled and cannot be disabled at runtime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> (<em>Any</em>) – The object to print. It can be either a tir.Buffer or tir.PrimExpr.</p></li>
+<li><p><strong>obj</strong> (<em>Any</em>) – The object to print. It can be either a tir.Buffer, tir.PrimExpr, or None (for msg-only print).</p></li>
 <li><p><strong>msg</strong> (<em>str</em>) – An optional message to include in the print statement.</p></li>
 <li><p><strong>warp_group_id</strong> (<em>int</em>) – The warp group id to print.</p></li>
 <li><p><strong>warp_id</strong> (<em>int</em>) – The warp id to print.</p></li>
@@ -832,6 +849,7 @@ The assert is always enabled and cannot be disabled at runtime.</p>
 <li><a class="reference internal" href="#tilelang.language.print_op.print_global_buffer_with_condition"><code class="docutils literal notranslate"><span class="pre">print_global_buffer_with_condition()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.print_op.print_shared_buffer_with_condition"><code class="docutils literal notranslate"><span class="pre">print_shared_buffer_with_condition()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.print_op.print_fragment_buffer_with_condition"><code class="docutils literal notranslate"><span class="pre">print_fragment_buffer_with_condition()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.print_op.print_msg"><code class="docutils literal notranslate"><span class="pre">print_msg()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.print_op.print_local_buffer_with_condition"><code class="docutils literal notranslate"><span class="pre">print_local_buffer_with_condition()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.print_op.get_stack_str"><code class="docutils literal notranslate"><span class="pre">get_stack_str()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.print_op.device_assert"><code class="docutils literal notranslate"><span class="pre">device_assert()</span></code></a></li>

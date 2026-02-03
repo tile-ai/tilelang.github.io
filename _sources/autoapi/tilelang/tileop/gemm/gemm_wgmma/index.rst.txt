@@ -20,6 +20,22 @@ Module Contents
    Bases: :py:obj:`tilelang.tileop.gemm.gemm_base.GemmBase`
 
 
+   .. py:method:: infer_shared_layout(continuity)
+
+      Infer the swizzle layout for shared memory based on continuity.
+
+      WGMMA can directly use shared memory as input, so the swizzle layout must
+      match the tensor core's access pattern. The swizzle granularity is determined
+      by the continuous dimension size:
+        - 128B swizzle (Full):    continuity % (vectorized_size * 8) == 0
+        - 64B swizzle (Half):     continuity % (vectorized_size * 4) == 0
+        - 32B swizzle (Quarter):  continuity % (vectorized_size * 2) == 0
+        - Linear (no swizzle):    otherwise
+
+      See: https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__TENSOR__MEMORY.html
+
+
+
    .. py:method:: infer_layout(target, thread_nums)
 
 

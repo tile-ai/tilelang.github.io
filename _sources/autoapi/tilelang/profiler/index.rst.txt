@@ -112,7 +112,7 @@ Package Contents
    .. py:method:: run_once(func = None)
 
 
-   .. py:method:: do_bench(func = None, warmup = 25, rep = 100, n_warmup = 1, n_repeat = 1, input_tensors = None, backend = 'event', quantiles = None, return_mode = 'mean')
+   .. py:method:: do_bench(func = None, warmup = 25, rep = 100, n_warmup = 1, n_repeat = 1, input_tensors = None, backend = 'event', quantiles = None, return_mode = 'mean', dynamic_symbolic_constraints = None)
 
       Benchmarks the execution time of a given function.
 
@@ -123,6 +123,9 @@ Package Contents
       :param n_repeat: Number of timing iterations
       :param profiler: Which profiling backend to use
       :param input_tensors: Optional pre-generated input tensors
+      :param dynamic_symbolic_constraints: Optional dict mapping dynamic symbolic variable
+                                           names to concrete int values. Use this when benchmarking kernels with
+                                           dynamic shapes, e.g., {"m": 2048, "n": 1024}
 
       :returns: Average execution time in milliseconds
       :rtype: float

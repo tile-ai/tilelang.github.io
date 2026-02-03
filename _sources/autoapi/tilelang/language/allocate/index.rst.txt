@@ -134,11 +134,16 @@ Module Contents
 
    Allocate a barrier buffer.
 
-   :param arrive_count: The number of threads that need to arrive at the barrier
-   :type arrive_count: int
+   :param arrive_count: The number of threads that need to arrive at each barrier
+   :type arrive_count: int | list[int]
 
    :returns: A TVM buffer object allocated as a barrier
    :rtype: T.Buffer
+
+   .. rubric:: Examples
+
+   >>> mbar = alloc_barrier(128)  # allocate a barrier with arrive count 128
+   >>> mbars = alloc_barrier([128] * n)  # allocate n barriers with the same arrive count 128
 
 
 .. py:function:: alloc_tmem(shape, dtype)

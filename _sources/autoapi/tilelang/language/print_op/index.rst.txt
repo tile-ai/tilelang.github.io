@@ -20,6 +20,7 @@ Functions
    tilelang.language.print_op.print_global_buffer_with_condition
    tilelang.language.print_op.print_shared_buffer_with_condition
    tilelang.language.print_op.print_fragment_buffer_with_condition
+   tilelang.language.print_op.print_msg
    tilelang.language.print_op.print_local_buffer_with_condition
    tilelang.language.print_op.get_stack_str
    tilelang.language.print_op.device_assert
@@ -88,6 +89,11 @@ Module Contents
    :rtype: tir.PrimExpr
 
 
+.. py:function:: print_msg(msg)
+
+   Prints a message string.
+
+
 .. py:function:: print_local_buffer_with_condition(condition, buffer, elems, msg = '')
 
    Conditionally prints the values of a flattened TIR buffer if the condition is True.
@@ -112,14 +118,14 @@ Module Contents
    The assert is always enabled and cannot be disabled at runtime.
 
 
-.. py:function:: print(obj, msg = '', warp_group_id = 0, warp_id = 0)
+.. py:function:: print(obj = None, msg = '', warp_group_id = 0, warp_id = 0)
 
    A generic print function that handles both TIR buffers and primitive expressions.
 
    - If the input is a TIR buffer, it prints its values, but only on the first thread (tx=0, ty=0, tz=0).
    - If the input is a TIR primitive expression, it prints its value directly.
 
-   :param obj: The object to print. It can be either a tir.Buffer or tir.PrimExpr.
+   :param obj: The object to print. It can be either a tir.Buffer, tir.PrimExpr, or None (for msg-only print).
    :type obj: Any
    :param msg: An optional message to include in the print statement.
    :type msg: str

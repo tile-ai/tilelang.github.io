@@ -14,8 +14,6 @@ Functions
 
 .. autoapisummary::
 
-   tilelang.language.builtin.create_list_of_mbarrier
-   tilelang.language.builtin.get_mbarrier
    tilelang.language.builtin.create_tma_descriptor
    tilelang.language.builtin.tma_load
    tilelang.language.builtin.fence_proxy_async
@@ -58,38 +56,18 @@ Functions
    tilelang.language.builtin.cp_async_barrier_noinc
    tilelang.language.builtin.tcgen05_mma_arrive
    tilelang.language.builtin.ptx_mma_sm70
+   tilelang.language.builtin.ldg32
+   tilelang.language.builtin.ldg64
+   tilelang.language.builtin.ldg128
+   tilelang.language.builtin.ldg256
+   tilelang.language.builtin.stg32
+   tilelang.language.builtin.stg64
+   tilelang.language.builtin.stg128
+   tilelang.language.builtin.stg256
 
 
 Module Contents
 ---------------
-
-.. py:function:: create_list_of_mbarrier(*args)
-
-   Create a list of memory barrier handles.
-
-   :param \*args: Either a single list of arguments, or multiple arguments directly.
-   :type \*args: list or Any
-
-   :returns: Handle to the created list of memory barriers.
-   :rtype: tvm.tir.Call
-
-   :raises TypeError: If the input is not a list or variadic arguments.
-
-   .. rubric:: Examples
-
-   >>> create_list_of_mbarrier([128, 128])
-   >>> create_list_of_mbarrier(128, 128)
-
-
-.. py:function:: get_mbarrier(*args)
-
-   Retrieve a memory barrier operation.
-
-   :param \*args: Variable arguments to specify which memory barrier to retrieve
-
-   :returns: A handle to the requested memory barrier
-   :rtype: tir.Call
-
 
 .. py:function:: create_tma_descriptor(*args)
 
@@ -191,40 +169,38 @@ Module Contents
 
    Wait for memory barrier parity condition.
 
-   :param mbarrier: Optional[int, PrimExpr]
-                    The memory barrier to wait on
-   :param parity: Optional[int, Var]
-                  The parity value to wait for
+   :param mbarrier: Buffer | BufferLoad
+   :param The memory barrier to wait on:
 
+       parity: int | Var
+           The parity value to wait for
    .. rubric:: Examples
 
    .. code-block:: python
 
-       # Wait for parity 0 on barrier 0
-       T.mbarrier_wait_parity(0, 0)
+       mbar = T.alloc_barrier(1)
+       # Wait for parity 0 on a single mbarrier
+       T.mbarrier_wait_parity(mbar, 0)
 
-       # Wait for parity value in variable ko on barrier 1
-       T.mbarrier_wait_parity(1, ko)
-
-       # Wait using barrier handle
-       barrier = T.get_mbarrier(0)
-       T.mbarrier_wait_parity(barrier, 1)
+       mbars = T.alloc_barrier([128] * n)
+       # Wait for parity value on one of the mbarriers
+       T.mbarrier_wait_parity(mbars[ko], ko)
 
        # Common usage in pipelined kernels:
        for ko in range(num_stages):
            # Producer waits for consumer to finish previous iteration
-           T.mbarrier_wait_parity(1, ko ^ 1)
+           T.mbarrier_wait_parity(mbars[1], ko ^ 1)
            # Producer copies data
            T.copy(A_global, A_shared)
            # Producer signals data ready
-           T.mbarrier_arrive(0)
+           T.mbarrier_arrive(mbars[0])
 
            # Consumer waits for producer data
-           T.mbarrier_wait_parity(0, ko)
+           T.mbarrier_wait_parity(mbars[0], ko)
            # Consumer computes
            T.gemm(A_shared, B_shared, C_local)
            # Consumer signals completion
-           T.mbarrier_arrive(1)
+           T.mbarrier_arrive(mbars[1])
 
    :returns: A handle to the barrier wait operation
    :rtype: tir.Call
@@ -234,15 +210,18 @@ Module Contents
 
    Arrive at memory barrier.
 
-   :param mbarrier: Optional[int, PrimExpr]
+   :param mbarrier: Buffer | BufferLoad
                     The memory barrier to arrive at
 
 
-.. py:function:: mbarrier_expect_tx(*args)
+.. py:function:: mbarrier_expect_tx(mbarrier, tx)
 
    Set expected transaction count for memory barrier.
 
-   :param \*args: Variable arguments specifying the expected transaction count
+   :param mbarrier: Buffer | BufferLoad
+                    The memory barrier to expect transaction count for
+   :param tx: int
+              The expected transaction count
 
    :returns: A handle to the barrier expectation operation
    :rtype: tir.Call
@@ -408,13 +387,13 @@ Module Contents
    :rtype: tir.Call
 
 
-.. py:function:: barrier_wait(barrier_id, parity = None)
+.. py:function:: barrier_wait(mbarrier, parity)
 
    Wait for a memory barrier to complete.
 
-   :param barrier_id: Optional[int, PrimExpr]
-                      The memory barrier to wait on
-   :param parity: Optional[int, Var]
+   :param mbarrier: Buffer | BufferLoad
+                    The memory barrier to wait on
+   :param parity: int | Var
                   The parity value to wait for
 
    :returns: A handle to the barrier wait operation
@@ -423,12 +402,12 @@ Module Contents
    Current implementation is a sugar syntax for mbarrier_wait_parity, as we only support parity 0 and 1.
 
 
-.. py:function:: barrier_arrive(barrier_id)
+.. py:function:: barrier_arrive(mbarrier)
 
    Arrive at a memory barrier.
 
-   :param barrier_id: Optional[int, PrimExpr]
-                      The memory barrier to arrive at
+   :param mbarrier: Buffer | BufferLoad
+                    The memory barrier to arrive at
 
 
 .. py:function:: shfl_xor(value, offset)
@@ -513,7 +492,7 @@ Module Contents
    Break out of the innermost loop.
 
 
-.. py:function:: cp_async_barrier_noinc(barrier_id)
+.. py:function:: cp_async_barrier_noinc(barrier)
 
    Perform a ptx async copy barrier using cp.async.mbarrier.arrive.noinc.
 
@@ -578,5 +557,145 @@ Module Contents
    ...     C_local.data,
    ...     0,
    ... )
+
+
+.. py:function:: ldg32(src, pred = None)
+
+   Load 32 bits (4 bytes) from global memory using explicit PTX instructions.
+
+   Usage: `T.ldg32(x[i])` or `T.ldg32(x[i:i+2])` emits `tl::ldg32(ptr)`.
+
+   :param src: A `Buffer`, `BufferRegion`, or `BufferLoad`.
+   :param pred: Optional predicate condition. If False, the load is skipped.
+
+   :returns: The loaded 32-bit value.
+   :rtype: PrimExpr
+
+   .. rubric:: Example
+
+   >>> val = T.ldg32(x[i])
+   >>> val = T.ldg32(x[i:i+2])  # load 2 x fp16
+   >>> val = T.ldg32(x[i], pred=i < N)  # predicated load
+
+
+.. py:function:: ldg64(src, pred = None)
+
+   Load 64 bits (8 bytes) from global memory using explicit PTX instructions.
+
+   Usage: `T.ldg64(x[i])` or `T.ldg64(x[i:i+4])` emits `tl::ldg64(ptr)`.
+
+   :param src: A `Buffer`, `BufferRegion`, or `BufferLoad`.
+   :param pred: Optional predicate condition. If False, the load is skipped.
+
+   :returns: The loaded 64-bit value.
+   :rtype: PrimExpr
+
+   .. rubric:: Example
+
+   >>> val = T.ldg64(x[i])
+   >>> val = T.ldg64(x[i:i+4])  # load 4 x fp16
+   >>> val = T.ldg64(x[i], pred=i < N)  # predicated load
+
+
+.. py:function:: ldg128(src, pred = None)
+
+   Load 128 bits (16 bytes) from global memory using explicit PTX instructions.
+
+   Usage: `T.ldg128(x[i])` or `T.ldg128(x[i:i+8])` emits `tl::ldg128(ptr)`.
+
+   :param src: A `Buffer`, `BufferRegion`, or `BufferLoad`.
+   :param pred: Optional predicate condition. If False, the load is skipped.
+
+   :returns: The loaded 128-bit value.
+   :rtype: PrimExpr
+
+   .. rubric:: Example
+
+   >>> val = T.ldg128(x[i])
+   >>> val = T.ldg128(x[i:i+8])  # load 8 x fp16
+   >>> val = T.ldg128(x[i], pred=i < N)  # predicated load
+
+
+.. py:function:: ldg256(src, pred = None)
+
+   Load 256 bits (32 bytes) from global memory using explicit PTX instructions.
+
+   Usage: `T.ldg256(x[i])` or `T.ldg256(x[i:i+16])` emits `tl::ldg256(ptr)`.
+
+   :param src: A `Buffer`, `BufferRegion`, or `BufferLoad`.
+   :param pred: Optional predicate condition. If False, the load is skipped.
+
+   :returns: The loaded 256-bit value.
+   :rtype: PrimExpr
+
+   .. rubric:: Example
+
+   >>> val = T.ldg256(x[i])
+   >>> val = T.ldg256(x[i:i+16])  # load 16 x fp16
+   >>> val = T.ldg256(x[i], pred=i < N)  # predicated load
+
+
+.. py:function:: stg32(dst, value, pred = None)
+
+   Store 32 bits (4 bytes) to global memory using explicit PTX instructions.
+
+   Usage: `T.stg32(y[i], value)` emits `tl::stg32(ptr, value)`.
+
+   :param dst: A `Buffer`, `BufferRegion`, or `BufferLoad` indicating the destination.
+   :param value: The 32-bit value to store.
+   :param pred: Optional predicate condition. If False, the store is skipped.
+
+   .. rubric:: Example
+
+   >>> T.stg32(y[i], val)
+   >>> T.stg32(y[i], val, pred=i < N)  # predicated store
+
+
+.. py:function:: stg64(dst, value, pred = None)
+
+   Store 64 bits (8 bytes) to global memory using explicit PTX instructions.
+
+   Usage: `T.stg64(y[i:i+2], value)` emits `tl::stg64(ptr, value)`.
+
+   :param dst: A `Buffer`, `BufferRegion`, or `BufferLoad` indicating the destination.
+   :param value: The 64-bit value to store (e.g., uint2).
+   :param pred: Optional predicate condition. If False, the store is skipped.
+
+   .. rubric:: Example
+
+   >>> T.stg64(y[i:i+2], val)
+   >>> T.stg64(y[i:i+2], val, pred=i < N)  # predicated store
+
+
+.. py:function:: stg128(dst, value, pred = None)
+
+   Store 128 bits (16 bytes) to global memory using explicit PTX instructions.
+
+   Usage: `T.stg128(y[i:i+4], value)` emits `tl::stg128(ptr, value)`.
+
+   :param dst: A `Buffer`, `BufferRegion`, or `BufferLoad` indicating the destination.
+   :param value: The 128-bit value to store (e.g., uint4).
+   :param pred: Optional predicate condition. If False, the store is skipped.
+
+   .. rubric:: Example
+
+   >>> T.stg128(y[i:i+4], val)
+   >>> T.stg128(y[i:i+4], val, pred=i < N)  # predicated store
+
+
+.. py:function:: stg256(dst, value, pred = None)
+
+   Store 256 bits (32 bytes) to global memory using explicit PTX instructions.
+
+   Usage: `T.stg256(y[i:i+8], value)` emits `tl::stg256(ptr, value)`.
+
+   :param dst: A `Buffer`, `BufferRegion`, or `BufferLoad` indicating the destination.
+   :param value: The 256-bit value to store (e.g., ulonglong4).
+   :param pred: Optional predicate condition. If False, the store is skipped.
+
+   .. rubric:: Example
+
+   >>> T.stg256(y[i:i+8], val)
+   >>> T.stg256(y[i:i+8], val, pred=i < N)  # predicated store
 
 

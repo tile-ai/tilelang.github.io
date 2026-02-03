@@ -22,6 +22,8 @@ Functions
    tilelang.layout.swizzle.make_half_bank_swizzled_layout
    tilelang.layout.swizzle.make_quarter_bank_swizzled_layout
    tilelang.layout.swizzle.make_linear_layout
+   tilelang.layout.swizzle.make_gemm_fragment_8x8
+   tilelang.layout.swizzle.make_gemm_fragment_8x8_transposed
 
 
 Module Contents
@@ -73,5 +75,26 @@ Module Contents
 
    :returns: A row-major linear layout
    :rtype: Layout
+
+
+.. py:function:: make_gemm_fragment_8x8()
+
+   Create a standard 8x8 GEMM fragment layout for ldmatrix/stmatrix.
+
+   This layout matches the warp-level matrix multiplication pattern used in tensor cores.
+
+   :returns: An 8x8 fragment layout
+   :rtype: Fragment
+
+
+.. py:function:: make_gemm_fragment_8x8_transposed()
+
+   Create a transposed 8x8 GEMM fragment layout for ldmatrix/stmatrix.
+
+   This layout is the transposed version of make_gemm_fragment_8x8, useful for
+   different access patterns in matrix operations.
+
+   :returns: A transposed 8x8 fragment layout
+   :rtype: Fragment
 
 

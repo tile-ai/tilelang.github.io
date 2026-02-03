@@ -663,7 +663,7 @@ signatures, behaviors, constraints, and examples, refer to API Reference
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_shared(shape,</span> <span class="pre">dtype,</span> <span class="pre">scope='shared.dyn')</span></code>: Allocate shared buffer.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_fragment(shape,</span> <span class="pre">dtype,</span> <span class="pre">scope='local.fragment')</span></code>: Allocate fragment.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_var(dtype,</span> <span class="pre">[init],</span> <span class="pre">scope='local.var')</span></code>: Scalar var buffer (1 elem).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_barrier(arrive_count)</span></code>: Shared barrier buffer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_barrier(arrive_count)</span></code>: Allocate and initialize one or more mbarriers.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_tmem(shape,</span> <span class="pre">dtype)</span></code>: Tensor memory (TMEM) buffer (Hopper+).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_reducer(shape,</span> <span class="pre">dtype,</span> <span class="pre">op='sum',</span> <span class="pre">replication=None)</span></code>: Reducer buf.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_descriptor(kind,</span> <span class="pre">dtype)</span></code>: Generic descriptor allocator.</p>
@@ -725,7 +725,7 @@ signatures, behaviors, constraints, and examples, refer to API Reference
 </ul>
 <p>Barriers, TMA, warp‑group</p>
 <ul class="simple">
-<li><p>Barriers: <code class="docutils literal notranslate"><span class="pre">T.create_list_of_mbarrier(...)</span></code>, <code class="docutils literal notranslate"><span class="pre">T.get_mbarrier(i)</span></code>.</p></li>
+<li><p>Barriers: <code class="docutils literal notranslate"><span class="pre">T.alloc_barrier(arrive_count)</span></code>.</p></li>
 <li><p>Parity ops: <code class="docutils literal notranslate"><span class="pre">T.mbarrier_wait_parity(barrier,</span> <span class="pre">parity)</span></code>, <code class="docutils literal notranslate"><span class="pre">T.mbarrier_arrive(barrier)</span></code>.</p></li>
 <li><p>Expect tx: <code class="docutils literal notranslate"><span class="pre">T.mbarrier_expect_tx(...)</span></code>; sugar: <code class="docutils literal notranslate"><span class="pre">T.barrier_wait(id,</span> <span class="pre">parity=None)</span></code>.</p></li>
 <li><p>TMA: <code class="docutils literal notranslate"><span class="pre">T.create_tma_descriptor(...)</span></code>, <code class="docutils literal notranslate"><span class="pre">T.tma_load(...)</span></code>,

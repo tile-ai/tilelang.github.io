@@ -578,6 +578,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.check_metal_availability" title="tilelang.utils.target.check_metal_availability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_metal_availability</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.determine_fp8_type" title="tilelang.utils.target.determine_fp8_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_fp8_type</span></code></a>([fp8_format])</p></td>
+<td><p>Select the correct FP8 dtype string for the current platform.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.determine_torch_fp8_type" title="tilelang.utils.target.determine_torch_fp8_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_torch_fp8_type</span></code></a>([fp8_format])</p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.normalize_cutedsl_target" title="tilelang.utils.target.normalize_cutedsl_target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_cutedsl_target</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
@@ -680,6 +686,35 @@
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.determine_fp8_type">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">determine_fp8_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fp8_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'e4m3'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.target.determine_fp8_type" title="Link to this definition">¶</a></dt>
+<dd><p>Select the correct FP8 dtype string for the current platform.
+- CUDA defaults to FP8 E4M3FN / E5M2.
+- ROCm uses FNUZ except gfx950 (OCP), which prefers non-FNUZ when available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fp8_format</strong> (<em>Literal</em><em>[</em><em>'e4m3'</em><em>, </em><em>'e5m2'</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.determine_torch_fp8_type">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">determine_torch_fp8_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fp8_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'e4m3'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.target.determine_torch_fp8_type" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fp8_format</strong> (<em>Literal</em><em>[</em><em>'e4m3'</em><em>, </em><em>'e5m2'</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>torch.dtype</p>
 </dd>
 </dl>
 </dd></dl>
@@ -974,6 +1009,8 @@
 <li><a class="reference internal" href="#tilelang.utils.target.check_cuda_availability"><code class="docutils literal notranslate"><span class="pre">check_cuda_availability()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.check_hip_availability"><code class="docutils literal notranslate"><span class="pre">check_hip_availability()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.check_metal_availability"><code class="docutils literal notranslate"><span class="pre">check_metal_availability()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.determine_fp8_type"><code class="docutils literal notranslate"><span class="pre">determine_fp8_type()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.determine_torch_fp8_type"><code class="docutils literal notranslate"><span class="pre">determine_torch_fp8_type()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.normalize_cutedsl_target"><code class="docutils literal notranslate"><span class="pre">normalize_cutedsl_target()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.determine_target"><code class="docutils literal notranslate"><span class="pre">determine_target()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.target_is_cuda"><code class="docutils literal notranslate"><span class="pre">target_is_cuda()</span></code></a></li>
