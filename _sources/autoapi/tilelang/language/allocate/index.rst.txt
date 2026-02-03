@@ -27,6 +27,7 @@ Attributes
 
 .. autoapisummary::
 
+   tilelang.language.allocate.ReducerOp
    tilelang.language.allocate.DescKind
 
 
@@ -98,8 +99,8 @@ Module Contents
    :rtype: T.Buffer
 
 
-.. py:function:: alloc_var(dtype: str, init: tvm.tir.PrimExpr | int | float, scope: str = 'local.var') -> tvm.tir.buffer.Buffer
-                 alloc_var(dtype: str, scope: str = 'local.var', *, init: tvm.tir.PrimExpr | int | float | None = None) -> tvm.tir.buffer.Buffer
+.. py:function:: alloc_var(dtype: tilelang._typing.DType, init: tvm.tir.PrimExpr | int | float, scope: str = 'local.var') -> tvm.tir.buffer.Buffer
+                 alloc_var(dtype: tilelang._typing.DType, scope: str = 'local.var', *, init: tvm.tir.PrimExpr | int | float | None = None) -> tvm.tir.buffer.Buffer
 
    Allocate a single-element variable buffer.
 
@@ -172,7 +173,9 @@ Module Contents
       - The buffer returned should be used according to TMEM access restrictions and deallocated appropriately.
 
 
-.. py:function:: alloc_reducer(shape, dtype, op='sum', replication=None)
+.. py:data:: ReducerOp
+
+.. py:function:: alloc_reducer(shape, dtype, op = 'sum', replication=None)
 
    Allocate a reducer buffer.
 

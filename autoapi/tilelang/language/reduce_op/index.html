@@ -550,6 +550,18 @@
           <section id="module-tilelang.language.reduce_op">
 <span id="tilelang-language-reduce-op"></span><h1>tilelang.language.reduce_op<a class="headerlink" href="#module-tilelang.language.reduce_op" title="Link to this heading">¶</a></h1>
 <p>Reduce operations exposed on the TileLang language surface.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.ReduceKind" title="tilelang.language.reduce_op.ReduceKind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReduceKind</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -612,6 +624,11 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.language.reduce_op.ReduceKind">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce_op.</span></span><span class="sig-name descname"><span class="pre">ReduceKind</span></span><a class="headerlink" href="#tilelang.language.reduce_op.ReduceKind" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.reduce_op.reduce">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce_op.</span></span><span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce_op.reduce" title="Link to this definition">¶</a></dt>
@@ -626,11 +643,8 @@
 <li><p><strong>clear</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether to initialize the output buffer before reduction</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the reduction operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -693,6 +707,9 @@
 If False, results will be accumulated on existing values.
 Defaults to True.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl>
@@ -844,17 +861,14 @@ the data to shared memory, performing the cumsum operation, and then copying bac
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em>) – Source buffer (Buffer, BufferRegion, or BufferLoad) containing input data.</p></li>
-<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em>) – Destination buffer (Buffer, BufferRegion, or BufferLoad) for output data.</p></li>
+<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – Source buffer (Buffer, BufferRegion, or BufferLoad) containing input data.</p></li>
+<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – Destination buffer (Buffer, BufferRegion, or BufferLoad) for output data.</p></li>
 <li><p><strong>dim</strong> (<em>int</em>) – Dimension along which to compute cumulative sum.</p></li>
 <li><p><strong>reverse</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – If True, compute cumulative sum in reverse order.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A handle to the cumulative sum operation.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.PrimExpr</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -906,8 +920,8 @@ the data to shared memory, performing the cumsum operation, and then copying bac
 </dd>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>)</p></li>
-<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>)</p></li>
+<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>dim</strong> (<em>int</em>)</p></li>
 <li><p><strong>reverse</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
@@ -1093,8 +1107,10 @@ will have the bitwise-or of all values across the warp.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.language.reduce_op</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.language.reduce_op.ReduceKind"><code class="docutils literal notranslate"><span class="pre">ReduceKind</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.reduce"><code class="docutils literal notranslate"><span class="pre">reduce()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.reduce_max"><code class="docutils literal notranslate"><span class="pre">reduce_max()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.reduce_min"><code class="docutils literal notranslate"><span class="pre">reduce_min()</span></code></a></li>

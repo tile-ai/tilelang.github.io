@@ -884,7 +884,7 @@ Whether to increment or decrement the register count
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer | BufferLoad</p></li>
+<li><p><strong>mbarrier</strong> (<em>tilelang._typing.BarrierType</em>) – BarrierType</p></li>
 <li><p><strong>on</strong> (<em>The memory barrier to wait</em>) – <dl class="simple">
 <dt>parity: int | Var</dt><dd><p>The parity value to wait for</p>
 </dd>
@@ -929,7 +929,7 @@ Whether to increment or decrement the register count
 </dd>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>)</p></li>
+<li><p><strong>mbarrier</strong> (<em>tilelang._typing.BarrierType</em>)</p></li>
 <li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em>)</p></li>
 </ul>
 </dd>
@@ -942,7 +942,7 @@ Whether to increment or decrement the register count
 <dd><p>Arrive at memory barrier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer | BufferLoad
+<dd class="field-odd"><p><strong>mbarrier</strong> (<em>tilelang._typing.BarrierType</em>) – BarrierType
 The memory barrier to arrive at</p>
 </dd>
 </dl>
@@ -955,7 +955,7 @@ The memory barrier to arrive at</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer | BufferLoad
+<li><p><strong>mbarrier</strong> (<em>tilelang._typing.BarrierType</em>) – BarrierType
 The memory barrier to expect transaction count for</p></li>
 <li><p><strong>tx</strong> (<em>int</em>) – int
 The expected transaction count</p></li>
@@ -1153,7 +1153,7 @@ WGMMA operations by issuing an empty inline assembly barrier on every register.<
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer_or_ptr</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Buffer | BufferLoad | BufferRegion | PrimExpr
+<li><p><strong>buffer_or_ptr</strong> (<em>tilelang._typing.BufferLikeType</em><em> | </em><em>tvm.tir.PrimExpr</em>) – BufferLikeType | PrimExpr
 A buffer representing the accumulator fragment, a buffer load/region
 that identifies a starting element within the fragment, or a pointer expression
 (e.g., tvm_access_ptr/address_of/typed Var).</p></li>
@@ -1162,7 +1162,7 @@ Element offset from the start of the accumulator fragment.</p></li>
 <li><p><strong>num_regs</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>) – int | PrimExpr | None
 Number of 32-bit registers to fence. If None and a Buffer is provided, it will be
 derived from the buffer shape and dtype.</p></li>
-<li><p><strong>dtype</strong> (<em>str</em><em> | </em><em>None</em>) – str | None
+<li><p><strong>dtype</strong> (<em>tilelang._typing.DType</em><em> | </em><em>None</em>) – DType | None
 Data type string of the accumulator elements. When passing a buffer or
 buffer-derived expression, dtype is inferred. It is required only when
 passing a raw pointer expression that cannot be inferred.</p></li>
@@ -1202,7 +1202,7 @@ The id of the WGMMA operation to wait for</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer | BufferLoad
+<li><p><strong>mbarrier</strong> (<em>tilelang._typing.BarrierType</em>) – BarrierType
 The memory barrier to wait on</p></li>
 <li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em>) – int | Var
 The parity value to wait for</p></li>
@@ -1224,7 +1224,7 @@ The parity value to wait for</p></li>
 <dd><p>Arrive at a memory barrier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mbarrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>) – Buffer | BufferLoad
+<dd class="field-odd"><p><strong>mbarrier</strong> (<em>tilelang._typing.BarrierType</em>) – BarrierType
 The memory barrier to arrive at</p>
 </dd>
 </dl>
@@ -1409,7 +1409,7 @@ The value to shuffle</p></li>
 <dd><p>Perform a ptx async copy barrier using cp.async.mbarrier.arrive.noinc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>barrier</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em>)</p>
+<dd class="field-odd"><p><strong>barrier</strong> (<em>tilelang._typing.BarrierType</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1483,7 +1483,7 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
+<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
 <li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
 </ul>
 </dd>
@@ -1510,7 +1510,7 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
+<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
 <li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
 </ul>
 </dd>
@@ -1537,7 +1537,7 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
+<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
 <li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
 </ul>
 </dd>
@@ -1564,7 +1564,7 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
+<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
 <li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
 </ul>
 </dd>
@@ -1591,7 +1591,7 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
+<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
 <li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 32-bit value to store.</p></li>
 <li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
 </ul>
@@ -1615,7 +1615,7 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
+<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
 <li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 64-bit value to store (e.g., uint2).</p></li>
 <li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
 </ul>
@@ -1639,7 +1639,7 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
+<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
 <li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 128-bit value to store (e.g., uint4).</p></li>
 <li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
 </ul>
@@ -1663,7 +1663,7 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dst</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferRegion</em><em> | </em><em>tvm.tir.BufferLoad</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
+<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
 <li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 256-bit value to store (e.g., ulonglong4).</p></li>
 <li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
 </ul>

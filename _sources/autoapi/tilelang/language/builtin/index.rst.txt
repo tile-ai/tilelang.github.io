@@ -169,7 +169,7 @@ Module Contents
 
    Wait for memory barrier parity condition.
 
-   :param mbarrier: Buffer | BufferLoad
+   :param mbarrier: BarrierType
    :param The memory barrier to wait on:
 
        parity: int | Var
@@ -210,7 +210,7 @@ Module Contents
 
    Arrive at memory barrier.
 
-   :param mbarrier: Buffer | BufferLoad
+   :param mbarrier: BarrierType
                     The memory barrier to arrive at
 
 
@@ -218,7 +218,7 @@ Module Contents
 
    Set expected transaction count for memory barrier.
 
-   :param mbarrier: Buffer | BufferLoad
+   :param mbarrier: BarrierType
                     The memory barrier to expect transaction count for
    :param tx: int
               The expected transaction count
@@ -358,7 +358,7 @@ Module Contents
    This prevents NVCC from sinking uses of accumulator fragments past the corresponding
    WGMMA operations by issuing an empty inline assembly barrier on every register.
 
-   :param buffer_or_ptr: Buffer | BufferLoad | BufferRegion | PrimExpr
+   :param buffer_or_ptr: BufferLikeType | PrimExpr
                          A buffer representing the accumulator fragment, a buffer load/region
                          that identifies a starting element within the fragment, or a pointer expression
                          (e.g., tvm_access_ptr/address_of/typed Var).
@@ -367,7 +367,7 @@ Module Contents
    :param num_regs: int | PrimExpr | None
                     Number of 32-bit registers to fence. If None and a Buffer is provided, it will be
                     derived from the buffer shape and dtype.
-   :param dtype: str | None
+   :param dtype: DType | None
                  Data type string of the accumulator elements. When passing a buffer or
                  buffer-derived expression, dtype is inferred. It is required only when
                  passing a raw pointer expression that cannot be inferred.
@@ -391,7 +391,7 @@ Module Contents
 
    Wait for a memory barrier to complete.
 
-   :param mbarrier: Buffer | BufferLoad
+   :param mbarrier: BarrierType
                     The memory barrier to wait on
    :param parity: int | Var
                   The parity value to wait for
@@ -406,7 +406,7 @@ Module Contents
 
    Arrive at a memory barrier.
 
-   :param mbarrier: Buffer | BufferLoad
+   :param mbarrier: BarrierType
                     The memory barrier to arrive at
 
 

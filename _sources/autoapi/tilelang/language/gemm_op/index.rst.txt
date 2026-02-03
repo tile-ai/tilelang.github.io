@@ -37,11 +37,11 @@ Module Contents
    TileLang GEMM operator.
 
    :param A: Input buffer A.
-   :type A: tir.Buffer | tir.Var
+   :type A: BufferLikeType, i.e. Buffer | BufferLoad | BufferRegion, or Var
    :param B: Input buffer B.
-   :type B: tir.Buffer | tir.Var
+   :type B: BufferLikeType
    :param C: Output buffer C.
-   :type C: tir.Buffer | tir.Var
+   :type C: BufferLikeType
    :param transpose_A: Whether to transpose A. Defaults to False.
    :type transpose_A: bool
    :param transpose_B: Whether to transpose B. Defaults to False.
@@ -55,7 +55,7 @@ Module Contents
    :param wg_wait: Int identifier of the warpgroup MMA batch to wait on.. Defaults to 0.
    :type wg_wait: int
    :param mbar: Mbarrier in Blackwell. Defaults to None.
-   :type mbar: tir.Buffer | tir.BufferLoad, optional
+   :type mbar: BarrierType, i.e. Buffer | BufferLoad, or Var, optional
 
    :returns: A handle to the GEMM operation.
    :rtype: tir.Call
