@@ -585,6 +585,9 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_gemm_fragment_8x8_transposed" title="tilelang.layout.swizzle.make_gemm_fragment_8x8_transposed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_gemm_fragment_8x8_transposed</span></code></a>()</p></td>
 <td><p>Create a transposed 8x8 GEMM fragment layout for ldmatrix/stmatrix.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.swizzle.make_fully_replicated_layout_fragment" title="tilelang.layout.swizzle.make_fully_replicated_layout_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_fully_replicated_layout_fragment</span></code></a>(buffer, threads)</p></td>
+<td><p>Create a fully replicated layout for a fragment buffer.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -734,6 +737,35 @@ different access patterns in matrix operations.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.swizzle.make_fully_replicated_layout_fragment">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.swizzle.</span></span><span class="sig-name descname"><span class="pre">make_fully_replicated_layout_fragment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.swizzle.make_fully_replicated_layout_fragment" title="Link to this definition">¶</a></dt>
+<dd><p>Create a fully replicated layout for a fragment buffer.</p>
+<p>A fully replicated fragment means all threads hold identical copies of the
+entire buffer. This is useful for index buffers or masks that need to be
+accessed uniformly across all threads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em><em> | </em><em>tvm.tir.BufferLoad</em><em> | </em><em>tvm.tir.BufferRegion</em>) – Buffer, BufferLoad, or BufferRegion to get shape information</p></li>
+<li><p><strong>threads</strong> (<em>int</em>) – Number of threads (replicate extent)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A fully replicated layout where each thread has a complete copy</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../fragment/index.html#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment">Fragment</a></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C_local</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="mi">2</span><span class="p">,),</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">layout</span> <span class="o">=</span> <span class="n">make_fully_replicated_layout_fragment</span><span class="p">(</span><span class="n">C_local</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">annotate_layout</span><span class="p">({</span><span class="n">C_local</span><span class="p">:</span> <span class="n">layout</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 </section>
 
@@ -805,6 +837,7 @@ different access patterns in matrix operations.</p>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_linear_layout"><code class="docutils literal notranslate"><span class="pre">make_linear_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_gemm_fragment_8x8"><code class="docutils literal notranslate"><span class="pre">make_gemm_fragment_8x8()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.swizzle.make_gemm_fragment_8x8_transposed"><code class="docutils literal notranslate"><span class="pre">make_gemm_fragment_8x8_transposed()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.swizzle.make_fully_replicated_layout_fragment"><code class="docutils literal notranslate"><span class="pre">make_fully_replicated_layout_fragment()</span></code></a></li>
 </ul>
 </li>
 </ul>

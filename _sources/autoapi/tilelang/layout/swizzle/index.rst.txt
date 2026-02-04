@@ -24,6 +24,7 @@ Functions
    tilelang.layout.swizzle.make_linear_layout
    tilelang.layout.swizzle.make_gemm_fragment_8x8
    tilelang.layout.swizzle.make_gemm_fragment_8x8_transposed
+   tilelang.layout.swizzle.make_fully_replicated_layout_fragment
 
 
 Module Contents
@@ -96,5 +97,26 @@ Module Contents
 
    :returns: A transposed 8x8 fragment layout
    :rtype: Fragment
+
+
+.. py:function:: make_fully_replicated_layout_fragment(buffer, threads)
+
+   Create a fully replicated layout for a fragment buffer.
+
+   A fully replicated fragment means all threads hold identical copies of the
+   entire buffer. This is useful for index buffers or masks that need to be
+   accessed uniformly across all threads.
+
+   :param buffer: Buffer, BufferLoad, or BufferRegion to get shape information
+   :param threads: Number of threads (replicate extent)
+
+   :returns: A fully replicated layout where each thread has a complete copy
+   :rtype: Fragment
+
+   .. rubric:: Example
+
+   >>> C_local = T.alloc_fragment((2,), T.float32)
+   >>> layout = make_fully_replicated_layout_fragment(C_local, 256)
+   >>> T.annotate_layout({C_local: layout})
 
 
