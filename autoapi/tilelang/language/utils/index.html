@@ -550,6 +550,7 @@
         <article role="main" id="furo-main-content">
           <section id="module-tilelang.language.utils">
 <span id="tilelang-language-utils"></span><h1>tilelang.language.utils<a class="headerlink" href="#module-tilelang.language.utils" title="Link to this heading">¶</a></h1>
+<p>Utils in TileLang operators.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -566,6 +567,12 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.utils.linear_index" title="tilelang.language.utils.linear_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linear_index</span></code></a>(*args)</p></td>
 <td><p>Compute a flat (linear) index from multi-dimensional coordinates and strides.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.utils.get_buffer_region_from_load" title="tilelang.language.utils.get_buffer_region_from_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer_region_from_load</span></code></a>(buffer_load[, extents])</p></td>
+<td><p>Get the buffer region from a buffer load.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.utils.get_extent" title="tilelang.language.utils.get_extent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_extent</span></code></a>(data)</p></td>
+<td><p>Return the inferred extent (shape) of a buffer-like object.</p></td>
 </tr>
 </tbody>
 </table>
@@ -669,6 +676,46 @@ the number of coordinates.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.utils.get_buffer_region_from_load">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.utils.</span></span><span class="sig-name descname"><span class="pre">get_buffer_region_from_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_load</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.utils.get_buffer_region_from_load" title="Link to this definition">¶</a></dt>
+<dd><p>Get the buffer region from a buffer load.</p>
+<p>May encounter buffer load like C[0:128, 0:32], ref to pull request
+for buffer wise op: <a class="reference external" href="https://github.com/apache/tvm/pull/14693">https://github.com/apache/tvm/pull/14693</a>
+convert load to region.</p>
+<p>If the buffer load has ramp indices, we will use the ramp’s base and lanes to create the region.
+Otherwise, return None since the load cannot be converted to a region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer_load</strong> (<em>tvm.tir.BufferLoad</em>)</p></li>
+<li><p><strong>extents</strong> (<em>list</em><em>[</em><em>tvm.tir.PrimExpr</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.BufferRegion | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.utils.get_extent">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.utils.</span></span><span class="sig-name descname"><span class="pre">get_extent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.utils.get_extent" title="Link to this definition">¶</a></dt>
+<dd><p>Return the inferred extent (shape) of a buffer-like object.</p>
+<p>If <cite>data</cite> is a Var bound to a let value, the let value is resolved before inspection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>tilelang._typing.BufferLikeType</em>) – A Var, Buffer, BufferLoad or BufferRegion to inspect.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The shape/extents as a list-like of PrimExpr (Buffer.shape or list of region item extents), or None if the extent cannot be determined.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tilelang._typing.ShapeType | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -734,6 +781,8 @@ the number of coordinates.</p>
 <li><a class="reference internal" href="#tilelang.language.utils.buffer_region_to_tile_region"><code class="docutils literal notranslate"><span class="pre">buffer_region_to_tile_region()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.utils.index_to_coordinates"><code class="docutils literal notranslate"><span class="pre">index_to_coordinates()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.utils.linear_index"><code class="docutils literal notranslate"><span class="pre">linear_index()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.utils.get_buffer_region_from_load"><code class="docutils literal notranslate"><span class="pre">get_buffer_region_from_load()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.utils.get_extent"><code class="docutils literal notranslate"><span class="pre">get_extent()</span></code></a></li>
 </ul>
 </li>
 </ul>
