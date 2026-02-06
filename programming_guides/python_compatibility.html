@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Logging in Tilelang/TVM" href="logging.html"><link rel="prev" title="Debugging Tile Language Programs" href="debug_tools_for_tilelang.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Autotuning" href="autotuning.html"><link rel="prev" title="Control Flow" href="control_flow.html">
         <link rel="prefetch" href="../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../_static/img/logo-v2.png" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
-        <title>Auto-Tuning Techniques for Performance Optimization - TileLang 0.1.7.post3 documentation</title>
+        <title>Python Compatibility - TileLang 0.1.7.post3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -206,20 +206,20 @@
 <li class="toctree-l1"><a class="reference internal" href="../get_started/targets.html">Understanding Targets</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">TUTORIALS</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Auto-Tuning Techniques for Performance Optimization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging in Tilelang/TVM</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/debug_tools_for_tilelang.html">Debugging Tile Language Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/auto_tuning.html">Auto-Tuning Techniques for Performance Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/logging.html">Logging in Tilelang/TVM</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">PROGRAMMING GUIDES</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/overview.html">Programming Guides Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/language_basics.html">Language Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/instructions.html">Instructions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/control_flow.html">Control Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/python_compatibility.html">Python Compatibility</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/autotuning.html">Autotuning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/type_system.html">Type System</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Programming Guides Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_basics.html">Language Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instructions.html">Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="control_flow.html">Control Flow</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Python Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autotuning.html">Autotuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_system.html">Type System</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">DEEP LEARNING OPERATORS</span></p>
 <ul>
@@ -530,7 +530,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/tutorials/auto_tuning.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/programming_guides/python_compatibility.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -548,156 +548,161 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="auto-tuning-techniques-for-performance-optimization">
-<h1>Auto-Tuning Techniques for Performance Optimization<a class="headerlink" href="#auto-tuning-techniques-for-performance-optimization" title="Link to this heading">¶</a></h1>
-<div style="text-align: left;">
-<em>Author:</em> <a href="https://github.com/yyttt6">yyttt6</a>
-</div>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>Auto-tuning a Tile Language program involves three main steps:</p>
-<ol class="arabic simple">
-<li><p>Implement the target program using Tile Language with reserved optimization parameters</p></li>
-<li><p>​Provide candidate configurations through manual search or <a class="reference internal" href="#using-carver-to-auto-generate-candidate-configurations"><span class="xref myst">auto-generation using Carver</span></a></p></li>
-<li><p>Parallel compile and benchmark candidate configurations to identify the best performance</p></li>
-</ol>
-</section>
-<section id="matrix-multiplication-example">
-<h2>Matrix Multiplication Example<a class="headerlink" href="#matrix-multiplication-example" title="Link to this heading">¶</a></h2>
-<p>The following example demonstrates auto-tuning matrix multiplication. Code has been simplified for readability - see <code class="docutils literal notranslate"><span class="pre">examples/gemm/example_gemm.py</span></code> for complete implementation.</p>
-<section id="step-1-implement-with-reserved-parameters">
-<h3>Step 1: Implement with Reserved Parameters<a class="headerlink" href="#step-1-implement-with-reserved-parameters" title="Link to this heading">¶</a></h3>
-<p>Users can implement matrix multiplication in Tile Language while reserving parameters for optimization:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reserved parameters for optimization</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span>
-    <span class="n">block_M</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">block_N</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">block_K</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">num_stages</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">thread_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">enable_rasteration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span>
-    <span class="n">accum_dtype</span> <span class="o">=</span> <span class="s2">&quot;float&quot;</span>
-
-    <span class="c1"># Matrix multiplication implementation</span>
-    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span>
-            <span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-            <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-            <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-    <span class="p">):</span>
-        <span class="c1"># ...existing code...</span>
-
-    <span class="k">return</span> <span class="n">main</span>
+          <section id="python-compatibility">
+<h1>Python Compatibility<a class="headerlink" href="#python-compatibility" title="Link to this heading">¶</a></h1>
+<p>TileLang is a Python-embedded DSL, but not all Python syntax is supported inside
+TileLang DSL. This guide clarifies what works, what doesn’t, and how
+to translate common Python patterns into TileLang equivalents. Specially, we focus on
+the kernel part (scripts inside <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">T.Kernel</span></code>) semantics. For host-side semantics when
+using eager-style JIT, please stay tuned for our upcoming documentation.</p>
+<p>The following codes use the conventional aliases:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tilelang</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tilelang</span><span class="w"> </span><span class="kn">import</span> <span class="n">jit</span>
 </pre></div>
 </div>
-</section>
-<section id="step-2-generate-candidate-configurations">
-<h3>Step 2: Generate Candidate Configurations<a class="headerlink" href="#step-2-generate-candidate-configurations" title="Link to this heading">¶</a></h3>
-<p>Manually define configurations or use combinatorial generation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">configs</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;block_M&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
-        <span class="s2">&quot;block_N&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
-        <span class="s2">&quot;block_K&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
-        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-        <span class="s2">&quot;thread_num&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
-        <span class="s2">&quot;enable_rasteration&quot;</span><span class="p">:</span> <span class="kc">True</span>
-    <span class="p">},</span>
-        <span class="p">{</span>
-        <span class="s2">&quot;block_M&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-        <span class="s2">&quot;block_N&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-        <span class="s2">&quot;block_K&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;thread_num&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-        <span class="s2">&quot;enable_rasteration&quot;</span><span class="p">:</span> <span class="kc">False</span>
-    <span class="p">},</span>
-    <span class="c1"># ...additional configurations...</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-<p>It can also be given by combinatorial traversal of different parameters</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
-
-<span class="n">block_M</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
-<span class="n">block_N</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
-<span class="n">block_K</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">]</span>
-<span class="n">num_stages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-<span class="n">thread_num</span> <span class="o">=</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
-<span class="n">enable_rasterization</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span>
-<span class="n">_configs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-    <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span>
-        <span class="n">block_M</span><span class="p">,</span>
-        <span class="n">block_N</span><span class="p">,</span>
-        <span class="n">block_K</span><span class="p">,</span>
-        <span class="n">num_stages</span><span class="p">,</span>
-        <span class="n">thread_num</span><span class="p">,</span>
-        <span class="n">enable_rasterization</span><span class="p">,</span>
-    <span class="p">))</span>
-
-<span class="n">configs</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;block_M&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s2">&quot;block_N&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-        <span class="s2">&quot;block_K&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-        <span class="s2">&quot;num_stages&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
-        <span class="s2">&quot;thread_num&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
-        <span class="s2">&quot;enable_rasteration&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-    <span class="p">}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">_configs</span>
-<span class="p">]</span>
-</pre></div>
+<section id="control-flow-loops">
+<h2>Control Flow &amp; Loops<a class="headerlink" href="#control-flow-loops" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Python Feature</p></th>
+<th class="head text-center"><p>Supported</p></th>
+<th class="head"><p>Notes / Alternative</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">range(n)</span></code></p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p>Maps to <code class="docutils literal notranslate"><span class="pre">T.serial(n)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">range(a,b,s)</span></code></p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p>Maps to <code class="docutils literal notranslate"><span class="pre">T.serial(a,</span> <span class="pre">b,</span> <span class="pre">s)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">x</span> <span class="pre">in</span> <span class="pre">list</span></code></p></td>
+<td class="text-center"><p>❌</p></td>
+<td><p>Use index-based loop</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">while</span> <span class="pre">condition</span></code></p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">if</span></code> / <code class="docutils literal notranslate"><span class="pre">elif</span></code> / <code class="docutils literal notranslate"><span class="pre">else</span></code></p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">if</span> <span class="pre">cond</span> <span class="pre">else</span> <span class="pre">y</span></code></p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p>Ternary expression</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">break</span></code> / <code class="docutils literal notranslate"><span class="pre">continue</span></code></p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">enumerate()</span></code> / <code class="docutils literal notranslate"><span class="pre">zip()</span></code></p></td>
+<td class="text-center"><p>❌</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
-<section id="step-3-compile-and-benchmark">
-<h3>Step 3: Compile and Benchmark<a class="headerlink" href="#step-3-compile-and-benchmark" title="Link to this heading">¶</a></h3>
-<p>Configure JIT compilation and benchmarking settings:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">autotuner</span> <span class="o">=</span> <span class="n">AutoTuner</span><span class="o">.</span><span class="n">from_kernel</span><span class="p">(</span>
-    <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">get_configs</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">with_roller</span><span class="p">))</span><span class="o">.</span><span class="n">set_compile_args</span><span class="p">(</span>
-        <span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-        <span class="n">supply_type</span><span class="o">=</span><span class="n">tl</span><span class="o">.</span><span class="n">TensorSupplyType</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
-        <span class="n">ref_prog</span><span class="o">=</span><span class="n">ref_program</span><span class="p">,</span>
-        <span class="n">skip_check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">target</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">autotuner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">warmup</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">rep</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
-<span class="n">out_c</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-</pre></div>
+<section id="data-access">
+<h2>Data Access<a class="headerlink" href="#data-access" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Python Feature</p></th>
+<th class="head text-center"><p>Supported</p></th>
+<th class="head"><p>Notes / Alternative</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">a[i]</span></code> indexing</p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p>Multi-dim indexing supported: <code class="docutils literal notranslate"><span class="pre">a[i,</span> <span class="pre">j,</span> <span class="pre">k]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">a[i:j]</span></code> slicing</p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p>Creates <code class="docutils literal notranslate"><span class="pre">BufferRegion</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">a[-1]</span></code> negative index</p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<p>The result object contains optimized kernel implementation which can be used by users directly</p>
 </section>
+<section id="assignment-arithmetic-operations">
+<h2>Assignment &amp; Arithmetic Operations<a class="headerlink" href="#assignment-arithmetic-operations" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Python Feature</p></th>
+<th class="head text-center"><p>Supported</p></th>
+<th class="head"><p>Notes / Alternative</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">expr</span></code></p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">/</span></code>, <code class="docutils literal notranslate"><span class="pre">%</span></code></p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p>Maps to device-side arithmetic operations</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">+=</span></code>, <code class="docutils literal notranslate"><span class="pre">-=</span></code>, <code class="docutils literal notranslate"><span class="pre">*=</span></code>, etc.</p></td>
+<td class="text-center"><p>✅</p></td>
+<td><p>Augmented assignment</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">b</span> <span class="pre">=</span> <span class="pre">c</span></code></p></td>
+<td class="text-center"><p>❌</p></td>
+<td><p>Use separate assignments</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
-<section id="using-carver-to-auto-generate-candidate-configurations">
-<h2>Using Carver to Auto-Generate Candidate Configurations<a class="headerlink" href="#using-carver-to-auto-generate-candidate-configurations" title="Link to this heading">¶</a></h2>
-<p>Carver is a lightweight framework for generating and ranking tile configurations (also known as tiling strategies, blocking schemes, or scheduling hints) for common GPU, CPU, and accelerator backends. It helps you explore efficient mappings of loops for operations such as matrix multiplication, elementwise transforms, and other reduction-oriented kernels.</p>
-<p>or common operators, Carver provides pre-built templates (e.g., <code class="docutils literal notranslate"><span class="pre">MatmulTemplate</span></code>):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Configure Matmul template</span>
-<span class="n">arch</span> <span class="o">=</span> <span class="n">CUDA</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
-<span class="n">carve_template</span> <span class="o">=</span> <span class="n">MatmulTemplate</span><span class="p">(</span>
-    <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span>
-    <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span>
-    <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span>
-    <span class="n">in_dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span>
-    <span class="n">out_dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span>
-    <span class="n">accum_dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">with_arch</span><span class="p">(</span><span class="n">arch</span><span class="p">)</span>
-
-<span class="c1"># Generate top-k optimization hints (topk=10 recommended)</span>
-<span class="n">roller_hints</span> <span class="o">=</span> <span class="n">carve_template</span><span class="o">.</span><span class="n">recommend_hints</span><span class="p">(</span><span class="n">topk</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-
-<span class="c1"># Configure candidate parameters</span>
-<span class="k">for</span> <span class="n">hint</span> <span class="ow">in</span> <span class="n">roller_hints</span><span class="p">:</span>
-
-    <span class="c1"># ...existing code...</span>
-
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;block_M&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block_m</span>
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;block_N&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block_n</span>
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;block_K&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">rstep</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;num_stages&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">pipeline_stage</span>
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;thread_num&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block_rows</span> <span class="o">*</span> <span class="n">block_cols</span> <span class="o">*</span> <span class="mi">32</span>
-    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;enable_rasteration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">rasterization_plan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoRasterization</span>
-
-</pre></div>
+<section id="functions-classes">
+<h2>Functions &amp; Classes<a class="headerlink" href="#functions-classes" title="Link to this heading">¶</a></h2>
+<p>As a kernel script language, TileLang doesn’t support functions or classes. You can use <code class="docutils literal notranslate"><span class="pre">&#64;T.macro</span></code> to define reusable code blocks, which will be inlined at compile time like <code class="docutils literal notranslate"><span class="pre">__device__</span></code> function.</p>
+</section>
+<section id="statements-built-in-functions">
+<h2>Statements &amp; Built-in Functions<a class="headerlink" href="#statements-built-in-functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Python Feature</p></th>
+<th class="head text-center"><p>Supported</p></th>
+<th class="head"><p>Notes / Alternative</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">with</span></code></p></td>
+<td class="text-center"><p>⚠️</p></td>
+<td><p>Only <code class="docutils literal notranslate"><span class="pre">T.Kernel</span></code>, <code class="docutils literal notranslate"><span class="pre">T.ws</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">assert</span></code></p></td>
+<td class="text-center"><p>⚠️</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">T.device_assert</span></code> or <code class="docutils literal notranslate"><span class="pre">T.assert</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">print()</span></code></p></td>
+<td class="text-center"><p>⚠️</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">T.print()</span></code>; <code class="docutils literal notranslate"><span class="pre">print</span></code> works for Python expressions</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">len()</span></code></p></td>
+<td class="text-center"><p>❌</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">buffer.shape[dim]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">type()</span></code>, <code class="docutils literal notranslate"><span class="pre">isinstance()</span></code></p></td>
+<td class="text-center"><p>❌</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 </section>
@@ -707,23 +712,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="logging.html">
+          <a class="next-page" href="autotuning.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Logging in Tilelang/TVM</div>
+                <div class="title">Autotuning</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="debug_tools_for_tilelang.html">
+          <a class="prev-page" href="control_flow.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Debugging Tile Language Programs</div>
+                <div class="title">Control Flow</div>
                 
               </div>
             </a>
@@ -757,15 +762,12 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Auto-Tuning Techniques for Performance Optimization</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#matrix-multiplication-example">Matrix Multiplication Example</a><ul>
-<li><a class="reference internal" href="#step-1-implement-with-reserved-parameters">Step 1: Implement with Reserved Parameters</a></li>
-<li><a class="reference internal" href="#step-2-generate-candidate-configurations">Step 2: Generate Candidate Configurations</a></li>
-<li><a class="reference internal" href="#step-3-compile-and-benchmark">Step 3: Compile and Benchmark</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#using-carver-to-auto-generate-candidate-configurations">Using Carver to Auto-Generate Candidate Configurations</a></li>
+<li><a class="reference internal" href="#">Python Compatibility</a><ul>
+<li><a class="reference internal" href="#control-flow-loops">Control Flow &amp; Loops</a></li>
+<li><a class="reference internal" href="#data-access">Data Access</a></li>
+<li><a class="reference internal" href="#assignment-arithmetic-operations">Assignment &amp; Arithmetic Operations</a></li>
+<li><a class="reference internal" href="#functions-classes">Functions &amp; Classes</a></li>
+<li><a class="reference internal" href="#statements-built-in-functions">Statements &amp; Built-in Functions</a></li>
 </ul>
 </li>
 </ul>
