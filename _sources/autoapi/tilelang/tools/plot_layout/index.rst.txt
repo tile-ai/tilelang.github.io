@@ -16,27 +16,28 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: plot_layout(layout, save_directory='./tmp', name = 'layout', colormap = 'RdPu', verbose = False, formats = 'png')
+.. py:function:: plot_layout(layout, save_directory='./tmp', name = 'layout', colormap = None, verbose = False, formats = 'pdf')
 
-   Plot the layout of a buffer.
+   Plot the layout mapping as a 2D grid visualization.
 
-   :param layout: The layout object that describes how indices are mapped.
-   :type layout: T.Layout
-   :param save_directory: The directory where the output images will be saved (default is "./tmp").
+   Dispatches to Fragment-specific or Layout-specific plotting based on the
+   type of the layout object.
+
+   :param layout: The layout object to visualize.
+   :type layout: T.Layout or T.Fragment
+   :param save_directory: Output directory (default "./tmp").
    :type save_directory: str, optional
-   :param name: The base name of the output files (default is "layout").
+   :param name: Base filename for saved images (default "layout").
    :type name: str, optional
-   :param colormap: The colormap to use for visualization (default is "RdPu").
+   :param colormap: Matplotlib colormap name. Defaults to "RdPu" for Fragment, "Spectral" for Layout.
    :type colormap: str, optional
-   :param verbose: If True, prints additional information about the mapping (default is False).
+   :param verbose: If True, print mapping details.
    :type verbose: bool, optional
-   :param formats: The formats to save the image in (default is "png").
+   :param formats: Output format(s): "pdf", "png", "svg", "all", or comma-separated (default "pdf").
    :type formats: str | list[str], optional
 
-   :rtype: None
 
-
-.. py:function:: plot_fragment_tv(frag, save_directory = None, name = 'layout', apply_idx_fn=lambda *args: args, colormap = 'RdPu', item_scale = 0.75, formats = 'png', dpi=80)
+.. py:function:: plot_fragment_tv(frag, save_directory = None, name = 'layout', apply_idx_fn=lambda *args: args, colormap = 'RdPu', item_scale = 0.75, formats = 'pdf', dpi=80)
 
    Plot fragment in terms of thread and local index mapping.
    :param frag: The fragment object that describes how indices are mapped.
@@ -51,7 +52,7 @@ Module Contents
    :type colormap: str, optional
    :param item_scale: The scale factor for each item in the plot (default is 0.75).
    :type item_scale: float, optional
-   :param formats: The formats to save the image in (default is "png").
+   :param formats: The formats to save the image in (default is "pdf").
    :type formats: str | list[str], optional
    :param dpi: The resolution in dots per inch for the saved image (default is 80).
    :type dpi: int, optional
