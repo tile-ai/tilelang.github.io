@@ -66,7 +66,7 @@ Module Contents
    This function provides accurate GPU kernel timing by:
    - Clearing L2 cache between runs for consistent measurements
    - Auto-calculating warmup and repeat counts based on kernel runtime
-   - Supporting multiple profiling backends (CUDA events or CUPTI)
+   - Supporting multiple profiling backends (CUDA events, CUPTI, or CUDA graph replay)
    - Offering flexible result aggregation (mean/median/min/max/quantiles)
 
    :param fn: Function to benchmark
@@ -76,7 +76,7 @@ Module Contents
    :param _n_repeat: Manual override for benchmark iterations (default: 0 = auto)
    :param quantiles: Performance percentiles to compute (e.g., [0.5, 0.95])
    :param fast_flush: Use faster L2 cache flush with int32 vs int8 (default: True)
-   :param backend: Profiler backend - "event" (CUDA events) or "cupti" (default: "event")
+   :param backend: Profiler backend - "event" (CUDA events), "cupti", or "cudagraph" (default: "event")
    :param return_mode: Result aggregation method - "mean", "median", "min", or "max"
 
    :returns: Runtime in milliseconds (float) or list of quantile values if quantiles specified
