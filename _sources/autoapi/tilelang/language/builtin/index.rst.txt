@@ -14,6 +14,7 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.language.builtin.access_ptr
    tilelang.language.builtin.create_tma_descriptor
    tilelang.language.builtin.tma_load
    tilelang.language.builtin.fence_proxy_async
@@ -68,6 +69,50 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:function:: access_ptr(base, access_type = 'r', *extents, offset = 0, extent = None, ignore_last_ndim = 0)
+
+   Create a TileLang `tl.access_ptr` from a buffer-like base location.
+
+   This is a frontend convenience wrapper that keeps a `BufferLoad` argument
+   in the resulting call so downstream passes can recover the referenced
+   `tir.Buffer` (including strides/storage scope) *and* the `rw_mask`
+   (read/write intent) required by synchronization and safety checks.
+
+   The returned `tl.access_ptr` is expected to be lowered to
+   `tir.builtin.tvm_access_ptr` later in the TileLang compilation pipeline.
+
+   :param base: The base location to take the address of. Supported:
+                - `tir.BufferLoad` (e.g. `A[i, j]`): pointer to that element
+                - `tir.BufferRegion`: pointer to the region minima
+                - `tir.Buffer`: pointer to the beginning of the buffer
+                - `tir.Var` with let-binding to one of the above (inside TileLang frame)
+   :type base: BufferLikeType
+   :param access_type: Access mask for the pointer. Common string forms: `"r"`, `"w"`, `"rw"`.
+                       Integer bitmask is also accepted (1=read, 2=write, 3=read-write).
+   :type access_type: str | int
+   :param \*extents: Optional per-axis extents. When provided and `extent` is not specified,
+                     the 1D `extent` passed to `tvm_access_ptr` is computed as the product of
+                     the provided extents (padding leading dimensions with 1 if needed).
+
+                     For example:
+                     - `T.access_ptr(A[i], "r")` -> extent defaults to 1 (element pointer)
+                     - `T.access_ptr(A[i], "r", 16)` -> extent=16
+                     - `T.access_ptr(A[i, j], "r", m, n)` -> extent=m*n
+   :type \*extents: PrimExpr | int
+   :param offset: Additional element offset from the base location.
+   :type offset: PrimExpr | int
+   :param extent: Optional explicit 1D extent override (in elements). If provided, it
+                  takes precedence over `*extents`.
+   :type extent: PrimExpr | int | None
+   :param ignore_last_ndim: If non-zero, the base linear offset is computed only over the leading
+                            dimensions, ignoring the last `ignore_last_ndim` axes. This is useful
+                            when treating an N-D buffer as a view of its trailing sub-tensor.
+   :type ignore_last_ndim: int
+
+   :returns: **ptr** -- A handle-typed `tir.Call` to `tl.access_ptr`.
+   :rtype: PrimExpr
+
 
 .. py:function:: create_tma_descriptor(*args)
 
