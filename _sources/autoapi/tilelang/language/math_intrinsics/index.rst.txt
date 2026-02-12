@@ -22,6 +22,9 @@ Functions
    tilelang.language.math_intrinsics.ieee_fsqrt
    tilelang.language.math_intrinsics.ieee_frsqrt
    tilelang.language.math_intrinsics.ieee_fdiv
+   tilelang.language.math_intrinsics.fadd2
+   tilelang.language.math_intrinsics.fmul2
+   tilelang.language.math_intrinsics.fma2
 
 
 Module Contents
@@ -141,5 +144,37 @@ Module Contents
 
    :returns: **result** -- The result of x/y.
    :rtype: PrimExpr
+
+
+.. py:function:: fadd2(x, y)
+
+   Packed FP32x2 add.
+
+   Lowers to PTX `add.rn.f32x2` on supported NVIDIA architectures/toolchains,
+   and falls back to per-lane scalar operations otherwise.
+
+   :param x: First operand. Must be dtype ``float32x2``.
+   :type x: PrimExpr
+   :param y: Second operand. Must be dtype ``float32x2``.
+   :type y: PrimExpr
+
+   :returns: **result** -- A ``float32x2`` result.
+   :rtype: PrimExpr
+
+
+.. py:function:: fmul2(x, y)
+
+   Packed FP32x2 multiply.
+
+   Lowers to PTX `mul.rn.f32x2` on supported NVIDIA architectures/toolchains,
+   and falls back to per-lane scalar operations otherwise.
+
+
+.. py:function:: fma2(x, y, z)
+
+   Packed FP32x2 fused multiply-add (x * y + z).
+
+   Lowers to PTX `fma.rn.f32x2` on supported NVIDIA architectures/toolchains,
+   and falls back to per-lane scalar operations otherwise.
 
 
