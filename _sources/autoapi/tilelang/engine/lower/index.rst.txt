@@ -56,7 +56,19 @@ Module Contents
 
 .. py:function:: canon_target_host(target, target_host)
 
-.. py:function:: host_codegen(host_mod, target_host)
+.. py:function:: host_codegen(host_mod, target_host, target = None)
+
+   Generate host-side code from the lowered IR module.
+
+   :param host_mod: The host-side IR module to compile.
+   :type host_mod: tvm.IRModule
+   :param target_host: The host compilation target (e.g. "llvm" or "c").
+   :type target_host: Target
+   :param target: The device target.  When the device target is Metal, the pass
+                  MarkHostMetalContext is applied so that the generated host code
+                  contains the Metal/MPS synchronisation logic.
+   :type target: Target, optional
+
 
 .. py:function:: device_codegen(device_mod, target)
 

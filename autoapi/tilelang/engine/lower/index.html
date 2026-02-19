@@ -586,8 +586,8 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.lower.canon_target_host" title="tilelang.engine.lower.canon_target_host"><code class="xref py py-obj docutils literal notranslate"><span class="pre">canon_target_host</span></code></a>(target, target_host)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.lower.host_codegen" title="tilelang.engine.lower.host_codegen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">host_codegen</span></code></a>(host_mod, target_host)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.lower.host_codegen" title="tilelang.engine.lower.host_codegen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">host_codegen</span></code></a>(host_mod, target_host[, target])</p></td>
+<td><p>Generate host-side code from the lowered IR module.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.lower.device_codegen" title="tilelang.engine.lower.device_codegen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_codegen</span></code></a>(device_mod, target)</p></td>
 <td><p></p></td>
@@ -709,12 +709,16 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.engine.lower.host_codegen">
-<span class="sig-prename descclassname"><span class="pre">tilelang.engine.lower.</span></span><span class="sig-name descname"><span class="pre">host_codegen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host_mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.lower.host_codegen" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<span class="sig-prename descclassname"><span class="pre">tilelang.engine.lower.</span></span><span class="sig-name descname"><span class="pre">host_codegen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host_mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.lower.host_codegen" title="Link to this definition">¶</a></dt>
+<dd><p>Generate host-side code from the lowered IR module.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>host_mod</strong> (<em>tilelang.tvm.IRModule</em>)</p></li>
-<li><p><strong>target_host</strong> (<em>tvm.target.Target</em>)</p></li>
+<li><p><strong>host_mod</strong> (<em>tvm.IRModule</em>) – The host-side IR module to compile.</p></li>
+<li><p><strong>target_host</strong> (<em>Target</em>) – The host compilation target (e.g. “llvm” or “c”).</p></li>
+<li><p><strong>target</strong> (<em>Target</em><em>, </em><em>optional</em>) – The device target.  When the device target is Metal, the pass
+MarkHostMetalContext is applied so that the generated host code
+contains the Metal/MPS synchronisation logic.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
