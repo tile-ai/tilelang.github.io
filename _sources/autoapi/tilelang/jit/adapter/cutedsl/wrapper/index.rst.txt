@@ -29,6 +29,7 @@ Attributes
    tilelang.jit.adapter.cutedsl.wrapper.CPP_KERNEL_INIT_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_TMA_LAUNCH_INIT_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_KERNEL_LAUNCH_TEMPLATE
+   tilelang.jit.adapter.cutedsl.wrapper.CPP_COOPERATIVE_KERNEL_LAUNCH_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_LAUNCHER_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CUBIN_TMA_ATOM_INIT_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CUBIN_KERNEL_LAUNCH_TEMPLATE
@@ -259,6 +260,47 @@ Module Contents
           );
           if (result != CUDA_SUCCESS) {{
             std::cerr << "Failed to launch kernel {kernel_name} on device " << device_id << ": " << result << "\n";
+            return result;
+          }}
+        }}
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: CPP_COOPERATIVE_KERNEL_LAUNCH_TEMPLATE
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """  // Launch kernel {kernel_idx}: {kernel_name} (cooperative)
+        {{
+          // Get the kernel for current device
+          auto kernels_it = g_device_kernels.find(device_id);
+          if (kernels_it == g_device_kernels.end()) {{
+            std::cerr << "Kernels not initialized for device " << device_id << "\n";
+            return CUDA_ERROR_NOT_INITIALIZED;
+          }}
+          const std::vector<CUfunction>& kernels = kernels_it->second;
+      
+          void* args[] = {{{kernel_args}}};
+          result = cuLaunchCooperativeKernel(
+              kernels[{kernel_idx}],
+              {grid_x}, {grid_y}, {grid_z},
+              {block_x}, {block_y}, {block_z},
+              {smem_size},
+              stream,
+              args
+          );
+          if (result != CUDA_SUCCESS) {{
+            std::cerr << "Failed to launch cooperative kernel {kernel_name} on device " << device_id << ": " << result << "\n";
             return result;
           }}
         }}
@@ -718,7 +760,7 @@ Module Contents
             "torch.int64": cutlass.Int64,
             "torch.int32": cutlass.Int32,
             "torch.uint32": cutlass.Uint32,
-            "torch.bool": cutlass.Boolean,
+            "torch.bool": cutlass.Uint8,  # CuTeDSL only supports i1 in rmem; use u8 for gmem
             "torch.int8": cutlass.Int8,
             "torch.uint8": cutlass.Uint8,
             "torch.int16": cutlass.Int16,

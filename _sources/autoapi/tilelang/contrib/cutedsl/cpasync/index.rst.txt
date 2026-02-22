@@ -4,15 +4,6 @@ tilelang.contrib.cutedsl.cpasync
 .. py:module:: tilelang.contrib.cutedsl.cpasync
 
 
-Attributes
-----------
-
-.. autoapisummary::
-
-   tilelang.contrib.cutedsl.cpasync.BYTES_PER_TENSORMAP
-   tilelang.contrib.cutedsl.cpasync.BYTES_PER_POINTER
-
-
 Functions
 ---------
 
@@ -23,22 +14,19 @@ Functions
    tilelang.contrib.cutedsl.cpasync.extract_tensormap_ptr
    tilelang.contrib.cutedsl.cpasync.tma_load
    tilelang.contrib.cutedsl.cpasync.tma_store
+   tilelang.contrib.cutedsl.cpasync.tma_reduce
    tilelang.contrib.cutedsl.cpasync.tma_store_arrive
    tilelang.contrib.cutedsl.cpasync.tma_store_wait
    tilelang.contrib.cutedsl.cpasync.cp_async_shared_global
    tilelang.contrib.cutedsl.cpasync.prefetch_tma_descriptor
+   tilelang.contrib.cutedsl.cpasync.mbarrier_wait
+   tilelang.contrib.cutedsl.cpasync.mbarrier_cp_async_arrive
+   tilelang.contrib.cutedsl.cpasync.fence_proxy_async
+   tilelang.contrib.cutedsl.cpasync.fence_barrier_init
 
 
 Module Contents
 ---------------
-
-.. py:data:: BYTES_PER_TENSORMAP
-   :value: 128
-
-
-.. py:data:: BYTES_PER_POINTER
-   :value: 8
-
 
 .. py:function:: cp_async_gs(size, dst, src)
 
@@ -68,6 +56,21 @@ Module Contents
 .. py:function:: tma_store(tma_desc, smem_ptr, crd, *, loc=None, ip=None)
 
    Store data from shared memory to global memory using TMA (Tensor Memory Access).
+
+   :param tma_desc:                 TMA descriptor for the tensor
+   :type tma_desc:                  TMA descriptor
+   :param smem_ptr:                 Source pointer in shared memory
+   :type smem_ptr:                  Pointer
+   :param crd:                      Coordinates tuple for the tensor access
+   :type crd:                       tuple[Int, ...]
+
+
+.. py:function:: tma_reduce(tma_desc, smem_ptr, crd, *, loc=None, ip=None)
+
+   Reduce data from shared memory to global memory using TMA with atomic ADD reduction.
+
+   This performs an atomic add of shared memory data to global memory using
+   the TMA unit's reduce capability.
 
    :param tma_desc:                 TMA descriptor for the tensor
    :type tma_desc:                  TMA descriptor
@@ -113,4 +116,18 @@ Module Contents
    Prefetch a TMA descriptor.
    Corresponds to PTX instruction: prefetch.tensormap;
 
+
+.. py:function:: mbarrier_wait(mbar_ptr, phase, timeout_ns = 10000000, *, loc=None, ip=None)
+
+   Waits on a mbarrier with a specified phase (blocking loop).
+
+   Uses inline PTX to loop until the try_wait succeeds.
+   The CUDA backend does: while (!mbar.try_wait(parity)) {}
+
+
+.. py:function:: mbarrier_cp_async_arrive(mbar_ptr, *, loc=None, ip=None)
+
+.. py:function:: fence_proxy_async()
+
+.. py:function:: fence_barrier_init()
 

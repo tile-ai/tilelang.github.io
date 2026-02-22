@@ -1,0 +1,123 @@
+tilelang.contrib.cutedsl.atomic
+===============================
+
+.. py:module:: tilelang.contrib.cutedsl.atomic
+
+.. autoapi-nested-parse::
+
+   Atomic operations for CuTeDSL backend.
+
+   This module provides implementations of atomic operations using NVVM and LLVM dialects.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.atomic.AtomicAdd
+   tilelang.contrib.cutedsl.atomic.AtomicAddRet
+   tilelang.contrib.cutedsl.atomic.AtomicAddx2
+   tilelang.contrib.cutedsl.atomic.AtomicAddx4
+   tilelang.contrib.cutedsl.atomic.AtomicMax
+   tilelang.contrib.cutedsl.atomic.AtomicMaxRet
+   tilelang.contrib.cutedsl.atomic.AtomicMin
+   tilelang.contrib.cutedsl.atomic.AtomicMinRet
+   tilelang.contrib.cutedsl.atomic.AtomicLoad
+   tilelang.contrib.cutedsl.atomic.AtomicStore
+
+
+Module Contents
+---------------
+
+.. py:function:: AtomicAdd(ptr, value, *, loc=None, ip=None)
+
+   Perform atomic addition on a pointer.
+
+   Supports float16, float32, int32, and int64 types.
+   Returns the old value before addition (atomicrmw semantics).
+
+
+.. py:function:: AtomicAddRet(ptr, value, *, loc=None, ip=None)
+
+   Perform atomic addition and return the previous value.
+
+   This is the same as AtomicAdd since nvvm.atomicrmw always returns old value.
+
+
+.. py:function:: AtomicAddx2(dst_ptr, src_values, *, loc=None, ip=None)
+
+   Vectorized atomic add for 2 consecutive elements.
+
+   Uses PTX atom.add.v2.f32 for float32 or atom.add.noftz.v2.f16 for float16.
+
+   :param dst_ptr: Pointer to destination (2 consecutive elements)
+   :param src_values: Source values - can be TensorSSA (loaded tensor) or Pointer
+
+
+.. py:function:: AtomicAddx4(dst_ptr, src_values, *, loc=None, ip=None)
+
+   Vectorized atomic add for 4 consecutive float32 elements.
+
+   Uses PTX atom.global.add.v4.f32 for true vectorized atomic operation on SM90+.
+
+   :param dst_ptr: Pointer to destination (4 consecutive float32 elements)
+   :param src_values: Source values - can be TensorSSA (loaded tensor) or Pointer
+
+
+.. py:function:: AtomicMax(ptr, value, *, loc=None, ip=None)
+
+   Perform atomic maximum operation.
+
+   For integers, uses nvvm.atomicrmw with MAX.
+   For floats, uses CAS loop since PTX doesn't have atomic max for float32.
+
+
+.. py:function:: AtomicMaxRet(ptr, value, *, loc=None, ip=None)
+
+   Perform atomic maximum and return the previous value.
+
+
+.. py:function:: AtomicMin(ptr, value, *, loc=None, ip=None)
+
+   Perform atomic minimum operation.
+
+   For integers, uses nvvm.atomicrmw with MIN.
+   For floats, uses CAS loop since PTX doesn't have atomic min for float32.
+
+
+.. py:function:: AtomicMinRet(ptr, value, *, loc=None, ip=None)
+
+   Perform atomic minimum and return the previous value.
+
+
+.. py:function:: AtomicLoad(ptr, memory_order, *, loc=None, ip=None)
+
+   Perform atomic load with specified memory ordering.
+
+   :param ptr: Pointer to load from
+   :param memory_order: TileLang memory order ID (0=relaxed, 2=acquire, 5=seq_cst, etc.)
+
+   :returns: The loaded value
+
+   PTX mapping (per NVIDIA ABI):
+       relaxed: ld.relaxed.<scope>
+       acquire: ld.acquire.<scope>
+       seq_cst: fence.sc.<scope>; ld.relaxed.<scope>
+
+
+.. py:function:: AtomicStore(ptr, value, memory_order, *, loc=None, ip=None)
+
+   Perform atomic store with specified memory ordering.
+
+   :param ptr: Pointer to store to
+   :param value: Value to store
+   :param memory_order: TileLang memory order ID (0=relaxed, 3=release, 5=seq_cst, etc.)
+
+   PTX mapping (per NVIDIA ABI):
+       relaxed: st.relaxed.<scope>
+       release: st.release.<scope>
+       seq_cst: fence.sc.<scope>; st.relaxed.<scope>
+
+

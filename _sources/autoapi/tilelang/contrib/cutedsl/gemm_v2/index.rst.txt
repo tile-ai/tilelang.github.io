@@ -1,0 +1,65 @@
+tilelang.contrib.cutedsl.gemm_v2
+================================
+
+.. py:module:: tilelang.contrib.cutedsl.gemm_v2
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.gemm_v2.GmmaDescriptor
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.gemm_v2.initialize_wgmma_descriptor
+   tilelang.contrib.cutedsl.gemm_v2.increase_descriptor_offset
+   tilelang.contrib.cutedsl.gemm_v2.warpgroup_fence_operand
+   tilelang.contrib.cutedsl.gemm_v2.warpgroup_arrive
+   tilelang.contrib.cutedsl.gemm_v2.warpgroup_commit_batch
+   tilelang.contrib.cutedsl.gemm_v2.warpgroup_wait
+   tilelang.contrib.cutedsl.gemm_v2.wgmma_ss
+   tilelang.contrib.cutedsl.gemm_v2.wgmma_rs
+
+
+Module Contents
+---------------
+
+.. py:class:: GmmaDescriptor(desc_64 = None)
+
+   .. py:attribute:: desc
+
+
+   .. py:attribute:: desc_i64
+
+
+   .. py:method:: __add__(offset)
+
+
+.. py:function:: initialize_wgmma_descriptor(layout_type, leading_byte_offset, stride_byte_offset, desc, start_address)
+
+.. py:function:: increase_descriptor_offset(desc, offset)
+
+.. py:function:: warpgroup_fence_operand(*args)
+
+.. py:function:: warpgroup_arrive()
+
+.. py:function:: warpgroup_commit_batch()
+
+.. py:function:: warpgroup_wait(N)
+
+.. py:function:: wgmma_ss(A_dtype, B_dtype, C_dtype, M, N, K, tnspA, tnspB, scaleA, scaleB, desc_a, desc_b, C_ptr, scale_out)
+
+.. py:function:: wgmma_rs(A_dtype, B_dtype, C_dtype, M, N, K, tnspB, scaleA, scaleB, A_ptr, desc_b, C_ptr, scale_out)
+
+   WGMMA register-shared variant using PTX inline asm.
+
+   A operand comes from registers, B from shared memory descriptor.
+   M is always 64. A is always K-major (not transposed).
+
+

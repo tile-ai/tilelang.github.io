@@ -21,6 +21,9 @@ Classes
    tilelang.contrib.cutedsl.reduce.BitAndOp
    tilelang.contrib.cutedsl.reduce.BitOrOp
    tilelang.contrib.cutedsl.reduce.BitXorOp
+   tilelang.contrib.cutedsl.reduce.CumSum1D
+   tilelang.contrib.cutedsl.reduce.CumSum2D
+   tilelang.contrib.cutedsl.reduce.NamedBarrier
 
 
 Functions
@@ -38,9 +41,17 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: min(a, b, c = None, *, loc=None, ip=None)
+.. py:function:: min(a, b, c=None)
 
-.. py:function:: max(a, b, c = None, *, loc=None, ip=None)
+   Type-aware min: uses arith.minsi for integers, nvvm.fmin for floats.
+   Falls back to integer path if float conversion fails (signless int types).
+
+
+.. py:function:: max(a, b, c=None)
+
+   Type-aware max: uses arith.maxsi for integers, nvvm.fmax for floats.
+   Falls back to integer path if float conversion fails (signless int types).
+
 
 .. py:class:: SumOp
 
@@ -105,6 +116,85 @@ Module Contents
 .. py:function:: bar_sync(barrier_id, number_of_threads)
 
 .. py:function:: bar_sync_ptx(barrier_id, number_of_threads)
+
+.. py:class:: CumSum1D(threads, reverse)
+
+   1D cumulative sum operation.
+   Based on tl::CumSum1D from reduce.h
+
+   Template params:
+       threads: Number of threads
+       reverse: Whether to cumsum in reverse order
+
+
+   .. py:attribute:: threads
+
+
+   .. py:attribute:: reverse
+
+
+   .. py:attribute:: SEG
+      :value: 32
+
+
+
+   .. py:method:: run(src, dst, N)
+
+      Perform 1D cumulative sum.
+
+      :param src: Source pointer
+      :param dst: Destination pointer
+      :param N: Number of elements (must be compile-time constant or small)
+
+
+
+.. py:class:: CumSum2D(threads, dim, reverse)
+
+   2D cumulative sum operation.
+   Based on tl::CumSum2D from reduce.h
+
+   Template params:
+       threads: Number of threads (must be power of 2, 32-1024)
+       dim: Axis along which to cumsum (0 or 1)
+       reverse: Whether to cumsum in reverse order
+
+
+   .. py:attribute:: threads
+
+
+   .. py:attribute:: dim
+
+
+   .. py:attribute:: reverse
+
+
+   .. py:attribute:: SEG
+      :value: 32
+
+
+
+   .. py:attribute:: TILE_H
+
+
+   .. py:method:: run(src, dst, H, W)
+
+      Perform 2D cumulative sum.
+
+      :param src: Source pointer
+      :param dst: Destination pointer
+      :param H: Number of rows
+      :param W: Number of columns (should be <= 32 for single-segment case)
+
+
+
+.. py:class:: NamedBarrier(all_threads)
+
+   Named barrier policy for AllReduce, uses bar.sync instead of __syncthreads.
+   Based on tl::NamedBarrier<all_threads> from reduce.h
+
+
+   .. py:attribute:: all_threads
+
 
 .. py:function:: AllReduce(reducer, threads, scale, thread_offset, all_threads=None)
 

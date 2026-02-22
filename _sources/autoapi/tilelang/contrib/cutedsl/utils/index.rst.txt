@@ -1,0 +1,78 @@
+tilelang.contrib.cutedsl.utils
+==============================
+
+.. py:module:: tilelang.contrib.cutedsl.utils
+
+.. autoapi-nested-parse::
+
+   Utility functions for CuTeDSL backend.
+
+   Provides common helpers used across the CuTeDSL codegen:
+   bitcast, tensor construction, warp election, barrier sync, and FP16 packing.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.utils.BYTES_PER_TENSORMAP
+   tilelang.contrib.cutedsl.utils.BYTES_PER_POINTER
+   tilelang.contrib.cutedsl.utils.type_map
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.utils.bitcast
+   tilelang.contrib.cutedsl.utils.make_filled_tensor
+   tilelang.contrib.cutedsl.utils.make_tensor_at_offset
+   tilelang.contrib.cutedsl.utils.shuffle_elect
+   tilelang.contrib.cutedsl.utils.sync_thread_partial
+   tilelang.contrib.cutedsl.utils.pack_half2
+
+
+Module Contents
+---------------
+
+.. py:data:: BYTES_PER_TENSORMAP
+   :value: 128
+
+
+.. py:data:: BYTES_PER_POINTER
+   :value: 8
+
+
+.. py:data:: type_map
+
+.. py:function:: bitcast(value, target_dtype)
+
+   Reinterpret the bits of a value as a different type.
+   Equivalent to C's (*(target_type *)(&value)).
+
+   :param value: Source value (Numeric type from CuTeDSL)
+   :param target_dtype: Target type (CuTeDSL type like Int8, Float16, etc.)
+
+   :returns: Value reinterpreted as target type
+
+
+.. py:function:: make_filled_tensor(shape, value)
+
+.. py:function:: make_tensor_at_offset(ptr, offset, shape, div_by=1)
+
+.. py:function:: shuffle_elect(thread_extent)
+
+.. py:function:: sync_thread_partial(barrier_id=None, thread_count=None)
+
+.. py:function:: pack_half2(x, y)
+
+   Pack two half-precision (fp16) values into a single 32-bit value.
+   Corresponds to CUDA's __pack_half2 intrinsic.
+
+   This packs two fp16 values into a single int32 by treating the fp16 bits
+   as raw data and concatenating them.
+
+
