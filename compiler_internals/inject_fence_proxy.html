@@ -557,34 +557,34 @@
         <article role="main" id="furo-main-content">
           <section id="injectfenceproxy-pass">
 <h1>InjectFenceProxy Pass<a class="headerlink" href="#injectfenceproxy-pass" title="Link to this heading">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">tl.InjectFenceProxy</span></code> is a TIR-level transform that keeps the GPU proxy state consistent on NVIDIA Hopper (SM90+) by inserting <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> instructions when control flow switches from generic memory operations to asynchronous proxy operations.</p>
+<p><code class="docutils literal notranslate"><span class="pre">tl.InjectFenceProxy</span></code> is a TIR-level transform that keeps the GPU proxy state consistent on NVIDIA Hopper (SM90+) by inserting <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> instructions when execution switches from <strong>generic proxy</strong> memory operations to <strong>async proxy</strong> operations.</p>
 <section id="why-fences-are-needed">
 <h2>Why Fences Are Needed<a class="headerlink" href="#why-fences-are-needed" title="Link to this heading">¶</a></h2>
-<p>Hopper separates memory instructions into generic and asynchronous proxy paths. When an asynchronous instruction (for example, <code class="docutils literal notranslate"><span class="pre">cp.async</span></code> or <code class="docutils literal notranslate"><span class="pre">tma.load</span></code>) issues after generic traffic (like <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code> or plain buffer stores), the hardware requires a <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> to guarantee ordering. Missing fences can lead to race conditions or undefined behavior.</p>
+<p>Hopper separates memory instructions into generic and asynchronous proxy paths. When an asynchronous instruction (for example, <code class="docutils literal notranslate"><span class="pre">wgmma</span></code>, <code class="docutils literal notranslate"><span class="pre">tma.load</span></code>, or <code class="docutils literal notranslate"><span class="pre">cp.async.bulk</span></code>) issues after generic traffic (like <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>, or <strong>shared-memory</strong> buffer stores), the hardware requires a <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> to guarantee ordering. Missing fences can lead to race conditions or undefined behavior.</p>
 </section>
 <section id="what-the-pass-does">
 <h2>What the Pass Does<a class="headerlink" href="#what-the-pass-does" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Walks every statement in the <code class="docutils literal notranslate"><span class="pre">PrimFunc</span></code>, tracking whether it behaves as a <strong>generic</strong>, <strong>async</strong>, or <strong>neutral</strong> proxy (neutral statements reset the state, such as an explicit fence).</p></li>
-<li><p>Automatically lowers <code class="docutils literal notranslate"><span class="pre">tma_store</span></code> intrinsics into the required <code class="docutils literal notranslate"><span class="pre">arrive</span></code>/<code class="docutils literal notranslate"><span class="pre">wait</span></code> handshake so that TMA stores participate correctly in synchronization.</p></li>
-<li><p>Injects an explicit <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> whenever a generic statement is followed by an async statement without an intervening neutral barrier.</p></li>
+<li><p>Walks statements in execution order while tracking a (may-)state of the last proxy kind (<strong>generic</strong>, <strong>async</strong>, or <strong>none/reset</strong>). Control-flow joins (e.g. <code class="docutils literal notranslate"><span class="pre">if</span></code>) merge states conservatively.</p></li>
+<li><p>Normalizes <code class="docutils literal notranslate"><span class="pre">tma_store</span></code> by ensuring the required <code class="docutils literal notranslate"><span class="pre">tma_store_arrive</span></code> / <code class="docutils literal notranslate"><span class="pre">tma_store_wait</span></code> handshake exists immediately after the store.</p></li>
+<li><p>Injects <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> right before an async-proxy instruction whenever the preceding state can be generic.</p></li>
 </ul>
-<p>The pass is conservative: unknown extern calls are treated as async so that the fence is inserted rather than accidentally omitted.</p>
+<p>By default, unknown/external calls do <strong>not</strong> affect proxy state. Opaque calls that may write into <strong>shared memory</strong> (e.g. via <code class="docutils literal notranslate"><span class="pre">tvm_access_ptr</span></code> / <code class="docutils literal notranslate"><span class="pre">address_of</span></code>) are treated as generic proxy traffic so a later async-proxy op will still be fenced.</p>
 <section id="timeline-view">
 <h3>Timeline View<a class="headerlink" href="#timeline-view" title="Link to this heading">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>generic initialize_wgmma_descriptor → generic shared-store → async wgmma
-             │                           │                   │
-             └─ generic proxy            ┴─ generic proxy    ┴─ async proxy
-                         │        fence inserted here   ↑
-                         └──────────────────────────────┘
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>generic shared-store (or ldmatrix/stmatrix/cp.async) → async op (wgmma / tma / cp.async.bulk)
+                 │                                  │
+                 └─ generic proxy                   └─ async proxy
+                             │        fence inserted here   ↑
+                             └──────────────────────────────┘
 </pre></div>
 </div>
-<p>The proxy tracker scans the sequence from left to right. The moment it detects a transition from generic to async (between the store and <code class="docutils literal notranslate"><span class="pre">cp.async</span></code> above), it synthesizes a <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> to reset the hardware proxy state before the async path runs.</p>
+<p>The proxy tracker effectively scans the program in execution order. The moment it detects a possible transition from generic to async (between the store and the async op above), it synthesizes a <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> to reset the hardware proxy state before the async path runs.</p>
 </section>
 </section>
 <section id="coverage-of-intrinsics">
 <h2>Coverage of Intrinsics<a class="headerlink" href="#coverage-of-intrinsics" title="Link to this heading">¶</a></h2>
-<p>The tracker understands the TileLang intrinsics for TMA load/store, shared-memory MMA (<code class="docutils literal notranslate"><span class="pre">wgmma</span></code>), and TVM/PTX async copy intrinsics (<code class="docutils literal notranslate"><span class="pre">cp.async</span></code> variants). Generic operations currently include <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">stmatrix</span></code>, and descriptor initialization. Other IR nodes (loops, blocks, attributes) receive a proxy kind derived from their bodies so that the analysis survives structured control flow.</p>
+<p>The tracker understands the TileLang intrinsics for TMA load/store, shared-memory MMA (<code class="docutils literal notranslate"><span class="pre">wgmma</span></code>), and TVM/PTX SM90 async copy intrinsics (<code class="docutils literal notranslate"><span class="pre">cp.async.bulk</span></code> family). Generic operations currently include <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">stmatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>, and <strong>shared-memory</strong> <code class="docutils literal notranslate"><span class="pre">BufferStore</span></code> statements. Structured control flow (loops, blocks, branches) is handled by propagating and conservatively merging proxy state.</p>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
@@ -661,7 +661,9 @@
 </section>
 <section id="extending-the-pass">
 <h2>Extending the Pass<a class="headerlink" href="#extending-the-pass" title="Link to this heading">¶</a></h2>
-<p>If you introduce a new intrinsic that behaves like an async proxy, add it to <code class="docutils literal notranslate"><span class="pre">IsAsyncIntrinsic</span></code> in <code class="docutils literal notranslate"><span class="pre">src/transform/inject_fence_proxy.cc</span></code>. Likewise, extend <code class="docutils literal notranslate"><span class="pre">IsKnownGeneric</span></code> for additional generic operations. When adding new neutral barriers, make sure they set the proxy kind to <code class="docutils literal notranslate"><span class="pre">kNeutral</span></code> so the state resets correctly.</p>
+<p>If you introduce a new intrinsic that behaves like an async proxy, add it to <code class="docutils literal notranslate"><span class="pre">IsAsyncIntrinsic</span></code> in <code class="docutils literal notranslate"><span class="pre">src/transform/inject_fence_proxy.cc</span></code>. Likewise, extend <code class="docutils literal notranslate"><span class="pre">IsKnownGeneric</span></code> for additional generic operations.</p>
+<p>Most calls default to <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> (no proxy-state effect). <code class="docutils literal notranslate"><span class="pre">IsNonProxyIntrinsic</span></code> exists for well-known synchronization / scheduling helpers and to document intent, but it is not required for correctness if an op is neither generic nor async.
+For custom/opaque ops, you must lower them into known intrinsics (or manually insert <code class="docutils literal notranslate"><span class="pre">fence_proxy_async</span></code>) if they participate in proxy switching.</p>
 </section>
 </section>
 
