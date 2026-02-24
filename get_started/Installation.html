@@ -562,8 +562,8 @@
 <p><strong>Prerequisites for installation via wheel or PyPI:</strong></p>
 <ul class="simple">
 <li><p><strong>glibc</strong>: 2.28 (Ubuntu 20.04 or later)</p></li>
-<li><p><strong>Python Version</strong>: &gt;= 3.8</p></li>
-<li><p><strong>CUDA Version</strong>: 12.0 &lt;= CUDA &lt; 13</p></li>
+<li><p><strong>Python Version</strong>: &gt;= 3.9</p></li>
+<li><p><strong>CUDA Version</strong>: &gt;= 10.0 (host installation), or pip-provided CUDA toolchain (&gt;= 13.0)</p></li>
 </ul>
 <p>The easiest way to install tilelang is directly from PyPI using pip. To install the latest version, run the following command in your terminal:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>tilelang
@@ -587,8 +587,8 @@
 <p><strong>Prerequisites for building from source:</strong></p>
 <ul class="simple">
 <li><p><strong>Operating System</strong>: Linux</p></li>
-<li><p><strong>Python Version</strong>: &gt;= 3.8</p></li>
-<li><p><strong>CUDA Version</strong>: &gt;= 10.0</p></li>
+<li><p><strong>Python Version</strong>: &gt;= 3.9</p></li>
+<li><p><strong>CUDA Version</strong>: &gt;= 10.0 (host installation), or pip-provided CUDA toolchain (&gt;= 13.0)</p></li>
 </ul>
 <p>If you prefer Docker, please skip to the <a class="reference internal" href="#install-using-docker">Install Using Docker</a> section. This section focuses on building from source on a native Linux environment.</p>
 <p>First, install the OS-level prerequisites on Ubuntu/Debian-based systems using the following commands:</p>
@@ -600,8 +600,28 @@ apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w">
 <blockquote>
 <div><p><strong>Note</strong>: Use the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> flag to include necessary submodules. Tilelang currently depends on a customized version of TVM, which is included as a submodule. If you prefer <a class="reference internal" href="#using-existing-tvm">Building with Existing TVM Installation</a>, you can skip cloning the TVM submodule (but still need other dependencies).</p>
 </div></blockquote>
+<section id="with-host-cuda-toolchain">
+<h3>With host CUDA toolchain<a class="headerlink" href="#with-host-cuda-toolchain" title="Link to this heading">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang.git
 <span class="nb">cd</span><span class="w"> </span>tilelang
+pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v
+</pre></div>
+</div>
+</section>
+<section id="with-pip-provided-cuda-toolchain-no-host-cuda-required">
+<h3>With pip-provided CUDA toolchain (no host CUDA required)<a class="headerlink" href="#with-pip-provided-cuda-toolchain-no-host-cuda-required" title="Link to this heading">¶</a></h3>
+<p>If you don’t have CUDA installed on the host, you can use pip-provided CUDA packages instead.</p>
+<p><strong>Option A</strong> — pip toolchain in the current environment (use <code class="docutils literal notranslate"><span class="pre">--no-build-isolation</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang.git
+<span class="nb">cd</span><span class="w"> </span>tilelang
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
+pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;nvidia-cuda-nvcc&gt;=13&quot;</span><span class="w"> </span><span class="s2">&quot;nvidia-cuda-cccl&gt;=13&quot;</span><span class="w"> </span><span class="s2">&quot;nvidia-cuda-nvrtc&gt;=13&quot;</span>
+pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v<span class="w"> </span>--no-build-isolation
+</pre></div>
+</div>
+<p><strong>Option B</strong> — pip toolchain in another virtualenv or path:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Point to the cu&lt;ver&gt; directory inside another venv&#39;s site-packages</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">WITH_PIP_CUDA_TOOLCHAIN</span><span class="o">=</span>/path/to/venv/lib/python3.x/site-packages/nvidia/cu13
 pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v
 </pre></div>
 </div>
@@ -612,6 +632,7 @@ pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </sp
 <blockquote>
 <div><p><strong>Note</strong>: changes to C++ files require rebuilding the tilelang C++ library. See <a class="reference internal" href="#faster-rebuild-for-developers">Faster Rebuild for Developers</a> below. A default <code class="docutils literal notranslate"><span class="pre">build</span></code> directory will be created if you use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code>, so you can also directly run <code class="docutils literal notranslate"><span class="pre">make</span></code> in the <code class="docutils literal notranslate"><span class="pre">build</span></code> directory to rebuild it as <a class="reference internal" href="#working-from-source-via-pythonpath">Working from Source via PYTHONPATH</a> suggested below.</p>
 </div></blockquote>
+</section>
 <section id="working-from-source-via-pythonpath-recommended-for-developers">
 <span id="working-from-source-via-pythonpath"></span><h3>Working from Source via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> (Recommended for Developers)<a class="headerlink" href="#working-from-source-via-pythonpath-recommended-for-developers" title="Link to this heading">¶</a></h3>
 <p>If you prefer to work directly from the source tree via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> instead of using pip, make sure the native extension (<code class="docutils literal notranslate"><span class="pre">libtilelang.so</span></code>) is built first:</p>
@@ -811,6 +832,7 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;i
 <p><code class="docutils literal notranslate"><span class="pre">USE_ROCM</span></code>: If to enable ROCm support, default: <code class="docutils literal notranslate"><span class="pre">OFF</span></code>. If your ROCm SDK does not located in <code class="docutils literal notranslate"><span class="pre">/opt/rocm</span></code>, set <code class="docutils literal notranslate"><span class="pre">USE_ROCM=&lt;rocm_sdk&gt;</span></code> to enable build ROCm against custom sdk path.</p>
 <p><code class="docutils literal notranslate"><span class="pre">USE_METAL</span></code>: If to enable Metal support, default: <code class="docutils literal notranslate"><span class="pre">ON</span></code> on Darwin.</p>
 <p><code class="docutils literal notranslate"><span class="pre">TVM_ROOT</span></code>: TVM source root to use.</p>
+<p><code class="docutils literal notranslate"><span class="pre">WITH_PIP_CUDA_TOOLCHAIN</span></code>: Path to a pip-installed CUDA toolkit directory (e.g., <code class="docutils literal notranslate"><span class="pre">/path/to/venv/lib/python3.x/site-packages/nvidia/cu13</span></code>). When set, the build system uses this directory instead of a host CUDA installation. If not set and no host CUDA is found, the build system will attempt to auto-detect pip-installed CUDA packages from the current Python environment.</p>
 <p><code class="docutils literal notranslate"><span class="pre">NO_VERSION_LABEL</span></code> and <code class="docutils literal notranslate"><span class="pre">NO_TOOLCHAIN_VERSION</span></code>:
 When building tilelang, we’ll try to embed SDK and version information into package version as below,
 where local version label could look like <code class="docutils literal notranslate"><span class="pre">&lt;sdk&gt;.git&lt;git_hash&gt;</span></code>. Set <code class="docutils literal notranslate"><span class="pre">NO_VERSION_LABEL=ON</span></code> to disable this behavior.</p>
@@ -933,6 +955,8 @@ you’ll see logs like below:</p>
 <li><a class="reference internal" href="#">Installation Guide</a><ul>
 <li><a class="reference internal" href="#installing-with-pip">Installing with pip</a></li>
 <li><a class="reference internal" href="#building-from-source">Building from Source</a><ul>
+<li><a class="reference internal" href="#with-host-cuda-toolchain">With host CUDA toolchain</a></li>
+<li><a class="reference internal" href="#with-pip-provided-cuda-toolchain-no-host-cuda-required">With pip-provided CUDA toolchain (no host CUDA required)</a></li>
 <li><a class="reference internal" href="#working-from-source-via-pythonpath-recommended-for-developers">Working from Source via <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> (Recommended for Developers)</a></li>
 <li><a class="reference internal" href="#building-with-customized-tvm-path">Building with Customized TVM Path</a></li>
 </ul>
