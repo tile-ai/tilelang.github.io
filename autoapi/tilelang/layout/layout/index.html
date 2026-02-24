@@ -655,6 +655,34 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.layout.Layout.repeat">
+<span class="sig-name descname"><span class="pre">repeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.layout.Layout.repeat" title="Link to this definition">¶</a></dt>
+<dd><p>Repeat a layout along a single input dimension.</p>
+<p>This is useful for building a larger layout by tiling an “atom” layout.
+Conceptually, repeating on dimension <code class="docutils literal notranslate"><span class="pre">dim</span></code> with <code class="docutils literal notranslate"><span class="pre">factor</span></code> constructs a
+new layout <code class="docutils literal notranslate"><span class="pre">L'</span></code> such that:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">L</span><span class="s1">&#39;(*idx) = [idx[dim] // extent_dim] + L(idx with idx[dim] </span><span class="si">% e</span><span class="s1">xtent_dim)</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">extent_dim</span></code> is the original extent of the repeated dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dim</strong> (<em>int</em>) – The input dimension to repeat (0-based, supports negative indexing).</p></li>
+<li><p><strong>factor</strong> (<em>int</em>) – The repeat factor. Must be a positive integer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new Layout with the repeated input shape and an extra leading
+output dimension representing the repeat-group index.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#tilelang.layout.layout.Layout" title="tilelang.layout.layout.Layout">Layout</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.layout.layout.Layout.inverse">
 <span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.layout.Layout.inverse" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the inverse of the current layout transformation.</p>
@@ -678,6 +706,19 @@
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.layout.Layout.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.layout.Layout.__call__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>list</em><em>[</em><em>tvm.tir.PrimExpr</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -757,8 +798,10 @@
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.get_forward_vars"><code class="docutils literal notranslate"><span class="pre">Layout.get_forward_vars()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.get_forward_index"><code class="docutils literal notranslate"><span class="pre">Layout.get_forward_index()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.map_forward_index"><code class="docutils literal notranslate"><span class="pre">Layout.map_forward_index()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.layout.Layout.repeat"><code class="docutils literal notranslate"><span class="pre">Layout.repeat()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.inverse"><code class="docutils literal notranslate"><span class="pre">Layout.inverse()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.is_equal"><code class="docutils literal notranslate"><span class="pre">Layout.is_equal()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.layout.Layout.__call__"><code class="docutils literal notranslate"><span class="pre">Layout.__call__()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.__repr__"><code class="docutils literal notranslate"><span class="pre">Layout.__repr__()</span></code></a></li>
 </ul>
 </li>

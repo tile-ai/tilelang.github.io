@@ -75,6 +75,29 @@ Module Contents
 
 
 
+   .. py:method:: repeat(dim, factor)
+
+      Repeat a layout along a single input dimension.
+
+      This is useful for building a larger layout by tiling an "atom" layout.
+      Conceptually, repeating on dimension ``dim`` with ``factor`` constructs a
+      new layout ``L'`` such that::
+
+          L'(*idx) = [idx[dim] // extent_dim] + L(idx with idx[dim] % extent_dim)
+
+      where ``extent_dim`` is the original extent of the repeated dimension.
+
+      :param dim: The input dimension to repeat (0-based, supports negative indexing).
+      :type dim: int
+      :param factor: The repeat factor. Must be a positive integer.
+      :type factor: int
+
+      :returns: A new Layout with the repeated input shape and an extra leading
+                output dimension representing the repeat-group index.
+      :rtype: Layout
+
+
+
    .. py:method:: inverse()
 
       Compute the inverse of the current layout transformation.
@@ -91,6 +114,9 @@ Module Contents
       :param other: The layout to compare with.
       :type other: Layout
 
+
+
+   .. py:method:: __call__(*args)
 
 
    .. py:method:: __repr__()
