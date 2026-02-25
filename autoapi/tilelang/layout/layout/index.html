@@ -683,6 +683,34 @@ output dimension representing the repeat-group index.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.layout.Layout.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">leading_shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.layout.Layout.expand" title="Link to this definition">¶</a></dt>
+<dd><p>Expand (lift) this layout by prepending new leading input dimensions.</p>
+<p>The new leading dimensions are forwarded unchanged to the output, and
+the original layout is applied to the remaining trailing dimensions.</p>
+<p class="rubric">Example</p>
+<p>Given a 2D layout <code class="docutils literal notranslate"><span class="pre">L</span></code> over <code class="docutils literal notranslate"><span class="pre">[J,</span> <span class="pre">K]</span></code>, you can lift it to a 3D layout
+over <code class="docutils literal notranslate"><span class="pre">[I,</span> <span class="pre">J,</span> <span class="pre">K]</span></code> by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">L3</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="n">I</span><span class="p">])</span>
+<span class="c1"># [i, j, k] -&gt; [i, *L(j, k)]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>leading_shape</strong> (<em>int</em><em> or </em><em>Sequence</em><em>[</em><em>int</em><em> or </em><em>PrimExpr</em><em>]</em>) – The shape of the new leading dimensions to prepend. Use an empty
+list/tuple for a no-op.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new Layout with input shape <code class="docutils literal notranslate"><span class="pre">leading_shape</span> <span class="pre">+</span> <span class="pre">input_shape</span></code> and
+output indices <code class="docutils literal notranslate"><span class="pre">[leading_dims]</span> <span class="pre">+</span> <span class="pre">old_forward_index</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#tilelang.layout.layout.Layout" title="tilelang.layout.layout.Layout">Layout</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.layout.layout.Layout.inverse">
 <span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.layout.Layout.inverse" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the inverse of the current layout transformation.</p>
@@ -799,6 +827,7 @@ output dimension representing the repeat-group index.</p>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.get_forward_index"><code class="docutils literal notranslate"><span class="pre">Layout.get_forward_index()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.map_forward_index"><code class="docutils literal notranslate"><span class="pre">Layout.map_forward_index()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.repeat"><code class="docutils literal notranslate"><span class="pre">Layout.repeat()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.layout.Layout.expand"><code class="docutils literal notranslate"><span class="pre">Layout.expand()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.inverse"><code class="docutils literal notranslate"><span class="pre">Layout.inverse()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.is_equal"><code class="docutils literal notranslate"><span class="pre">Layout.is_equal()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.layout.Layout.__call__"><code class="docutils literal notranslate"><span class="pre">Layout.__call__()</span></code></a></li>

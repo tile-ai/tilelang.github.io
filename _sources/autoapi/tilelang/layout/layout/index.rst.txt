@@ -98,6 +98,31 @@ Module Contents
 
 
 
+   .. py:method:: expand(leading_shape)
+
+      Expand (lift) this layout by prepending new leading input dimensions.
+
+      The new leading dimensions are forwarded unchanged to the output, and
+      the original layout is applied to the remaining trailing dimensions.
+
+      .. rubric:: Example
+
+      Given a 2D layout ``L`` over ``[J, K]``, you can lift it to a 3D layout
+      over ``[I, J, K]`` by::
+
+          L3 = L.expand([I])
+          # [i, j, k] -> [i, *L(j, k)]
+
+      :param leading_shape: The shape of the new leading dimensions to prepend. Use an empty
+                            list/tuple for a no-op.
+      :type leading_shape: int or Sequence[int or PrimExpr]
+
+      :returns: A new Layout with input shape ``leading_shape + input_shape`` and
+                output indices ``[leading_dims] + old_forward_index``.
+      :rtype: Layout
+
+
+
    .. py:method:: inverse()
 
       Compute the inverse of the current layout transformation.
