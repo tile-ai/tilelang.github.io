@@ -11,6 +11,7 @@ Functions
 
    tilelang.engine.phase.allow_warp_specialized
    tilelang.engine.phase.allow_tma_and_warp_specialized
+   tilelang.engine.phase.allow_tma_lower
    tilelang.engine.phase.allow_fence_proxy
    tilelang.engine.phase.allow_vectorize
    tilelang.engine.phase.allow_global_thread_synchronization
@@ -32,6 +33,15 @@ Module Contents
 .. py:function:: allow_warp_specialized(pass_ctx = None, target = None)
 
 .. py:function:: allow_tma_and_warp_specialized(pass_ctx = None, target = None)
+
+.. py:function:: allow_tma_lower(pass_ctx = None, target = None)
+
+   Return True when TMA lowering is enabled for the given target.
+
+   This is intentionally decoupled from warp specialization so Hopper TMA can
+   be used in a non-warp-specialized pipeline (e.g., no-WS kernels still need
+   mbarrier allocation/init and expect_tx injection).
+
 
 .. py:function:: allow_fence_proxy(target = None)
 
