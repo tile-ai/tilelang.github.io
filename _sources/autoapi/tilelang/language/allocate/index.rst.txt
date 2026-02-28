@@ -41,6 +41,7 @@ Functions
    tilelang.language.allocate.alloc_fragment
    tilelang.language.allocate.alloc_var
    tilelang.language.allocate.alloc_barrier
+   tilelang.language.allocate.alloc_cluster_barrier
    tilelang.language.allocate.alloc_tmem
    tilelang.language.allocate.alloc_reducer
    tilelang.language.allocate.alloc_descriptor
@@ -145,6 +146,17 @@ Module Contents
 
    >>> mbar = alloc_barrier(128)  # allocate a barrier with arrive count 128
    >>> mbars = alloc_barrier([128] * n)  # allocate n barriers with the same arrive count 128
+
+
+.. py:function:: alloc_cluster_barrier(arrive_count)
+
+   Allocate a cluster barrier buffer.
+
+   :param arrive_count: The number of threads that need to arrive at each barrier
+   :type arrive_count: int | list[int]
+
+   :returns: A TVM buffer object allocated as a cluster barrier
+   :rtype: T.Buffer
 
 
 .. py:function:: alloc_tmem(shape, dtype)

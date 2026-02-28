@@ -19,6 +19,7 @@ Attributes
    tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC
    tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC
    tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_CODE
+   tilelang.jit.adapter.wrapper.KERNEL_CLUSTER_LAUNCH_FUNC_CODE
    tilelang.jit.adapter.wrapper.logger
 
 
@@ -328,6 +329,44 @@ Module Contents
       		config.gridDim = {0};
       		config.blockDim = {1};
       		config.dynamicSmemBytes = {2};
+      		cudaLaunchKernelEx(&config, {4}, {3});
+      	}}
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: KERNEL_CLUSTER_LAUNCH_FUNC_CODE
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      	{{
+      		cudaLaunchConfig_t config;
+      		cudaLaunchAttribute attribute[2];
+      		attribute[0].id = cudaLaunchAttributeClusterDimension;
+      		attribute[0].val.clusterDim = {{{5}, {6}, {7}}};
+      		attribute[1].id = cudaLaunchAttributeProgrammaticStreamSerialization;
+      		attribute[1].val.programmaticStreamSerializationAllowed = 1;
+      		config.attrs = attribute;
+      		config.numAttrs = 2;
+      		config.stream = stream;
+      		config.gridDim = {0};
+      		config.blockDim = {1};
+      		config.dynamicSmemBytes = {2};
+      		cudaError_t cluster_attr_result = cudaFuncSetAttribute({4}, cudaFuncAttributeNonPortableClusterSizeAllowed, 1);
+      		if (cluster_attr_result != cudaSuccess) {{
+      			snprintf(error_buf, ERROR_BUF_SIZE, "Failed to set cluster attribute for {4}: %s", cudaGetErrorString(cluster_attr_result));
+      			return -1;
+      		}}
       		cudaLaunchKernelEx(&config, {4}, {3});
       	}}
       """

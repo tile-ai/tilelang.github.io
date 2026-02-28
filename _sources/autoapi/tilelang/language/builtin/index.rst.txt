@@ -27,6 +27,7 @@ Functions
    tilelang.language.builtin.annotate_consumer_reg_alloc
    tilelang.language.builtin.no_set_max_nreg
    tilelang.language.builtin.disable_warp_group_reg_alloc
+   tilelang.language.builtin.ptx_arrive_cluster_barrier
    tilelang.language.builtin.mbarrier_wait_parity
    tilelang.language.builtin.mbarrier_arrive
    tilelang.language.builtin.mbarrier_expect_tx
@@ -210,6 +211,16 @@ Module Contents
    Disable the warp group reg alloc.
 
 
+.. py:function:: ptx_arrive_cluster_barrier(mbarrier, cta_id)
+
+   Arrive at a shared barrier in cluster.
+
+   :param mbarrier: BarrierType
+                    The memory barrier to arrive at
+   :param cta_id: int | Var
+                  The peer CTA rank in cluster to arrive at.
+
+
 .. py:function:: mbarrier_wait_parity(mbarrier, parity)
 
    Wait for memory barrier parity condition.
@@ -251,12 +262,15 @@ Module Contents
    :rtype: tir.Call
 
 
-.. py:function:: mbarrier_arrive(mbarrier)
+.. py:function:: mbarrier_arrive(mbarrier, cta_id = None)
 
    Arrive at memory barrier.
 
    :param mbarrier: BarrierType
                     The memory barrier to arrive at
+   :param cta_id: int | Var | None
+                  The peer CTA rank in cluster to arrive at. (Only valid for cluster barriers)
+                  If not provided, will arrive on current CTA's barrier.
 
 
 .. py:function:: mbarrier_expect_tx(mbarrier, tx)

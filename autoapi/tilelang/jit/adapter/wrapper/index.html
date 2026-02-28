@@ -405,6 +405,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../language/annotations/index.html">tilelang.language.annotations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/atomic/index.html">tilelang.language.atomic</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/builtin/index.html">tilelang.language.builtin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../language/cluster/index.html">tilelang.language.cluster</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/copy_op/index.html">tilelang.language.copy_op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/customize/index.html">tilelang.language.customize</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/dtypes/index.html">tilelang.language.dtypes</a></li>
@@ -592,7 +593,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_CODE" title="tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_CODE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KERNEL_LAUNCH_FUNC_CODE</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.logger" title="tilelang.jit.adapter.wrapper.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.KERNEL_CLUSTER_LAUNCH_FUNC_CODE" title="tilelang.jit.adapter.wrapper.KERNEL_CLUSTER_LAUNCH_FUNC_CODE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KERNEL_CLUSTER_LAUNCH_FUNC_CODE</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.wrapper.logger" title="tilelang.jit.adapter.wrapper.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -833,6 +837,35 @@
 <span class="sd">          config.gridDim = {0};</span>
 <span class="sd">          config.blockDim = {1};</span>
 <span class="sd">          config.dynamicSmemBytes = {2};</span>
+<span class="sd">          cudaLaunchKernelEx(&amp;config, {4}, {3});</span>
+<span class="sd">  }}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.KERNEL_CLUSTER_LAUNCH_FUNC_CODE">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">KERNEL_CLUSTER_LAUNCH_FUNC_CODE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.KERNEL_CLUSTER_LAUNCH_FUNC_CODE" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  {{</span>
+<span class="sd">          cudaLaunchConfig_t config;</span>
+<span class="sd">          cudaLaunchAttribute attribute[2];</span>
+<span class="sd">          attribute[0].id = cudaLaunchAttributeClusterDimension;</span>
+<span class="sd">          attribute[0].val.clusterDim = {{{5}, {6}, {7}}};</span>
+<span class="sd">          attribute[1].id = cudaLaunchAttributeProgrammaticStreamSerialization;</span>
+<span class="sd">          attribute[1].val.programmaticStreamSerializationAllowed = 1;</span>
+<span class="sd">          config.attrs = attribute;</span>
+<span class="sd">          config.numAttrs = 2;</span>
+<span class="sd">          config.stream = stream;</span>
+<span class="sd">          config.gridDim = {0};</span>
+<span class="sd">          config.blockDim = {1};</span>
+<span class="sd">          config.dynamicSmemBytes = {2};</span>
+<span class="sd">          cudaError_t cluster_attr_result = cudaFuncSetAttribute({4}, cudaFuncAttributeNonPortableClusterSizeAllowed, 1);</span>
+<span class="sd">          if (cluster_attr_result != cudaSuccess) {{</span>
+<span class="sd">                  snprintf(error_buf, ERROR_BUF_SIZE, &quot;Failed to set cluster attribute for {4}: %s&quot;, cudaGetErrorString(cluster_attr_result));</span>
+<span class="sd">                  return -1;</span>
+<span class="sd">          }}</span>
 <span class="sd">          cudaLaunchKernelEx(&amp;config, {4}, {3});</span>
 <span class="sd">  }}</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -1503,6 +1536,7 @@ inheritance.</p>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_DESC_INIT_FUNC"><code class="docutils literal notranslate"><span class="pre">TMA_DESC_INIT_FUNC</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.TMA_IM2COL_DESC_INIT_FUNC"><code class="docutils literal notranslate"><span class="pre">TMA_IM2COL_DESC_INIT_FUNC</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.KERNEL_LAUNCH_FUNC_CODE"><code class="docutils literal notranslate"><span class="pre">KERNEL_LAUNCH_FUNC_CODE</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.KERNEL_CLUSTER_LAUNCH_FUNC_CODE"><code class="docutils literal notranslate"><span class="pre">KERNEL_CLUSTER_LAUNCH_FUNC_CODE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.BaseWrapper"><code class="docutils literal notranslate"><span class="pre">BaseWrapper</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.jit.adapter.wrapper.BaseWrapper.wrap"><code class="docutils literal notranslate"><span class="pre">BaseWrapper.wrap()</span></code></a></li>
 </ul>

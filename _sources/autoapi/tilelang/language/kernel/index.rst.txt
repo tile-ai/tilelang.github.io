@@ -195,7 +195,7 @@ Module Contents
       Returns the total number of threads.
 
 
-.. py:function:: Kernel(*blocks, threads = None, is_cpu = False, prelude = None)
+.. py:function:: Kernel(*blocks, threads = None, cluster_dims = None, is_cpu = False, prelude = None)
 
    Tools to quickly construct a GPU kernel launch frame.
 
@@ -205,6 +205,11 @@ Module Contents
                    Or a list of integers representing blockDim.(x|y|z)
                    if the value is -1, we skip the threadIdx.x binding.
    :type threads: int
+   :param cluster_dims: The cluster dimensions for SM90+ cluster launch.
+                        For example, use 2 or (2, 1, 1) to create 2-CTA clusters.
+                        When specified, the kernel will be launched using cudaLaunchKernelEx
+                        with cudaLaunchAttributeClusterDimension.
+   :type cluster_dims: int | tuple[int, int, int] | list[int] | None
    :param is_cpu: Whether the kernel is running on CPU.
                   Thus we will not bind threadIdx.x, threadIdx.y, threadIdx.z.
                   and blockIdx.x, blockIdx.y, blockIdx.z.
