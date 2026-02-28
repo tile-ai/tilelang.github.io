@@ -564,7 +564,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.tileop.gemm.gemm_mma.GemmMMA" title="tilelang.tileop.gemm.gemm_mma.GemmMMA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmMMA</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Base class for GEMM tile operators.</p></td>
 </tr>
 </tbody>
 </table>
@@ -576,6 +576,10 @@
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_mma.GemmMMA">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.tileop.gemm.gemm_mma.</span></span><span class="sig-name descname"><span class="pre">GemmMMA</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_mma.GemmMMA" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gemm_base/index.html#tilelang.tileop.gemm.gemm_base.GemmBase" title="tilelang.tileop.gemm.gemm_base.GemmBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.tileop.gemm.gemm_base.GemmBase</span></code></a></p>
+<p>Base class for GEMM tile operators.</p>
+<p>Classifies the GEMM variant by the memory scopes of operands A and B
+(SS, SR, RS, TS, RR) and provides common property accessors for the
+underlying <code class="docutils literal notranslate"><span class="pre">gemm_node</span></code> IR node.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_mma.GemmMMA.infer_layout">
 <span class="sig-name descname"><span class="pre">infer_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_nums</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_mma.GemmMMA.infer_layout" title="Link to this definition">¶</a></dt>
@@ -607,7 +611,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_mma.GemmMMA.is_gemm_ss">
 <span class="sig-name descname"><span class="pre">is_gemm_ss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_mma.GemmMMA.is_gemm_ss" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if both A and B are in shared memory (SS variant).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
 </dd>
@@ -617,7 +622,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_mma.GemmMMA.is_gemm_sr">
 <span class="sig-name descname"><span class="pre">is_gemm_sr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_mma.GemmMMA.is_gemm_sr" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if A is in shared memory and B is in registers (SR variant).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
 </dd>
@@ -627,7 +633,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_mma.GemmMMA.is_gemm_rs">
 <span class="sig-name descname"><span class="pre">is_gemm_rs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_mma.GemmMMA.is_gemm_rs" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if A is in registers and B is in shared memory (RS variant).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
 </dd>
@@ -637,7 +644,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_mma.GemmMMA.is_gemm_rr">
 <span class="sig-name descname"><span class="pre">is_gemm_rr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_mma.GemmMMA.is_gemm_rr" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if both A and B are in registers (RR variant).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
 </dd>

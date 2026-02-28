@@ -77,7 +77,11 @@ Module Contents
    Bases: :py:obj:`tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter`
 
 
-   To eliminate Python syntax within TIR Macro.
+   Intrinsic emitter for Blackwell (SM100) TCGEN5MMA instructions.
+
+   Generates TIR macros that lower to ``tcgen05.mma`` PTX instructions for
+   both the SS (Shared-Shared) and TS (TensorMemory-Shared) GEMM variants.
+   Also provides layout helpers for tensor-memory (TMEM) buffers.
 
 
    .. py:attribute:: tcgen05_prefix
@@ -97,6 +101,45 @@ Module Contents
 
 
    .. py:method:: tcgen05mma(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
+
+      Emit a TCGEN5MMA operation, dispatching to SS or TS variant based on A's memory scope.
+
+      If *A_buf* resides in tensor memory (``shared.tmem``), the TS variant is
+      emitted; otherwise the SS variant is used (both A and B from shared memory).
+
+      :param A_buf: Operand A — either in shared memory (SS) or tensor memory (TS).
+      :type A_buf: Buffer
+      :param B_buf: Operand B in shared memory.
+      :type B_buf: Buffer
+      :param C_local_buf: Accumulator buffer in tensor memory.
+      :type C_local_buf: Buffer
+      :param mbar: Memory barrier used for MMA completion signalling.
+      :type mbar: PrimExpr
+      :param clear_accum: Whether to zero the accumulator before the first MMA.
+      :type clear_accum: PrimExpr
+
+
+
+   .. py:method:: tcgen05mma_ts(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
+
+      Emit the TS (TensorMemory-Shared) variant of TCGEN5MMA.
+
+      Reads operand A directly from tensor memory (TMEM) and operand B from
+      shared memory via a descriptor.  The TMEM column offset for A is
+      computed assuming packed storage (e.g. two ``bfloat16`` values per
+      ``uint32`` column) to match the output of ``tcgen05.st``.
+
+      :param A_buf: Operand A residing in tensor memory (``shared.tmem``).
+      :type A_buf: Buffer
+      :param B_buf: Operand B in shared memory.
+      :type B_buf: Buffer
+      :param C_local_buf: Accumulator buffer in tensor memory.
+      :type C_local_buf: Buffer
+      :param mbar: Memory barrier for MMA completion signalling.
+      :type mbar: PrimExpr
+      :param clear_accum: Whether to zero the accumulator before the first MMA.
+      :type clear_accum: PrimExpr
+
 
 
    .. py:method:: make_mma_load_layout(local_buf, matrix = 'A')
@@ -135,7 +178,13 @@ Module Contents
 
    .. py:method:: get_tcgen5_mma_meta(m, n, k)
 
+      Query the FFI for TCGEN5MMA atom metadata (atom_m, atom_n, atom_k, enable_ws, enable_2cta).
+
+
 
    .. py:method:: get_tcgen5_instr_desc(atom_m, atom_n, atom_k, a_is_k_major, b_is_k_major, scale_in_a, scale_in_b)
+
+      Build the 64-bit instruction descriptor for a ``tcgen05.mma`` PTX call.
+
 
 

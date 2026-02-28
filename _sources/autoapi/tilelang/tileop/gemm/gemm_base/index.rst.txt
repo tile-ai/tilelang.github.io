@@ -17,6 +17,13 @@ Module Contents
 
 .. py:class:: GemmBase
 
+   Base class for GEMM tile operators.
+
+   Classifies the GEMM variant by the memory scopes of operands A and B
+   (SS, SR, RS, TS, RR) and provides common property accessors for the
+   underlying ``gemm_node`` IR node.
+
+
    .. py:attribute:: gemm_node
       :type:  tvm.ir.base.Node
 
@@ -33,14 +40,32 @@ Module Contents
 
    .. py:method:: is_gemm_ss()
 
+      Return True if both A and B are in shared memory (SS variant).
+
+
 
    .. py:method:: is_gemm_sr()
+
+      Return True if A is in shared memory and B is in registers (SR variant).
+
 
 
    .. py:method:: is_gemm_rs()
 
+      Return True if A is in registers and B is in shared memory (RS variant).
+
+
+
+   .. py:method:: is_gemm_ts()
+
+      Return True if A is in tensor memory and B is in shared memory (TS variant).
+
+
 
    .. py:method:: is_gemm_rr()
+
+      Return True if both A and B are in registers (RR variant).
+
 
 
    .. py:property:: M
@@ -71,6 +96,11 @@ Module Contents
    .. py:property:: in_dtype
       :type: str
 
+
+      Input data type for the multiplication.
+
+      For the TS variant, A resides in TMEM with the accumulator dtype, so
+      the actual input dtype is derived from B.
 
 
    .. py:property:: accum_dtype

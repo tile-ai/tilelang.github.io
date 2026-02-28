@@ -564,7 +564,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.tileop.gemm.gemm_tcgen05.GemmTCGEN5" title="tilelang.tileop.gemm.gemm_tcgen05.GemmTCGEN5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmTCGEN5</span></code></a></p></td>
-<td><p></p></td>
+<td><p>GEMM operator for Blackwell (SM100) TCGEN5MMA instructions.</p></td>
 </tr>
 </tbody>
 </table>
@@ -576,10 +576,17 @@
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_tcgen05.GemmTCGEN5">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.tileop.gemm.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">GemmTCGEN5</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_tcgen05.GemmTCGEN5" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gemm_base/index.html#tilelang.tileop.gemm.gemm_base.GemmBase" title="tilelang.tileop.gemm.gemm_base.GemmBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.tileop.gemm.gemm_base.GemmBase</span></code></a></p>
+<p>GEMM operator for Blackwell (SM100) TCGEN5MMA instructions.</p>
+<p>Supports the SS (Shared-Shared) and TS (TensorMemory-Shared) variants.
+Layout inference and lowering are dispatched based on the memory scopes
+of operands A and B.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_tcgen05.GemmTCGEN5.infer_layout">
 <span class="sig-name descname"><span class="pre">infer_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_nums</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_tcgen05.GemmTCGEN5.infer_layout" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Infer swizzled layouts for operands and accumulator.</p>
+<p>For SS: both A and B get swizzled shared-memory layouts.
+For TS: A and C get TMEM store layouts, B gets a swizzled shared-memory layout.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>tvm.target.Target</em>)</p></li>
@@ -592,7 +599,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_tcgen05.GemmTCGEN5.lower">
 <span class="sig-name descname"><span class="pre">lower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_tcgen05.GemmTCGEN5.lower" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Lower the GEMM tile-op into a TIR prim_func containing TCGEN5MMA calls.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layout_map</strong> (<em>dict</em>)</p></li>

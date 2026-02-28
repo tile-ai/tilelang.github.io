@@ -20,9 +20,25 @@ Module Contents
    Bases: :py:obj:`tilelang.tileop.gemm.gemm_base.GemmBase`
 
 
+   GEMM operator for Blackwell (SM100) TCGEN5MMA instructions.
+
+   Supports the SS (Shared-Shared) and TS (TensorMemory-Shared) variants.
+   Layout inference and lowering are dispatched based on the memory scopes
+   of operands A and B.
+
+
    .. py:method:: infer_layout(target, thread_nums)
+
+      Infer swizzled layouts for operands and accumulator.
+
+      For SS: both A and B get swizzled shared-memory layouts.
+      For TS: A and C get TMEM store layouts, B gets a swizzled shared-memory layout.
+
 
 
    .. py:method:: lower(layout_map, target, thread_bounds, thread_var)
+
+      Lower the GEMM tile-op into a TIR prim_func containing TCGEN5MMA calls.
+
 
 

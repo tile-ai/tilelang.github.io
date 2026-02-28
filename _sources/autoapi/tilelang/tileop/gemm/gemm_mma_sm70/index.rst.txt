@@ -20,6 +20,13 @@ Module Contents
    Bases: :py:obj:`tilelang.tileop.gemm.gemm_base.GemmBase`
 
 
+   Base class for GEMM tile operators.
+
+   Classifies the GEMM variant by the memory scopes of operands A and B
+   (SS, SR, RS, TS, RR) and provides common property accessors for the
+   underlying ``gemm_node`` IR node.
+
+
    .. py:method:: infer_layout(target, thread_nums)
 
 
@@ -28,13 +35,25 @@ Module Contents
 
    .. py:method:: is_gemm_ss()
 
+      Return True if both A and B are in shared memory (SS variant).
+
+
 
    .. py:method:: is_gemm_sr()
+
+      Return True if A is in shared memory and B is in registers (SR variant).
+
 
 
    .. py:method:: is_gemm_rs()
 
+      Return True if A is in registers and B is in shared memory (RS variant).
+
+
 
    .. py:method:: is_gemm_rr()
+
+      Return True if both A and B are in registers (RR variant).
+
 
 
