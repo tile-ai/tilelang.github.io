@@ -34,6 +34,7 @@ Functions
    tilelang.transform.LayoutInference
    tilelang.transform.LowerTileOp
    tilelang.transform.InjectSoftwarePipeline
+   tilelang.transform.OptimizeCPAsyncSync
    tilelang.transform.FrontendLegalize
    tilelang.transform.LegalizeNegativeIndex
    tilelang.transform.InjectAssumes
@@ -59,6 +60,7 @@ Functions
    tilelang.transform.SplitHostDevice
    tilelang.transform.AnnotateReadOnlyParams
    tilelang.transform.VectorizeLoop
+   tilelang.transform.LowerPTXAsyncCopy
    tilelang.transform.InjectPTXAsyncCopy
    tilelang.transform.LowerDeviceStorageAccessInfo
    tilelang.transform.ConfigIndexBitwidth
@@ -126,6 +128,14 @@ Package Contents
 .. py:function:: InjectSoftwarePipeline()
 
    InjectSoftwarePipeline
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: OptimizeCPAsyncSync()
+
+   Optimize explicit cp.async commit/wait synchronization intrinsics.
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
@@ -348,12 +358,25 @@ Package Contents
    :rtype: tvm.transform.Pass
 
 
-.. py:function:: InjectPTXAsyncCopy()
+.. py:function:: LowerPTXAsyncCopy()
 
-   Rewrite global to shared memory copy on CUDA with asynchronous copy.
+   Lower eligible global->shared copies into PTX `cp.async` on CUDA.
+
+   When enabled (pass config `tl.enable_async_copy`, default True), this pass
+   may rewrite plain user-written global->shared `BufferStore` patterns (e.g.
+   SIMT copies in `T.Parallel`) into `tir.ptx_cp_async`, and insert
+   `tir.ptx_commit_group` + `tir.ptx_wait_group(0)` to preserve synchronous
+   semantics for normal stores. If explicit commit/wait intrinsics already
+   exist, the pass avoids duplicating them (and may insert a missing commit
+   immediately before an existing wait to cover injected `cp.async`).
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
+
+
+.. py:function:: InjectPTXAsyncCopy()
+
+   Deprecated alias of `LowerPTXAsyncCopy`.
 
 
 .. py:function:: LowerDeviceStorageAccessInfo()

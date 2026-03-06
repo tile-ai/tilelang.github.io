@@ -777,6 +777,31 @@ CUDA compile callback. Default: None</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_ASYNC_COPY">
+<span class="sig-name descname"><span class="pre">TL_ENABLE_ASYNC_COPY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tl.enable_async_copy'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_ASYNC_COPY" title="Link to this definition">¶</a></dt>
+<dd><p>Enable lowering eligible global-&gt;shared copies to PTX <cite>cp.async</cite>.</p>
+<p>When True (default), TileLang may lower:
+- <cite>T.copy(global -&gt; shared, …)</cite> to <cite>ptx_cp_async + commit + wait</cite>
+- <cite>T.async_copy(global -&gt; shared, …)</cite> to <cite>ptx_cp_async + commit</cite> (no wait)
+- plain user-written global-&gt;shared copy stores (e.g. in <cite>T.Parallel</cite>) to</p>
+<blockquote>
+<div><p><cite>ptx_cp_async + commit + wait</cite></p>
+</div></blockquote>
+<p>Important: Automatic cp.async lowering is gated by the surrounding loop
+context. TileLang will only auto-enable cp.async when the copy is observed
+inside a software-pipelined loop annotated with <cite>num_stages &gt; 0</cite>
+(e.g. created by <cite>T.Pipelined(…, num_stages=…)</cite> or by pipeline planning).
+Outside such loops, TileLang will prefer synchronous copy lowering even when
+this flag is True.
+You can request local cp.async injection on a specific parallel loop via
+<cite>T.Parallel(…, prefer_async=True)</cite>.</p>
+<p>When False, TileLang will avoid the cp.async lowering path for <cite>T.copy</cite>.
+Explicit <cite>T.async_copy</cite> still requires cp.async support and may error if
+it cannot be lowered.</p>
+<p>Default: True</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_LOWER_LDGSTG">
 <span class="sig-name descname"><span class="pre">TL_ENABLE_LOWER_LDGSTG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tl.enable_lower_ldgstg'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_LOWER_LDGSTG" title="Link to this definition">¶</a></dt>
 <dd><p>Enable non-predicated LDG/STG lowering for global memory access.
@@ -1185,6 +1210,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_TMA_LOWER"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_DISABLE_TMA_LOWER</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_VECTORIZE_256"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_DISABLE_VECTORIZE_256</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_ASYNC_COPY"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_ENABLE_ASYNC_COPY</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_LOWER_LDGSTG"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_ENABLE_LOWER_LDGSTG</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_LOWER_LDGSTG_PREDICATED"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_ENABLE_LOWER_LDGSTG_PREDICATED</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_VECTORIZE_PLANNER_VERBOSE"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_ENABLE_VECTORIZE_PLANNER_VERBOSE</span></code></a></li>

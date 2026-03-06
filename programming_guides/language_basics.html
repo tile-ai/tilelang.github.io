@@ -703,6 +703,13 @@ buffer regions, or buffer loads; extents are inferred or can be broadcast.</p>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">T.copy</span></code> performs coalescing and scope‑specific lowering during compilation.</p>
+<p>If you need explicitly asynchronous global-&gt;shared prefetch for manual pipelining,
+use <code class="docutils literal notranslate"><span class="pre">T.async_copy(src,</span> <span class="pre">dst)</span></code>. Unlike <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>, it does not auto-insert any wait:
+you must explicitly insert <code class="docutils literal notranslate"><span class="pre">T.ptx_wait_group(...)</span></code> before consuming <code class="docutils literal notranslate"><span class="pre">dst</span></code>. A
+shared-memory barrier is still required for cross-thread consumption, but in
+most TileLang programs you do not need to write it manually because
+<code class="docutils literal notranslate"><span class="pre">ThreadSync(&quot;shared&quot;)</span></code> will insert the necessary <code class="docutils literal notranslate"><span class="pre">T.tvm_storage_sync(&quot;shared&quot;)</span></code>
+before the first read from <code class="docutils literal notranslate"><span class="pre">dst</span></code>.</p>
 </section>
 <section id="a-minimal-endtoend-example-vector-add">
 <h2>6. A Minimal End‑to‑End Example (Vector Add)<a class="headerlink" href="#a-minimal-endtoend-example-vector-add" title="Link to this heading">¶</a></h2>

@@ -567,7 +567,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.copy" title="tilelang.language.copy_op.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>(src, dst, *[, coalesced_width, disable_tma, ...])</p></td>
 <td><p>Copy data between memory regions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.async_copy" title="tilelang.language.copy_op.async_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">async_copy</span></code></a>(src, dst, *[, coalesced_width, ...])</p></td>
+<td><p>Asynchronous copy primitive lowered through cp.async.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
 <td><p>Perform im2col transformation for 2D convolution.</p></td>
 </tr>
 </tbody>
@@ -627,6 +630,35 @@ support something like “broadcast”.</p></li>
 and passed through to the backend; low-level loop construction and any
 scope-specific decisions happen during lowering.</p></li>
 </ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy_op.async_copy">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">async_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.async_copy" title="Link to this definition">¶</a></dt>
+<dd><p>Asynchronous copy primitive lowered through cp.async.</p>
+<p>This operator is intended for explicitly asynchronous global-&gt;shared copy.
+The backend enforces cp.async constraints and emits:</p>
+<blockquote>
+<div><p><cite>ptx_cp_async(…)</cite> + <cite>ptx_commit_group()</cite>.</p>
+</div></blockquote>
+<p>No wait is auto-inserted for <cite>T.async_copy</cite>; synchronization is explicit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>Union</em><em>[</em><em>tir.Buffer</em><em>, </em><em>tir.BufferLoad</em><em>, </em><em>tir.BufferRegion</em><em>]</em>) – Source memory region</p></li>
+<li><p><strong>dst</strong> (<em>Union</em><em>[</em><em>tir.Buffer</em><em>, </em><em>tir.BufferLoad</em><em>, </em><em>tir.BufferRegion</em><em>]</em>) – Destination memory region</p></li>
+<li><p><strong>coalesced_width</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>keyword-only</em>) – Width for coalesced memory access. Defaults to None.</p></li>
+<li><p><strong>annotations</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em><em>, </em><em>keyword-only</em>) – Additional annotations dict.</p></li>
+<li><p><strong>loop_layout</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../../layout/fragment/index.html#tilelang.layout.fragment.Fragment" title="tilelang.layout.fragment.Fragment"><em>Fragment</em></a><em>]</em><em>, </em><em>keyword-only</em>) – A parallel loop layout hint for the SIMT copy loop.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the async copy operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -718,6 +750,7 @@ scope-specific decisions happen during lowering.</p></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.language.copy_op.copy"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.copy_op.async_copy"><code class="docutils literal notranslate"><span class="pre">async_copy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col"><code class="docutils literal notranslate"><span class="pre">c2d_im2col()</span></code></a></li>
 </ul>
 </li>

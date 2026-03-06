@@ -563,7 +563,7 @@ level, how they map to hardware concepts, and how to use them correctly.</p>
 <section id="quick-categories">
 <h2>Quick Categories<a class="headerlink" href="#quick-categories" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Data movement: <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.c2d_im2col</span></code>, staging Global ↔ Shared ↔ Fragment</p></li>
+<li><p>Data movement: <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.async_copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.c2d_im2col</span></code>, staging Global ↔ Shared ↔ Fragment</p></li>
 <li><p>Compute primitives: <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code>/<code class="docutils literal notranslate"><span class="pre">T.gemm_sp</span></code>, elementwise math (<code class="docutils literal notranslate"><span class="pre">T.exp</span></code>, <code class="docutils literal notranslate"><span class="pre">T.max</span></code>),
 reductions (<code class="docutils literal notranslate"><span class="pre">T.reduce_sum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cumsum</span></code>, warp reducers)</p></li>
 <li><p>Control helpers: <code class="docutils literal notranslate"><span class="pre">T.clear</span></code>/<code class="docutils literal notranslate"><span class="pre">T.fill</span></code>, <code class="docutils literal notranslate"><span class="pre">T.reshape</span></code>/<code class="docutils literal notranslate"><span class="pre">T.view</span></code></p></li>
@@ -592,10 +592,60 @@ vectorization is not required in HL mode.</p></li>
 <li><p>Safety: the LegalizeSafeMemoryAccess pass inserts boundary guards when an
 access may be out‑of‑bounds and drops them when proven safe.</p></li>
 </ul>
+<section id="t-copy-vs-t-async-copy">
+<h3><code class="docutils literal notranslate"><span class="pre">T.copy</span></code> vs <code class="docutils literal notranslate"><span class="pre">T.async_copy</span></code><a class="headerlink" href="#t-copy-vs-t-async-copy" title="Link to this heading">¶</a></h3>
+<p>TileLang supports both synchronous and explicitly-asynchronous copies.</p>
+<p><code class="docutils literal notranslate"><span class="pre">T.copy(src,</span> <span class="pre">dst,</span> <span class="pre">...)</span></code> (synchronous semantics)</p>
+<ul class="simple">
+<li><p>Intended default for most TileLang programs.</p></li>
+<li><p>The compiler is free to lower it to different mechanisms (SIMT copy, <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code>,
+TMA, <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>, etc.) depending on target/hints, but the observable semantics
+are <em>synchronous</em>: after the statement, it is safe to use <code class="docutils literal notranslate"><span class="pre">dst</span></code>.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> lowers to <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>, TileLang will still preserve synchronous
+semantics by emitting the required <code class="docutils literal notranslate"><span class="pre">commit</span></code>/<code class="docutils literal notranslate"><span class="pre">wait</span></code> (and any required
+synchronization) so that consuming <code class="docutils literal notranslate"><span class="pre">dst</span></code> is correct.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">T.async_copy(src,</span> <span class="pre">dst,</span> <span class="pre">...)</span></code> (explicit async semantics)</p>
+<ul class="simple">
+<li><p>Intended for writing manual pipelines or warp-specialized code where you want
+to overlap global-&gt;shared copies with compute.</p></li>
+<li><p>Lowers through <code class="docutils literal notranslate"><span class="pre">cp.async</span></code> and emits:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">ptx_cp_async(...)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ptx_commit_group()</span></code></p></li>
+<li><p>No <code class="docutils literal notranslate"><span class="pre">ptx_wait_group(...)</span></code> is auto-inserted.</p></li>
+</ul>
+</li>
+<li><p>You must explicitly insert <code class="docutils literal notranslate"><span class="pre">T.ptx_wait_group(...)</span></code> before consuming <code class="docutils literal notranslate"><span class="pre">dst</span></code>.</p></li>
+<li><p>A barrier is still required when <code class="docutils literal notranslate"><span class="pre">dst</span></code> is produced cooperatively and consumed
+across threads. In most TileLang programs you do not need to write it
+manually: <code class="docutils literal notranslate"><span class="pre">ThreadSync(&quot;shared&quot;)</span></code> will insert the required
+<code class="docutils literal notranslate"><span class="pre">T.tvm_storage_sync(&quot;shared&quot;)</span></code> before the first read from <code class="docutils literal notranslate"><span class="pre">dst</span></code>. If you want
+explicit control (or if you’re writing very low-level code), you can insert
+<code class="docutils literal notranslate"><span class="pre">T.tvm_storage_sync(&quot;shared&quot;)</span></code> yourself (or <code class="docutils literal notranslate"><span class="pre">T.tvm_storage_sync(&quot;warp&quot;)</span></code> for
+warp-local consumption).</p></li>
+<li><p>This op is intentionally strict: if the copy cannot be lowered to <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>
+(e.g., wrong scopes, unsupported vector width), compilation fails instead of
+silently falling back to a synchronous copy.</p></li>
+</ul>
+<p>Example (manual async prefetch)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Prefetch into shared asynchronously (emits cp.async + commit).</span>
+<span class="n">T</span><span class="o">.</span><span class="n">async_copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">BM</span><span class="p">,</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">],</span> <span class="n">A_s</span><span class="p">)</span>
+
+<span class="c1"># ... independent work here ...</span>
+
+<span class="c1"># Before consuming A_s, ensure the async copies are completed.</span>
+<span class="n">T</span><span class="o">.</span><span class="n">ptx_wait_group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># The required shared-memory barrier will be inserted automatically before the</span>
+<span class="c1"># first read from A_s by ThreadSync(&quot;shared&quot;) in the default lowering pipeline.</span>
+<span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_s</span><span class="p">,</span> <span class="n">B_s</span><span class="p">,</span> <span class="n">C_f</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Other helpers</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">T.c2d_im2col(img,</span> <span class="pre">col,</span> <span class="pre">...)</span></code>: convenience for conv‑style transforms.</p></li>
 </ul>
+</section>
 </section>
 <section id="compute-primitives">
 <h2>Compute Primitives<a class="headerlink" href="#compute-primitives" title="Link to this heading">¶</a></h2>
@@ -665,6 +715,7 @@ signatures, behaviors, constraints, and examples, refer to API Reference
 <p>Data movement</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">T.copy(src,</span> <span class="pre">dst,</span> <span class="pre">...)</span></code>: Move tiles between Global/Shared/Fragment.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T.async_copy(src,</span> <span class="pre">dst,</span> <span class="pre">...)</span></code>: Explicit async global→shared copy via <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.c2d_im2col(img,</span> <span class="pre">col,</span> <span class="pre">...)</span></code>: 2D im2col transform for conv.</p></li>
 </ul>
 <p>Memory allocation and descriptors</p>
@@ -826,7 +877,10 @@ All are normalized internally. See Type System for details.</p></li>
             <ul>
 <li><a class="reference internal" href="#">Instructions</a><ul>
 <li><a class="reference internal" href="#quick-categories">Quick Categories</a></li>
-<li><a class="reference internal" href="#data-movement">Data Movement</a></li>
+<li><a class="reference internal" href="#data-movement">Data Movement</a><ul>
+<li><a class="reference internal" href="#t-copy-vs-t-async-copy"><code class="docutils literal notranslate"><span class="pre">T.copy</span></code> vs <code class="docutils literal notranslate"><span class="pre">T.async_copy</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#compute-primitives">Compute Primitives</a></li>
 <li><a class="reference internal" href="#synchronization-hl-usage">Synchronization (HL usage)</a></li>
 <li><a class="reference internal" href="#putting-it-together-gemm-tile">Putting It Together: GEMM Tile</a></li>

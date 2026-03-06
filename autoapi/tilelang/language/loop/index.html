@@ -564,7 +564,7 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.Parallel" title="tilelang.language.loop.Parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parallel</span></code></a>(*extents[, coalesced_width, loop_layout])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.loop.Parallel" title="tilelang.language.loop.Parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parallel</span></code></a>(*extents[, coalesced_width, loop_layout, ...])</p></td>
 <td><p>Tools to construct nested parallel for loop.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.loop.Persistent" title="tilelang.language.loop.Persistent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Persistent</span></code></a>(domain, wave_size, index[, group_size])</p></td>
@@ -599,7 +599,7 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.loop.Parallel">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">extents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Parallel" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.loop.</span></span><span class="sig-name descname"><span class="pre">Parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">extents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefer_async</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.loop.Parallel" title="Link to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Tools to construct nested parallel for loop.</dt><dd><p>This can be used to create element-wise tensor expression.</p>
 </dd>
@@ -614,6 +614,13 @@
 <code class="docutils literal notranslate"><span class="pre">&quot;parallel_loop_layout&quot;</span></code> annotation on the outermost parallel loop.
 For a k-dimensional <code class="docutils literal notranslate"><span class="pre">T.Parallel(...)</span></code> nest, the fragment’s
 <code class="docutils literal notranslate"><span class="pre">InputDim</span></code> must equal <code class="docutils literal notranslate"><span class="pre">k</span></code>.</p></li>
+<li><p><strong>prefer_async</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>) – Optional hint for PTX async-copy rewrite in this parallel loop subtree.
+When set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, it requests cp.async injection even outside
+pipelined loops. <code class="docutils literal notranslate"><span class="pre">False</span></code>/<code class="docutils literal notranslate"><span class="pre">None</span></code> keeps default behavior.
+Internally lowered as loop annotation <code class="docutils literal notranslate"><span class="pre">&quot;parallel_prefer_async&quot;</span></code>.</p></li>
+<li><p><strong>annotations</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – Optional user-provided loop annotations attached to the outermost
+generated parallel loop. For example:
+<code class="docutils literal notranslate"><span class="pre">{&quot;parallel_async_without_async_commit_wait&quot;:</span> <span class="pre">True}</span></code>.</p></li>
 <li><p><strong>constraints</strong> (<em>Notes on layout</em>)</p></li>
 <li><p><strong>---------------------------</strong></p></li>
 <li><p><strong>during</strong> (<em>TileLang validates parallel loop layout annotations</em>)</p></li>

@@ -15,6 +15,7 @@ Functions
 .. autoapisummary::
 
    tilelang.language.copy_op.copy
+   tilelang.language.copy_op.async_copy
    tilelang.language.copy_op.c2d_im2col
 
 
@@ -66,6 +67,30 @@ Module Contents
    - The finalized extents are encoded with `tl.region` via `to_buffer_region`
      and passed through to the backend; low-level loop construction and any
      scope-specific decisions happen during lowering.
+
+
+.. py:function:: async_copy(src, dst, *, coalesced_width = None, annotations = None, loop_layout = None)
+
+   Asynchronous copy primitive lowered through cp.async.
+
+   This operator is intended for explicitly asynchronous global->shared copy.
+   The backend enforces cp.async constraints and emits:
+     `ptx_cp_async(...)` + `ptx_commit_group()`.
+   No wait is auto-inserted for `T.async_copy`; synchronization is explicit.
+
+   :param src: Source memory region
+   :type src: Union[tir.Buffer, tir.BufferLoad, tir.BufferRegion]
+   :param dst: Destination memory region
+   :type dst: Union[tir.Buffer, tir.BufferLoad, tir.BufferRegion]
+   :param coalesced_width: Width for coalesced memory access. Defaults to None.
+   :type coalesced_width: Optional[int], keyword-only
+   :param annotations: Additional annotations dict.
+   :type annotations: Optional[dict], keyword-only
+   :param loop_layout: A parallel loop layout hint for the SIMT copy loop.
+   :type loop_layout: Optional[Fragment], keyword-only
+
+   :returns: A handle to the async copy operation
+   :rtype: tir.Call
 
 
 .. py:function:: c2d_im2col(img, col, nhw_step, c_step, kernel, stride, dilation, pad, eviction_policy = None)
