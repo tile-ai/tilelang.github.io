@@ -8,7 +8,7 @@
         <link rel="prefetch" href="../_static/img/logo-v2.png" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
-        <title>CUDA/CUDART/NVRTC Stubs - TileLang 0.1.8 documentation</title>
+        <title>CUDA and ROCm Stub Libraries - TileLang 0.1.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -556,14 +556,31 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="cuda-cudart-nvrtc-stubs">
-<h1>CUDA/CUDART/NVRTC Stubs<a class="headerlink" href="#cuda-cudart-nvrtc-stubs" title="Link to this heading">¶</a></h1>
-<p>This document describes the stub mechanism in TileLang for CUDA-related libraries.</p>
+          <section id="cuda-and-rocm-stub-libraries">
+<h1>CUDA and ROCm Stub Libraries<a class="headerlink" href="#cuda-and-rocm-stub-libraries" title="Link to this heading">¶</a></h1>
+<p>This document describes TileLang’s stub mechanism for GPU driver/runtime
+libraries (CUDA and ROCm/HIP).</p>
 <section id="purpose">
 <h2>Purpose<a class="headerlink" href="#purpose" title="Link to this heading">¶</a></h2>
+<p>CUDA:</p>
 <ol class="arabic simple">
-<li><p><strong>CUDA Driver (<code class="docutils literal notranslate"><span class="pre">cuda</span></code>)</strong>: Allows TileLang to be imported on systems without a GPU (e.g., CI/compilation nodes) by lazy-loading <code class="docutils literal notranslate"><span class="pre">libcuda.so</span></code> only when needed.</p></li>
-<li><p><strong>Runtime &amp; Compiler (<code class="docutils literal notranslate"><span class="pre">cudart</span></code>, <code class="docutils literal notranslate"><span class="pre">nvrtc</span></code>)</strong>: Resolves SONAME versioning mismatches, enabling a single build to work across different CUDA versions. This is achieved by reusing the existing CUDA runtime loaded by frameworks like PyTorch.</p></li>
+<li><p><strong>CUDA Driver (<code class="docutils literal notranslate"><span class="pre">cuda_stub</span></code>)</strong>: Allows TileLang to be imported on systems
+without a GPU (e.g., CI/compilation nodes) by lazy-loading <code class="docutils literal notranslate"><span class="pre">libcuda.so</span></code> only
+when needed.</p></li>
+<li><p><strong>CUDA Runtime &amp; Compiler (<code class="docutils literal notranslate"><span class="pre">cudart_stub</span></code>, <code class="docutils literal notranslate"><span class="pre">nvrtc_stub</span></code>)</strong>: Resolves SONAME
+versioning mismatches (e.g. <code class="docutils literal notranslate"><span class="pre">libcudart.so.11</span></code> vs <code class="docutils literal notranslate"><span class="pre">libcudart.so.12</span></code>),
+enabling a single build to work across different CUDA versions. This is
+achieved by reusing CUDA libraries already loaded by frameworks like PyTorch
+when possible.</p></li>
+</ol>
+<p>ROCm:</p>
+<ol class="arabic simple">
+<li><p><strong>HIP Runtime/Module API (<code class="docutils literal notranslate"><span class="pre">hip_stub</span></code>)</strong>: Allows TileLang to be imported on
+systems without ROCm installed by lazy-loading <code class="docutils literal notranslate"><span class="pre">libamdhip64.so</span></code> only when
+needed. The stub also prefers already-loaded symbols via <code class="docutils literal notranslate"><span class="pre">RTLD_DEFAULT</span></code> /
+<code class="docutils literal notranslate"><span class="pre">RTLD_NEXT</span></code> to interoperate with frameworks that have already loaded HIP.</p></li>
+<li><p><strong>HIP Runtime Compiler (<code class="docutils literal notranslate"><span class="pre">hiprtc_stub</span></code>)</strong>: Lazily loads <code class="docutils literal notranslate"><span class="pre">libhiprtc.so</span></code> and
+exposes the minimal HIPRTC API subset used by TileLang/TVM.</p></li>
 </ol>
 </section>
 <section id="implementation">
@@ -572,12 +589,23 @@
 <ul class="simple">
 <li><p><strong>Lazy Loading</strong>: Libraries are loaded via <code class="docutils literal notranslate"><span class="pre">dlopen</span></code> only upon the first API call.</p></li>
 <li><p><strong>Global Symbol Reuse</strong>: For <code class="docutils literal notranslate"><span class="pre">cudart</span></code> and <code class="docutils literal notranslate"><span class="pre">nvrtc</span></code>, the stubs first check the global namespace (<code class="docutils literal notranslate"><span class="pre">RTLD_DEFAULT</span></code>) to use any already loaded symbols (e.g., from PyTorch).</p></li>
+<li><p><strong>ROCm Notes</strong>: <code class="docutils literal notranslate"><span class="pre">hip_stub</span></code> checks <code class="docutils literal notranslate"><span class="pre">RTLD_DEFAULT</span></code> / <code class="docutils literal notranslate"><span class="pre">RTLD_NEXT</span></code> first and then
+falls back to <code class="docutils literal notranslate"><span class="pre">dlopen(&quot;libamdhip64.so&quot;)</span></code>. It additionally provides wrappers
+for <code class="docutils literal notranslate"><span class="pre">hsa_init</span></code> / <code class="docutils literal notranslate"><span class="pre">hsa_shut_down</span></code> so that ROCm-enabled wheels do not record a
+hard dependency on <code class="docutils literal notranslate"><span class="pre">libhsa-runtime64</span></code> at import time.</p></li>
 <li><p><strong>Versioning Support</strong>: Handles ABI differences between CUDA versions (e.g., <code class="docutils literal notranslate"><span class="pre">cudaGraphInstantiate</span></code> changes in CUDA 12).</p></li>
 </ul>
 </section>
 <section id="build-option">
 <h2>Build Option<a class="headerlink" href="#build-option" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">TILELANG_USE_CUDA_STUBS</span></code> (Default: <code class="docutils literal notranslate"><span class="pre">ON</span></code>) controls this behavior. When enabled, TileLang links against these stubs instead of the system CUDA toolkit.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TILELANG_USE_CUDA_STUBS</span></code> (Default: <code class="docutils literal notranslate"><span class="pre">ON</span></code>) controls CUDA stubs. When enabled,
+TileLang links against these stubs instead of the system CUDA toolkit
+libraries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TILELANG_USE_HIP_STUBS</span></code> (Default: <code class="docutils literal notranslate"><span class="pre">ON</span></code>) controls ROCm stubs. When enabled
+(and <code class="docutils literal notranslate"><span class="pre">USE_ROCM=ON</span></code>), TileLang/TVM link against <code class="docutils literal notranslate"><span class="pre">hip_stub</span></code> / <code class="docutils literal notranslate"><span class="pre">hiprtc_stub</span></code>
+instead of the system ROCm libraries.</p></li>
+</ul>
 </section>
 </section>
 
@@ -618,7 +646,7 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">CUDA/CUDART/NVRTC Stubs</a><ul>
+<li><a class="reference internal" href="#">CUDA and ROCm Stub Libraries</a><ul>
 <li><a class="reference internal" href="#purpose">Purpose</a></li>
 <li><a class="reference internal" href="#implementation">Implementation</a></li>
 <li><a class="reference internal" href="#build-option">Build Option</a></li>
