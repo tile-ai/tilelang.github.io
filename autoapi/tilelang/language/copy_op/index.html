@@ -571,7 +571,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.async_copy" title="tilelang.language.copy_op.async_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">async_copy</span></code></a>(src, dst, *[, coalesced_width, ...])</p></td>
 <td><p>Asynchronous copy primitive lowered through cp.async.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.tma_copy" title="tilelang.language.copy_op.tma_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_copy</span></code></a>(src, dst, *, barrier[, eviction_policy, ...])</p></td>
+<td><p>TMA copy — issues arrive_and_expect_tx + tma_load, no wait.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
 <td><p>Perform im2col transformation for 2D convolution.</p></td>
 </tr>
 </tbody>
@@ -655,6 +658,35 @@ The backend enforces cp.async constraints and emits:</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A handle to the async copy operation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy_op.tma_copy">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">tma_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">barrier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.tma_copy" title="Link to this definition">¶</a></dt>
+<dd><p>TMA copy — issues arrive_and_expect_tx + tma_load, no wait.</p>
+<p>Unlike T.copy() which emits a full synchronous TMA sequence (arrive + load + wait),
+T.tma_copy() emits only the producer part (arrive_and_expect_tx + tma_load).
+The user manages synchronization explicitly via T.mbarrier_wait_parity().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – Source memory region (global or shared)</p></li>
+<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – Destination memory region (shared or global)</p></li>
+<li><p><strong>barrier</strong> – Mbarrier (from T.alloc_barrier()) for TMA synchronization.
+The TMA load will arrive at this barrier with expected byte count.
+The user must wait on the same barrier via T.mbarrier_wait_parity().</p></li>
+<li><p><strong>eviction_policy</strong> (<em>Literal</em><em>[</em><em>'evict_normal'</em><em>, </em><em>'evict_first'</em><em>, </em><em>'evict_last'</em><em>] </em><em>| </em><em>None</em>) – Cache eviction policy. Defaults to None.</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>) – Additional annotations dict. Values in annotations take
+precedence over individual arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the tma_copy operation</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tir.Call</p>
@@ -752,6 +784,7 @@ The backend enforces cp.async constraints and emits:</p>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.language.copy_op.copy"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.async_copy"><code class="docutils literal notranslate"><span class="pre">async_copy()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.copy_op.tma_copy"><code class="docutils literal notranslate"><span class="pre">tma_copy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col"><code class="docutils literal notranslate"><span class="pre">c2d_im2col()</span></code></a></li>
 </ul>
 </li>

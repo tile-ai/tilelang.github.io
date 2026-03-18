@@ -16,6 +16,7 @@ Functions
 
    tilelang.language.copy_op.copy
    tilelang.language.copy_op.async_copy
+   tilelang.language.copy_op.tma_copy
    tilelang.language.copy_op.c2d_im2col
 
 
@@ -90,6 +91,27 @@ Module Contents
    :type loop_layout: Optional[Fragment], keyword-only
 
    :returns: A handle to the async copy operation
+   :rtype: tir.Call
+
+
+.. py:function:: tma_copy(src, dst, *, barrier, eviction_policy = None, annotations = None)
+
+   TMA copy — issues arrive_and_expect_tx + tma_load, no wait.
+
+   Unlike T.copy() which emits a full synchronous TMA sequence (arrive + load + wait),
+   T.tma_copy() emits only the producer part (arrive_and_expect_tx + tma_load).
+   The user manages synchronization explicitly via T.mbarrier_wait_parity().
+
+   :param src: Source memory region (global or shared)
+   :param dst: Destination memory region (shared or global)
+   :param barrier: Mbarrier (from T.alloc_barrier()) for TMA synchronization.
+                   The TMA load will arrive at this barrier with expected byte count.
+                   The user must wait on the same barrier via T.mbarrier_wait_parity().
+   :param eviction_policy: Cache eviction policy. Defaults to None.
+   :param annotations: Additional annotations dict. Values in annotations take
+                       precedence over individual arguments.
+
+   :returns: A handle to the tma_copy operation
    :rtype: tir.Call
 
 

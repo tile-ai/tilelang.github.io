@@ -49,8 +49,10 @@ Functions
    tilelang.transform.LoopUnswitching
    tilelang.transform.MultiVersionBuffer
    tilelang.transform.WarpSpecialized
+   tilelang.transform.ProducerConsumerWarpSpecialized
    tilelang.transform.AnnotateWarpGroupRegAlloc
    tilelang.transform.InjectTmaBarrier
+   tilelang.transform.FuseMBarrierArriveExpectTx
    tilelang.transform.InjectFenceProxy
    tilelang.transform.LegalizeVectorizedLoop
    tilelang.transform.LegalizeSafeMemoryAccess
@@ -262,6 +264,17 @@ Package Contents
    :rtype: tvm.transform.Pass
 
 
+.. py:function:: ProducerConsumerWarpSpecialized()
+
+   Producer-Consumer Warp Specialization for TMA pipelines.
+
+   Splits pipelined loops with TMA loads into producer (TMA copy) and
+   consumer (compute) warp groups with mbarrier-based synchronization.
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
 .. py:function:: AnnotateWarpGroupRegAlloc()
 
    Inject set_max_nreg calls into warp-specialized functions.
@@ -280,6 +293,11 @@ Package Contents
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
+
+
+.. py:function:: FuseMBarrierArriveExpectTx()
+
+   Fuse simple expect_tx -> TMA issue -> arrive back into arrive_and_expect_tx.
 
 
 .. py:function:: InjectFenceProxy()
