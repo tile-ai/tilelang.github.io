@@ -600,7 +600,7 @@ underlying <code class="docutils literal notranslate"><span class="pre">gemm_nod
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.lower">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.lower" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar_phase_expr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.lower" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -608,6 +608,7 @@ underlying <code class="docutils literal notranslate"><span class="pre">gemm_nod
 <li><p><strong>target</strong> (<em>tvm.target.Target</em>)</p></li>
 <li><p><strong>thread_bounds</strong> (<em>tvm.ir.Range</em>)</p></li>
 <li><p><strong>thread_var</strong> (<em>tvm.tir.Var</em>)</p></li>
+<li><p><strong>mbar_phase_expr</strong> (<em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -867,6 +868,16 @@ the actual input dtype is derived from B.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.is_tcgen05">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_tcgen05</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><span class="pre">bool</span></a></em><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.is_tcgen05" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.policy">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">policy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../base/index.html#tilelang.tileop.base.GemmWarpPolicy" title="tilelang.tileop.base.GemmWarpPolicy"><span class="pre">tilelang.tileop.base.GemmWarpPolicy</span></a></em><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.policy" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -1028,6 +1039,7 @@ this returns [ko % 2, 0, 0]</p>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.clear_accum"><code class="docutils literal notranslate"><span class="pre">GemmBase.clear_accum</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.k_pack"><code class="docutils literal notranslate"><span class="pre">GemmBase.k_pack</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.wg_wait"><code class="docutils literal notranslate"><span class="pre">GemmBase.wg_wait</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.is_tcgen05"><code class="docutils literal notranslate"><span class="pre">GemmBase.is_tcgen05</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.policy"><code class="docutils literal notranslate"><span class="pre">GemmBase.policy</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.mbarptr"><code class="docutils literal notranslate"><span class="pre">GemmBase.mbarptr</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.mbar"><code class="docutils literal notranslate"><span class="pre">GemmBase.mbar</span></code></a></li>
