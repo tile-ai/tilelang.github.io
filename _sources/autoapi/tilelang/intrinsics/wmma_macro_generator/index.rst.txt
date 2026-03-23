@@ -1,0 +1,231 @@
+tilelang.intrinsics.wmma_macro_generator
+========================================
+
+.. py:module:: tilelang.intrinsics.wmma_macro_generator
+
+.. autoapi-nested-parse::
+
+   WMMA intrinsic emitter for AMD RDNA architectures (gfx11 / gfx12).
+
+   Only supports the f16->f32, 16x16x16 variant with warp-size=32.
+
+   Thread-data mapping (per AMDGPU ISA):
+     A[16][K=16]: thread t holds A[t//2][(t%2)*8 : (t%2)*8+8]  (8 fp16 = 4 f32 per thread)
+     B[K=16][16]: same mapping as A for the transposed dimension
+     C/D[16][16]: thread t holds D[t//2][(t%2)*8 : (t%2)*8+8]  (8 f32 per thread)
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.intrinsics.wmma_macro_generator.lift
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter
+
+
+Module Contents
+---------------
+
+.. py:data:: lift
+
+.. py:class:: WMMAIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float32', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 16, warp_col_tiles = 16, chunk = 16, k_pack = 1, thread_var = None, target = None)
+
+   Intrinsic emitter for AMD RDNA WMMA (16×16×16, warp-size=32).
+
+   Supports:
+     - fp16 -> fp32  (f32_16x16x16_f16_w32 / _gfx12)
+
+
+   .. py:attribute:: M_DIM
+      :value: 16
+
+
+
+   .. py:attribute:: N_DIM
+      :value: 16
+
+
+
+   .. py:attribute:: K_DIM
+      :value: 16
+
+
+
+   .. py:attribute:: WARP_SIZE
+      :value: 32
+
+
+
+   .. py:attribute:: a_dtype
+      :value: 'float16'
+
+
+
+   .. py:attribute:: b_dtype
+      :value: 'float16'
+
+
+
+   .. py:attribute:: accum_dtype
+      :value: 'float32'
+
+
+
+   .. py:attribute:: a_transposed
+      :value: False
+
+
+
+   .. py:attribute:: b_transposed
+      :value: False
+
+
+
+   .. py:attribute:: block_row_warps
+      :value: 2
+
+
+
+   .. py:attribute:: block_col_warps
+      :value: 2
+
+
+
+   .. py:attribute:: warp_row_tiles
+      :value: 16
+
+
+
+   .. py:attribute:: warp_col_tiles
+      :value: 16
+
+
+
+   .. py:attribute:: chunk
+      :value: 16
+
+
+
+   .. py:attribute:: k_pack
+      :value: 1
+
+
+
+   .. py:attribute:: thread_var
+      :value: None
+
+
+
+   .. py:attribute:: target
+      :value: None
+
+
+
+   .. py:attribute:: micro_size_x
+      :value: 16
+
+
+
+   .. py:attribute:: micro_size_y
+      :value: 16
+
+
+
+   .. py:attribute:: micro_size_k
+      :value: 16
+
+
+
+   .. py:attribute:: local_size_a
+      :value: 8
+
+
+
+   .. py:attribute:: local_size_b
+      :value: 8
+
+
+
+   .. py:attribute:: local_size_out
+      :value: 8
+
+
+
+   .. py:attribute:: warp_rows
+      :value: 1
+
+
+
+   .. py:attribute:: warp_cols
+      :value: 1
+
+
+
+   .. py:attribute:: threads
+      :value: 128
+
+
+
+   .. py:attribute:: wmma_shape
+      :value: 'f32_16x16x16_f16_w32'
+
+
+
+   .. py:method:: get_thread_binding()
+
+
+   .. py:method:: extract_thread_binding(thread_id)
+
+      Return (lane_id, warp_n, warp_m).
+
+
+
+   .. py:method:: get_ldmatrix_index_map(is_b = False)
+
+      Return (forward, reverse) index maps for shared→local loading.
+
+      For WMMA gfx12:
+        - A is stored row-major [M, K]. Thread t loads A[t%16][(t//16)*8+local].
+        - B (non-transposed) is stored row-major [K, N].
+          Thread t loads B[t%16][(t//16)*8+local] (same shape/pattern as A).
+        - B (transposed) is stored [N, K].
+          Thread t loads B_T[t%16][(t//16)*8+local] (N-row, K-col).
+
+
+
+   .. py:method:: get_store_index_map(inverse = False)
+
+      Return the store index map.
+
+      The forward map is (thread_id, local_id) -> (i, j), which is affine.
+      The inverse map is (i, j) -> (thread_id, local_id).
+
+
+
+   .. py:method:: ldmatrix_a(A_local_buf, A_shared_buf, ki, rk=0)
+
+
+   .. py:method:: ldmatrix_b(B_local_buf, B_shared_buf, ki, rk=0)
+
+
+   .. py:method:: wmma(A_local_buf, B_local_buf, C_local_buf, k_inner = 0)
+
+
+   .. py:method:: stmatrix(C_local_buf, C_buf, pid_m=None, pid_n=None)
+
+
+   .. py:method:: make_wmma_load_layout(local_buf, matrix = 'A')
+
+
+   .. py:method:: make_wmma_store_layout(local_buf)
+
+
