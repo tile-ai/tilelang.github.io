@@ -637,7 +637,10 @@ with the appropriate memory scope.</p>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.empty" title="tilelang.language.allocate.empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">empty</span></code></a>(shape[, dtype])</p></td>
-<td><p></p></td>
+<td><p>Declare the output tensor used in eager-style JIT.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_global" title="tilelang.language.allocate.alloc_global"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_global</span></code></a>(shape, dtype[, scope])</p></td>
+<td><p>Allocate a global memory buffer as a global workspace.</p></td>
 </tr>
 </tbody>
 </table>
@@ -940,12 +943,46 @@ You may want to use <cite>T.max_value</cite> for min and <cite>T.min_value</cite
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.allocate.empty">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_dtypes.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.empty" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Declare the output tensor used in eager-style JIT.</p>
+<p>Tensors allocated in this way should be returned as the output of the function.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dtype</strong> (<em>tilelang._typing.DType</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shape</strong> (<em>tuple</em>) – The shape of the tensor to allocate</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>) – The data type of the tensor (e.g., ‘float32’, ‘int32’)</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tilelang.language.proxy.Tensor</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The declared OutTensor object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.allocate.alloc_global">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_global</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'global'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_global" title="Link to this definition">¶</a></dt>
+<dd><p>Allocate a global memory buffer as a global workspace.</p>
+<p>NOTE: Memory allocated in this way doesn’t go through torch allocator. Instead,
+it’s allocated directly by the corresponding backend APIs, like cudaMalloc. We
+recommend allocating workspace in Torch side and pass it to the kernel via arguments,
+which is managed under the hood by the framework. This API is mainly for testing
+purposes and some specific purposes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shape</strong> (<em>tuple</em>) – The shape of the buffer to allocate</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>) – The data type of the buffer (e.g., ‘float32’, ‘int32’)</p></li>
+<li><p><strong>scope</strong> (<em>str</em><em>, </em><em>optional</em>) – The memory scope. Defaults to “global”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A TVM buffer object allocated in global memory</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>T.Buffer</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1028,6 +1065,7 @@ You may want to use <cite>T.max_value</cite> for min and <cite>T.min_value</cite
 <li><a class="reference internal" href="#tilelang.language.allocate.alloc_tcgen05_instruction_desc"><code class="docutils literal notranslate"><span class="pre">alloc_tcgen05_instruction_desc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.allocate.alloc_tcgen05_instr_desc"><code class="docutils literal notranslate"><span class="pre">alloc_tcgen05_instr_desc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.allocate.empty"><code class="docutils literal notranslate"><span class="pre">empty()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.allocate.alloc_global"><code class="docutils literal notranslate"><span class="pre">alloc_global()</span></code></a></li>
 </ul>
 </li>
 </ul>

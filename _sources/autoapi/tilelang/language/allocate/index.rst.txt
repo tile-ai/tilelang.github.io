@@ -50,6 +50,7 @@ Functions
    tilelang.language.allocate.alloc_tcgen05_instruction_desc
    tilelang.language.allocate.alloc_tcgen05_instr_desc
    tilelang.language.allocate.empty
+   tilelang.language.allocate.alloc_global
 
 
 Module Contents
@@ -235,4 +236,38 @@ Module Contents
 .. py:function:: alloc_tcgen05_instr_desc(dtype = _dtypes.uint32)
 
 .. py:function:: empty(shape, dtype = _dtypes.float32)
+
+   Declare the output tensor used in eager-style JIT.
+
+   Tensors allocated in this way should be returned as the output of the function.
+
+   :param shape: The shape of the tensor to allocate
+   :type shape: tuple
+   :param dtype: The data type of the tensor (e.g., 'float32', 'int32')
+   :type dtype: str
+
+   :returns: The declared OutTensor object.
+   :rtype: Tensor
+
+
+.. py:function:: alloc_global(shape, dtype, scope='global')
+
+   Allocate a global memory buffer as a global workspace.
+
+   NOTE: Memory allocated in this way doesn't go through torch allocator. Instead,
+   it's allocated directly by the corresponding backend APIs, like cudaMalloc. We
+   recommend allocating workspace in Torch side and pass it to the kernel via arguments,
+   which is managed under the hood by the framework. This API is mainly for testing
+   purposes and some specific purposes.
+
+   :param shape: The shape of the buffer to allocate
+   :type shape: tuple
+   :param dtype: The data type of the buffer (e.g., 'float32', 'int32')
+   :type dtype: str
+   :param scope: The memory scope. Defaults to "global"
+   :type scope: str, optional
+
+   :returns: A TVM buffer object allocated in global memory
+   :rtype: T.Buffer
+
 
