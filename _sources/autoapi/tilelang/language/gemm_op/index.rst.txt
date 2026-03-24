@@ -84,7 +84,7 @@ Module Contents
    compilation fails instead of silently falling back to MMA.
 
 
-.. py:function:: tcgen05_gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, *, mbar)
+.. py:function:: tcgen05_gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, *, mbar, use_2cta = False)
 
    Explicit Blackwell TCGEN05 GEMM without an implicit wait.
 
@@ -92,6 +92,9 @@ Module Contents
    default synchronous `T.gemm(...)` interface, with two stricter guarantees:
    - it always requests the TCGEN5MMA lowering path
    - it never auto-emits an inlined `mbarrier_wait_parity`
+
+   When ``use_2cta=True``, the instruction is lowered to the 2CTA variant
+   which requires ``cluster_dims`` to be ``(2,1,1)`` or ``(1,2,1)``.
 
    If the current target or operand pattern cannot use Blackwell TCGEN5MMA,
    compilation fails instead of silently falling back to another GEMM path.

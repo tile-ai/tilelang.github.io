@@ -120,6 +120,25 @@ Module Contents
 
 
 
+   .. py:method:: tcgen05mma_ss(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
+
+      Emit the SS (Shared-Shared) variant of TCGEN5MMA.
+
+      Reads operand A and B from shared memory via a descriptor.
+
+      :param A_buf: Operand A in shared memory.
+      :type A_buf: Buffer
+      :param B_buf: Operand B in shared memory.
+      :type B_buf: Buffer
+      :param C_local_buf: Accumulator buffer in tensor memory.
+      :type C_local_buf: Buffer
+      :param mbar: Memory barrier for MMA completion signalling.
+      :type mbar: PrimExpr
+      :param clear_accum: Whether to zero the accumulator before the first MMA.
+      :type clear_accum: PrimExpr
+
+
+
    .. py:method:: tcgen05mma_ts(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
 
       Emit the TS (TensorMemory-Shared) variant of TCGEN5MMA.
@@ -176,9 +195,9 @@ Module Contents
 
 
 
-   .. py:method:: get_tcgen5_mma_meta(m, n, k)
+   .. py:method:: get_tcgen5_mma_meta(m, n, k, disable_2cta)
 
-      Query the FFI for TCGEN5MMA atom metadata (atom_m, atom_n, atom_k, enable_ws, enable_2cta).
+      Query the FFI for TCGEN5MMA atom metadata (atom_m, atom_n, atom_k, enable_ws, enable_2cta), and record them in `self.meta`.
 
 
 

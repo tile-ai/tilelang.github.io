@@ -17,6 +17,7 @@ Functions
    tilelang.language.builtin.access_ptr
    tilelang.language.builtin.create_tma_descriptor
    tilelang.language.builtin.tma_load
+   tilelang.language.builtin.tma_load_2sm
    tilelang.language.builtin.fence_proxy_async
    tilelang.language.builtin.tma_store_arrive
    tilelang.language.builtin.tma_store_wait
@@ -128,6 +129,16 @@ Module Contents
 .. py:function:: tma_load(*args)
 
    Perform a Tensor Memory Access (TMA) load operation.
+
+   :param \*args: Variable arguments specifying the TMA load parameters
+
+   :returns: A handle to the TMA load operation
+   :rtype: tir.Call
+
+
+.. py:function:: tma_load_2sm(*args)
+
+   Perform a Tensor Memory Access (TMA) load operation with 2SM on Blackwell.
 
    :param \*args: Variable arguments specifying the TMA load parameters
 
@@ -556,12 +567,15 @@ Module Contents
    Perform a ptx async copy barrier using cp.async.mbarrier.arrive.noinc.
 
 
-.. py:function:: tcgen05_mma_arrive(mbar)
+.. py:function:: tcgen05_mma_arrive(mbar, arrive_2cta = False)
 
    Signal UMMA (TCGEN05) barrier arrival for a shared-memory mbarrier pointer.
 
    :param mbar: The mbarrier object in shared memory (e.g., Barrier*) or its address.
    :type mbar: tir.Buffer | BufferLoad | PrimExpr
+   :param arrive_2cta: Whether to also arrive at the peer CTA's barrier.
+                       If set, will be lowered to umma_arrive_multicast_2x1SM.
+   :type arrive_2cta: bool
 
 
 .. py:function:: ptx_mma_sm70(shape, A_layout, B_layout, A_dtype, B_dtype, C_dtype, multiplicand_a, a_index, multiplicand_b, b_index, accumulator, c_index)
