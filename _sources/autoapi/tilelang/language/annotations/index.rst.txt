@@ -18,6 +18,7 @@ Functions
    tilelang.language.annotations.annotate_layout
    tilelang.language.annotations.annotate_safe_value
    tilelang.language.annotations.annotate_l2_hit_ratio
+   tilelang.language.annotations.annotate_min_blocks_per_sm
    tilelang.language.annotations.annotate_restrict_buffers
 
 
@@ -42,6 +43,26 @@ Module Contents
 .. py:function:: annotate_l2_hit_ratio(l2_hit_ratio_map)
 
    Annotate the L2 hit ratio of the buffer.
+
+
+.. py:function:: annotate_min_blocks_per_sm(n)
+
+   Annotate the minimum number of thread blocks per SM (multiprocessor).
+
+   When set, this value is passed as the second argument of
+   ``__launch_bounds__(maxThreadsPerBlock, minBlocksPerMultiprocessor)`` in
+   the generated CUDA kernel.  A larger value hints the compiler to limit
+   register usage so that more blocks can reside on each SM simultaneously,
+   which can improve occupancy at the cost of potentially more register
+   spilling.
+
+   .. rubric:: Example
+
+   >>> @T.prim_func
+   ... def my_kernel(...):
+   ...     with T.Kernel(...):
+               T.annotate_min_blocks_per_sm(2)
+   ...         ...
 
 
 .. py:function:: annotate_restrict_buffers(*buffers)
