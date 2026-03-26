@@ -592,14 +592,26 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.ieee_fdiv" title="tilelang.language.math_intrinsics.ieee_fdiv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ieee_fdiv</span></code></a>(x, y[, rounding_mode])</p></td>
 <td><p>IEEE-compliant division with specified rounding mode</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.fadd2" title="tilelang.language.math_intrinsics.fadd2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fadd2</span></code></a>(x, y)</p></td>
-<td><p>Packed FP32x2 add.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.add2" title="tilelang.language.math_intrinsics.add2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add2</span></code></a>(x, y)</p></td>
+<td><p>Packed element-wise add (x + y).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.fmul2" title="tilelang.language.math_intrinsics.fmul2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fmul2</span></code></a>(x, y)</p></td>
-<td><p>Packed FP32x2 multiply.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.sub2" title="tilelang.language.math_intrinsics.sub2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sub2</span></code></a>(x, y)</p></td>
+<td><p>Packed element-wise subtract (x - y).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.fma2" title="tilelang.language.math_intrinsics.fma2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fma2</span></code></a>(x, y, z)</p></td>
-<td><p>Packed FP32x2 fused multiply-add (x * y + z).</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.mul2" title="tilelang.language.math_intrinsics.mul2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul2</span></code></a>(x, y)</p></td>
+<td><p>Packed element-wise multiply (x * y).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.fma2" title="tilelang.language.math_intrinsics.fma2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fma2</span></code></a>(x, y, z)</p></td>
+<td><p>Packed fused multiply-add (x * y + z).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.max2" title="tilelang.language.math_intrinsics.max2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max2</span></code></a>(x, y)</p></td>
+<td><p>Packed element-wise maximum.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.min2" title="tilelang.language.math_intrinsics.min2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min2</span></code></a>(x, y)</p></td>
+<td><p>Packed element-wise minimum.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.math_intrinsics.abs2" title="tilelang.language.math_intrinsics.abs2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">abs2</span></code></a>(x)</p></td>
+<td><p>Packed element-wise absolute value.</p></td>
 </tr>
 </tbody>
 </table>
@@ -773,33 +785,43 @@ Default is ‘rn’.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.math_intrinsics.fadd2">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.math_intrinsics.</span></span><span class="sig-name descname"><span class="pre">fadd2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.math_intrinsics.fadd2" title="Link to this definition">¶</a></dt>
-<dd><p>Packed FP32x2 add.</p>
-<p>Lowers to PTX <cite>add.rn.f32x2</cite> on supported NVIDIA architectures/toolchains,
-and falls back to per-lane scalar operations otherwise.</p>
+<dt class="sig sig-object py" id="tilelang.language.math_intrinsics.add2">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.math_intrinsics.</span></span><span class="sig-name descname"><span class="pre">add2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.math_intrinsics.add2" title="Link to this definition">¶</a></dt>
+<dd><p>Packed element-wise add (x + y).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>PrimExpr</em>) – First operand. Must be dtype <code class="docutils literal notranslate"><span class="pre">float32x2</span></code>.</p></li>
-<li><p><strong>y</strong> (<em>PrimExpr</em>) – Second operand. Must be dtype <code class="docutils literal notranslate"><span class="pre">float32x2</span></code>.</p></li>
+<li><p><strong>x</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>y</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>result</strong> – A <code class="docutils literal notranslate"><span class="pre">float32x2</span></code> result.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>PrimExpr</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.math_intrinsics.fmul2">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.math_intrinsics.</span></span><span class="sig-name descname"><span class="pre">fmul2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.math_intrinsics.fmul2" title="Link to this definition">¶</a></dt>
-<dd><p>Packed FP32x2 multiply.</p>
-<p>Lowers to PTX <cite>mul.rn.f32x2</cite> on supported NVIDIA architectures/toolchains,
-and falls back to per-lane scalar operations otherwise.</p>
+<dt class="sig sig-object py" id="tilelang.language.math_intrinsics.sub2">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.math_intrinsics.</span></span><span class="sig-name descname"><span class="pre">sub2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.math_intrinsics.sub2" title="Link to this definition">¶</a></dt>
+<dd><p>Packed element-wise subtract (x - y).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>y</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.math_intrinsics.mul2">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.math_intrinsics.</span></span><span class="sig-name descname"><span class="pre">mul2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.math_intrinsics.mul2" title="Link to this definition">¶</a></dt>
+<dd><p>Packed element-wise multiply (x * y).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -816,9 +838,7 @@ and falls back to per-lane scalar operations otherwise.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.math_intrinsics.fma2">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.math_intrinsics.</span></span><span class="sig-name descname"><span class="pre">fma2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.math_intrinsics.fma2" title="Link to this definition">¶</a></dt>
-<dd><p>Packed FP32x2 fused multiply-add (x * y + z).</p>
-<p>Lowers to PTX <cite>fma.rn.f32x2</cite> on supported NVIDIA architectures/toolchains,
-and falls back to per-lane scalar operations otherwise.</p>
+<dd><p>Packed fused multiply-add (x * y + z).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -826,6 +846,54 @@ and falls back to per-lane scalar operations otherwise.</p>
 <li><p><strong>y</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
 <li><p><strong>z</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.math_intrinsics.max2">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.math_intrinsics.</span></span><span class="sig-name descname"><span class="pre">max2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.math_intrinsics.max2" title="Link to this definition">¶</a></dt>
+<dd><p>Packed element-wise maximum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>y</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.math_intrinsics.min2">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.math_intrinsics.</span></span><span class="sig-name descname"><span class="pre">min2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.math_intrinsics.min2" title="Link to this definition">¶</a></dt>
+<dd><p>Packed element-wise minimum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>y</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.math_intrinsics.abs2">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.math_intrinsics.</span></span><span class="sig-name descname"><span class="pre">abs2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.math_intrinsics.abs2" title="Link to this definition">¶</a></dt>
+<dd><p>Packed element-wise absolute value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>tvm.tir.PrimExpr</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>tvm.tir.PrimExpr</p>
@@ -902,9 +970,13 @@ and falls back to per-lane scalar operations otherwise.</p>
 <li><a class="reference internal" href="#tilelang.language.math_intrinsics.ieee_fsqrt"><code class="docutils literal notranslate"><span class="pre">ieee_fsqrt()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.math_intrinsics.ieee_frsqrt"><code class="docutils literal notranslate"><span class="pre">ieee_frsqrt()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.math_intrinsics.ieee_fdiv"><code class="docutils literal notranslate"><span class="pre">ieee_fdiv()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.math_intrinsics.fadd2"><code class="docutils literal notranslate"><span class="pre">fadd2()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.math_intrinsics.fmul2"><code class="docutils literal notranslate"><span class="pre">fmul2()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.math_intrinsics.add2"><code class="docutils literal notranslate"><span class="pre">add2()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.math_intrinsics.sub2"><code class="docutils literal notranslate"><span class="pre">sub2()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.math_intrinsics.mul2"><code class="docutils literal notranslate"><span class="pre">mul2()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.math_intrinsics.fma2"><code class="docutils literal notranslate"><span class="pre">fma2()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.math_intrinsics.max2"><code class="docutils literal notranslate"><span class="pre">max2()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.math_intrinsics.min2"><code class="docutils literal notranslate"><span class="pre">min2()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.math_intrinsics.abs2"><code class="docutils literal notranslate"><span class="pre">abs2()</span></code></a></li>
 </ul>
 </li>
 </ul>
