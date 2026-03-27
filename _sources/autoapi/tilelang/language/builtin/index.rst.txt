@@ -120,7 +120,14 @@ Module Contents
 
    Create a Tensor Memory Access (TMA) descriptor.
 
-   :param \*args: Variable arguments defining the TMA descriptor configuration
+   This is an internal API used by copy lowering. The argument list depends on
+   the tensor rank and encodes the full TMA descriptor configuration:
+
+       create_tma_descriptor(data_type, rank, global_addr,
+           global_shape..., global_stride..., smem_box..., smem_stride...,
+           interleave, swizzle, l2_promotion, oob_fill)
+
+   Total arguments: 7 + 4 * rank.
 
    :returns: A handle to the created TMA descriptor
    :rtype: tir.Call
@@ -130,7 +137,9 @@ Module Contents
 
    Perform a Tensor Memory Access (TMA) load operation.
 
-   :param \*args: Variable arguments specifying the TMA load parameters
+   This is an internal API used by copy lowering. Arguments:
+
+       tma_load(descriptor, mbarrier, smem_addr, coord_0, ..., coord_n, eviction_policy)
 
    :returns: A handle to the TMA load operation
    :rtype: tir.Call
@@ -138,39 +147,47 @@ Module Contents
 
 .. py:function:: tma_load_2sm(*args)
 
-   Perform a Tensor Memory Access (TMA) load operation with 2SM on Blackwell.
+   Perform a TMA load with 2SM (two Streaming Multiprocessors) on Blackwell.
 
-   :param \*args: Variable arguments specifying the TMA load parameters
+   This is an internal API. Same arguments as :func:`tma_load`, but with
+   the ``use_2cta`` annotation enabled for 2-CTA cooperative loading.
 
    :returns: A handle to the TMA load operation
    :rtype: tir.Call
 
 
-.. py:function:: fence_proxy_async(*args)
+.. py:function:: fence_proxy_async()
 
-   Create a fence for asynchronous proxy operations.
+   Issue a shared memory fence for asynchronous proxy operations.
 
-   :param \*args: Variable arguments for fence configuration
+   Ensures that prior asynchronous operations (e.g. TMA stores) are visible
+   to subsequent memory accesses. Maps to ``fence.proxy.async.shared::cta``.
 
    :returns: A handle to the fence operation
    :rtype: tir.Call
 
 
-.. py:function:: tma_store_arrive(*args)
+.. py:function:: tma_store_arrive()
 
    Signal the arrival of a TMA store operation.
 
-   :param \*args: Variable arguments for the store arrival operation
+   Commits the current group of outstanding TMA store operations.
+   Maps to ``cp.async.bulk.commit_group``.
 
    :returns: A handle to the store arrive operation
    :rtype: tir.Call
 
 
-.. py:function:: tma_store_wait(*args)
+.. py:function:: tma_store_wait(count = 0)
 
    Wait for completion of TMA store operations.
 
-   :param \*args: Variable arguments specifying which store operations to wait for
+   Waits until the number of outstanding TMA store groups is at most ``count``.
+   Maps to the PTX instruction ``cp.async.bulk.wait_group.read <count>``.
+
+   :param count: The maximum number of outstanding store groups allowed
+                 to remain in flight. Defaults to 0 (wait for all stores to complete).
+   :type count: int
 
    :returns: A handle to the store wait operation
    :rtype: tir.Call

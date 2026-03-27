@@ -94,17 +94,25 @@ Module Contents
    :rtype: tir.Call
 
 
-.. py:function:: tma_copy(src, dst, *, barrier, eviction_policy = None, annotations = None)
+.. py:function:: tma_copy(src, dst, *, barrier=None, eviction_policy = None, annotations = None)
 
-   TMA copy — issues arrive_and_expect_tx + tma_load, no wait.
+   TMA copy with user-managed synchronization.
 
+   For **loads** (global -> shared): issues expect_tx + tma_load (no wait).
    Unlike T.copy() which emits a full synchronous TMA sequence (arrive + load + wait),
-   T.tma_copy() emits only the producer part (arrive_and_expect_tx + tma_load).
-   The user manages synchronization explicitly via T.mbarrier_wait_parity().
+   T.tma_copy() emits only the producer part (expect_tx + tma_load).
+   The user manages synchronization explicitly via T.barrier_arrive() and
+   T.mbarrier_wait_parity(). ``barrier`` is required for loads.
+
+   For **stores** (shared -> global): issues tma_store + tma_store_arrive (no wait).
+   Unlike T.copy() which emits tma_store + tma_store_arrive + tma_store_wait,
+   T.tma_copy() omits the wait so the user can batch multiple stores before
+   calling T.tma_store_wait() explicitly. ``barrier`` is not needed for stores.
 
    :param src: Source memory region (global or shared)
    :param dst: Destination memory region (shared or global)
-   :param barrier: Mbarrier (from T.alloc_barrier()) for TMA synchronization.
+   :param barrier: Mbarrier (from T.alloc_barrier()) for TMA load synchronization.
+                   Required for loads (global -> shared). Not needed for stores.
                    The TMA load will arrive at this barrier with expected byte count.
                    The user must wait on the same barrier via T.mbarrier_wait_parity().
    :param eviction_policy: Cache eviction policy. Defaults to None.

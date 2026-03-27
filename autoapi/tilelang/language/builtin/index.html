@@ -578,15 +578,15 @@
 <td><p>Perform a Tensor Memory Access (TMA) load operation.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.tma_load_2sm" title="tilelang.language.builtin.tma_load_2sm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_load_2sm</span></code></a>(*args)</p></td>
-<td><p>Perform a Tensor Memory Access (TMA) load operation with 2SM on Blackwell.</p></td>
+<td><p>Perform a TMA load with 2SM (two Streaming Multiprocessors) on Blackwell.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.fence_proxy_async" title="tilelang.language.builtin.fence_proxy_async"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fence_proxy_async</span></code></a>(*args)</p></td>
-<td><p>Create a fence for asynchronous proxy operations.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.fence_proxy_async" title="tilelang.language.builtin.fence_proxy_async"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fence_proxy_async</span></code></a>()</p></td>
+<td><p>Issue a shared memory fence for asynchronous proxy operations.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.tma_store_arrive" title="tilelang.language.builtin.tma_store_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store_arrive</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.tma_store_arrive" title="tilelang.language.builtin.tma_store_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store_arrive</span></code></a>()</p></td>
 <td><p>Signal the arrival of a TMA store operation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.tma_store_wait" title="tilelang.language.builtin.tma_store_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store_wait</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.tma_store_wait" title="tilelang.language.builtin.tma_store_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store_wait</span></code></a>([count])</p></td>
 <td><p>Wait for completion of TMA store operations.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.set_max_nreg" title="tilelang.language.builtin.set_max_nreg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_max_nreg</span></code></a>(reg_count, is_inc)</p></td>
@@ -782,15 +782,22 @@ when treating an N-D buffer as a view of its trailing sub-tensor.</p></li>
 <dt class="sig sig-object py" id="tilelang.language.builtin.create_tma_descriptor">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">create_tma_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.create_tma_descriptor" title="Link to this definition">¶</a></dt>
 <dd><p>Create a Tensor Memory Access (TMA) descriptor.</p>
+<p>This is an internal API used by copy lowering. The argument list depends on
+the tensor rank and encodes the full TMA descriptor configuration:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>create_tma_descriptor(data_type, rank, global_addr,</dt><dd><p>global_shape…, global_stride…, smem_box…, smem_stride…,
+interleave, swizzle, l2_promotion, oob_fill)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>Total arguments: 7 + 4 * rank.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> – Variable arguments defining the TMA descriptor configuration</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A handle to the created TMA descriptor</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A handle to the created TMA descriptor</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tir.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -799,15 +806,16 @@ when treating an N-D buffer as a view of its trailing sub-tensor.</p></li>
 <dt class="sig sig-object py" id="tilelang.language.builtin.tma_load">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_load" title="Link to this definition">¶</a></dt>
 <dd><p>Perform a Tensor Memory Access (TMA) load operation.</p>
+<p>This is an internal API used by copy lowering. Arguments:</p>
+<blockquote>
+<div><p>tma_load(descriptor, mbarrier, smem_addr, coord_0, …, coord_n, eviction_policy)</p>
+</div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> – Variable arguments specifying the TMA load parameters</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A handle to the TMA load operation</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A handle to the TMA load operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tir.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -815,61 +823,61 @@ when treating an N-D buffer as a view of its trailing sub-tensor.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.tma_load_2sm">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_load_2sm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_load_2sm" title="Link to this definition">¶</a></dt>
-<dd><p>Perform a Tensor Memory Access (TMA) load operation with 2SM on Blackwell.</p>
+<dd><p>Perform a TMA load with 2SM (two Streaming Multiprocessors) on Blackwell.</p>
+<p>This is an internal API. Same arguments as <a class="reference internal" href="#tilelang.language.builtin.tma_load" title="tilelang.language.builtin.tma_load"><code class="xref py py-func docutils literal notranslate"><span class="pre">tma_load()</span></code></a>, but with
+the <code class="docutils literal notranslate"><span class="pre">use_2cta</span></code> annotation enabled for 2-CTA cooperative loading.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> – Variable arguments specifying the TMA load parameters</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A handle to the TMA load operation</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A handle to the TMA load operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tir.Call</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.fence_proxy_async">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">fence_proxy_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.fence_proxy_async" title="Link to this definition">¶</a></dt>
-<dd><p>Create a fence for asynchronous proxy operations.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">fence_proxy_async</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.fence_proxy_async" title="Link to this definition">¶</a></dt>
+<dd><p>Issue a shared memory fence for asynchronous proxy operations.</p>
+<p>Ensures that prior asynchronous operations (e.g. TMA stores) are visible
+to subsequent memory accesses. Maps to <code class="docutils literal notranslate"><span class="pre">fence.proxy.async.shared::cta</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> – Variable arguments for fence configuration</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A handle to the fence operation</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A handle to the fence operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tir.Call</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.tma_store_arrive">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_store_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_store_arrive" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_store_arrive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_store_arrive" title="Link to this definition">¶</a></dt>
 <dd><p>Signal the arrival of a TMA store operation.</p>
+<p>Commits the current group of outstanding TMA store operations.
+Maps to <code class="docutils literal notranslate"><span class="pre">cp.async.bulk.commit_group</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> – Variable arguments for the store arrival operation</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A handle to the store arrive operation</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A handle to the store arrive operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tir.Call</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.tma_store_wait">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_store_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_store_wait" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_store_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_store_wait" title="Link to this definition">¶</a></dt>
 <dd><p>Wait for completion of TMA store operations.</p>
+<p>Waits until the number of outstanding TMA store groups is at most <code class="docutils literal notranslate"><span class="pre">count</span></code>.
+Maps to the PTX instruction <code class="docutils literal notranslate"><span class="pre">cp.async.bulk.wait_group.read</span> <span class="pre">&lt;count&gt;</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> – Variable arguments specifying which store operations to wait for</p>
+<dd class="field-odd"><p><strong>count</strong> (<em>int</em>) – The maximum number of outstanding store groups allowed
+to remain in flight. Defaults to 0 (wait for all stores to complete).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A handle to the store wait operation</p>
