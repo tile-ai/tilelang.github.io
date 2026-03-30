@@ -720,6 +720,7 @@ signatures, behaviors, constraints, and examples, refer to API Reference
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">T.copy(src,</span> <span class="pre">dst,</span> <span class="pre">...)</span></code>: Move tiles between Global/Shared/Fragment.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.async_copy(src,</span> <span class="pre">dst,</span> <span class="pre">...)</span></code>: Explicit async global→shared copy via <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T.transpose(src,</span> <span class="pre">dst)</span></code>: Transpose a 2D shared buffer: <code class="docutils literal notranslate"><span class="pre">dst[j,</span> <span class="pre">i]</span> <span class="pre">=</span> <span class="pre">src[i,</span> <span class="pre">j]</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.c2d_im2col(img,</span> <span class="pre">col,</span> <span class="pre">...)</span></code>: 2D im2col transform for conv.</p></li>
 </ul>
 <p>Memory allocation and descriptors</p>
@@ -729,6 +730,7 @@ signatures, behaviors, constraints, and examples, refer to API Reference
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_var(dtype,</span> <span class="pre">[init],</span> <span class="pre">scope='local.var')</span></code>: Scalar var buffer (1 elem).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_barrier(arrive_count)</span></code>: Allocate and initialize one or more mbarriers.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_tmem(shape,</span> <span class="pre">dtype)</span></code>: Tensor memory (TMEM) buffer (Hopper+).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T.deallocate_tmem(buffer)</span></code>: Explicitly release a TMEM buffer at the current site.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_reducer(shape,</span> <span class="pre">dtype,</span> <span class="pre">op='sum',</span> <span class="pre">replication=None)</span></code>: Reducer buf.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.alloc_descriptor(kind,</span> <span class="pre">dtype)</span></code>: Generic descriptor allocator.</p>
 <ul>

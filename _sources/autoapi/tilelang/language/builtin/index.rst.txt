@@ -15,6 +15,7 @@ Functions
 .. autoapisummary::
 
    tilelang.language.builtin.access_ptr
+   tilelang.language.builtin.deallocate_tmem
    tilelang.language.builtin.create_tma_descriptor
    tilelang.language.builtin.tma_load
    tilelang.language.builtin.tma_load_2sm
@@ -114,6 +115,24 @@ Module Contents
 
    :returns: **ptr** -- A handle-typed `tir.Call` to `tl.access_ptr`.
    :rtype: PrimExpr
+
+
+.. py:function:: deallocate_tmem(tmem)
+
+   Explicitly deallocate a TMEM buffer allocated by ``T.alloc_tmem``.
+
+   By default, TileLang inserts a TMEM deallocation automatically at the end
+   of the allocation block. Calling ``T.deallocate_tmem(buf)`` suppresses that
+   automatic tail deallocation for ``buf`` and lowers an explicit deallocation
+   at the call site instead.
+
+   Notes:
+   - The deallocation must obey the hardware TMEM rules: it should be issued by
+     the same warp that performed the allocation.
+   - Once this API is used, the buffer lifetime is user-managed for the current
+     block; deallocating too early or conditionally is the user's responsibility.
+
+   :param tmem: A TMEM buffer previously returned by ``T.alloc_tmem``.
 
 
 .. py:function:: create_tma_descriptor(*args)

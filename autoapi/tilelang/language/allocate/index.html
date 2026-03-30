@@ -797,7 +797,9 @@ a = T.alloc_var(‘int32’, init=1) # var with init 1 and local.var scope</p>
 <dl class="simple">
 <dt>Key properties and requirements:</dt><dd><ul class="simple">
 <li><p>The number of columns allocated must be a power of 2 and at least 32.</p></li>
-<li><p>TMEM allocations are dynamic and must be explicitly deallocated.</p></li>
+<li><p>TMEM allocations are dynamic. TileLang deallocates them automatically at
+the end of the allocation block unless you call <code class="docutils literal notranslate"><span class="pre">T.deallocate_tmem</span></code> to
+take manual control of the lifetime.</p></li>
 <li><p>Both allocation and deallocation must be performed by the same warp.</p></li>
 <li><p>The base address of the TMEM allocation is stored in shared memory and used as the offset for TCGEN5.MMA accumulator tensors.</p></li>
 <li><p>Only TCGEN5.MMA and specific TMEM load/store instructions can access TMEM; all pre-processing must occur before data is loaded into TMEM, and all post-processing after data is retrieved.</p></li>
@@ -824,7 +826,8 @@ a = T.alloc_var(‘int32’, init=1) # var with init 1 and local.var scope</p>
 <p class="admonition-title">Note</p>
 <ul class="simple">
 <li><p>TMEM is only available on supported architectures (e.g., Hopper and later).</p></li>
-<li><p>The buffer returned should be used according to TMEM access restrictions and deallocated appropriately.</p></li>
+<li><p>The buffer returned should be used according to TMEM access restrictions.
+Use <code class="docutils literal notranslate"><span class="pre">T.deallocate_tmem</span></code> only when you need an earlier, explicit release.</p></li>
 </ul>
 </div>
 </dd></dl>

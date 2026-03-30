@@ -17,6 +17,7 @@ Functions
    tilelang.language.copy_op.copy
    tilelang.language.copy_op.async_copy
    tilelang.language.copy_op.tma_copy
+   tilelang.language.copy_op.transpose
    tilelang.language.copy_op.c2d_im2col
 
 
@@ -120,6 +121,20 @@ Module Contents
                        precedence over individual arguments.
 
    :returns: A handle to the tma_copy operation
+   :rtype: tir.Call
+
+
+.. py:function:: transpose(src, dst)
+
+   Transpose a 2D buffer in shared memory: dst[j, i] = src[i, j].
+
+   Both src and dst should be shared memory buffers.
+   If src has shape (M, N), dst should have shape (N, M).
+
+   :param src: Source buffer or region of shape (..., M, N).
+   :param dst: Destination buffer or region of shape (..., N, M).
+
+   :returns: A handle to the transpose operation.
    :rtype: tir.Call
 
 

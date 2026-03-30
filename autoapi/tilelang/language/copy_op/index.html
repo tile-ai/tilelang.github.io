@@ -577,7 +577,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.tma_copy" title="tilelang.language.copy_op.tma_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_copy</span></code></a>(src, dst, *[, barrier, eviction_policy, ...])</p></td>
 <td><p>TMA copy with user-managed synchronization.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.transpose" title="tilelang.language.copy_op.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>(src, dst)</p></td>
+<td><p>Transpose a 2D buffer in shared memory: dst[j, i] = src[i, j].</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
 <td><p>Perform im2col transformation for 2D convolution.</p></td>
 </tr>
 </tbody>
@@ -705,6 +708,28 @@ precedence over individual arguments.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy_op.transpose">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.transpose" title="Link to this definition">¶</a></dt>
+<dd><p>Transpose a 2D buffer in shared memory: dst[j, i] = src[i, j].</p>
+<p>Both src and dst should be shared memory buffers.
+If src has shape (M, N), dst should have shape (N, M).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – Source buffer or region of shape (…, M, N).</p></li>
+<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – Destination buffer or region of shape (…, N, M).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the transpose operation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.copy_op.c2d_im2col">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">c2d_im2col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nhw_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dilation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.c2d_im2col" title="Link to this definition">¶</a></dt>
 <dd><p>Perform im2col transformation for 2D convolution.</p>
@@ -795,6 +820,7 @@ precedence over individual arguments.</p></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.copy"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.async_copy"><code class="docutils literal notranslate"><span class="pre">async_copy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.tma_copy"><code class="docutils literal notranslate"><span class="pre">tma_copy()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.copy_op.transpose"><code class="docutils literal notranslate"><span class="pre">transpose()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col"><code class="docutils literal notranslate"><span class="pre">c2d_im2col()</span></code></a></li>
 </ul>
 </li>
