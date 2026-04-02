@@ -669,6 +669,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.eager.builder.const" title="tilelang.language.eager.builder.const"><code class="xref py py-obj docutils literal notranslate"><span class="pre">const</span></code></a>(name[, dtype])</p></td>
 <td><p>Declare constexpr variables for dynamic tensor dimensions (eager mode only).</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.eager.builder.annotate_compile_flags" title="tilelang.language.eager.builder.annotate_compile_flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_compile_flags</span></code></a>(flags)</p></td>
+<td><p>Annotate additional device compile flags inside a function body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.eager.builder.annotate_pass_configs" title="tilelang.language.eager.builder.annotate_pass_configs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_pass_configs</span></code></a>(configs)</p></td>
+<td><p>Annotate pass configuration inside a function body.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.eager.builder.substitute_primfunc" title="tilelang.language.eager.builder.substitute_primfunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">substitute_primfunc</span></code></a>(prim_func, vmap)</p></td>
 <td><p></p></td>
 </tr>
@@ -926,6 +932,16 @@ They do not have any runtime representation in the generated TIR.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.eager.builder.Builder.eager_jit_subs">
 <span class="sig-name descname"><span class="pre">eager_jit_subs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tvm.tir.expr.PrimExpr</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.eager.builder.Builder.eager_jit_subs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.builder.Builder.func_pass_configs">
+<span class="sig-name descname"><span class="pre">func_pass_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.eager.builder.Builder.func_pass_configs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.builder.Builder.func_compile_flags">
+<span class="sig-name descname"><span class="pre">func_compile_flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.eager.builder.Builder.func_compile_flags" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1278,11 +1294,6 @@ For example, a generic mapping type might be defined as:</p>
 <span class="sig-name descname"><span class="pre">orig_func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">_P</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.eager.builder.PrimFunc.orig_func" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.language.eager.builder.PrimFunc.out_idx_override">
-<span class="sig-name descname"><span class="pre">out_idx_override</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.eager.builder.PrimFunc.out_idx_override" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -1439,6 +1450,55 @@ inferred from actual tensor arguments at runtime.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>tvm.tir.expr.Var | tuple[tvm.tir.expr.Var, Ellipsis]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.eager.builder.annotate_compile_flags">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.builder.</span></span><span class="sig-name descname"><span class="pre">annotate_compile_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flags</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.builder.annotate_compile_flags" title="Link to this definition">¶</a></dt>
+<dd><p>Annotate additional device compile flags inside a function body.</p>
+<p>The flags will be merged with any externally provided compile_flags
+at compilation time. Can be placed before or after tensor type annotations.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">annotate_compile_flags</span><span class="p">([</span><span class="s2">&quot;--use_fast_math&quot;</span><span class="p">])</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flags</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.eager.builder.annotate_pass_configs">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.builder.</span></span><span class="sig-name descname"><span class="pre">annotate_pass_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.builder.annotate_pass_configs" title="Link to this definition">¶</a></dt>
+<dd><p>Annotate pass configuration inside a function body.</p>
+<p>The configs will be merged with any externally provided pass_configs
+at compilation time (function-level configs take lower priority, i.e.
+external configs override). Can be placed before or after tensor type annotations.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">annotate_pass_configs</span><span class="p">({</span>
+        <span class="n">PassConfigKey</span><span class="o">.</span><span class="n">TL_ENABLE_FAST_MATH</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1742,6 +1802,8 @@ original function returns a PrimFunc directly.</p>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.constexpr_var"><code class="docutils literal notranslate"><span class="pre">Builder.constexpr_var</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.eager_jit"><code class="docutils literal notranslate"><span class="pre">Builder.eager_jit</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.eager_jit_subs"><code class="docutils literal notranslate"><span class="pre">Builder.eager_jit_subs</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.func_pass_configs"><code class="docutils literal notranslate"><span class="pre">Builder.func_pass_configs</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.func_compile_flags"><code class="docutils literal notranslate"><span class="pre">Builder.func_compile_flags</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.current_file"><code class="docutils literal notranslate"><span class="pre">Builder.current_file</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.current_line"><code class="docutils literal notranslate"><span class="pre">Builder.current_line</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Builder.current_macro_name"><code class="docutils literal notranslate"><span class="pre">Builder.current_macro_name</span></code></a></li>
@@ -1793,7 +1855,6 @@ original function returns a PrimFunc directly.</p>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.PrimFunc.span"><code class="docutils literal notranslate"><span class="pre">PrimFunc.span</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.PrimFunc.ir_gen"><code class="docutils literal notranslate"><span class="pre">PrimFunc.ir_gen</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.PrimFunc.orig_func"><code class="docutils literal notranslate"><span class="pre">PrimFunc.orig_func</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.eager.builder.PrimFunc.out_idx_override"><code class="docutils literal notranslate"><span class="pre">PrimFunc.out_idx_override</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.Macro"><code class="docutils literal notranslate"><span class="pre">Macro</span></code></a><ul>
@@ -1810,6 +1871,8 @@ original function returns a PrimFunc directly.</p>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.macro"><code class="docutils literal notranslate"><span class="pre">macro()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.get_type_hints"><code class="docutils literal notranslate"><span class="pre">get_type_hints()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.const"><code class="docutils literal notranslate"><span class="pre">const()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.builder.annotate_compile_flags"><code class="docutils literal notranslate"><span class="pre">annotate_compile_flags()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.builder.annotate_pass_configs"><code class="docutils literal notranslate"><span class="pre">annotate_pass_configs()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate"><code class="docutils literal notranslate"><span class="pre">TirTemplate</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.name"><code class="docutils literal notranslate"><span class="pre">TirTemplate.name</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.builder.TirTemplate.prim_func"><code class="docutils literal notranslate"><span class="pre">TirTemplate.prim_func</span></code></a></li>

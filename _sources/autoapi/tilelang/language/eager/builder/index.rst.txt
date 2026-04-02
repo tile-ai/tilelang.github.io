@@ -51,6 +51,8 @@ Functions
    tilelang.language.eager.builder.macro
    tilelang.language.eager.builder.get_type_hints
    tilelang.language.eager.builder.const
+   tilelang.language.eager.builder.annotate_compile_flags
+   tilelang.language.eager.builder.annotate_pass_configs
    tilelang.language.eager.builder.substitute_primfunc
    tilelang.language.eager.builder.prim_func
 
@@ -236,6 +238,18 @@ Module Contents
 
    .. py:attribute:: eager_jit_subs
       :type:  dict[str, tvm.tir.expr.PrimExpr]
+
+
+   .. py:attribute:: func_pass_configs
+      :type:  dict[str, Any] | None
+      :value: None
+
+
+
+   .. py:attribute:: func_compile_flags
+      :type:  list[str] | str | None
+      :value: None
+
 
 
    .. py:attribute:: current_file
@@ -433,10 +447,6 @@ Module Contents
       :type:  Callable[_P, _T] | None
 
 
-   .. py:attribute:: out_idx_override
-      :type:  list[int] | None
-
-
 .. py:class:: Macro
 
    Bases: :py:obj:`Generic`\ [\ :py:obj:`_P`\ , :py:obj:`_T`\ ]
@@ -538,6 +548,39 @@ Module Contents
        def kernel(A, B):
            M, N = T.const("M, N")
            A: T.Tensor[[M, N], T.float32]
+           ...
+
+
+.. py:function:: annotate_compile_flags(flags)
+
+   Annotate additional device compile flags inside a function body.
+
+   The flags will be merged with any externally provided compile_flags
+   at compilation time. Can be placed before or after tensor type annotations.
+
+   Example::
+
+       @tilelang.jit
+       def kernel(A, B):
+           T.annotate_compile_flags(["--use_fast_math"])
+           ...
+
+
+.. py:function:: annotate_pass_configs(configs)
+
+   Annotate pass configuration inside a function body.
+
+   The configs will be merged with any externally provided pass_configs
+   at compilation time (function-level configs take lower priority, i.e.
+   external configs override). Can be placed before or after tensor type annotations.
+
+   Example::
+
+       @tilelang.jit
+       def kernel(A, B):
+           T.annotate_pass_configs({
+               PassConfigKey.TL_ENABLE_FAST_MATH: True,
+           })
            ...
 
 
