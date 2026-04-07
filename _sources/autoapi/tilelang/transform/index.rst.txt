@@ -31,10 +31,10 @@ Functions
    tilelang.transform.get_pass_context
    tilelang.transform.ClusterPlanning
    tilelang.transform.PipelinePlanning
+   tilelang.transform.InstructionAnnotation
    tilelang.transform.LayoutInference
    tilelang.transform.LowerTileOp
    tilelang.transform.InjectSoftwarePipeline
-   tilelang.transform.OptimizeCPAsyncSync
    tilelang.transform.FrontendLegalize
    tilelang.transform.LegalizeNegativeIndex
    tilelang.transform.InjectAssumes
@@ -42,13 +42,14 @@ Functions
    tilelang.transform.LowerHopperIntrin
    tilelang.transform.WarpSpecializedPipeline
    tilelang.transform.RewriteWgmmaSync
+   tilelang.transform.ReuseLocalDescriptorAllocations
    tilelang.transform.ThreadSync
    tilelang.transform.ThreadPartialSync
    tilelang.transform.IfStmtBinding
    tilelang.transform.MergeIfStmt
    tilelang.transform.LoopUnswitching
-   tilelang.transform.MultiVersionBuffer
    tilelang.transform.ProducerConsumerWarpSpecialized
+   tilelang.transform.ProducerConsumerWarpSpecializedTiled
    tilelang.transform.AnnotateWarpGroupRegAlloc
    tilelang.transform.FuseMBarrierArriveExpectTx
    tilelang.transform.InjectFenceProxy
@@ -111,6 +112,19 @@ Package Contents
    :rtype: tvm.transform.Pass
 
 
+.. py:function:: InstructionAnnotation()
+
+   Annotate tile operations with coarse-grained instruction kind.
+
+   This pass runs before LayoutInference and LowerTileOp.  It adds a
+   ``tl_instruction_kind`` annotation to each tile-op Call node indicating
+   the instruction category ("tma", "cp_async", "sync", "wgmma", etc.)
+   that will be selected during lowering.
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
 .. py:function:: LayoutInference()
 
    LayoutInference
@@ -130,14 +144,6 @@ Package Contents
 .. py:function:: InjectSoftwarePipeline()
 
    InjectSoftwarePipeline
-
-   :returns: **fpass** -- The result pass
-   :rtype: tvm.transform.Pass
-
-
-.. py:function:: OptimizeCPAsyncSync()
-
-   Optimize explicit cp.async commit/wait synchronization intrinsics.
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
@@ -202,6 +208,14 @@ Package Contents
    :rtype: tvm.transform.Pass
 
 
+.. py:function:: ReuseLocalDescriptorAllocations()
+
+   Pool lexically-disjoint local descriptor allocations.
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
 .. py:function:: ThreadSync(storage_scope)
 
    Insert sync between parallel read/write of shared buffers.
@@ -248,24 +262,24 @@ Package Contents
    :rtype: tvm.transform.Pass
 
 
-.. py:function:: MultiVersionBuffer(barrier_only = False)
+.. py:function:: ProducerConsumerWarpSpecialized()
 
-   MultiVersionBuffer
+   Producer-consumer warp specialization at the tile-op level.
 
-   :param barrier_only: If True, only version barrier buffers (shared.barrier scope).
-                        Data buffer versioning is left to InjectSoftwarePipeline.
-   :type barrier_only: bool
+   This pass runs before LayoutInference and LowerTileOp. It rewrites
+   eligible pipelined tile-op loops into warp-specialized producer and
+   consumer branches with explicit barrier synchronization.
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
 
 
-.. py:function:: ProducerConsumerWarpSpecialized()
+.. py:function:: ProducerConsumerWarpSpecializedTiled()
 
-   Producer-Consumer Warp Specialization for TMA pipelines.
+   Compatibility alias for ``ProducerConsumerWarpSpecialized``.
 
-   Splits pipelined loops with TMA loads into producer (TMA copy) and
-   consumer (compute) warp groups with mbarrier-based synchronization.
+   The tiled tile-op implementation is now the canonical
+   ``ProducerConsumerWarpSpecialized`` pass.
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass

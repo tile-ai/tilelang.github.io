@@ -12,6 +12,14 @@ Classes
    tilelang.transform.pass_config.PassConfigKey
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.transform.pass_config.normalize_pass_configs
+
+
 Module Contents
 ---------------
 
@@ -173,9 +181,11 @@ Module Contents
       :value: 'tl.disable_tma_lower'
 
 
-      False
+      Deprecated compatibility-only flag for legacy kernels.
 
-      :type: Disable TMA (Tensor Memory Access) lowering. Default
+      This flag no longer has any effect in the current lowering pipeline and is
+      kept only so older kernels do not fail pass-config validation. It will be
+      removed in v0.1.10.
 
 
    .. py:attribute:: TL_DISABLE_SAFE_MEMORY_ACCESS
@@ -520,5 +530,10 @@ Module Contents
       ./dump_ir/
 
       :type: Path to the directory where IR will be dumped. Default
+
+
+.. py:function:: normalize_pass_configs(pass_configs)
+
+   Canonicalize known pass-config keys and emit compatibility warnings.
 
 
