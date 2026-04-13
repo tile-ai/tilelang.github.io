@@ -51,6 +51,16 @@ Functions
    tilelang.language.builtin.sync_threads
    tilelang.language.builtin.sync_warp
    tilelang.language.builtin.shfl_sync
+   tilelang.language.builtin.any_sync
+   tilelang.language.builtin.all_sync
+   tilelang.language.builtin.ballot_sync
+   tilelang.language.builtin.ballot
+   tilelang.language.builtin.activemask
+   tilelang.language.builtin.syncthreads_count
+   tilelang.language.builtin.syncthreads_and
+   tilelang.language.builtin.syncthreads_or
+   tilelang.language.builtin.match_any_sync
+   tilelang.language.builtin.match_all_sync
    tilelang.language.builtin.sync_global
    tilelang.language.builtin.sync_grid
    tilelang.language.builtin.initialize_wgmma_descriptor
@@ -518,33 +528,22 @@ Module Contents
                     The memory barrier to arrive at
 
 
-.. py:function:: shfl_xor(value, offset)
+.. py:function:: shfl_xor(mask, value, delta, width = _DEFAULT_SHFL_WIDTH)
 
-   Perform a shuffle operation with XOR offset.
-
-   :param value: Optional[int, PrimExpr]
-                 The value to shuffle
-   :param offset: Optional[int, PrimExpr]
-                  The offset for the shuffle operation
-
-   :returns: A handle to the shuffle operation
-   :rtype: tir.Call
+   XOR-swap ``value`` across lanes (``__shfl_xor_sync`` on CUDA,
+   ``__shfl_xor`` on HIP — mask ignored on HIP).
 
 
-.. py:function:: shfl_down(value, offset)
+.. py:function:: shfl_down(mask, value, delta, width = _DEFAULT_SHFL_WIDTH)
 
-   Perform a shuffle operation with down offset.
-
-   :param value: Optional[int, PrimExpr]
-                 The value to shuffle
+   Shift ``value`` down by ``delta`` lanes (``__shfl_down_sync`` on CUDA,
+   ``__shfl_down`` on HIP).
 
 
-.. py:function:: shfl_up(value, offset)
+.. py:function:: shfl_up(mask, value, delta, width = _DEFAULT_SHFL_WIDTH)
 
-   Perform a shuffle operation with up offset.
-
-   :param value: Optional[int, PrimExpr]
-                 The value to shuffle
+   Shift ``value`` up by ``delta`` lanes (``__shfl_up_sync`` on CUDA,
+   ``__shfl_up`` on HIP).
 
 
 .. py:function:: sync_threads(barrier_id = None, arrive_count = None)
@@ -557,9 +556,105 @@ Module Contents
    Synchronize all threads in a warp.
 
 
-.. py:function:: shfl_sync(mask, value, srcLane, width = None)
+.. py:function:: shfl_sync(mask, value, srcLane, width = _DEFAULT_SHFL_WIDTH)
 
-   Receives data from a thread in the same warp.
+   Broadcast ``value`` from ``srcLane`` to all lanes in the subgroup of
+   ``width`` lanes (``__shfl_sync`` on CUDA, ``__shfl`` on HIP — mask ignored
+   on HIP).
+
+
+.. py:function:: any_sync(mask, predicate)
+
+   Non-zero if ANY active lane in ``mask`` has a non-zero ``predicate``.
+
+   Lowers to ``__any_sync(mask, predicate)`` on CUDA and ``__any(predicate)``
+   on HIP (the mask is ignored on HIP because the full wavefront is always
+   convergent).
+
+   :param mask: Warp lane mask (e.g. ``0xFFFFFFFF`` for all 32 lanes).
+   :param predicate: Integer condition to test.
+
+   :returns: Non-zero if any thread in the mask has a non-zero predicate.
+   :rtype: int32
+
+
+.. py:function:: all_sync(mask, predicate)
+
+   Non-zero only if ALL active lanes in ``mask`` have a non-zero predicate.
+
+   Lowers to ``__all_sync(mask, predicate)`` on CUDA and ``__all(predicate)``
+   on HIP.
+
+   :param mask: Warp lane mask (e.g. ``0xFFFFFFFF`` for all 32 lanes).
+   :param predicate: Integer condition to test.
+
+   :returns: Non-zero if all threads in the mask have a non-zero predicate.
+   :rtype: int32
+
+
+.. py:function:: ballot_sync(mask, predicate)
+
+   Return a ``uint64`` bitmask of lanes in ``mask`` whose predicate is set.
+
+   CUDA: ``__ballot_sync(mask, predicate)`` returns ``unsigned int``; codegen
+   zero-extends it to ``uint64`` (upper 32 bits always zero for 32-wide warps).
+   HIP: ``__ballot(predicate)`` returns ``uint64`` natively, covering all
+   64 wavefront lanes. The mask argument is ignored on HIP.
+
+   :returns: Bitmask with bit N set if lane N's predicate is non-zero.
+   :rtype: uint64
+
+
+.. py:function:: ballot(predicate)
+
+   Full-warp / full-wavefront ballot. Equivalent to
+   ``ballot_sync(0xFFFFFFFF, predicate)``.
+
+   :returns: Bitmask with bit N set if lane N's predicate is non-zero.
+   :rtype: uint64
+
+
+.. py:function:: activemask()
+
+   Return a ``uint64`` bitmask of currently active (non-exited) lanes.
+
+   Lowers to ``__activemask()`` (zero-extended to ``uint64``) on CUDA and
+   ``__ballot(1)`` on HIP.
+
+
+.. py:function:: syncthreads_count(predicate)
+
+   Block barrier that returns the number of threads whose ``predicate``
+   evaluates to non-zero (``__syncthreads_count`` on CUDA and HIP).
+
+
+.. py:function:: syncthreads_and(predicate)
+
+   Block barrier that returns non-zero only if ALL threads have a non-zero
+   ``predicate`` (``__syncthreads_and`` on CUDA and HIP).
+
+
+.. py:function:: syncthreads_or(predicate)
+
+   Block barrier that returns non-zero if ANY thread has a non-zero
+   ``predicate`` (``__syncthreads_or`` on CUDA and HIP).
+
+
+.. py:function:: match_any_sync(mask, value)
+
+   Return a ``uint32`` bitmask of lanes in ``mask`` whose ``value`` equals
+   the calling lane's value. Lowers to ``__match_any_sync`` on CUDA
+   (compute capability >= 7.0). Not supported on HIP.
+
+
+.. py:function:: match_all_sync(mask, value)
+
+   Return ``mask`` if all lanes in ``mask`` agree on ``value``, else 0.
+
+   Lowers to ``__match_all_sync`` on CUDA (compute capability >= 7.0); the
+   trailing ``int*`` predicate output is hidden in codegen and discarded.
+   Callers can reconstruct the predicate as ``result != 0``. Not supported
+   on HIP.
 
 
 .. py:function:: sync_global()

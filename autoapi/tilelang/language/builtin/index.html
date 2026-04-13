@@ -661,14 +661,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.barrier_arrive" title="tilelang.language.builtin.barrier_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">barrier_arrive</span></code></a>(mbarrier)</p></td>
 <td><p>Arrive at a memory barrier.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_xor" title="tilelang.language.builtin.shfl_xor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_xor</span></code></a>(value, offset)</p></td>
-<td><p>Perform a shuffle operation with XOR offset.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_xor" title="tilelang.language.builtin.shfl_xor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_xor</span></code></a>(mask, value, delta[, width])</p></td>
+<td><p>XOR-swap <code class="docutils literal notranslate"><span class="pre">value</span></code> across lanes (<code class="docutils literal notranslate"><span class="pre">__shfl_xor_sync</span></code> on CUDA,</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_down" title="tilelang.language.builtin.shfl_down"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_down</span></code></a>(value, offset)</p></td>
-<td><p>Perform a shuffle operation with down offset.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_down" title="tilelang.language.builtin.shfl_down"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_down</span></code></a>(mask, value, delta[, width])</p></td>
+<td><p>Shift <code class="docutils literal notranslate"><span class="pre">value</span></code> down by <code class="docutils literal notranslate"><span class="pre">delta</span></code> lanes (<code class="docutils literal notranslate"><span class="pre">__shfl_down_sync</span></code> on CUDA,</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_up" title="tilelang.language.builtin.shfl_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_up</span></code></a>(value, offset)</p></td>
-<td><p>Perform a shuffle operation with up offset.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_up" title="tilelang.language.builtin.shfl_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_up</span></code></a>(mask, value, delta[, width])</p></td>
+<td><p>Shift <code class="docutils literal notranslate"><span class="pre">value</span></code> up by <code class="docutils literal notranslate"><span class="pre">delta</span></code> lanes (<code class="docutils literal notranslate"><span class="pre">__shfl_up_sync</span></code> on CUDA,</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_threads" title="tilelang.language.builtin.sync_threads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_threads</span></code></a>([barrier_id, arrive_count])</p></td>
 <td><p>Synchronize all threads in a block.</p></td>
@@ -677,7 +677,37 @@
 <td><p>Synchronize all threads in a warp.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.shfl_sync" title="tilelang.language.builtin.shfl_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shfl_sync</span></code></a>(mask, value, srcLane[, width])</p></td>
-<td><p>Receives data from a thread in the same warp.</p></td>
+<td><p>Broadcast <code class="docutils literal notranslate"><span class="pre">value</span></code> from <code class="docutils literal notranslate"><span class="pre">srcLane</span></code> to all lanes in the subgroup of</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.any_sync" title="tilelang.language.builtin.any_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any_sync</span></code></a>(mask, predicate)</p></td>
+<td><p>Non-zero if ANY active lane in <code class="docutils literal notranslate"><span class="pre">mask</span></code> has a non-zero <code class="docutils literal notranslate"><span class="pre">predicate</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.all_sync" title="tilelang.language.builtin.all_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_sync</span></code></a>(mask, predicate)</p></td>
+<td><p>Non-zero only if ALL active lanes in <code class="docutils literal notranslate"><span class="pre">mask</span></code> have a non-zero predicate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.ballot_sync" title="tilelang.language.builtin.ballot_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ballot_sync</span></code></a>(mask, predicate)</p></td>
+<td><p>Return a <code class="docutils literal notranslate"><span class="pre">uint64</span></code> bitmask of lanes in <code class="docutils literal notranslate"><span class="pre">mask</span></code> whose predicate is set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.ballot" title="tilelang.language.builtin.ballot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ballot</span></code></a>(predicate)</p></td>
+<td><p>Full-warp / full-wavefront ballot. Equivalent to</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.activemask" title="tilelang.language.builtin.activemask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">activemask</span></code></a>()</p></td>
+<td><p>Return a <code class="docutils literal notranslate"><span class="pre">uint64</span></code> bitmask of currently active (non-exited) lanes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.syncthreads_count" title="tilelang.language.builtin.syncthreads_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">syncthreads_count</span></code></a>(predicate)</p></td>
+<td><p>Block barrier that returns the number of threads whose <code class="docutils literal notranslate"><span class="pre">predicate</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.syncthreads_and" title="tilelang.language.builtin.syncthreads_and"><code class="xref py py-obj docutils literal notranslate"><span class="pre">syncthreads_and</span></code></a>(predicate)</p></td>
+<td><p>Block barrier that returns non-zero only if ALL threads have a non-zero</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.syncthreads_or" title="tilelang.language.builtin.syncthreads_or"><code class="xref py py-obj docutils literal notranslate"><span class="pre">syncthreads_or</span></code></a>(predicate)</p></td>
+<td><p>Block barrier that returns non-zero if ANY thread has a non-zero</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.match_any_sync" title="tilelang.language.builtin.match_any_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_any_sync</span></code></a>(mask, value)</p></td>
+<td><p>Return a <code class="docutils literal notranslate"><span class="pre">uint32</span></code> bitmask of lanes in <code class="docutils literal notranslate"><span class="pre">mask</span></code> whose <code class="docutils literal notranslate"><span class="pre">value</span></code> equals</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.match_all_sync" title="tilelang.language.builtin.match_all_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_all_sync</span></code></a>(mask, value)</p></td>
+<td><p>Return <code class="docutils literal notranslate"><span class="pre">mask</span></code> if all lanes in <code class="docutils literal notranslate"><span class="pre">mask</span></code> agree on <code class="docutils literal notranslate"><span class="pre">value</span></code>, else 0.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_global" title="tilelang.language.builtin.sync_global"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_global</span></code></a>()</p></td>
 <td><p>Synchronize all threads in the entire grid.</p></td>
@@ -1381,36 +1411,33 @@ The memory barrier to arrive at</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.shfl_xor">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_xor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_xor" title="Link to this definition">¶</a></dt>
-<dd><p>Perform a shuffle operation with XOR offset.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_xor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_DEFAULT_SHFL_WIDTH</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_xor" title="Link to this definition">¶</a></dt>
+<dd><p>XOR-swap <code class="docutils literal notranslate"><span class="pre">value</span></code> across lanes (<code class="docutils literal notranslate"><span class="pre">__shfl_xor_sync</span></code> on CUDA,
+<code class="docutils literal notranslate"><span class="pre">__shfl_xor</span></code> on HIP — mask ignored on HIP).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>) – Optional[int, PrimExpr]
-The value to shuffle</p></li>
-<li><p><strong>offset</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>) – Optional[int, PrimExpr]
-The offset for the shuffle operation</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
+<li><p><strong>delta</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
+<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A handle to the shuffle operation</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.shfl_down">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_down" title="Link to this definition">¶</a></dt>
-<dd><p>Perform a shuffle operation with down offset.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_DEFAULT_SHFL_WIDTH</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_down" title="Link to this definition">¶</a></dt>
+<dd><p>Shift <code class="docutils literal notranslate"><span class="pre">value</span></code> down by <code class="docutils literal notranslate"><span class="pre">delta</span></code> lanes (<code class="docutils literal notranslate"><span class="pre">__shfl_down_sync</span></code> on CUDA,
+<code class="docutils literal notranslate"><span class="pre">__shfl_down</span></code> on HIP).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>) – Optional[int, PrimExpr]
-The value to shuffle</p></li>
-<li><p><strong>offset</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
+<li><p><strong>delta</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
+<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1418,14 +1445,16 @@ The value to shuffle</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.shfl_up">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_up" title="Link to this definition">¶</a></dt>
-<dd><p>Perform a shuffle operation with up offset.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_DEFAULT_SHFL_WIDTH</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_up" title="Link to this definition">¶</a></dt>
+<dd><p>Shift <code class="docutils literal notranslate"><span class="pre">value</span></code> up by <code class="docutils literal notranslate"><span class="pre">delta</span></code> lanes (<code class="docutils literal notranslate"><span class="pre">__shfl_up_sync</span></code> on CUDA,
+<code class="docutils literal notranslate"><span class="pre">__shfl_up</span></code> on HIP).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>) – Optional[int, PrimExpr]
-The value to shuffle</p></li>
-<li><p><strong>offset</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
+<li><p><strong>delta</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
+<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1458,16 +1487,203 @@ The value to shuffle</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.shfl_sync">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">srcLane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_sync" title="Link to this definition">¶</a></dt>
-<dd><p>Receives data from a thread in the same warp.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">shfl_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">srcLane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_DEFAULT_SHFL_WIDTH</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.shfl_sync" title="Link to this definition">¶</a></dt>
+<dd><p>Broadcast <code class="docutils literal notranslate"><span class="pre">value</span></code> from <code class="docutils literal notranslate"><span class="pre">srcLane</span></code> to all lanes in the subgroup of
+<code class="docutils literal notranslate"><span class="pre">width</span></code> lanes (<code class="docutils literal notranslate"><span class="pre">__shfl_sync</span></code> on CUDA, <code class="docutils literal notranslate"><span class="pre">__shfl</span></code> on HIP — mask ignored
+on HIP).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mask</strong> (<em>int</em>)</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
 <li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>srcLane</strong> (<em>int</em>)</p></li>
-<li><p><strong>width</strong> (<em>int</em>)</p></li>
+<li><p><strong>srcLane</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.any_sync">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">any_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.any_sync" title="Link to this definition">¶</a></dt>
+<dd><p>Non-zero if ANY active lane in <code class="docutils literal notranslate"><span class="pre">mask</span></code> has a non-zero <code class="docutils literal notranslate"><span class="pre">predicate</span></code>.</p>
+<p>Lowers to <code class="docutils literal notranslate"><span class="pre">__any_sync(mask,</span> <span class="pre">predicate)</span></code> on CUDA and <code class="docutils literal notranslate"><span class="pre">__any(predicate)</span></code>
+on HIP (the mask is ignored on HIP because the full wavefront is always
+convergent).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Warp lane mask (e.g. <code class="docutils literal notranslate"><span class="pre">0xFFFFFFFF</span></code> for all 32 lanes).</p></li>
+<li><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Integer condition to test.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Non-zero if any thread in the mask has a non-zero predicate.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int32</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.all_sync">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">all_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.all_sync" title="Link to this definition">¶</a></dt>
+<dd><p>Non-zero only if ALL active lanes in <code class="docutils literal notranslate"><span class="pre">mask</span></code> have a non-zero predicate.</p>
+<p>Lowers to <code class="docutils literal notranslate"><span class="pre">__all_sync(mask,</span> <span class="pre">predicate)</span></code> on CUDA and <code class="docutils literal notranslate"><span class="pre">__all(predicate)</span></code>
+on HIP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Warp lane mask (e.g. <code class="docutils literal notranslate"><span class="pre">0xFFFFFFFF</span></code> for all 32 lanes).</p></li>
+<li><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Integer condition to test.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Non-zero if all threads in the mask have a non-zero predicate.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int32</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.ballot_sync">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ballot_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ballot_sync" title="Link to this definition">¶</a></dt>
+<dd><p>Return a <code class="docutils literal notranslate"><span class="pre">uint64</span></code> bitmask of lanes in <code class="docutils literal notranslate"><span class="pre">mask</span></code> whose predicate is set.</p>
+<p>CUDA: <code class="docutils literal notranslate"><span class="pre">__ballot_sync(mask,</span> <span class="pre">predicate)</span></code> returns <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code>; codegen
+zero-extends it to <code class="docutils literal notranslate"><span class="pre">uint64</span></code> (upper 32 bits always zero for 32-wide warps).
+HIP: <code class="docutils literal notranslate"><span class="pre">__ballot(predicate)</span></code> returns <code class="docutils literal notranslate"><span class="pre">uint64</span></code> natively, covering all
+64 wavefront lanes. The mask argument is ignored on HIP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bitmask with bit N set if lane N’s predicate is non-zero.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>uint64</p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.ballot">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ballot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ballot" title="Link to this definition">¶</a></dt>
+<dd><p>Full-warp / full-wavefront ballot. Equivalent to
+<code class="docutils literal notranslate"><span class="pre">ballot_sync(0xFFFFFFFF,</span> <span class="pre">predicate)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bitmask with bit N set if lane N’s predicate is non-zero.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>uint64</p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.activemask">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">activemask</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.activemask" title="Link to this definition">¶</a></dt>
+<dd><p>Return a <code class="docutils literal notranslate"><span class="pre">uint64</span></code> bitmask of currently active (non-exited) lanes.</p>
+<p>Lowers to <code class="docutils literal notranslate"><span class="pre">__activemask()</span></code> (zero-extended to <code class="docutils literal notranslate"><span class="pre">uint64</span></code>) on CUDA and
+<code class="docutils literal notranslate"><span class="pre">__ballot(1)</span></code> on HIP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.syncthreads_count">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">syncthreads_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.syncthreads_count" title="Link to this definition">¶</a></dt>
+<dd><p>Block barrier that returns the number of threads whose <code class="docutils literal notranslate"><span class="pre">predicate</span></code>
+evaluates to non-zero (<code class="docutils literal notranslate"><span class="pre">__syncthreads_count</span></code> on CUDA and HIP).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.syncthreads_and">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">syncthreads_and</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.syncthreads_and" title="Link to this definition">¶</a></dt>
+<dd><p>Block barrier that returns non-zero only if ALL threads have a non-zero
+<code class="docutils literal notranslate"><span class="pre">predicate</span></code> (<code class="docutils literal notranslate"><span class="pre">__syncthreads_and</span></code> on CUDA and HIP).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.syncthreads_or">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">syncthreads_or</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.syncthreads_or" title="Link to this definition">¶</a></dt>
+<dd><p>Block barrier that returns non-zero if ANY thread has a non-zero
+<code class="docutils literal notranslate"><span class="pre">predicate</span></code> (<code class="docutils literal notranslate"><span class="pre">__syncthreads_or</span></code> on CUDA and HIP).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.match_any_sync">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">match_any_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.match_any_sync" title="Link to this definition">¶</a></dt>
+<dd><p>Return a <code class="docutils literal notranslate"><span class="pre">uint32</span></code> bitmask of lanes in <code class="docutils literal notranslate"><span class="pre">mask</span></code> whose <code class="docutils literal notranslate"><span class="pre">value</span></code> equals
+the calling lane’s value. Lowers to <code class="docutils literal notranslate"><span class="pre">__match_any_sync</span></code> on CUDA
+(compute capability &gt;= 7.0). Not supported on HIP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.match_all_sync">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">match_all_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.match_all_sync" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">mask</span></code> if all lanes in <code class="docutils literal notranslate"><span class="pre">mask</span></code> agree on <code class="docutils literal notranslate"><span class="pre">value</span></code>, else 0.</p>
+<p>Lowers to <code class="docutils literal notranslate"><span class="pre">__match_all_sync</span></code> on CUDA (compute capability &gt;= 7.0); the
+trailing <code class="docutils literal notranslate"><span class="pre">int*</span></code> predicate output is hidden in codegen and discarded.
+Callers can reconstruct the predicate as <code class="docutils literal notranslate"><span class="pre">result</span> <span class="pre">!=</span> <span class="pre">0</span></code>. Not supported
+on HIP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1940,6 +2156,16 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <li><a class="reference internal" href="#tilelang.language.builtin.sync_threads"><code class="docutils literal notranslate"><span class="pre">sync_threads()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.sync_warp"><code class="docutils literal notranslate"><span class="pre">sync_warp()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.shfl_sync"><code class="docutils literal notranslate"><span class="pre">shfl_sync()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.any_sync"><code class="docutils literal notranslate"><span class="pre">any_sync()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.all_sync"><code class="docutils literal notranslate"><span class="pre">all_sync()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.ballot_sync"><code class="docutils literal notranslate"><span class="pre">ballot_sync()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.ballot"><code class="docutils literal notranslate"><span class="pre">ballot()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.activemask"><code class="docutils literal notranslate"><span class="pre">activemask()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.syncthreads_count"><code class="docutils literal notranslate"><span class="pre">syncthreads_count()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.syncthreads_and"><code class="docutils literal notranslate"><span class="pre">syncthreads_and()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.syncthreads_or"><code class="docutils literal notranslate"><span class="pre">syncthreads_or()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.match_any_sync"><code class="docutils literal notranslate"><span class="pre">match_any_sync()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.match_all_sync"><code class="docutils literal notranslate"><span class="pre">match_all_sync()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.sync_global"><code class="docutils literal notranslate"><span class="pre">sync_global()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.sync_grid"><code class="docutils literal notranslate"><span class="pre">sync_grid()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.initialize_wgmma_descriptor"><code class="docutils literal notranslate"><span class="pre">initialize_wgmma_descriptor()</span></code></a></li>
