@@ -528,19 +528,19 @@ Module Contents
                     The memory barrier to arrive at
 
 
-.. py:function:: shfl_xor(mask, value, delta, width = _DEFAULT_SHFL_WIDTH)
+.. py:function:: shfl_xor(value, delta, width = _DEFAULT_SHFL_WIDTH, mask = _FULL_WARP_MASK)
 
    XOR-swap ``value`` across lanes (``__shfl_xor_sync`` on CUDA,
    ``__shfl_xor`` on HIP — mask ignored on HIP).
 
 
-.. py:function:: shfl_down(mask, value, delta, width = _DEFAULT_SHFL_WIDTH)
+.. py:function:: shfl_down(value, delta, width = _DEFAULT_SHFL_WIDTH, mask = _FULL_WARP_MASK)
 
    Shift ``value`` down by ``delta`` lanes (``__shfl_down_sync`` on CUDA,
    ``__shfl_down`` on HIP).
 
 
-.. py:function:: shfl_up(mask, value, delta, width = _DEFAULT_SHFL_WIDTH)
+.. py:function:: shfl_up(value, delta, width = _DEFAULT_SHFL_WIDTH, mask = _FULL_WARP_MASK)
 
    Shift ``value`` up by ``delta`` lanes (``__shfl_up_sync`` on CUDA,
    ``__shfl_up`` on HIP).
@@ -556,14 +556,14 @@ Module Contents
    Synchronize all threads in a warp.
 
 
-.. py:function:: shfl_sync(mask, value, srcLane, width = _DEFAULT_SHFL_WIDTH)
+.. py:function:: shfl_sync(value, srcLane, width = _DEFAULT_SHFL_WIDTH, mask = _FULL_WARP_MASK)
 
    Broadcast ``value`` from ``srcLane`` to all lanes in the subgroup of
    ``width`` lanes (``__shfl_sync`` on CUDA, ``__shfl`` on HIP — mask ignored
    on HIP).
 
 
-.. py:function:: any_sync(mask, predicate)
+.. py:function:: any_sync(predicate, mask = _FULL_WARP_MASK)
 
    Non-zero if ANY active lane in ``mask`` has a non-zero ``predicate``.
 
@@ -571,28 +571,28 @@ Module Contents
    on HIP (the mask is ignored on HIP because the full wavefront is always
    convergent).
 
-   :param mask: Warp lane mask (e.g. ``0xFFFFFFFF`` for all 32 lanes).
    :param predicate: Integer condition to test.
+   :param mask: Warp lane mask (defaults to ``0xFFFFFFFF``, i.e. all 32 lanes).
 
    :returns: Non-zero if any thread in the mask has a non-zero predicate.
    :rtype: int32
 
 
-.. py:function:: all_sync(mask, predicate)
+.. py:function:: all_sync(predicate, mask = _FULL_WARP_MASK)
 
    Non-zero only if ALL active lanes in ``mask`` have a non-zero predicate.
 
    Lowers to ``__all_sync(mask, predicate)`` on CUDA and ``__all(predicate)``
    on HIP.
 
-   :param mask: Warp lane mask (e.g. ``0xFFFFFFFF`` for all 32 lanes).
    :param predicate: Integer condition to test.
+   :param mask: Warp lane mask (defaults to ``0xFFFFFFFF``, i.e. all 32 lanes).
 
    :returns: Non-zero if all threads in the mask have a non-zero predicate.
    :rtype: int32
 
 
-.. py:function:: ballot_sync(mask, predicate)
+.. py:function:: ballot_sync(predicate, mask = _FULL_WARP_MASK)
 
    Return a ``uint64`` bitmask of lanes in ``mask`` whose predicate is set.
 
@@ -608,7 +608,7 @@ Module Contents
 .. py:function:: ballot(predicate)
 
    Full-warp / full-wavefront ballot. Equivalent to
-   ``ballot_sync(0xFFFFFFFF, predicate)``.
+   ``ballot_sync(predicate)`` (i.e. with the default full warp mask).
 
    :returns: Bitmask with bit N set if lane N's predicate is non-zero.
    :rtype: uint64
@@ -640,14 +640,14 @@ Module Contents
    ``predicate`` (``__syncthreads_or`` on CUDA and HIP).
 
 
-.. py:function:: match_any_sync(mask, value)
+.. py:function:: match_any_sync(value, mask = _FULL_WARP_MASK)
 
    Return a ``uint32`` bitmask of lanes in ``mask`` whose ``value`` equals
    the calling lane's value. Lowers to ``__match_any_sync`` on CUDA
    (compute capability >= 7.0). Not supported on HIP.
 
 
-.. py:function:: match_all_sync(mask, value)
+.. py:function:: match_all_sync(value, mask = _FULL_WARP_MASK)
 
    Return ``mask`` if all lanes in ``mask`` agree on ``value``, else 0.
 
