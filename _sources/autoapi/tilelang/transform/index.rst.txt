@@ -51,6 +51,7 @@ Functions
    tilelang.transform.AnnotateWarpGroupRegAlloc
    tilelang.transform.FuseMBarrierArriveExpectTx
    tilelang.transform.InjectFenceProxy
+   tilelang.transform.InjectTcgen05Fence
    tilelang.transform.LegalizeVectorizedLoop
    tilelang.transform.LegalizeSafeMemoryAccess
    tilelang.transform.LowerAccessPtr
@@ -287,6 +288,21 @@ Package Contents
 .. py:function:: InjectFenceProxy()
 
    InjectFenceProxy
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: InjectTcgen05Fence()
+
+   Inject tcgen05.fence::before_thread_sync / after_thread_sync at
+   conservative TCGEN05/TMEM synchronization boundaries on Blackwell
+   (SM100+) targets.
+
+   The current pass wraps CTA-wide shared-memory syncs and also inserts
+   fences around linear mbarrier wait/use and use/arrive handoff patterns.
+   It is intentionally conservative and does not try to infer arbitrary
+   barrier protocols.
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
