@@ -24,6 +24,7 @@ Functions
 .. autoapisummary::
 
    tilelang.language.kernel.Kernel
+   tilelang.language.kernel.CUDASourceCodeKernel
    tilelang.language.kernel.get_thread_binding
    tilelang.language.kernel.get_thread_bindings
    tilelang.language.kernel.get_block_binding
@@ -210,10 +211,6 @@ Module Contents
                         When specified, the kernel will be launched using cudaLaunchKernelEx
                         with cudaLaunchAttributeClusterDimension.
    :type cluster_dims: int | tuple[int, int, int] | list[int] | None
-   :param is_cpu: Whether the kernel is running on CPU.
-                  Thus we will not bind threadIdx.x, threadIdx.y, threadIdx.z.
-                  and blockIdx.x, blockIdx.y, blockIdx.z.
-   :type is_cpu: bool
    :param prelude: The import c code of the kernel,
                    will be injected before the generated kernel code.
    :type prelude: str
@@ -245,6 +242,38 @@ Module Contents
 
        with T.Kernel(loop_extent, is_cpu=True) as (i,):
            ...
+
+
+.. py:function:: CUDASourceCodeKernel(*blocks, threads = None, source_code_or_path, entry_name = 'main_kernel', cluster_dims = None, prelude = None)
+
+   Launch a kernel from CUDA source code or a CUDA source file.
+
+   The code must follows the following rules:
+   1. The kernel source must be a valid CUDA kernel which can be correctly compiled under TileLang's context.
+   2. The kernel source must either contains only one `__global__` function as an entry, or have a `__global__` entry function named `main_kernel`.
+
+   :param source_code_or_path: Inline CUDA source code, or a path to a CUDA source file.
+                               If the argument resolves to an existing file, the file contents are
+                               loaded. Otherwise it is treated as inline CUDA source code.
+   :type source_code_or_path: str | os.PathLike[str]
+   :param blocks: A list of extent, can be 1-3 dimension, representing gridDim.(x|y|z)
+   :type blocks: int
+   :param entry_name: Optional name of the `__global__` CUDA entry function inside the
+                      provided source. When specified, TileLang launches that external CUDA
+                      entry directly.
+   :type entry_name: str | None
+   :param threads: A integer representing blockDim.x
+                   Or a list of integers representing blockDim.(x|y|z)
+                   if the value is -1, we skip the threadIdx.x binding.
+   :type threads: int
+   :param cluster_dims: The cluster dimensions for SM90+ cluster launch.
+                        For example, use 2 or (2, 1, 1) to create 2-CTA clusters.
+                        When specified, the kernel will be launched using cudaLaunchKernelEx
+                        with cudaLaunchAttributeClusterDimension.
+   :type cluster_dims: int | tuple[int, int, int] | list[int] | None
+   :param prelude: The import c code of the kernel,
+                   will be injected before the generated kernel code.
+   :type prelude: str
 
 
 .. py:function:: get_thread_binding(dim = 0)

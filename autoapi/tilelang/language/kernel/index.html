@@ -586,28 +586,31 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.Kernel" title="tilelang.language.kernel.Kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Kernel</span></code></a>(*blocks[, threads, cluster_dims, is_cpu, prelude])</p></td>
 <td><p>Tools to quickly construct a GPU kernel launch frame.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_thread_binding" title="tilelang.language.kernel.get_thread_binding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thread_binding</span></code></a>([dim])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.CUDASourceCodeKernel" title="tilelang.language.kernel.CUDASourceCodeKernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CUDASourceCodeKernel</span></code></a>(*blocks[, threads, entry_name, ...])</p></td>
+<td><p>Launch a kernel from CUDA source code or a CUDA source file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_thread_binding" title="tilelang.language.kernel.get_thread_binding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thread_binding</span></code></a>([dim])</p></td>
 <td><p>Returns the thread binding for the given dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_thread_bindings" title="tilelang.language.kernel.get_thread_bindings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thread_bindings</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_thread_bindings" title="tilelang.language.kernel.get_thread_bindings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thread_bindings</span></code></a>()</p></td>
 <td><p>Returns all three thread bindings.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_block_binding" title="tilelang.language.kernel.get_block_binding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_block_binding</span></code></a>([dim])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_block_binding" title="tilelang.language.kernel.get_block_binding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_block_binding</span></code></a>([dim])</p></td>
 <td><p>Returns the block binding for the given dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_block_bindings" title="tilelang.language.kernel.get_block_bindings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_block_bindings</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_block_bindings" title="tilelang.language.kernel.get_block_bindings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_block_bindings</span></code></a>()</p></td>
 <td><p>Returns all three block bindings.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_thread_extent" title="tilelang.language.kernel.get_thread_extent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thread_extent</span></code></a>([dim])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_thread_extent" title="tilelang.language.kernel.get_thread_extent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thread_extent</span></code></a>([dim])</p></td>
 <td><p>Returns the thread extent for the given dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_thread_extents" title="tilelang.language.kernel.get_thread_extents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thread_extents</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_thread_extents" title="tilelang.language.kernel.get_thread_extents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thread_extents</span></code></a>()</p></td>
 <td><p>Returns all three thread extents.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_block_extent" title="tilelang.language.kernel.get_block_extent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_block_extent</span></code></a>([dim])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_block_extent" title="tilelang.language.kernel.get_block_extent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_block_extent</span></code></a>([dim])</p></td>
 <td><p>Returns the block extent for the given dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_block_extents" title="tilelang.language.kernel.get_block_extents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_block_extents</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.get_block_extents" title="tilelang.language.kernel.get_block_extents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_block_extents</span></code></a>()</p></td>
 <td><p>Returns all three block extents.</p></td>
 </tr>
 </tbody>
@@ -866,11 +869,9 @@ if the value is -1, we skip the threadIdx.x binding.</p></li>
 For example, use 2 or (2, 1, 1) to create 2-CTA clusters.
 When specified, the kernel will be launched using cudaLaunchKernelEx
 with cudaLaunchAttributeClusterDimension.</p></li>
-<li><p><strong>is_cpu</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether the kernel is running on CPU.
-Thus we will not bind threadIdx.x, threadIdx.y, threadIdx.z.
-and blockIdx.x, blockIdx.y, blockIdx.z.</p></li>
 <li><p><strong>prelude</strong> (<em>str</em>) – The import c code of the kernel,
 will be injected before the generated kernel code.</p></li>
+<li><p><strong>is_cpu</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -898,6 +899,40 @@ will be injected before the generated kernel code.</p></li>
     <span class="o">...</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.kernel.CUDASourceCodeKernel">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">CUDASourceCodeKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">blocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_code_or_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main_kernel'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prelude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.kernel.CUDASourceCodeKernel" title="Link to this definition">¶</a></dt>
+<dd><p>Launch a kernel from CUDA source code or a CUDA source file.</p>
+<p>The code must follows the following rules:
+1. The kernel source must be a valid CUDA kernel which can be correctly compiled under TileLang’s context.
+2. The kernel source must either contains only one <cite>__global__</cite> function as an entry, or have a <cite>__global__</cite> entry function named <cite>main_kernel</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_code_or_path</strong> (<em>str</em><em> | </em><em>os.PathLike</em><em>[</em><em>str</em><em>]</em>) – Inline CUDA source code, or a path to a CUDA source file.
+If the argument resolves to an existing file, the file contents are
+loaded. Otherwise it is treated as inline CUDA source code.</p></li>
+<li><p><strong>blocks</strong> (<em>int</em>) – A list of extent, can be 1-3 dimension, representing gridDim.(x|y|z)</p></li>
+<li><p><strong>entry_name</strong> (<em>str</em><em> | </em><em>None</em>) – Optional name of the <cite>__global__</cite> CUDA entry function inside the
+provided source. When specified, TileLang launches that external CUDA
+entry directly.</p></li>
+<li><p><strong>threads</strong> (<em>int</em>) – A integer representing blockDim.x
+Or a list of integers representing blockDim.(x|y|z)
+if the value is -1, we skip the threadIdx.x binding.</p></li>
+<li><p><strong>cluster_dims</strong> (<em>int</em><em> | </em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>] </em><em>| </em><em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>) – The cluster dimensions for SM90+ cluster launch.
+For example, use 2 or (2, 1, 1) to create 2-CTA clusters.
+When specified, the kernel will be launched using cudaLaunchKernelEx
+with cudaLaunchAttributeClusterDimension.</p></li>
+<li><p><strong>prelude</strong> (<em>str</em>) – The import c code of the kernel,
+will be injected before the generated kernel code.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1090,6 +1125,7 @@ will be injected before the generated kernel code.</p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.language.kernel.Kernel"><code class="docutils literal notranslate"><span class="pre">Kernel()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.kernel.CUDASourceCodeKernel"><code class="docutils literal notranslate"><span class="pre">CUDASourceCodeKernel()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.kernel.get_thread_binding"><code class="docutils literal notranslate"><span class="pre">get_thread_binding()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.kernel.get_thread_bindings"><code class="docutils literal notranslate"><span class="pre">get_thread_bindings()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.kernel.get_block_binding"><code class="docutils literal notranslate"><span class="pre">get_block_binding()</span></code></a></li>
