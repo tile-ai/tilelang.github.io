@@ -582,6 +582,24 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.cluster.block_rank_in_cluster" title="tilelang.language.cluster.block_rank_in_cluster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">block_rank_in_cluster</span></code></a>()</p></td>
 <td><p>Return the 1-D rank of the calling CTA within its cluster (%%cluster_ctarank).</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.cluster.clc_try_cancel" title="tilelang.language.cluster.clc_try_cancel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clc_try_cancel</span></code></a>(result, mbarrier)</p></td>
+<td><p>Issue a single-CTA cluster launch control query.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.cluster.clc_try_cancel_multicast" title="tilelang.language.cluster.clc_try_cancel_multicast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clc_try_cancel_multicast</span></code></a>(result, mbarrier)</p></td>
+<td><p>Issue a cluster-wide multicast cluster launch control query.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.cluster.clc_is_canceled" title="tilelang.language.cluster.clc_is_canceled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clc_is_canceled</span></code></a>(result)</p></td>
+<td><p>Return 1 when the CLC query successfully canceled a future launch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.cluster.clc_get_first_ctaid_x" title="tilelang.language.cluster.clc_get_first_ctaid_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clc_get_first_ctaid_x</span></code></a>(result)</p></td>
+<td><p>Return the x coordinate of the first CTA in a successful CLC response.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.cluster.clc_get_first_ctaid_y" title="tilelang.language.cluster.clc_get_first_ctaid_y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clc_get_first_ctaid_y</span></code></a>(result)</p></td>
+<td><p>Return the y coordinate of the first CTA in a successful CLC response.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.cluster.clc_get_first_ctaid_z" title="tilelang.language.cluster.clc_get_first_ctaid_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clc_get_first_ctaid_z</span></code></a>(result)</p></td>
+<td><p>Return the z coordinate of the first CTA in a successful CLC response.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -636,6 +654,72 @@
 <dt class="sig sig-object py" id="tilelang.language.cluster.block_rank_in_cluster">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.cluster.</span></span><span class="sig-name descname"><span class="pre">block_rank_in_cluster</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.cluster.block_rank_in_cluster" title="Link to this definition">¶</a></dt>
 <dd><p>Return the 1-D rank of the calling CTA within its cluster (%%cluster_ctarank).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.cluster.clc_try_cancel">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.cluster.</span></span><span class="sig-name descname"><span class="pre">clc_try_cancel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.cluster.clc_try_cancel" title="Link to this definition">¶</a></dt>
+<dd><p>Issue a single-CTA cluster launch control query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.cluster.clc_try_cancel_multicast">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.cluster.</span></span><span class="sig-name descname"><span class="pre">clc_try_cancel_multicast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbarrier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.cluster.clc_try_cancel_multicast" title="Link to this definition">¶</a></dt>
+<dd><p>Issue a cluster-wide multicast cluster launch control query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.cluster.clc_is_canceled">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.cluster.</span></span><span class="sig-name descname"><span class="pre">clc_is_canceled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.cluster.clc_is_canceled" title="Link to this definition">¶</a></dt>
+<dd><p>Return 1 when the CLC query successfully canceled a future launch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.cluster.clc_get_first_ctaid_x">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.cluster.</span></span><span class="sig-name descname"><span class="pre">clc_get_first_ctaid_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.cluster.clc_get_first_ctaid_x" title="Link to this definition">¶</a></dt>
+<dd><p>Return the x coordinate of the first CTA in a successful CLC response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.cluster.clc_get_first_ctaid_y">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.cluster.</span></span><span class="sig-name descname"><span class="pre">clc_get_first_ctaid_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.cluster.clc_get_first_ctaid_y" title="Link to this definition">¶</a></dt>
+<dd><p>Return the y coordinate of the first CTA in a successful CLC response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.cluster.clc_get_first_ctaid_z">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.cluster.</span></span><span class="sig-name descname"><span class="pre">clc_get_first_ctaid_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.cluster.clc_get_first_ctaid_z" title="Link to this definition">¶</a></dt>
+<dd><p>Return the z coordinate of the first CTA in a successful CLC response.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tvm.tir.PrimExpr</p>
@@ -709,6 +793,12 @@
 <li><a class="reference internal" href="#tilelang.language.cluster.cluster_wait"><code class="docutils literal notranslate"><span class="pre">cluster_wait()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.cluster.cluster_sync"><code class="docutils literal notranslate"><span class="pre">cluster_sync()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.cluster.block_rank_in_cluster"><code class="docutils literal notranslate"><span class="pre">block_rank_in_cluster()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.cluster.clc_try_cancel"><code class="docutils literal notranslate"><span class="pre">clc_try_cancel()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.cluster.clc_try_cancel_multicast"><code class="docutils literal notranslate"><span class="pre">clc_try_cancel_multicast()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.cluster.clc_is_canceled"><code class="docutils literal notranslate"><span class="pre">clc_is_canceled()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.cluster.clc_get_first_ctaid_x"><code class="docutils literal notranslate"><span class="pre">clc_get_first_ctaid_x()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.cluster.clc_get_first_ctaid_y"><code class="docutils literal notranslate"><span class="pre">clc_get_first_ctaid_y()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.cluster.clc_get_first_ctaid_z"><code class="docutils literal notranslate"><span class="pre">clc_get_first_ctaid_z()</span></code></a></li>
 </ul>
 </li>
 </ul>
