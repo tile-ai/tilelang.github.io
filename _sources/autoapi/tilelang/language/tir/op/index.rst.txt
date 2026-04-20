@@ -962,7 +962,7 @@ Module Contents
    :rtype: PrimExpr
 
 
-.. py:function:: ptx_cp_async(dst_access_ptr, src_access_ptr, bytes, predicate=None)
+.. py:function:: ptx_cp_async(dst_access_ptr, src_access_ptr, num_elems, predicate=None)
 
    TVM intrinsic for ptx async copy from global to shared memory using cp.async
    https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cp-async
@@ -973,8 +973,12 @@ Module Contents
    :param src_access_ptr: The source (global memory) access pointer created by tvm_access_ptr.
                           Should include pointer, offset, extent, and read access flag (rw_mask=1).
    :type src_access_ptr: PrimExpr
-   :param bytes: The number of bytes to copy (must be 4, 8, or 16).
-   :type bytes: int or PrimExpr
+   :param num_elems: The number of logical elements to copy.
+
+                     For TileLang's ``tl.ptx_cp_async`` frontend op, the final PTX byte width
+                     is derived later from ``num_elems * element_bits(access_ptr)`` and must
+                     eventually land on a legal ``cp.async`` width of 4, 8, or 16 bytes.
+   :type num_elems: int or PrimExpr
    :param predicate: Optional predicate condition for conditional cp.async. When provided, the copy
                      will only be performed if the predicate evaluates to true. Otherwise, the
                      destination will be filled with zeros (default behavior of cp.async).
@@ -985,11 +989,11 @@ Module Contents
 
    .. rubric:: Examples
 
-   >>> # Copy 16 bytes from global to shared memory
+   >>> # Copy 16 uint8 elements (= 16 bytes) from global to shared memory
    >>> T.ptx_cp_async(
    ...     T.tvm_access_ptr(T.type_annotation(T.uint8), A_shared.data, 0, 16, 2),  # dst
    ...     T.tvm_access_ptr(T.type_annotation(T.uint8), B_global.data, 0, 16, 1),  # src
-   ...     16  # bytes
+   ...     16  # num_elems
    ... )
    >>>
    >>> # Predicated cp.async (only copy if condition is true)

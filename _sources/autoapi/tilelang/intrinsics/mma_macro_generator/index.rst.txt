@@ -10,6 +10,7 @@ Attributes
 .. autoapisummary::
 
    tilelang.intrinsics.mma_macro_generator.lift
+   tilelang.intrinsics.mma_macro_generator.INT4_TENSORCORE_MMA_SPEC
 
 
 Classes
@@ -17,16 +18,145 @@ Classes
 
 .. autoapisummary::
 
+   tilelang.intrinsics.mma_macro_generator.SubByteTensorCoreMMAOp
+   tilelang.intrinsics.mma_macro_generator.SubByteTensorCoreMMASpec
    tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitter
    tilelang.intrinsics.mma_macro_generator.TensorCoreIntrinEmitterWithLadderTransform
-   tilelang.intrinsics.mma_macro_generator.INT4TensorCoreIntrinEmitter
-   tilelang.intrinsics.mma_macro_generator.INT4TensorCoreIntrinEmitterWithLadderTransform
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.intrinsics.mma_macro_generator.get_subbyte_tensorcore_mma_spec
+   tilelang.intrinsics.mma_macro_generator.infer_subbyte_tensorcore_mma_spec
 
 
 Module Contents
 ---------------
 
 .. py:data:: lift
+
+.. py:class:: SubByteTensorCoreMMAOp
+
+   .. py:attribute:: a_offset_num
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: a_offset_den
+      :type:  int
+      :value: 1
+
+
+
+   .. py:attribute:: b_offset_num
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: b_offset_den
+      :type:  int
+      :value: 1
+
+
+
+   .. py:attribute:: c_offset_num
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: c_offset_den
+      :type:  int
+      :value: 1
+
+
+
+   .. py:method:: resolve_offsets(local_size_a, local_size_b, local_size_out)
+
+
+.. py:class:: SubByteTensorCoreMMASpec
+
+   .. py:attribute:: logical_a_dtype
+      :type:  str
+
+
+   .. py:attribute:: logical_b_dtype
+      :type:  str
+
+
+   .. py:attribute:: logical_a_bits
+      :type:  int
+
+
+   .. py:attribute:: logical_b_bits
+      :type:  int
+
+
+   .. py:attribute:: accum_dtype
+      :type:  str
+
+
+   .. py:attribute:: mma_prefix
+      :type:  str
+
+
+   .. py:attribute:: mma_a_dtype_abbrv
+      :type:  str
+
+
+   .. py:attribute:: mma_b_dtype_abbrv
+      :type:  str
+
+
+   .. py:attribute:: mma_ops
+      :type:  tuple[SubByteTensorCoreMMAOp, Ellipsis]
+
+
+   .. py:method:: __post_init__()
+
+
+   .. py:property:: storage_a_dtype
+      :type: str
+
+
+
+   .. py:property:: storage_b_dtype
+      :type: str
+
+
+
+   .. py:property:: a_pack_factor
+      :type: int
+
+
+
+   .. py:property:: b_pack_factor
+      :type: int
+
+
+
+   .. py:method:: get_pack_factor(matrix)
+
+
+   .. py:method:: get_storage_dtype(matrix)
+
+
+   .. py:method:: get_logical_dtype(matrix)
+
+
+   .. py:method:: pack_extent(extent, matrix)
+
+
+.. py:data:: INT4_TENSORCORE_MMA_SPEC
+
+.. py:function:: get_subbyte_tensorcore_mma_spec(dtype)
+
+.. py:function:: infer_subbyte_tensorcore_mma_spec(a_dtype, b_dtype)
 
 .. py:class:: TensorCoreIntrinEmitter(a_dtype = T.float16, b_dtype = T.float16, accum_dtype = T.float16, a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, thread_var = None)
 
@@ -85,6 +215,11 @@ Module Contents
 
    .. py:attribute:: b_transposed
       :value: False
+
+
+
+   .. py:attribute:: subbyte_mma_spec
+      :value: None
 
 
 
@@ -206,29 +341,6 @@ Module Contents
 
 
    .. py:method:: ldmatrix_b(B_local_buf, B_shared_buf, ki, rk=0)
-
-
-   .. py:method:: mma(A_local_buf, B_local_buf, C_local_buf)
-
-
-.. py:class:: INT4TensorCoreIntrinEmitter(a_dtype = T.float16, b_dtype = T.float16, accum_dtype = T.float16, a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, thread_var = None)
-
-   Bases: :py:obj:`TensorCoreIntrinEmitter`
-
-
-   To eliminate Python syntax within TIR Macro.
-
-
-   .. py:method:: mma(A_local_buf, B_local_buf, C_local_buf)
-
-
-.. py:class:: INT4TensorCoreIntrinEmitterWithLadderTransform(a_dtype = T.float16, b_dtype = T.float16, accum_dtype = T.float16, a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, transform_kind_a = 0, transform_kind_b = 0)
-
-   Bases: :py:obj:`TensorCoreIntrinEmitterWithLadderTransform`
-
-
-   To eliminate Python syntax within TIR Macro.
-   With Ladder Transform Plugin.
 
 
    .. py:method:: mma(A_local_buf, B_local_buf, C_local_buf)

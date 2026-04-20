@@ -726,7 +726,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_ldmatrix" title="tilelang.language.tir.op.ptx_ldmatrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix</span></code></a>(dtype, trans, num, type, local_ptr, ...)</p></td>
 <td><p>TVM intrinsic for ptx load matrix from shared memory</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_cp_async" title="tilelang.language.tir.op.ptx_cp_async"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_cp_async</span></code></a>(dst_access_ptr, src_access_ptr, bytes[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_cp_async" title="tilelang.language.tir.op.ptx_cp_async"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_cp_async</span></code></a>(dst_access_ptr, src_access_ptr, num_elems)</p></td>
 <td><p>TVM intrinsic for ptx async copy from global to shared memory using cp.async</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_cp_async_bulk" title="tilelang.language.tir.op.ptx_cp_async_bulk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_cp_async_bulk</span></code></a>(dtype, shared_ptr, shared_offset, ...)</p></td>
@@ -2024,7 +2024,7 @@ Alternatively, use <cite>variant=”ws”</cite> (or “default”).
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.tir.op.ptx_cp_async">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_cp_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst_access_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_access_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_cp_async" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_cp_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst_access_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_access_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_elems</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_cp_async" title="Link to this definition">¶</a></dt>
 <dd><p>TVM intrinsic for ptx async copy from global to shared memory using cp.async
 <a class="reference external" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cp-async">https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cp-async</a></p>
 <dl class="field-list simple">
@@ -2034,7 +2034,11 @@ Alternatively, use <cite>variant=”ws”</cite> (or “default”).
 Should include pointer, offset, extent, and write access flag (rw_mask=2).</p></li>
 <li><p><strong>src_access_ptr</strong> (<em>PrimExpr</em>) – The source (global memory) access pointer created by tvm_access_ptr.
 Should include pointer, offset, extent, and read access flag (rw_mask=1).</p></li>
-<li><p><strong>bytes</strong> (<em>int</em><em> or </em><em>PrimExpr</em>) – The number of bytes to copy (must be 4, 8, or 16).</p></li>
+<li><p><strong>num_elems</strong> (<em>int</em><em> or </em><em>PrimExpr</em>) – <p>The number of logical elements to copy.</p>
+<p>For TileLang’s <code class="docutils literal notranslate"><span class="pre">tl.ptx_cp_async</span></code> frontend op, the final PTX byte width
+is derived later from <code class="docutils literal notranslate"><span class="pre">num_elems</span> <span class="pre">*</span> <span class="pre">element_bits(access_ptr)</span></code> and must
+eventually land on a legal <code class="docutils literal notranslate"><span class="pre">cp.async</span></code> width of 4, 8, or 16 bytes.</p>
+</p></li>
 <li><p><strong>predicate</strong> (<em>PrimExpr</em><em>, </em><em>optional</em>) – Optional predicate condition for conditional cp.async. When provided, the copy
 will only be performed if the predicate evaluates to true. Otherwise, the
 destination will be filled with zeros (default behavior of cp.async).</p></li>
@@ -2048,11 +2052,11 @@ destination will be filled with zeros (default behavior of cp.async).</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Copy 16 bytes from global to shared memory</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Copy 16 uint8 elements (= 16 bytes) from global to shared memory</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">ptx_cp_async</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">T</span><span class="o">.</span><span class="n">tvm_access_ptr</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">type_annotation</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span> <span class="n">A_shared</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>  <span class="c1"># dst</span>
 <span class="gp">... </span>    <span class="n">T</span><span class="o">.</span><span class="n">tvm_access_ptr</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">type_annotation</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span> <span class="n">B_global</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># src</span>
-<span class="gp">... </span>    <span class="mi">16</span>  <span class="c1"># bytes</span>
+<span class="gp">... </span>    <span class="mi">16</span>  <span class="c1"># num_elems</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Predicated cp.async (only copy if condition is true)</span>
