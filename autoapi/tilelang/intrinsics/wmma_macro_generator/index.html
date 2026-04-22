@@ -565,9 +565,19 @@
 <p>WMMA intrinsic emitter for AMD RDNA architectures (gfx11 / gfx12).</p>
 <p>Only supports the f16-&gt;f32, 16x16x16 variant with warp-size=32.</p>
 <dl class="simple">
-<dt>Thread-data mapping (per AMDGPU ISA):</dt><dd><p>A[16][K=16]: thread t holds A[t//2][(t%2)*8 : (t%2)*8+8]  (8 fp16 = 4 f32 per thread)
-B[K=16][16]: same mapping as A for the transposed dimension
-C/D[16][16]: thread t holds D[t//2][(t%2)*8 : (t%2)*8+8]  (8 f32 per thread)</p>
+<dt>Thread-data mapping (per AMDGPU ISA):</dt><dd><dl class="simple">
+<dt>gfx11:</dt><dd><ul class="simple">
+<li><p>A/B: duplicated across the two half-waves, so each logical input fragment
+is distributed over an effective wave size of 16 lanes.</p></li>
+<li><p>C/D: distributed over the full wave32 output layout.</p></li>
+</ul>
+</dd>
+<dt>gfx12:</dt><dd><ul class="simple">
+<li><p>A/B: distributed over the full wave32 input layout.</p></li>
+<li><p>C/D: distributed over the full wave32 output layout.</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 </dl>
 <section id="attributes">
@@ -588,7 +598,7 @@ C/D[16][16]: thread t holds D[t//2][(t%2)*8 : (t%2)*8+8]  (8 f32 per thread)</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter" title="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WMMAIntrinEmitter</span></code></a></p></td>
-<td><p>Intrinsic emitter for AMD RDNA WMMA (16×16×16, warp-size=32).</p></td>
+<td><p>Intrinsic emitter for AMD RDNA WMMA (16x16x16, warp-size=32).</p></td>
 </tr>
 </tbody>
 </table>
@@ -604,10 +614,10 @@ C/D[16][16]: thread t holds D[t//2][(t%2)*8 : (t%2)*8+8]  (8 f32 per thread)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">WMMAIntrinEmitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_row_warps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_col_warps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_row_tiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_col_tiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_pack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter" title="Link to this definition">¶</a></dt>
-<dd><p>Intrinsic emitter for AMD RDNA WMMA (16×16×16, warp-size=32).</p>
+<dd><p>Intrinsic emitter for AMD RDNA WMMA (16x16x16, warp-size=32).</p>
 <dl class="simple">
 <dt>Supports:</dt><dd><ul class="simple">
-<li><p>fp16 -&gt; fp32  (f32_16x16x16_f16_w32 / _gfx12)</p></li>
+<li><p>fp16 -&gt; fp32  (f32_16x16x16_f16_w32, with <cite>_gfx12</cite> codegen suffix on gfx12)</p></li>
 </ul>
 </dd>
 </dl>
@@ -716,6 +726,11 @@ C/D[16][16]: thread t holds D[t//2][(t%2)*8 : (t%2)*8+8]  (8 f32 per thread)</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.rdna_gen">
+<span class="sig-name descname"><span class="pre">rdna_gen</span></span><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.rdna_gen" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_x">
 <span class="sig-name descname"><span class="pre">micro_size_x</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_x" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -732,12 +747,12 @@ C/D[16][16]: thread t holds D[t//2][(t%2)*8 : (t%2)*8+8]  (8 f32 per thread)</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.local_size_a">
-<span class="sig-name descname"><span class="pre">local_size_a</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.local_size_a" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">local_size_a</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.local_size_a" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.local_size_b">
-<span class="sig-name descname"><span class="pre">local_size_b</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.local_size_b" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">local_size_b</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.local_size_b" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -758,6 +773,26 @@ C/D[16][16]: thread t holds D[t//2][(t%2)*8 : (t%2)*8+8]  (8 f32 per thread)</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.threads">
 <span class="sig-name descname"><span class="pre">threads</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.threads" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.a_fragment_forward_fn">
+<span class="sig-name descname"><span class="pre">a_fragment_forward_fn</span></span><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.a_fragment_forward_fn" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.b_fragment_forward_fn">
+<span class="sig-name descname"><span class="pre">b_fragment_forward_fn</span></span><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.b_fragment_forward_fn" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.fragment_replicate">
+<span class="sig-name descname"><span class="pre">fragment_replicate</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.fragment_replicate" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.store_index_map_fn">
+<span class="sig-name descname"><span class="pre">store_index_map_fn</span></span><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.store_index_map_fn" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -786,12 +821,9 @@ C/D[16][16]: thread t holds D[t//2][(t%2)*8 : (t%2)*8+8]  (8 f32 per thread)</p>
 <span class="sig-name descname"><span class="pre">get_ldmatrix_index_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.get_ldmatrix_index_map" title="Link to this definition">¶</a></dt>
 <dd><p>Return (forward, reverse) index maps for shared→local loading.</p>
 <dl class="simple">
-<dt>For WMMA gfx12:</dt><dd><ul class="simple">
-<li><p>A is stored row-major [M, K]. Thread t loads A[t%16][(t//16)*8+local].</p></li>
-<li><p>B (non-transposed) is stored row-major [K, N].
-Thread t loads B[t%16][(t//16)*8+local] (same shape/pattern as A).</p></li>
-<li><p>B (transposed) is stored [N, K].
-Thread t loads B_T[t%16][(t//16)*8+local] (N-row, K-col).</p></li>
+<dt>The actual layout functions are chosen during __init__ based on rdna_gen:</dt><dd><ul class="simple">
+<li><p>gfx11 uses half-wave duplicated A/B input layouts (32x16 naming).</p></li>
+<li><p>gfx12 uses full wave32 A/B input layouts (32x8 naming).</p></li>
 </ul>
 </dd>
 </dl>
@@ -960,6 +992,7 @@ The inverse map is (i, j) -&gt; (thread_id, local_id).</p>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.k_pack"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.k_pack</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.thread_var"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.thread_var</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.target"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.target</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.rdna_gen"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.rdna_gen</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_x"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.micro_size_x</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_y"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.micro_size_y</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_k"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.micro_size_k</span></code></a></li>
@@ -969,6 +1002,10 @@ The inverse map is (i, j) -&gt; (thread_id, local_id).</p>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.warp_rows"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.warp_rows</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.warp_cols"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.warp_cols</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.threads"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.threads</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.a_fragment_forward_fn"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.a_fragment_forward_fn</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.b_fragment_forward_fn"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.b_fragment_forward_fn</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.fragment_replicate"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.fragment_replicate</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.store_index_map_fn"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.store_index_map_fn</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.wmma_shape"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.wmma_shape</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.get_thread_binding"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.get_thread_binding()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.extract_thread_binding"><code class="docutils literal notranslate"><span class="pre">WMMAIntrinEmitter.extract_thread_binding()</span></code></a></li>

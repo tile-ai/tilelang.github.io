@@ -10,9 +10,13 @@ tilelang.intrinsics.wmma_macro_generator
    Only supports the f16->f32, 16x16x16 variant with warp-size=32.
 
    Thread-data mapping (per AMDGPU ISA):
-     A[16][K=16]: thread t holds A[t//2][(t%2)*8 : (t%2)*8+8]  (8 fp16 = 4 f32 per thread)
-     B[K=16][16]: same mapping as A for the transposed dimension
-     C/D[16][16]: thread t holds D[t//2][(t%2)*8 : (t%2)*8+8]  (8 f32 per thread)
+     gfx11:
+       - A/B: duplicated across the two half-waves, so each logical input fragment
+         is distributed over an effective wave size of 16 lanes.
+       - C/D: distributed over the full wave32 output layout.
+     gfx12:
+       - A/B: distributed over the full wave32 input layout.
+       - C/D: distributed over the full wave32 output layout.
 
 
 
@@ -39,10 +43,10 @@ Module Contents
 
 .. py:class:: WMMAIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float32', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 16, warp_col_tiles = 16, chunk = 16, k_pack = 1, thread_var = None, target = None)
 
-   Intrinsic emitter for AMD RDNA WMMA (16×16×16, warp-size=32).
+   Intrinsic emitter for AMD RDNA WMMA (16x16x16, warp-size=32).
 
    Supports:
-     - fp16 -> fp32  (f32_16x16x16_f16_w32 / _gfx12)
+     - fp16 -> fp32  (f32_16x16x16_f16_w32, with `_gfx12` codegen suffix on gfx12)
 
 
    .. py:attribute:: M_DIM
@@ -130,6 +134,9 @@ Module Contents
 
 
 
+   .. py:attribute:: rdna_gen
+
+
    .. py:attribute:: micro_size_x
       :value: 16
 
@@ -146,12 +153,12 @@ Module Contents
 
 
    .. py:attribute:: local_size_a
-      :value: 8
+      :value: 16
 
 
 
    .. py:attribute:: local_size_b
-      :value: 8
+      :value: 16
 
 
 
@@ -175,6 +182,20 @@ Module Contents
 
 
 
+   .. py:attribute:: a_fragment_forward_fn
+
+
+   .. py:attribute:: b_fragment_forward_fn
+
+
+   .. py:attribute:: fragment_replicate
+      :value: 2
+
+
+
+   .. py:attribute:: store_index_map_fn
+
+
    .. py:attribute:: wmma_shape
       :value: 'f32_16x16x16_f16_w32'
 
@@ -193,12 +214,9 @@ Module Contents
 
       Return (forward, reverse) index maps for shared→local loading.
 
-      For WMMA gfx12:
-        - A is stored row-major [M, K]. Thread t loads A[t%16][(t//16)*8+local].
-        - B (non-transposed) is stored row-major [K, N].
-          Thread t loads B[t%16][(t//16)*8+local] (same shape/pattern as A).
-        - B (transposed) is stored [N, K].
-          Thread t loads B_T[t%16][(t//16)*8+local] (N-row, K-col).
+      The actual layout functions are chosen during __init__ based on rdna_gen:
+        - gfx11 uses half-wave duplicated A/B input layouts (32x16 naming).
+        - gfx12 uses full wave32 A/B input layouts (32x8 naming).
 
 
 

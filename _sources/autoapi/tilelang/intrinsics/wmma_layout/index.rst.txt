@@ -29,10 +29,35 @@ tilelang.intrinsics.wmma_layout
        Reverse: (thread, local) -> (M=(thread//16)*8+local, N=thread%16)
        Store: D[M=(t//16)*8+l][N=t%16] = d_vec[l]
 
-   NOTE: A and D have DIFFERENT layouts (A uses t%16 for M, D uses (t//16)*8+l for M).
-   This means they cannot be used interchangeably without a layout change.
+   EMPIRICALLY VERIFIED hardware layouts for wmma_f32_16x16x16_f16_w32 (gfx11):
 
-   local_size = 8 per thread
+     A[M=16][K=16]:
+       thread t, elem e -> A[M=t%16][K=e]
+       Forward: (M, K) -> (thread=M, local=K%16) [Mapping to tid=0~15]
+       Reverse: (thread, local) -> (M=thread%16, K=local)
+       Memory load: A[M=t%16][K=0..+15] -> CONTIGUOUS in K (vectorized)
+
+     B[K=16][N=16] (non-transposed, K x N storage):
+       thread t, elem e -> B[K=e][N=t%16]
+       Forward: (K, N) -> (thread=N, local=K%16) [Mapping to tid=0~15]
+       Reverse: (thread, local) -> (K=local, N=thread%16)
+
+     B_T[N=16][K=16] (transposed storage of B):
+       B_T[N=t%16][K=e] -> CONTIGUOUS in K (vectorized)
+
+     D[M=16][N=16]:
+       thread t, elem l -> D[M=(t//16)+l*2][N=t%16]
+       Forward: (M, N) -> (thread=(M%2)*16+N, local=M//2)
+       Reverse: (thread, local) -> (M=(thread//16)+local*2, N=thread%16)
+       Store: D[M=(t//16)+l*2][N=t%16] = d_vec[l]
+
+   NOTE:
+   1.  A and D have DIFFERENT layouts (e.g. For gfx12, A uses t%16 for M,
+       D uses (t//16)*8+l for M). This means they cannot be used interchangeably
+       without a layout change.
+   2.  For gfx11, lane 16~31 share the same A/B data as lane 0~15.
+
+   local_size = 8 (gfx12) | 16 (gfx11)
 
 
 
@@ -41,62 +66,217 @@ Functions
 
 .. autoapisummary::
 
-   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A
-   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A
-   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B
-   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B
-   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor
-   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor
-   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C
-   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C
-   tilelang.intrinsics.wmma_layout.wmma_store_index_map
+   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_gfx12
+   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_gfx12
+   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_colmajor_gfx12
+   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_colmajor_gfx12
+   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_gfx12
+   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_gfx12
+   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor_gfx12
+   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor_gfx12
+   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx12
+   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx12
+   tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx12
+   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_gfx11
+   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_gfx11
+   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_colmajor_gfx11
+   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_colmajor_gfx11
+   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_gfx11
+   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_gfx11
+   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_colmajor_gfx11
+   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_colmajor_gfx11
+   tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx11
+   tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx11
+   tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx11
+   tilelang.intrinsics.wmma_layout.fragment_forward_A_gfx11
+   tilelang.intrinsics.wmma_layout.fragment_forward_A_colmajor_gfx11
+   tilelang.intrinsics.wmma_layout.fragment_forward_B_gfx11
+   tilelang.intrinsics.wmma_layout.fragment_forward_B_colmajor_gfx11
+   tilelang.intrinsics.wmma_layout.get_wmma_a_layout_funcs
+   tilelang.intrinsics.wmma_layout.get_wmma_b_layout_funcs
+   tilelang.intrinsics.wmma_layout.get_wmma_c_layout_funcs
+   tilelang.intrinsics.wmma_layout.get_wmma_store_index_map_func
+   tilelang.intrinsics.wmma_layout.get_wmma_a_fragment_forward_func
+   tilelang.intrinsics.wmma_layout.get_wmma_b_fragment_forward_func
+   tilelang.intrinsics.wmma_layout.get_wmma_fragment_replicate_count
 
 
 Module Contents
 ---------------
 
-.. py:function:: shared_16x16_to_local_32x8_layout_A(i, j)
+.. py:function:: shared_16x16_to_local_32x8_layout_A_gfx12(i, j)
 
    Forward: A[i=M, j=K] -> (thread=(j//8)*16+i, local=j%8).
 
 
-.. py:function:: thread_id_shared_access_32x8_to_16x16_layout_A(thread_id, local_id)
+.. py:function:: thread_id_shared_access_32x8_to_16x16_layout_A_gfx12(thread_id, local_id)
 
    Reverse: (thread, local) -> (i=M=thread%16, j=K=(thread//16)*8+local).
 
 
-.. py:function:: shared_16x16_to_local_32x8_layout_B(i, j)
+.. py:function:: shared_16x16_to_local_32x8_layout_A_colmajor_gfx12(i, j)
+
+   Forward: A_T[i=K, j=M] -> (thread=(i//8)*16+j, local=i%8).
+
+
+.. py:function:: thread_id_shared_access_32x8_to_16x16_layout_A_colmajor_gfx12(thread_id, local_id)
+
+   Reverse: (thread, local) -> (i=K=(thread//16)*8+local, j=M=thread%16).
+
+
+.. py:function:: shared_16x16_to_local_32x8_layout_B_gfx12(i, j)
 
    Forward: B[i=K, j=N] -> (thread=(i//8)*16+j, local=i%8).
 
 
-.. py:function:: thread_id_shared_access_32x8_to_16x16_layout_B(thread_id, local_id)
+.. py:function:: thread_id_shared_access_32x8_to_16x16_layout_B_gfx12(thread_id, local_id)
 
    Reverse: (thread, local) -> (i=K=(thread//16)*8+local, j=N=thread%16).
 
 
-.. py:function:: shared_16x16_to_local_32x8_layout_B_colmajor(i, j)
+.. py:function:: shared_16x16_to_local_32x8_layout_B_colmajor_gfx12(i, j)
 
    Forward: B_T[i=N, j=K] -> (thread=(j//8)*16+i, local=j%8).
 
 
-.. py:function:: thread_id_shared_access_32x8_to_16x16_layout_B_colmajor(thread_id, local_id)
+.. py:function:: thread_id_shared_access_32x8_to_16x16_layout_B_colmajor_gfx12(thread_id, local_id)
 
    Reverse: (thread, local) -> (i=N=thread%16, j=K=(thread//16)*8+local).
 
 
-.. py:function:: shared_16x16_to_local_32x8_layout_C(i, j)
+.. py:function:: shared_16x16_to_local_32x8_layout_C_gfx12(i, j)
 
    Forward: D[i=M, j=N] -> (thread=(i//8)*16+j, local=i%8).
 
 
-.. py:function:: thread_id_shared_access_32x8_to_16x16_layout_C(thread_id, local_id)
+.. py:function:: thread_id_shared_access_32x8_to_16x16_layout_C_gfx12(thread_id, local_id)
 
    Reverse: (thread, local) -> (i=M=(thread//16)*8+local, j=N=thread%16).
 
 
-.. py:function:: wmma_store_index_map(thread_id, local_id)
+.. py:function:: wmma_store_index_map_gfx12(thread_id, local_id)
 
    (thread, local) -> (M, N) in D.  Hardware D layout.
+
+
+.. py:function:: shared_16x16_to_local_32x16_layout_A_gfx11(i, j)
+
+   Forward: A[i=M, j=K] -> (thread=i, local=j%16).
+   ATTN: Here we only reflect (i, j) to the lower-half-lane of threads in
+   a warp.
+
+
+.. py:function:: thread_id_shared_access_32x16_to_16x16_layout_A_gfx11(thread_id, local_id)
+
+   Reverse: (thread, local) -> (i=M=thread%16, j=K=local)
+
+
+.. py:function:: shared_16x16_to_local_32x16_layout_A_colmajor_gfx11(i, j)
+
+   Forward: A_T[i=K, j=M] -> (thread=M, local=K%16).
+   ATTN: Here we only reflect (i, j) to the lower-half-lane of threads in
+   a warp.
+
+
+.. py:function:: thread_id_shared_access_32x16_to_16x16_layout_A_colmajor_gfx11(thread_id, local_id)
+
+   Reverse: (thread, local) -> (i=K=local, j=M=thread%16)
+
+
+.. py:function:: shared_16x16_to_local_32x16_layout_B_gfx11(i, j)
+
+   Forward: B[i=K, j=N] -> (thread=N, local=K%16).
+   ATTN: Here we only reflect (i, j) to the lower-half-lane of threads in
+   a warp.
+
+
+.. py:function:: thread_id_shared_access_32x16_to_16x16_layout_B_gfx11(thread_id, local_id)
+
+   Reverse: (thread, local) -> (i=K=local, j=N=thread%16)
+
+
+.. py:function:: shared_16x16_to_local_32x16_layout_B_colmajor_gfx11(i, j)
+
+   Forward: B_T[i=N, j=K] -> (thread=i, local=j%16).
+   ATTN: Here we only reflect (i, j) to the lower-half-lane of threads in
+   a warp.
+
+
+.. py:function:: thread_id_shared_access_32x16_to_16x16_layout_B_colmajor_gfx11(thread_id, local_id)
+
+   Reverse: (thread, local) -> (j=K=local, i=N=thread%16)
+
+
+.. py:function:: shared_16x16_to_local_32x8_layout_C_gfx11(i, j)
+
+   Forward: D[i=M, j=N] -> (thread=(i%2)*16+j, local=i//2).
+
+
+.. py:function:: thread_id_shared_access_32x8_to_16x16_layout_C_gfx11(thread_id, local_id)
+
+   Reverse: (thread, local) -> (i=M=(thread//16)+local*2, j=N=thread%16)
+
+
+.. py:function:: wmma_store_index_map_gfx11(thread_id, local_id)
+
+   (thread, local) -> (M, N) in D.  Hardware D layout.
+
+
+.. py:function:: fragment_forward_A_gfx11(i, j, rep)
+
+   Replicated fragment forward map for gfx11 A.
+
+   The canonical owner lives in the lower half-wave and `rep` selects whether
+   the logical element is materialized in the lower or upper half-wave copy.
+
+
+.. py:function:: fragment_forward_A_colmajor_gfx11(i, j, rep)
+
+   Replicated fragment forward map for gfx11 transposed A.
+
+
+.. py:function:: fragment_forward_B_gfx11(i, j, rep)
+
+   Replicated fragment forward map for gfx11 B.
+
+
+.. py:function:: fragment_forward_B_colmajor_gfx11(i, j, rep)
+
+   Replicated fragment forward map for gfx11 transposed B.
+
+
+.. py:function:: get_wmma_a_layout_funcs(rdna_gen, transposed)
+
+   Return (forward_map, reverse_map) for A layout.
+
+
+.. py:function:: get_wmma_b_layout_funcs(rdna_gen, transposed)
+
+   Return (forward_map, reverse_map) for B layout.
+
+
+.. py:function:: get_wmma_c_layout_funcs(rdna_gen)
+
+   Return (forward_map, reverse_map) for C/D layout.
+
+
+.. py:function:: get_wmma_store_index_map_func(rdna_gen)
+
+   Return the (thread_id, local_id) -> (row, col) store map.
+
+
+.. py:function:: get_wmma_a_fragment_forward_func(rdna_gen, transposed)
+
+   Return the fragment forward function for A layout.
+
+
+.. py:function:: get_wmma_b_fragment_forward_func(rdna_gen, transposed)
+
+   Return the fragment forward function for B layout.
+
+
+.. py:function:: get_wmma_fragment_replicate_count(rdna_gen)
+
+   Return the fragment replicate count used for logical one-to-many owners.
 
 

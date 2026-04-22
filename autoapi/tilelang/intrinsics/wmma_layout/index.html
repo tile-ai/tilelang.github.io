@@ -584,40 +584,140 @@ Store: D[M=(t//16)*8+l][N=t%16] = d_vec[l]</p>
 </dd>
 </dl>
 </div></blockquote>
-<p>NOTE: A and D have DIFFERENT layouts (A uses t%16 for M, D uses (t//16)*8+l for M).
-This means they cannot be used interchangeably without a layout change.</p>
-<p>local_size = 8 per thread</p>
+<p>EMPIRICALLY VERIFIED hardware layouts for wmma_f32_16x16x16_f16_w32 (gfx11):</p>
+<blockquote>
+<div><dl class="simple">
+<dt>A[M=16][K=16]:</dt><dd><p>thread t, elem e -&gt; A[M=t%16][K=e]
+Forward: (M, K) -&gt; (thread=M, local=K%16) [Mapping to tid=0~15]
+Reverse: (thread, local) -&gt; (M=thread%16, K=local)
+Memory load: A[M=t%16][K=0..+15] -&gt; CONTIGUOUS in K (vectorized)</p>
+</dd>
+<dt>B[K=16][N=16] (non-transposed, K x N storage):</dt><dd><p>thread t, elem e -&gt; B[K=e][N=t%16]
+Forward: (K, N) -&gt; (thread=N, local=K%16) [Mapping to tid=0~15]
+Reverse: (thread, local) -&gt; (K=local, N=thread%16)</p>
+</dd>
+<dt>B_T[N=16][K=16] (transposed storage of B):</dt><dd><p>B_T[N=t%16][K=e] -&gt; CONTIGUOUS in K (vectorized)</p>
+</dd>
+<dt>D[M=16][N=16]:</dt><dd><p>thread t, elem l -&gt; D[M=(t//16)+l*2][N=t%16]
+Forward: (M, N) -&gt; (thread=(M%2)*16+N, local=M//2)
+Reverse: (thread, local) -&gt; (M=(thread//16)+local*2, N=thread%16)
+Store: D[M=(t//16)+l*2][N=t%16] = d_vec[l]</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>NOTE:
+1.  A and D have DIFFERENT layouts (e.g. For gfx12, A uses t%16 for M,</p>
+<blockquote>
+<div><p>D uses (t//16)*8+l for M). This means they cannot be used interchangeably
+without a layout change.</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>For gfx11, lane 16~31 share the same A/B data as lane 0~15.</p></li>
+</ol>
+<p>local_size = 8 (gfx12) | 16 (gfx11)</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_A</span></code></a>(i, j)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_gfx12" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_A_gfx12</span></code></a>(i, j)</p></td>
 <td><p>Forward: A[i=M, j=K] -&gt; (thread=(j//8)*16+i, local=j%8).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_A</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_gfx12" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_A_gfx12</span></code></a>(...)</p></td>
 <td><p>Reverse: (thread, local) -&gt; (i=M=thread%16, j=K=(thread//16)*8+local).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_B</span></code></a>(i, j)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_colmajor_gfx12" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_colmajor_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_A_colmajor_gfx12</span></code></a>(i, j)</p></td>
+<td><p>Forward: A_T[i=K, j=M] -&gt; (thread=(i//8)*16+j, local=i%8).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_colmajor_gfx12" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_colmajor_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_A_colmajor_gfx12</span></code></a>(...)</p></td>
+<td><p>Reverse: (thread, local) -&gt; (i=K=(thread//16)*8+local, j=M=thread%16).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_gfx12" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_B_gfx12</span></code></a>(i, j)</p></td>
 <td><p>Forward: B[i=K, j=N] -&gt; (thread=(i//8)*16+j, local=i%8).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_gfx12" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B_gfx12</span></code></a>(...)</p></td>
 <td><p>Reverse: (thread, local) -&gt; (i=K=(thread//16)*8+local, j=N=thread%16).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_B_colmajor</span></code></a>(i, j)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor_gfx12" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_B_colmajor_gfx12</span></code></a>(i, j)</p></td>
 <td><p>Forward: B_T[i=N, j=K] -&gt; (thread=(j//8)*16+i, local=j%8).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B_colmajor</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor_gfx12" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B_colmajor_gfx12</span></code></a>(...)</p></td>
 <td><p>Reverse: (thread, local) -&gt; (i=N=thread%16, j=K=(thread//16)*8+local).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_C</span></code></a>(i, j)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx12" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_C_gfx12</span></code></a>(i, j)</p></td>
 <td><p>Forward: D[i=M, j=N] -&gt; (thread=(i//8)*16+j, local=i%8).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_C</span></code></a>(...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx12" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_C_gfx12</span></code></a>(...)</p></td>
 <td><p>Reverse: (thread, local) -&gt; (i=M=(thread//16)*8+local, j=N=thread%16).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.wmma_store_index_map" title="tilelang.intrinsics.wmma_layout.wmma_store_index_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wmma_store_index_map</span></code></a>(thread_id, local_id)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx12" title="tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wmma_store_index_map_gfx12</span></code></a>(thread_id, local_id)</p></td>
 <td><p>(thread, local) -&gt; (M, N) in D.  Hardware D layout.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_gfx11" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x16_layout_A_gfx11</span></code></a>(i, j)</p></td>
+<td><p>Forward: A[i=M, j=K] -&gt; (thread=i, local=j%16).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_gfx11" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_A_gfx11</span></code></a>(...)</p></td>
+<td><p>Reverse: (thread, local) -&gt; (i=M=thread%16, j=K=local)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_colmajor_gfx11" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_colmajor_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x16_layout_A_colmajor_gfx11</span></code></a>(i, j)</p></td>
+<td><p>Forward: A_T[i=K, j=M] -&gt; (thread=M, local=K%16).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_colmajor_gfx11" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_colmajor_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_A_colmajor_gfx11</span></code></a>(...)</p></td>
+<td><p>Reverse: (thread, local) -&gt; (i=K=local, j=M=thread%16)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_gfx11" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x16_layout_B_gfx11</span></code></a>(i, j)</p></td>
+<td><p>Forward: B[i=K, j=N] -&gt; (thread=N, local=K%16).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_gfx11" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_B_gfx11</span></code></a>(...)</p></td>
+<td><p>Reverse: (thread, local) -&gt; (i=K=local, j=N=thread%16)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_colmajor_gfx11" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_colmajor_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x16_layout_B_colmajor_gfx11</span></code></a>(i, j)</p></td>
+<td><p>Forward: B_T[i=N, j=K] -&gt; (thread=i, local=j%16).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_colmajor_gfx11" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_colmajor_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_B_colmajor_gfx11</span></code></a>(...)</p></td>
+<td><p>Reverse: (thread, local) -&gt; (j=K=local, i=N=thread%16)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx11" title="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_C_gfx11</span></code></a>(i, j)</p></td>
+<td><p>Forward: D[i=M, j=N] -&gt; (thread=(i%2)*16+j, local=i//2).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx11" title="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_C_gfx11</span></code></a>(...)</p></td>
+<td><p>Reverse: (thread, local) -&gt; (i=M=(thread//16)+local*2, j=N=thread%16)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx11" title="tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wmma_store_index_map_gfx11</span></code></a>(thread_id, local_id)</p></td>
+<td><p>(thread, local) -&gt; (M, N) in D.  Hardware D layout.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.fragment_forward_A_gfx11" title="tilelang.intrinsics.wmma_layout.fragment_forward_A_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fragment_forward_A_gfx11</span></code></a>(i, j, rep)</p></td>
+<td><p>Replicated fragment forward map for gfx11 A.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.fragment_forward_A_colmajor_gfx11" title="tilelang.intrinsics.wmma_layout.fragment_forward_A_colmajor_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fragment_forward_A_colmajor_gfx11</span></code></a>(i, j, rep)</p></td>
+<td><p>Replicated fragment forward map for gfx11 transposed A.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.fragment_forward_B_gfx11" title="tilelang.intrinsics.wmma_layout.fragment_forward_B_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fragment_forward_B_gfx11</span></code></a>(i, j, rep)</p></td>
+<td><p>Replicated fragment forward map for gfx11 B.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.fragment_forward_B_colmajor_gfx11" title="tilelang.intrinsics.wmma_layout.fragment_forward_B_colmajor_gfx11"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fragment_forward_B_colmajor_gfx11</span></code></a>(i, j, rep)</p></td>
+<td><p>Replicated fragment forward map for gfx11 transposed B.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_a_layout_funcs" title="tilelang.intrinsics.wmma_layout.get_wmma_a_layout_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_wmma_a_layout_funcs</span></code></a>(rdna_gen, transposed)</p></td>
+<td><p>Return (forward_map, reverse_map) for A layout.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_b_layout_funcs" title="tilelang.intrinsics.wmma_layout.get_wmma_b_layout_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_wmma_b_layout_funcs</span></code></a>(rdna_gen, transposed)</p></td>
+<td><p>Return (forward_map, reverse_map) for B layout.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_c_layout_funcs" title="tilelang.intrinsics.wmma_layout.get_wmma_c_layout_funcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_wmma_c_layout_funcs</span></code></a>(rdna_gen)</p></td>
+<td><p>Return (forward_map, reverse_map) for C/D layout.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_store_index_map_func" title="tilelang.intrinsics.wmma_layout.get_wmma_store_index_map_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_wmma_store_index_map_func</span></code></a>(rdna_gen)</p></td>
+<td><p>Return the (thread_id, local_id) -&gt; (row, col) store map.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_a_fragment_forward_func" title="tilelang.intrinsics.wmma_layout.get_wmma_a_fragment_forward_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_wmma_a_fragment_forward_func</span></code></a>(rdna_gen, transposed)</p></td>
+<td><p>Return the fragment forward function for A layout.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_b_fragment_forward_func" title="tilelang.intrinsics.wmma_layout.get_wmma_b_fragment_forward_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_wmma_b_fragment_forward_func</span></code></a>(rdna_gen, transposed)</p></td>
+<td><p>Return the fragment forward function for B layout.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_fragment_replicate_count" title="tilelang.intrinsics.wmma_layout.get_wmma_fragment_replicate_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_wmma_fragment_replicate_count</span></code></a>(rdna_gen)</p></td>
+<td><p>Return the fragment replicate count used for logical one-to-many owners.</p></td>
 </tr>
 </tbody>
 </table>
@@ -626,57 +726,258 @@ This means they cannot be used interchangeably without a layout change.</p>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x8_layout_A</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x8_layout_A_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_gfx12" title="Link to this definition">¶</a></dt>
 <dd><p>Forward: A[i=M, j=K] -&gt; (thread=(j//8)*16+i, local=j%8).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_A</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_A_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_gfx12" title="Link to this definition">¶</a></dt>
 <dd><p>Reverse: (thread, local) -&gt; (i=M=thread%16, j=K=(thread//16)*8+local).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x8_layout_B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_colmajor_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x8_layout_A_colmajor_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_colmajor_gfx12" title="Link to this definition">¶</a></dt>
+<dd><p>Forward: A_T[i=K, j=M] -&gt; (thread=(i//8)*16+j, local=i%8).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_colmajor_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_A_colmajor_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_colmajor_gfx12" title="Link to this definition">¶</a></dt>
+<dd><p>Reverse: (thread, local) -&gt; (i=K=(thread//16)*8+local, j=M=thread%16).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x8_layout_B_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_gfx12" title="Link to this definition">¶</a></dt>
 <dd><p>Forward: B[i=K, j=N] -&gt; (thread=(i//8)*16+j, local=i%8).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_gfx12" title="Link to this definition">¶</a></dt>
 <dd><p>Reverse: (thread, local) -&gt; (i=K=(thread//16)*8+local, j=N=thread%16).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x8_layout_B_colmajor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x8_layout_B_colmajor_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor_gfx12" title="Link to this definition">¶</a></dt>
 <dd><p>Forward: B_T[i=N, j=K] -&gt; (thread=(j//8)*16+i, local=j%8).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B_colmajor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B_colmajor_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor_gfx12" title="Link to this definition">¶</a></dt>
 <dd><p>Reverse: (thread, local) -&gt; (i=N=thread%16, j=K=(thread//16)*8+local).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x8_layout_C</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x8_layout_C_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx12" title="Link to this definition">¶</a></dt>
 <dd><p>Forward: D[i=M, j=N] -&gt; (thread=(i//8)*16+j, local=i%8).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_C</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_C_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx12" title="Link to this definition">¶</a></dt>
 <dd><p>Reverse: (thread, local) -&gt; (i=M=(thread//16)*8+local, j=N=thread%16).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.wmma_store_index_map">
-<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">wmma_store_index_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.wmma_store_index_map" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx12">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">wmma_store_index_map_gfx12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx12" title="Link to this definition">¶</a></dt>
 <dd><p>(thread, local) -&gt; (M, N) in D.  Hardware D layout.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x16_layout_A_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Forward: A[i=M, j=K] -&gt; (thread=i, local=j%16).
+ATTN: Here we only reflect (i, j) to the lower-half-lane of threads in
+a warp.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_A_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Reverse: (thread, local) -&gt; (i=M=thread%16, j=K=local)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_colmajor_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x16_layout_A_colmajor_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_colmajor_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Forward: A_T[i=K, j=M] -&gt; (thread=M, local=K%16).
+ATTN: Here we only reflect (i, j) to the lower-half-lane of threads in
+a warp.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_colmajor_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_A_colmajor_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_colmajor_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Reverse: (thread, local) -&gt; (i=K=local, j=M=thread%16)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x16_layout_B_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Forward: B[i=K, j=N] -&gt; (thread=N, local=K%16).
+ATTN: Here we only reflect (i, j) to the lower-half-lane of threads in
+a warp.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_B_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Reverse: (thread, local) -&gt; (i=K=local, j=N=thread%16)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_colmajor_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x16_layout_B_colmajor_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_colmajor_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Forward: B_T[i=N, j=K] -&gt; (thread=i, local=j%16).
+ATTN: Here we only reflect (i, j) to the lower-half-lane of threads in
+a warp.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_colmajor_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_B_colmajor_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_colmajor_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Reverse: (thread, local) -&gt; (j=K=local, i=N=thread%16)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">shared_16x16_to_local_32x8_layout_C_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Forward: D[i=M, j=N] -&gt; (thread=(i%2)*16+j, local=i//2).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_C_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Reverse: (thread, local) -&gt; (i=M=(thread//16)+local*2, j=N=thread%16)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">wmma_store_index_map_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>(thread, local) -&gt; (M, N) in D.  Hardware D layout.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.fragment_forward_A_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">fragment_forward_A_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.fragment_forward_A_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Replicated fragment forward map for gfx11 A.</p>
+<p>The canonical owner lives in the lower half-wave and <cite>rep</cite> selects whether
+the logical element is materialized in the lower or upper half-wave copy.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.fragment_forward_A_colmajor_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">fragment_forward_A_colmajor_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.fragment_forward_A_colmajor_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Replicated fragment forward map for gfx11 transposed A.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.fragment_forward_B_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">fragment_forward_B_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.fragment_forward_B_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Replicated fragment forward map for gfx11 B.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.fragment_forward_B_colmajor_gfx11">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">fragment_forward_B_colmajor_gfx11</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.fragment_forward_B_colmajor_gfx11" title="Link to this definition">¶</a></dt>
+<dd><p>Replicated fragment forward map for gfx11 transposed B.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.get_wmma_a_layout_funcs">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">get_wmma_a_layout_funcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdna_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.get_wmma_a_layout_funcs" title="Link to this definition">¶</a></dt>
+<dd><p>Return (forward_map, reverse_map) for A layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rdna_gen</strong> (<em>int</em>)</p></li>
+<li><p><strong>transposed</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.get_wmma_b_layout_funcs">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">get_wmma_b_layout_funcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdna_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.get_wmma_b_layout_funcs" title="Link to this definition">¶</a></dt>
+<dd><p>Return (forward_map, reverse_map) for B layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rdna_gen</strong> (<em>int</em>)</p></li>
+<li><p><strong>transposed</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.get_wmma_c_layout_funcs">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">get_wmma_c_layout_funcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdna_gen</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.get_wmma_c_layout_funcs" title="Link to this definition">¶</a></dt>
+<dd><p>Return (forward_map, reverse_map) for C/D layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdna_gen</strong> (<em>int</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.get_wmma_store_index_map_func">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">get_wmma_store_index_map_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdna_gen</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.get_wmma_store_index_map_func" title="Link to this definition">¶</a></dt>
+<dd><p>Return the (thread_id, local_id) -&gt; (row, col) store map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdna_gen</strong> (<em>int</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.get_wmma_a_fragment_forward_func">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">get_wmma_a_fragment_forward_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdna_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.get_wmma_a_fragment_forward_func" title="Link to this definition">¶</a></dt>
+<dd><p>Return the fragment forward function for A layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rdna_gen</strong> (<em>int</em>)</p></li>
+<li><p><strong>transposed</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.get_wmma_b_fragment_forward_func">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">get_wmma_b_fragment_forward_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdna_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.get_wmma_b_fragment_forward_func" title="Link to this definition">¶</a></dt>
+<dd><p>Return the fragment forward function for B layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rdna_gen</strong> (<em>int</em>)</p></li>
+<li><p><strong>transposed</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.intrinsics.wmma_layout.get_wmma_fragment_replicate_count">
+<span class="sig-prename descclassname"><span class="pre">tilelang.intrinsics.wmma_layout.</span></span><span class="sig-name descname"><span class="pre">get_wmma_fragment_replicate_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdna_gen</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.wmma_layout.get_wmma_fragment_replicate_count" title="Link to this definition">¶</a></dt>
+<dd><p>Return the fragment replicate count used for logical one-to-many owners.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdna_gen</strong> (<em>int</em>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -740,15 +1041,39 @@ This means they cannot be used interchangeably without a layout change.</p>
 <li><a class="reference internal" href="#">tilelang.intrinsics.wmma_layout</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_A()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_A()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_B()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_B_colmajor()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B_colmajor()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_C()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_C()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.wmma_store_index_map"><code class="docutils literal notranslate"><span class="pre">wmma_store_index_map()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_gfx12"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_A_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_gfx12"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_A_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_A_colmajor_gfx12"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_A_colmajor_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_A_colmajor_gfx12"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_A_colmajor_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_gfx12"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_B_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_gfx12"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_B_colmajor_gfx12"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_B_colmajor_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_B_colmajor_gfx12"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_B_colmajor_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx12"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_C_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx12"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_C_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx12"><code class="docutils literal notranslate"><span class="pre">wmma_store_index_map_gfx12()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_gfx11"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x16_layout_A_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_gfx11"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_A_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_A_colmajor_gfx11"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x16_layout_A_colmajor_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_A_colmajor_gfx11"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_A_colmajor_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_gfx11"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x16_layout_B_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_gfx11"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_B_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x16_layout_B_colmajor_gfx11"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x16_layout_B_colmajor_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x16_to_16x16_layout_B_colmajor_gfx11"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x16_to_16x16_layout_B_colmajor_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.shared_16x16_to_local_32x8_layout_C_gfx11"><code class="docutils literal notranslate"><span class="pre">shared_16x16_to_local_32x8_layout_C_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.thread_id_shared_access_32x8_to_16x16_layout_C_gfx11"><code class="docutils literal notranslate"><span class="pre">thread_id_shared_access_32x8_to_16x16_layout_C_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.wmma_store_index_map_gfx11"><code class="docutils literal notranslate"><span class="pre">wmma_store_index_map_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.fragment_forward_A_gfx11"><code class="docutils literal notranslate"><span class="pre">fragment_forward_A_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.fragment_forward_A_colmajor_gfx11"><code class="docutils literal notranslate"><span class="pre">fragment_forward_A_colmajor_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.fragment_forward_B_gfx11"><code class="docutils literal notranslate"><span class="pre">fragment_forward_B_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.fragment_forward_B_colmajor_gfx11"><code class="docutils literal notranslate"><span class="pre">fragment_forward_B_colmajor_gfx11()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_a_layout_funcs"><code class="docutils literal notranslate"><span class="pre">get_wmma_a_layout_funcs()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_b_layout_funcs"><code class="docutils literal notranslate"><span class="pre">get_wmma_b_layout_funcs()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_c_layout_funcs"><code class="docutils literal notranslate"><span class="pre">get_wmma_c_layout_funcs()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_store_index_map_func"><code class="docutils literal notranslate"><span class="pre">get_wmma_store_index_map_func()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_a_fragment_forward_func"><code class="docutils literal notranslate"><span class="pre">get_wmma_a_fragment_forward_func()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_b_fragment_forward_func"><code class="docutils literal notranslate"><span class="pre">get_wmma_b_fragment_forward_func()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.wmma_layout.get_wmma_fragment_replicate_count"><code class="docutils literal notranslate"><span class="pre">get_wmma_fragment_replicate_count()</span></code></a></li>
 </ul>
 </li>
 </ul>
