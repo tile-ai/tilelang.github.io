@@ -73,6 +73,8 @@ Functions
    tilelang.language.builtin.tcgen05_before_thread_sync
    tilelang.language.builtin.tcgen05_after_thread_sync
    tilelang.language.builtin.ptx_mma_sm70
+   tilelang.language.builtin.ds_read_tr16_b64
+   tilelang.language.builtin.ds_read_tr8_b64
    tilelang.language.builtin.ldg32
    tilelang.language.builtin.ldg64
    tilelang.language.builtin.ldg128
@@ -773,6 +775,40 @@ Module Contents
    ...     C_local.data,
    ...     0,
    ... )
+
+
+.. py:function:: ds_read_tr16_b64(src)
+
+   LDS transpose read, 64-bit, 16-element transpose (gfx950 only).
+
+   Reads 8 bytes from LDS (__shared__ memory) with a 16-element transpose.
+   Used for FP16/BF16 MFMA matrix B-loads on MI350/MI355X (gfx950).
+
+   :param src: A `Buffer`, `BufferRegion`, or `BufferLoad` in shared memory.
+
+   :returns: The loaded 64-bit value as uint32x2.
+   :rtype: PrimExpr
+
+   .. rubric:: Example
+
+   >>> val = T.ds_read_tr16_b64(smem[i])
+
+
+.. py:function:: ds_read_tr8_b64(src)
+
+   LDS transpose read, 64-bit, 8-element transpose (gfx950 only).
+
+   Reads 8 bytes from LDS (__shared__ memory) with an 8-element transpose.
+   Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).
+
+   :param src: A `Buffer`, `BufferRegion`, or `BufferLoad` in shared memory.
+
+   :returns: The loaded 64-bit value as uint32x2.
+   :rtype: PrimExpr
+
+   .. rubric:: Example
+
+   >>> val = T.ds_read_tr8_b64(smem[i])
 
 
 .. py:function:: ldg32(src, pred = None)

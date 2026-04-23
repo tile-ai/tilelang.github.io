@@ -745,6 +745,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.ptx_mma_sm70" title="tilelang.language.builtin.ptx_mma_sm70"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_mma_sm70</span></code></a>(shape, A_layout, B_layout, A_dtype, ...)</p></td>
 <td><p>TVM intrinsic for ptx tensor core mma instructions on SM70 (Volta).</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.ds_read_tr16_b64" title="tilelang.language.builtin.ds_read_tr16_b64"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds_read_tr16_b64</span></code></a>(src)</p></td>
+<td><p>LDS transpose read, 64-bit, 16-element transpose (gfx950 only).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.ds_read_tr8_b64" title="tilelang.language.builtin.ds_read_tr8_b64"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds_read_tr8_b64</span></code></a>(src)</p></td>
+<td><p>LDS transpose read, 64-bit, 8-element transpose (gfx950 only).</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.ldg32" title="tilelang.language.builtin.ldg32"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldg32</span></code></a>(src[, pred])</p></td>
 <td><p>Load 32 bits (4 bytes) from global memory using explicit PTX instructions.</p></td>
 </tr>
@@ -1872,6 +1878,52 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.ds_read_tr16_b64">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ds_read_tr16_b64</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ds_read_tr16_b64" title="Link to this definition">¶</a></dt>
+<dd><p>LDS transpose read, 64-bit, 16-element transpose (gfx950 only).</p>
+<p>Reads 8 bytes from LDS (__shared__ memory) with a 16-element transpose.
+Used for FP16/BF16 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> in shared memory.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loaded 64-bit value as uint32x2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ds_read_tr16_b64</span><span class="p">(</span><span class="n">smem</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.ds_read_tr8_b64">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ds_read_tr8_b64</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ds_read_tr8_b64" title="Link to this definition">¶</a></dt>
+<dd><p>LDS transpose read, 64-bit, 8-element transpose (gfx950 only).</p>
+<p>Reads 8 bytes from LDS (__shared__ memory) with an 8-element transpose.
+Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> in shared memory.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loaded 64-bit value as uint32x2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PrimExpr</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ds_read_tr8_b64</span><span class="p">(</span><span class="n">smem</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.ldg32">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ldg32</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ldg32" title="Link to this definition">¶</a></dt>
 <dd><p>Load 32 bits (4 bytes) from global memory using explicit PTX instructions.</p>
@@ -2195,6 +2247,8 @@ with FP16 inputs and FP16/FP32 accumulation.</p>
 <li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_before_thread_sync"><code class="docutils literal notranslate"><span class="pre">tcgen05_before_thread_sync()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_after_thread_sync"><code class="docutils literal notranslate"><span class="pre">tcgen05_after_thread_sync()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.ptx_mma_sm70"><code class="docutils literal notranslate"><span class="pre">ptx_mma_sm70()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.ds_read_tr16_b64"><code class="docutils literal notranslate"><span class="pre">ds_read_tr16_b64()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.ds_read_tr8_b64"><code class="docutils literal notranslate"><span class="pre">ds_read_tr8_b64()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.ldg32"><code class="docutils literal notranslate"><span class="pre">ldg32()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.ldg64"><code class="docutils literal notranslate"><span class="pre">ldg64()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.ldg128"><code class="docutils literal notranslate"><span class="pre">ldg128()</span></code></a></li>
