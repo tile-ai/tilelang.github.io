@@ -742,6 +742,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.tcgen05_after_thread_sync" title="tilelang.language.builtin.tcgen05_after_thread_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_after_thread_sync</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.tcgen05_cp_warpx4" title="tilelang.language.builtin.tcgen05_cp_warpx4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_cp_warpx4</span></code></a>(smem_src, tmem_dst[, ...])</p></td>
+<td><p>Copy one or more packed scale-factor chunks from shared memory to tensor memory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.tcgen05_sf_warp_transpose" title="tilelang.language.builtin.tcgen05_sf_warp_transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_sf_warp_transpose</span></code></a>(smem_src)</p></td>
+<td><p>Warp-level transpose for one or more packed scale-factor chunks in shared memory.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.ptx_mma_sm70" title="tilelang.language.builtin.ptx_mma_sm70"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_mma_sm70</span></code></a>(shape, A_layout, B_layout, A_dtype, ...)</p></td>
 <td><p>TVM intrinsic for ptx tensor core mma instructions on SM70 (Volta).</p></td>
 </tr>
@@ -1828,6 +1834,28 @@ If set, will be lowered to umma_arrive_multicast_2x1SM.</p></li>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.tcgen05_cp_warpx4">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tcgen05_cp_warpx4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_col_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tcgen05_cp_warpx4" title="Link to this definition">¶</a></dt>
+<dd><p>Copy one or more packed scale-factor chunks from shared memory to tensor memory.</p>
+<p>The helper lowers to one or more <code class="docutils literal notranslate"><span class="pre">tcgen05.cp.cta_group::{1,2}.32x128b.warpx4</span></code>
+instructions. For 1D packed <code class="docutils literal notranslate"><span class="pre">uint32</span></code> scale buffers, each 128-word chunk maps to
+4 TMEM columns and the column offset is advanced automatically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>use_2cta</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.tcgen05_sf_warp_transpose">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tcgen05_sf_warp_transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tcgen05_sf_warp_transpose" title="Link to this definition">¶</a></dt>
+<dd><p>Warp-level transpose for one or more packed scale-factor chunks in shared memory.</p>
+<p>For 1D packed <code class="docutils literal notranslate"><span class="pre">uint32</span></code> scale buffers, the helper automatically applies the
+transpose to each 128-word chunk in order.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.ptx_mma_sm70">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">ptx_mma_sm70</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiplicand_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiplicand_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.ptx_mma_sm70" title="Link to this definition">¶</a></dt>
 <dd><p>TVM intrinsic for ptx tensor core mma instructions on SM70 (Volta).</p>
@@ -2246,6 +2274,8 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_mma_arrive"><code class="docutils literal notranslate"><span class="pre">tcgen05_mma_arrive()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_before_thread_sync"><code class="docutils literal notranslate"><span class="pre">tcgen05_before_thread_sync()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_after_thread_sync"><code class="docutils literal notranslate"><span class="pre">tcgen05_after_thread_sync()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_cp_warpx4"><code class="docutils literal notranslate"><span class="pre">tcgen05_cp_warpx4()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_sf_warp_transpose"><code class="docutils literal notranslate"><span class="pre">tcgen05_sf_warp_transpose()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.ptx_mma_sm70"><code class="docutils literal notranslate"><span class="pre">ptx_mma_sm70()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.ds_read_tr16_b64"><code class="docutils literal notranslate"><span class="pre">ds_read_tr16_b64()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.ds_read_tr8_b64"><code class="docutils literal notranslate"><span class="pre">ds_read_tr8_b64()</span></code></a></li>

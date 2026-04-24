@@ -581,7 +581,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.tileop.gemm.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">GemmTCGEN5</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_tcgen05.GemmTCGEN5" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gemm_base/index.html#tilelang.tileop.gemm.gemm_base.GemmBase" title="tilelang.tileop.gemm.gemm_base.GemmBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.tileop.gemm.gemm_base.GemmBase</span></code></a></p>
 <p>GEMM operator for Blackwell (SM100) TCGEN5MMA instructions.</p>
-<p>Supports the SS (Shared-Shared) and TS (TensorMemory-Shared) variants.
+<p>Supports the SS (Shared-Shared) and TS (TensorMemory-Shared) variants,
+as well as block-scaled MXFP8 GEMM when SFA/SFB scale factors are present.
 Layout inference and lowering are dispatched based on the memory scopes
 of operands A and B.</p>
 <dl class="py method">
@@ -603,7 +604,8 @@ of operands A and B.</p>
 <span class="sig-name descname"><span class="pre">infer_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_nums</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_tcgen05.GemmTCGEN5.infer_layout" title="Link to this definition">¶</a></dt>
 <dd><p>Infer swizzled layouts for operands and accumulator.</p>
 <p>For SS: both A and B get swizzled shared-memory layouts.
-For TS: A and C get TMEM store layouts, B gets a swizzled shared-memory layout.</p>
+For TS: A and C get TMEM store layouts, B gets a swizzled shared-memory layout.
+For block-scaled: same as SS (A and B get swizzle, C gets TMEM store layout).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

@@ -161,6 +161,21 @@ Module Contents
 
 
 
+   .. py:method:: tcgen05mma_blockscaled(A_buf, B_buf, C_local_buf, SFA_tmem, SFB_tmem, mbar, clear_accum = False, sf_a_id=0, sf_b_id=0)
+
+      Emit a block-scaled TCGEN5MMA (SS variant with TMEM scale factors).
+
+      Uses ``tcgen05.mma.cta_group::1|2.kind::mxf8f6f4.block_scale`` PTX instruction.
+      Scale factors must already reside in tensor memory.
+
+
+
+   .. py:method:: get_tcgen5_blockscaled_instr_desc(atom_m, atom_n, a_is_k_major, b_is_k_major, scale_in_a, scale_in_b, a_sf_id, b_sf_id)
+
+      Build the block-scaled instruction descriptor via FFI.
+
+
+
    .. py:method:: make_mma_load_layout(local_buf, matrix = 'A')
       :abstractmethod:
 

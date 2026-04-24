@@ -24,6 +24,7 @@ Functions
    tilelang.utils.language.retrieve_stride
    tilelang.utils.language.retrive_ptr_from_buffer_region
    tilelang.utils.language.retrieve_ptr
+   tilelang.utils.language.retrieve_buffer_and_offset
    tilelang.utils.language.retrieve_offset
    tilelang.utils.language.retrieve_dtype
    tilelang.utils.language.bits_product
@@ -175,6 +176,18 @@ Module Contents
    :param obj: Buffer-like object
    :param access_type: TVM Buffer access mask, e.g. "r", "w", "rw"
    :param ignore_last_ndim: do not offset the last N dimensions
+
+
+.. py:function:: retrieve_buffer_and_offset(obj)
+
+   Retrieve the underlying buffer together with its logical element offset.
+
+   - Buffer -> (buffer, 0)
+   - BufferRegion -> (buffer, offset from region minima)
+   - BufferLoad -> (buffer, offset from indices or derived region minima)
+
+   This is useful when callers need to build custom access patterns from a
+   common buffer base rather than materializing a full `access_ptr` directly.
 
 
 .. py:function:: retrieve_offset(obj)

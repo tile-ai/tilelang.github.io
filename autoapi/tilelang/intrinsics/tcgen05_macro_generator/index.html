@@ -785,6 +785,47 @@ computed assuming packed storage (e.g. two <code class="docutils literal notrans
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.tcgen05mma_blockscaled">
+<span class="sig-name descname"><span class="pre">tcgen05mma_blockscaled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFA_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFB_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_a_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_b_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.tcgen05mma_blockscaled" title="Link to this definition">¶</a></dt>
+<dd><p>Emit a block-scaled TCGEN5MMA (SS variant with TMEM scale factors).</p>
+<p>Uses <code class="docutils literal notranslate"><span class="pre">tcgen05.mma.cta_group::1|2.kind::mxf8f6f4.block_scale</span></code> PTX instruction.
+Scale factors must already reside in tensor memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A_buf</strong> (<em>tvm.tir.Buffer</em>)</p></li>
+<li><p><strong>B_buf</strong> (<em>tvm.tir.Buffer</em>)</p></li>
+<li><p><strong>C_local_buf</strong> (<em>tvm.tir.Buffer</em>)</p></li>
+<li><p><strong>clear_accum</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.get_tcgen5_blockscaled_instr_desc">
+<span class="sig-name descname"><span class="pre">get_tcgen5_blockscaled_instr_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_sf_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_sf_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.get_tcgen5_blockscaled_instr_desc" title="Link to this definition">¶</a></dt>
+<dd><p>Build the block-scaled instruction descriptor via FFI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_m</strong> (<em>int</em>)</p></li>
+<li><p><strong>atom_n</strong> (<em>int</em>)</p></li>
+<li><p><strong>a_is_k_major</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>b_is_k_major</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>scale_in_a</strong> (<em>int</em>)</p></li>
+<li><p><strong>scale_in_b</strong> (<em>int</em>)</p></li>
+<li><p><strong>a_sf_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>b_sf_id</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.make_mma_load_layout">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_mma_load_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.make_mma_load_layout" title="Link to this definition">¶</a></dt>
 <dd><p>Create a layout function for storing MMA results into a fragment buffer.
@@ -954,6 +995,8 @@ swizzled tensor-memory offsets required by TCGEN5MMA.</p>
 <li><a class="reference internal" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.tcgen05mma"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.tcgen05mma()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.tcgen05mma_ss"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.tcgen05mma_ss()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.tcgen05mma_ts"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.tcgen05mma_ts()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.tcgen05mma_blockscaled"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.tcgen05mma_blockscaled()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.get_tcgen5_blockscaled_instr_desc"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.get_tcgen5_blockscaled_instr_desc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.make_mma_load_layout"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.make_mma_load_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.make_mma_store_layout"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.make_mma_store_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.intrinsics.tcgen05_macro_generator.TensorCoreIntrinEmitter.get_tcgen5_mma_meta"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.get_tcgen5_mma_meta()</span></code></a></li>

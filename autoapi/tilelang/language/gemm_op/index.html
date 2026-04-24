@@ -577,6 +577,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.gemm_op.tcgen05_gemm" title="tilelang.language.gemm_op.tcgen05_gemm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_gemm</span></code></a>(A, B, C[, transpose_A, transpose_B, ...])</p></td>
 <td><p>Explicit Blackwell TCGEN05 GEMM without an implicit wait.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.gemm_op.tcgen05_gemm_blockscaled" title="tilelang.language.gemm_op.tcgen05_gemm_blockscaled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_gemm_blockscaled</span></code></a>(A, B, C, SFA_tmem, SFB_tmem)</p></td>
+<td><p>Explicit Blackwell TCGEN05 block-scaled GEMM without an implicit wait.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.gemm_op.make_blockscaled_gemm_layout" title="tilelang.language.gemm_op.make_blockscaled_gemm_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_blockscaled_gemm_layout</span></code></a>(C, A[, transpose_A])</p></td>
+<td><p>Build the TMEM store layout for the C accumulator of a block-scaled GEMM.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -678,6 +684,68 @@ compilation fails instead of silently falling back to another GEMM path.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.gemm_op.tcgen05_gemm_blockscaled">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm_op.</span></span><span class="sig-name descname"><span class="pre">tcgen05_gemm_blockscaled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFA_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFB_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wg_wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_a_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_b_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.gemm_op.tcgen05_gemm_blockscaled" title="Link to this definition">¶</a></dt>
+<dd><p>Explicit Blackwell TCGEN05 block-scaled GEMM without an implicit wait.</p>
+<p>This is the explicit asynchronous Blackwell TCGEN5MMA block-scaled
+counterpart to <cite>T.tcgen05_gemm(…)</cite>. It never auto-emits an inlined
+<cite>mbarrier_wait_parity</cite>, and compilation fails instead of silently falling
+back if the requested ISA path is unavailable.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">use_2cta=True</span></code>, this lowers to the true 2CTA block-scaled TCGEN05
+path only; there is no fallback or emulation. That mode requires
+<code class="docutils literal notranslate"><span class="pre">cluster_dims</span></code> to be <code class="docutils literal notranslate"><span class="pre">(2,1,1)</span></code> or <code class="docutils literal notranslate"><span class="pre">(1,2,1)</span></code>.</p>
+<p>A and B are FP8 (E4M3/E5M2) in shared memory, C is the accumulator in
+tensor memory, and SFA/SFB are E8M0 scale factors already resident in
+tensor memory. As with <cite>T.tcgen05_gemm(…)</cite>, this API is explicit-async:
+it issues the MMA and leaves synchronization to the user schedule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>tilelang._typing.BufferLikeType</em>) – FP8 input buffer A in shared memory.</p></li>
+<li><p><strong>B</strong> (<em>tilelang._typing.BufferLikeType</em>) – FP8 input buffer B in shared memory.</p></li>
+<li><p><strong>C</strong> (<em>tilelang._typing.BufferLikeType</em>) – Accumulator in tensor memory.</p></li>
+<li><p><strong>SFA_tmem</strong> (<em>tilelang._typing.BufferLikeType</em>) – Scale factors for A in tensor memory.</p></li>
+<li><p><strong>SFB_tmem</strong> (<em>tilelang._typing.BufferLikeType</em>) – Scale factors for B in tensor memory.</p></li>
+<li><p><strong>transpose_A</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether A is MN-major. Default: False (K-major).</p></li>
+<li><p><strong>transpose_B</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether B is K-major. Default: False (MN-major).</p></li>
+<li><p><strong>clear_accum</strong> – Whether to zero the accumulator.</p></li>
+<li><p><strong>wg_wait</strong> (<em>int</em>) – Warp group wait identifier.</p></li>
+<li><p><strong>mbar</strong> (<em>tilelang._typing.BarrierType</em><em> | </em><em>None</em>) – Mbarrier for MMA completion signaling.</p></li>
+<li><p><strong>sf_a_id</strong> (<em>int</em>) – Scale factor ID for A (0-3).</p></li>
+<li><p><strong>sf_b_id</strong> (<em>int</em>) – Scale factor ID for B (0-3).</p></li>
+<li><p><strong>use_2cta</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether to request true <code class="docutils literal notranslate"><span class="pre">cta_group::2</span></code> lowering.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.gemm_op.make_blockscaled_gemm_layout">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm_op.</span></span><span class="sig-name descname"><span class="pre">make_blockscaled_gemm_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.gemm_op.make_blockscaled_gemm_layout" title="Link to this definition">¶</a></dt>
+<dd><p>Build the TMEM store layout for the C accumulator of a block-scaled GEMM.</p>
+<p>Users must call <code class="docutils literal notranslate"><span class="pre">T.annotate_layout({C_tmem:</span> <span class="pre">layout})</span></code> with the returned layout
+so that subsequent <code class="docutils literal notranslate"><span class="pre">T.copy(C_tmem,</span> <span class="pre">...)</span></code> can be lowered correctly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>C</strong> (<em>tilelang._typing.BufferLikeType</em>) – The TMEM accumulator buffer (block_M, block_N).</p></li>
+<li><p><strong>A</strong> (<em>tilelang._typing.BufferLikeType</em>) – The FP8 operand A buffer (used to infer K and dtype).</p></li>
+<li><p><strong>transpose_A</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether A is MN-major.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A Layout object for C’s TMEM storage.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tilelang.layout.Layout</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -742,6 +810,8 @@ compilation fails instead of silently falling back to another GEMM path.</p>
 <li><a class="reference internal" href="#tilelang.language.gemm_op.gemm"><code class="docutils literal notranslate"><span class="pre">gemm()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.gemm_op.wgmma_gemm"><code class="docutils literal notranslate"><span class="pre">wgmma_gemm()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.gemm_op.tcgen05_gemm"><code class="docutils literal notranslate"><span class="pre">tcgen05_gemm()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.gemm_op.tcgen05_gemm_blockscaled"><code class="docutils literal notranslate"><span class="pre">tcgen05_gemm_blockscaled()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.gemm_op.make_blockscaled_gemm_layout"><code class="docutils literal notranslate"><span class="pre">make_blockscaled_gemm_layout()</span></code></a></li>
 </ul>
 </li>
 </ul>

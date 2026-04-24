@@ -72,6 +72,8 @@ Functions
    tilelang.language.builtin.tcgen05_mma_arrive
    tilelang.language.builtin.tcgen05_before_thread_sync
    tilelang.language.builtin.tcgen05_after_thread_sync
+   tilelang.language.builtin.tcgen05_cp_warpx4
+   tilelang.language.builtin.tcgen05_sf_warp_transpose
    tilelang.language.builtin.ptx_mma_sm70
    tilelang.language.builtin.ds_read_tr16_b64
    tilelang.language.builtin.ds_read_tr8_b64
@@ -722,6 +724,23 @@ Module Contents
 .. py:function:: tcgen05_before_thread_sync()
 
 .. py:function:: tcgen05_after_thread_sync()
+
+.. py:function:: tcgen05_cp_warpx4(smem_src, tmem_dst, tmem_col_offset=0, *, use_2cta = False)
+
+   Copy one or more packed scale-factor chunks from shared memory to tensor memory.
+
+   The helper lowers to one or more ``tcgen05.cp.cta_group::{1,2}.32x128b.warpx4``
+   instructions. For 1D packed ``uint32`` scale buffers, each 128-word chunk maps to
+   4 TMEM columns and the column offset is advanced automatically.
+
+
+.. py:function:: tcgen05_sf_warp_transpose(smem_src)
+
+   Warp-level transpose for one or more packed scale-factor chunks in shared memory.
+
+   For 1D packed ``uint32`` scale buffers, the helper automatically applies the
+   transpose to each 128-word chunk in order.
+
 
 .. py:function:: ptx_mma_sm70(shape, A_layout, B_layout, A_dtype, B_dtype, C_dtype, multiplicand_a, a_index, multiplicand_b, b_index, accumulator, c_index)
 

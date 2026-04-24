@@ -17,6 +17,8 @@ Functions
    tilelang.language.gemm_op.gemm
    tilelang.language.gemm_op.wgmma_gemm
    tilelang.language.gemm_op.tcgen05_gemm
+   tilelang.language.gemm_op.tcgen05_gemm_blockscaled
+   tilelang.language.gemm_op.make_blockscaled_gemm_layout
 
 
 Module Contents
@@ -86,5 +88,52 @@ Module Contents
 
    If the current target or operand pattern cannot use Blackwell TCGEN5MMA,
    compilation fails instead of silently falling back to another GEMM path.
+
+
+.. py:function:: tcgen05_gemm_blockscaled(A, B, C, SFA_tmem, SFB_tmem, transpose_A = False, transpose_B = False, clear_accum=False, wg_wait = 0, mbar = None, sf_a_id = 0, sf_b_id = 0, *, use_2cta = False)
+
+   Explicit Blackwell TCGEN05 block-scaled GEMM without an implicit wait.
+
+   This is the explicit asynchronous Blackwell TCGEN5MMA block-scaled
+   counterpart to `T.tcgen05_gemm(...)`. It never auto-emits an inlined
+   `mbarrier_wait_parity`, and compilation fails instead of silently falling
+   back if the requested ISA path is unavailable.
+
+   With ``use_2cta=True``, this lowers to the true 2CTA block-scaled TCGEN05
+   path only; there is no fallback or emulation. That mode requires
+   ``cluster_dims`` to be ``(2,1,1)`` or ``(1,2,1)``.
+
+   A and B are FP8 (E4M3/E5M2) in shared memory, C is the accumulator in
+   tensor memory, and SFA/SFB are E8M0 scale factors already resident in
+   tensor memory. As with `T.tcgen05_gemm(...)`, this API is explicit-async:
+   it issues the MMA and leaves synchronization to the user schedule.
+
+   :param A: FP8 input buffer A in shared memory.
+   :param B: FP8 input buffer B in shared memory.
+   :param C: Accumulator in tensor memory.
+   :param SFA_tmem: Scale factors for A in tensor memory.
+   :param SFB_tmem: Scale factors for B in tensor memory.
+   :param transpose_A: Whether A is MN-major. Default: False (K-major).
+   :param transpose_B: Whether B is K-major. Default: False (MN-major).
+   :param clear_accum: Whether to zero the accumulator.
+   :param wg_wait: Warp group wait identifier.
+   :param mbar: Mbarrier for MMA completion signaling.
+   :param sf_a_id: Scale factor ID for A (0-3).
+   :param sf_b_id: Scale factor ID for B (0-3).
+   :param use_2cta: Whether to request true ``cta_group::2`` lowering.
+
+
+.. py:function:: make_blockscaled_gemm_layout(C, A, transpose_A = False)
+
+   Build the TMEM store layout for the C accumulator of a block-scaled GEMM.
+
+   Users must call ``T.annotate_layout({C_tmem: layout})`` with the returned layout
+   so that subsequent ``T.copy(C_tmem, ...)`` can be lowered correctly.
+
+   :param C: The TMEM accumulator buffer (block_M, block_N).
+   :param A: The FP8 operand A buffer (used to infer K and dtype).
+   :param transpose_A: Whether A is MN-major.
+
+   :returns: A Layout object for C's TMEM storage.
 
 
