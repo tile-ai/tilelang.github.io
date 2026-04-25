@@ -16,6 +16,7 @@ tilelang.language.allocate
        - alloc_local: Allocates local memory buffers for thread-private storage
        - alloc_fragment: Allocates fragment memory buffers for specialized operations
        - alloc_var: Allocates single-element variable buffers
+       - alloc_global: Allocates global memory buffers as workspace
 
    Each function takes shape and dtype parameters and returns a TVM buffer object
    with the appropriate memory scope.
@@ -40,6 +41,7 @@ Functions
    tilelang.language.allocate.alloc_local
    tilelang.language.allocate.alloc_fragment
    tilelang.language.allocate.alloc_var
+   tilelang.language.allocate.alloc_global
    tilelang.language.allocate.alloc_barrier
    tilelang.language.allocate.alloc_cluster_barrier
    tilelang.language.allocate.alloc_tmem
@@ -50,7 +52,6 @@ Functions
    tilelang.language.allocate.alloc_tcgen05_instruction_desc
    tilelang.language.allocate.alloc_tcgen05_instr_desc
    tilelang.language.allocate.empty
-   tilelang.language.allocate.alloc_global
 
 
 Module Contents
@@ -130,6 +131,29 @@ Module Contents
    a = T.alloc_var('int32', init=1) # var with init 1 and local.var scope
 
    :returns: A TVM buffer object allocated as a single-element variable
+   :rtype: T.Buffer
+
+
+.. py:function:: alloc_global(shape, dtype, scope='global')
+
+   Allocate a global memory buffer as a global workspace.
+
+   NOTE(chaofan): Memory allocated in this way doesn't go through torch allocator. Instead,
+   it's allocated directly by the corresponding backend APIs, like cudaMalloc. We
+   recommend allocating workspace in Torch side and pass it to the kernel via arguments,
+   which is managed under the hood by the framework. This API is mainly for testing
+   purposes and some specific purposes.
+
+   NOTE(chaofan): This API may not be available in all backends (e.g. CuteDSL).
+
+   :param shape: The shape of the buffer to allocate
+   :type shape: tuple
+   :param dtype: The data type of the buffer (e.g., 'float32', 'int32')
+   :type dtype: str
+   :param scope: The memory scope. Defaults to "global"
+   :type scope: str, optional
+
+   :returns: A TVM buffer object allocated in global memory
    :rtype: T.Buffer
 
 
@@ -251,26 +275,5 @@ Module Contents
 
    :returns: The declared OutTensor object.
    :rtype: Tensor
-
-
-.. py:function:: alloc_global(shape, dtype, scope='global')
-
-   Allocate a global memory buffer as a global workspace.
-
-   NOTE: Memory allocated in this way doesn't go through torch allocator. Instead,
-   it's allocated directly by the corresponding backend APIs, like cudaMalloc. We
-   recommend allocating workspace in Torch side and pass it to the kernel via arguments,
-   which is managed under the hood by the framework. This API is mainly for testing
-   purposes and some specific purposes.
-
-   :param shape: The shape of the buffer to allocate
-   :type shape: tuple
-   :param dtype: The data type of the buffer (e.g., 'float32', 'int32')
-   :type dtype: str
-   :param scope: The memory scope. Defaults to "global"
-   :type scope: str, optional
-
-   :returns: A TVM buffer object allocated in global memory
-   :rtype: T.Buffer
 
 
