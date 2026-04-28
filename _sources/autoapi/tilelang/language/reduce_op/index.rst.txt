@@ -46,7 +46,7 @@ Module Contents
 
 .. py:data:: ReduceKind
 
-.. py:function:: reduce(buffer, out, reduce_type, dim, clear, nan_propagate = False)
+.. py:function:: reduce(buffer, out, reduce_type, dim, clear, batch = 1, nan_propagate = False)
 
    Perform a reduction operation on a buffer along a specified dimension.
 
@@ -60,6 +60,12 @@ Module Contents
    :type dim: int
    :param clear: Whether to initialize the output buffer before reduction
    :type clear: bool
+   :param batch: Number of output elements per batched AllReduce call
+                 (default 1 = scalar, current behaviour). When batch > 1 the
+                 compiler emits ceil(N/batch) batched AllReduce calls each sharing
+                 a single pair of barriers, reducing total barrier count by batch×.
+                 batch must evenly divide the per-thread output element count N.
+   :type batch: int
    :param nan_propagate: Only meaningful for max/min/absmax on
                          float16/bfloat16. When True, lower to CUDA __hmax_nan/__hmin_nan so
                          NaNs propagate through the reduction. When False (default), use
@@ -67,7 +73,7 @@ Module Contents
    :type nan_propagate: bool
 
 
-.. py:function:: reduce_max(buffer, out, dim = -1, clear = True, nan_propagate = False)
+.. py:function:: reduce_max(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False)
 
    Perform reduce max on input buffer, store the result to output buffer
 
@@ -79,6 +85,8 @@ Module Contents
    :type dim: int
    :param clear: If set to True, the output buffer will first be initialized to -inf.
    :type clear: bool
+   :param batch: Number of output elements per batched AllReduce call (default 1).
+   :type batch: int
    :param nan_propagate: For float16/bfloat16 only. When True, NaN inputs propagate through the
                          reduction (CUDA __hmax_nan). When False (default), NaN inputs are
                          ignored in favor of the other operand (CUDA __hmax). CUDA-only.
@@ -88,7 +96,7 @@ Module Contents
    :rtype: PrimExpr
 
 
-.. py:function:: reduce_min(buffer, out, dim = -1, clear = True, nan_propagate = False)
+.. py:function:: reduce_min(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False)
 
    Perform reduce min on input buffer, store the result to output buffer.
 
@@ -100,6 +108,8 @@ Module Contents
    :type dim: int
    :param clear: If True, output buffer will be initialized to inf. Defaults to True.
    :type clear: bool, optional
+   :param batch: Number of output elements per batched AllReduce call (default 1).
+   :type batch: int
    :param nan_propagate: For float16/bfloat16 only. When True,
                          NaN inputs propagate (CUDA __hmin_nan). When False (default), NaNs
                          are ignored (CUDA __hmin). CUDA-only.
@@ -109,7 +119,7 @@ Module Contents
    :rtype: tir.Call
 
 
-.. py:function:: reduce_sum(buffer, out, dim = -1, clear = True)
+.. py:function:: reduce_sum(buffer, out, dim = -1, clear = True, batch = 1)
 
    Perform reduce sum on input buffer, store the result to output buffer.
 
@@ -123,6 +133,8 @@ Module Contents
                  If False, results will be accumulated on existing values.
                  Defaults to True.
    :type clear: bool, optional
+   :param batch: Number of output elements per batched AllReduce call (default 1).
+   :type batch: int
 
    Note: When clear=True, reduce_sum will not compute directly on the output buffer. This is because
          during warp reduction, the same value would be accumulated multiple times (number of threads
@@ -136,7 +148,7 @@ Module Contents
    :rtype: tir.Call
 
 
-.. py:function:: reduce_abssum(buffer, out, dim = -1)
+.. py:function:: reduce_abssum(buffer, out, dim = -1, batch = 1)
 
    Perform reduce absolute sum on input buffer, store the result to output buffer.
 
@@ -146,12 +158,14 @@ Module Contents
    :type out: tir.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
+   :param batch: Number of output elements per batched AllReduce call (default 1).
+   :type batch: int
 
    :returns: Handle to the reduction operation
    :rtype: tir.Call
 
 
-.. py:function:: reduce_absmax(buffer, out, dim = -1, clear = True, nan_propagate = False)
+.. py:function:: reduce_absmax(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False)
 
    Perform reduce absolute max on input buffer, store the result to output buffer.
 
@@ -161,6 +175,8 @@ Module Contents
    :type out: tir.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
+   :param batch: Number of output elements per batched AllReduce call (default 1).
+   :type batch: int
    :param nan_propagate: For float16/bfloat16 only. When True,
                          NaN inputs propagate (CUDA __hmax_nan). When False (default), NaNs
                          are ignored. CUDA-only.
@@ -170,7 +186,7 @@ Module Contents
    :rtype: tir.Call
 
 
-.. py:function:: reduce_bitand(buffer, out, dim = -1, clear = True)
+.. py:function:: reduce_bitand(buffer, out, dim = -1, clear = True, batch = 1)
 
    Perform reduce bitwise-and on input buffer, store the result to output buffer.
 
@@ -180,12 +196,14 @@ Module Contents
    :type out: tir.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
+   :param batch: Number of output elements per batched AllReduce call (default 1).
+   :type batch: int
 
    :returns: Handle to the reduction operation
    :rtype: tir.Call
 
 
-.. py:function:: reduce_bitor(buffer, out, dim = -1, clear = True)
+.. py:function:: reduce_bitor(buffer, out, dim = -1, clear = True, batch = 1)
 
    Perform reduce bitwise-or on input buffer, store the result to output buffer.
 
@@ -195,12 +213,14 @@ Module Contents
    :type out: tir.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
+   :param batch: Number of output elements per batched AllReduce call (default 1).
+   :type batch: int
 
    :returns: Handle to the reduction operation
    :rtype: tir.Call
 
 
-.. py:function:: reduce_bitxor(buffer, out, dim = -1, clear = True)
+.. py:function:: reduce_bitxor(buffer, out, dim = -1, clear = True, batch = 1)
 
    Perform reduce bitwise-xor on input buffer, store the result to output buffer.
 
@@ -273,7 +293,7 @@ Module Contents
    :rtype: tir.Call
 
 
-.. py:function:: finalize_reducer(reducer)
+.. py:function:: finalize_reducer(reducer, batch = 1)
 
    Finalize a reducer buffer by emitting the `tl.tileop.finalize_reducer` intrinsic.
 
@@ -282,6 +302,12 @@ Module Contents
 
    :param reducer: Reducer buffer whose writable pointer will be finalized.
    :type reducer: tir.Buffer
+   :param batch: Batch size for the AllReduce call (default 1 = scalar path,
+                 matching the T.reduce default).  When batch > 1, the compiler emits a
+                 single batched AllReduce call covering `batch` output elements at a
+                 time, reducing barrier count by batch×.  batch must evenly divide the
+                 total number of per-thread output elements.
+   :type batch: int
 
    :returns: Handle to the finalize reducer intrinsic call.
    :rtype: tir.Call

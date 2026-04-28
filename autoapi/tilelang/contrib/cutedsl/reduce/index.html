@@ -846,7 +846,7 @@ Based on tl::NamedBarrier&lt;all_threads&gt; from reduce.h</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.AllReduce">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">AllReduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reducer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.AllReduce" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">AllReduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reducer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workspace_stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.AllReduce" title="Link to this definition">¶</a></dt>
 <dd><p>AllReduce operation implementing warp/block-level reduction.
 Based on tl::AllReduce from reduce.h</p>
 <dl class="field-list simple">
@@ -856,7 +856,9 @@ Based on tl::AllReduce from reduce.h</p>
 <li><p><strong>threads</strong> – Number of threads participating in reduction</p></li>
 <li><p><strong>scale</strong> – Reduction scale factor</p></li>
 <li><p><strong>thread_offset</strong> – Thread ID offset</p></li>
-<li><p><strong>all_threads</strong> – Total number of threads in block</p></li>
+<li><p><strong>all_threads</strong> – Total number of threads in block (or NamedBarrier instance)</p></li>
+<li><p><strong>batch_size</strong> – Number of elements per thread to reduce in parallel (default 1)</p></li>
+<li><p><strong>workspace_stride</strong> – Stride between batch channels in shared memory (default 0)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

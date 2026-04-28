@@ -196,7 +196,7 @@ Module Contents
    .. py:attribute:: all_threads
 
 
-.. py:function:: AllReduce(reducer, threads, scale, thread_offset, all_threads=None)
+.. py:function:: AllReduce(reducer, threads, scale, thread_offset, all_threads=None, batch_size=1, workspace_stride=0)
 
    AllReduce operation implementing warp/block-level reduction.
    Based on tl::AllReduce from reduce.h
@@ -205,7 +205,9 @@ Module Contents
    :param threads: Number of threads participating in reduction
    :param scale: Reduction scale factor
    :param thread_offset: Thread ID offset
-   :param all_threads: Total number of threads in block
+   :param all_threads: Total number of threads in block (or NamedBarrier instance)
+   :param batch_size: Number of elements per thread to reduce in parallel (default 1)
+   :param workspace_stride: Stride between batch channels in shared memory (default 0)
 
    :returns: A callable object with run() and run_hopper() methods
 
