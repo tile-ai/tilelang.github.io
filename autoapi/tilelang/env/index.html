@@ -345,6 +345,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../contrib/dlpack/index.html">tilelang.contrib.dlpack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../contrib/hipcc/index.html">tilelang.contrib.hipcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contrib/msvc/index.html">tilelang.contrib.msvc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../contrib/nvcc/index.html">tilelang.contrib.nvcc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../contrib/nvrtc/index.html">tilelang.contrib.nvrtc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../contrib/rocm/index.html">tilelang.contrib.rocm</a></li>
@@ -684,7 +685,16 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.env.prepend_pythonpath" title="tilelang.env.prepend_pythonpath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepend_pythonpath</span></code></a>(path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.env.prepend_dll_search_path" title="tilelang.env.prepend_dll_search_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepend_dll_search_path</span></code></a>(paths)</p></td>
+<td><p>Prepend <code class="docutils literal notranslate"><span class="pre">paths</span></code> to <code class="docutils literal notranslate"><span class="pre">%PATH%</span></code> on Windows, skipping entries already present.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.env.get_cuda_dll_search_dirs" title="tilelang.env.get_cuda_dll_search_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cuda_dll_search_dirs</span></code></a>()</p></td>
+<td><p>Return CUDA_HOME-derived DLL search directories (Windows only).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.env.get_windows_runtime_dll_dirs" title="tilelang.env.get_windows_runtime_dll_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_windows_runtime_dll_dirs</span></code></a>()</p></td>
+<td><p>Return Windows-only DLL directories shipped with sibling Python packages.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.env.prepend_pythonpath" title="tilelang.env.prepend_pythonpath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepend_pythonpath</span></code></a>(path)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -750,6 +760,22 @@
 <dt class="sig sig-object py" id="id1">
 <span class="sig-prename descclassname"><span class="pre">tilelang.env.</span></span><span class="sig-name descname"><span class="pre">DEV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.env.prepend_dll_search_path">
+<span class="sig-prename descclassname"><span class="pre">tilelang.env.</span></span><span class="sig-name descname"><span class="pre">prepend_dll_search_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.prepend_dll_search_path" title="Link to this definition">¶</a></dt>
+<dd><p>Prepend <code class="docutils literal notranslate"><span class="pre">paths</span></code> to <code class="docutils literal notranslate"><span class="pre">%PATH%</span></code> on Windows, skipping entries already present.</p>
+<p>Used by Windows DLL discovery: PATH is consulted by <code class="docutils literal notranslate"><span class="pre">LoadLibrary</span></code> and by
+<code class="docutils literal notranslate"><span class="pre">os.add_dll_directory</span></code>-registered directories alike. POSIX is a no-op.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paths</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.env.CacheState">
@@ -1154,6 +1180,34 @@ auto-tuning configs, and build options.</p>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.env.get_cuda_dll_search_dirs">
+<span class="sig-prename descclassname"><span class="pre">tilelang.env.</span></span><span class="sig-name descname"><span class="pre">get_cuda_dll_search_dirs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.get_cuda_dll_search_dirs" title="Link to this definition">¶</a></dt>
+<dd><p>Return CUDA_HOME-derived DLL search directories (Windows only).</p>
+<p>The CUDA_HOME value itself is auto-detected by <code class="docutils literal notranslate"><span class="pre">_find_cuda_home</span></code> (env vars,
+<code class="docutils literal notranslate"><span class="pre">nvcc</span></code> on PATH, pip <code class="docutils literal notranslate"><span class="pre">nvidia-cuda-nvcc</span></code> package, or default install paths).
+This helper expands it into the subdirectories that actually contain
+<code class="docutils literal notranslate"><span class="pre">nvcuda.dll</span></code> / <code class="docutils literal notranslate"><span class="pre">cudart64_*.dll</span></code> / <code class="docutils literal notranslate"><span class="pre">nvrtc64_*.dll</span></code> / <code class="docutils literal notranslate"><span class="pre">nvvm*.dll</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.env.get_windows_runtime_dll_dirs">
+<span class="sig-prename descclassname"><span class="pre">tilelang.env.</span></span><span class="sig-name descname"><span class="pre">get_windows_runtime_dll_dirs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.get_windows_runtime_dll_dirs" title="Link to this definition">¶</a></dt>
+<dd><p>Return Windows-only DLL directories shipped with sibling Python packages.</p>
+<p>Currently locates <code class="docutils literal notranslate"><span class="pre">tvm_ffi</span></code> and <code class="docutils literal notranslate"><span class="pre">z3</span></code> install dirs so their DLLs resolve
+when TileLang is imported. Each lookup is best-effort; failures are ignored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.env.prepend_pythonpath">
 <span class="sig-prename descclassname"><span class="pre">tilelang.env.</span></span><span class="sig-name descname"><span class="pre">prepend_pythonpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.prepend_pythonpath" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1267,6 +1321,7 @@ auto-tuning configs, and build options.</p>
 <li><a class="reference internal" href="#tilelang.env.DEV"><code class="docutils literal notranslate"><span class="pre">DEV</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.THIRD_PARTY_ROOT"><code class="docutils literal notranslate"><span class="pre">THIRD_PARTY_ROOT</span></code></a></li>
 <li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">DEV</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.prepend_dll_search_path"><code class="docutils literal notranslate"><span class="pre">prepend_dll_search_path()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.CacheState"><code class="docutils literal notranslate"><span class="pre">CacheState</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.env.CacheState.enable"><code class="docutils literal notranslate"><span class="pre">CacheState.enable()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.CacheState.disable"><code class="docutils literal notranslate"><span class="pre">CacheState.disable()</span></code></a></li>
@@ -1325,6 +1380,8 @@ auto-tuning configs, and build options.</p>
 <li><a class="reference internal" href="#tilelang.env.is_cache_enabled"><code class="docutils literal notranslate"><span class="pre">is_cache_enabled</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.CUDA_HOME"><code class="docutils literal notranslate"><span class="pre">CUDA_HOME</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.ROCM_HOME"><code class="docutils literal notranslate"><span class="pre">ROCM_HOME</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.get_cuda_dll_search_dirs"><code class="docutils literal notranslate"><span class="pre">get_cuda_dll_search_dirs()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.get_windows_runtime_dll_dirs"><code class="docutils literal notranslate"><span class="pre">get_windows_runtime_dll_dirs()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.prepend_pythonpath"><code class="docutils literal notranslate"><span class="pre">prepend_pythonpath()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.tvm_path"><code class="docutils literal notranslate"><span class="pre">tvm_path</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.cutlass_inc_path"><code class="docutils literal notranslate"><span class="pre">cutlass_inc_path</span></code></a></li>

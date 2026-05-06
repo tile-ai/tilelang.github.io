@@ -50,6 +50,9 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.env.prepend_dll_search_path
+   tilelang.env.get_cuda_dll_search_dirs
+   tilelang.env.get_windows_runtime_dll_dirs
    tilelang.env.prepend_pythonpath
 
 
@@ -94,6 +97,14 @@ Module Contents
 
 .. py:data:: DEV
    :value: True
+
+
+.. py:function:: prepend_dll_search_path(paths)
+
+   Prepend ``paths`` to ``%PATH%`` on Windows, skipping entries already present.
+
+   Used by Windows DLL discovery: PATH is consulted by ``LoadLibrary`` and by
+   ``os.add_dll_directory``-registered directories alike. POSIX is a no-op.
 
 
 .. py:class:: CacheState
@@ -339,6 +350,24 @@ Module Contents
 .. py:data:: CUDA_HOME
 
 .. py:data:: ROCM_HOME
+
+.. py:function:: get_cuda_dll_search_dirs()
+
+   Return CUDA_HOME-derived DLL search directories (Windows only).
+
+   The CUDA_HOME value itself is auto-detected by ``_find_cuda_home`` (env vars,
+   ``nvcc`` on PATH, pip ``nvidia-cuda-nvcc`` package, or default install paths).
+   This helper expands it into the subdirectories that actually contain
+   ``nvcuda.dll`` / ``cudart64_*.dll`` / ``nvrtc64_*.dll`` / ``nvvm*.dll``.
+
+
+.. py:function:: get_windows_runtime_dll_dirs()
+
+   Return Windows-only DLL directories shipped with sibling Python packages.
+
+   Currently locates ``tvm_ffi`` and ``z3`` install dirs so their DLLs resolve
+   when TileLang is imported. Each lookup is best-effort; failures are ignored.
+
 
 .. py:function:: prepend_pythonpath(path)
 

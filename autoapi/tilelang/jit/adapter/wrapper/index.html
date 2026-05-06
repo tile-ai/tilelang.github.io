@@ -345,6 +345,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../contrib/dlpack/index.html">tilelang.contrib.dlpack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../contrib/hipcc/index.html">tilelang.contrib.hipcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../contrib/msvc/index.html">tilelang.contrib.msvc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../contrib/nvcc/index.html">tilelang.contrib.nvcc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../contrib/nvrtc/index.html">tilelang.contrib.nvrtc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../contrib/rocm/index.html">tilelang.contrib.rocm</a></li>
@@ -707,14 +708,20 @@
 <dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.PREDEF_INIT_FUNC">
 <span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">PREDEF_INIT_FUNC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.PREDEF_INIT_FUNC" title="Link to this definition">¶</a></dt>
 <dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">#ifdef _WIN32</span>
+<span class="sd">#define TL_EXPORT __declspec(dllexport)</span>
+<span class="sd">#else</span>
+<span class="sd">#define TL_EXPORT</span>
+<span class="sd">#endif</span>
+
 <span class="sd">#define ERROR_BUF_SIZE 1024</span>
 <span class="sd">static char error_buf[ERROR_BUF_SIZE];</span>
 
-<span class="sd">extern &quot;C&quot; const char* get_last_error() {{</span>
+<span class="sd">extern &quot;C&quot; TL_EXPORT const char* get_last_error() {{</span>
 <span class="sd">    return error_buf;</span>
 <span class="sd">}}</span>
 
-<span class="sd">extern &quot;C&quot; int init() {{</span>
+<span class="sd">extern &quot;C&quot; TL_EXPORT int init() {{</span>
 <span class="sd">    error_buf[0] = &#39;\0&#39;;</span>
 <span class="sd">    {0}</span>
 <span class="sd">    return 0;</span>
@@ -728,7 +735,7 @@
 <dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.PREDEF_HOST_FUNC">
 <span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.wrapper.</span></span><span class="sig-name descname"><span class="pre">PREDEF_HOST_FUNC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.PREDEF_HOST_FUNC" title="Link to this definition">¶</a></dt>
 <dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">extern &quot;C&quot; int call({}) {{</span>
+<span class="sd">extern &quot;C&quot; TL_EXPORT int call({}) {{</span>
 <span class="sd">{}</span>
 <span class="sd">  return 0;</span>
 <span class="sd">}}</span>
@@ -799,9 +806,7 @@
 <span class="sd">    &amp;{0}, {0}_type, {0}_tensorRank, {0}_globalAddress, {0}_globalDim, {0}_globalStride + 1, {0}_boxDim, {0}_elementStrides, {0}_interleave, {0}_swizzle, {0}_l2Promotion, {0}_oobFill);</span>
 
 <span class="sd">  if ({0}_result != CUDA_SUCCESS) {{</span>
-<span class="sd">          std::stringstream ss;</span>
-<span class="sd">          ss &lt;&lt; &quot;Error: Failed to initialize the TMA descriptor {0}&quot;;</span>
-<span class="sd">          snprintf(error_buf, ERROR_BUF_SIZE, &quot;%s&quot;, ss.str().c_str());</span>
+<span class="sd">          snprintf(error_buf, ERROR_BUF_SIZE, &quot;Error: Failed to initialize the TMA descriptor {0}&quot;);</span>
 <span class="sd">          return -1;</span>
 <span class="sd">  }}</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -834,9 +839,7 @@
 <span class="sd">    {0}_lowerCorner, {0}_upperCorner, {0}_channelsPerPixel, {0}_pixelsPerColumn, {0}_elementStrides, {0}_interleave, {0}_swizzle, {0}_l2Promotion, {0}_oobFill);</span>
 
 <span class="sd">  if ({0}_result != CUDA_SUCCESS) {{</span>
-<span class="sd">          std::stringstream ss;</span>
-<span class="sd">          ss &lt;&lt; &quot;Error: Failed to initialize the TMA descriptor {0}&quot;;</span>
-<span class="sd">          snprintf(error_buf, ERROR_BUF_SIZE, &quot;%s&quot;, ss.str().c_str());</span>
+<span class="sd">          snprintf(error_buf, ERROR_BUF_SIZE, &quot;Error: Failed to initialize the TMA descriptor {0}&quot;);</span>
 <span class="sd">          return -1;</span>
 <span class="sd">  }}</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -1201,14 +1204,20 @@ inheritance.</p>
 <dt class="sig sig-object py" id="tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.INIT_FUNC">
 <span class="sig-name descname"><span class="pre">INIT_FUNC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.wrapper.TLCPUSourceWrapper.INIT_FUNC" title="Link to this definition">¶</a></dt>
 <dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">#ifdef _WIN32</span>
+<span class="sd">#define TL_EXPORT __declspec(dllexport)</span>
+<span class="sd">#else</span>
+<span class="sd">#define TL_EXPORT</span>
+<span class="sd">#endif</span>
+
 <span class="sd">#define ERROR_BUF_SIZE 1024</span>
 <span class="sd">static char error_buf[ERROR_BUF_SIZE];</span>
 
-<span class="sd">extern &quot;C&quot; const char* get_last_error() {</span>
+<span class="sd">extern &quot;C&quot; TL_EXPORT const char* get_last_error() {</span>
 <span class="sd">    return error_buf;</span>
 <span class="sd">}</span>
 
-<span class="sd">extern &quot;C&quot; int init() {</span>
+<span class="sd">extern &quot;C&quot; TL_EXPORT int init() {</span>
 <span class="sd">    error_buf[0] = &#39;\0&#39;;</span>
 
 <span class="sd">    return 0;</span>

@@ -345,6 +345,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../contrib/dlpack/index.html">tilelang.contrib.dlpack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../contrib/hipcc/index.html">tilelang.contrib.hipcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contrib/msvc/index.html">tilelang.contrib.msvc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../contrib/nvcc/index.html">tilelang.contrib.nvcc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../contrib/nvrtc/index.html">tilelang.contrib.nvrtc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../contrib/rocm/index.html">tilelang.contrib.rocm</a></li>
@@ -627,16 +628,13 @@ and performance optimization through configuration search.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.autotuner.tuner.timeout_handler" title="tilelang.autotuner.tuner.timeout_handler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timeout_handler</span></code></a>(signum, frame)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.autotuner.tuner.run_with_timeout" title="tilelang.autotuner.tuner.run_with_timeout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_with_timeout</span></code></a>(func, timeout, *args, **kwargs)</p></td>
+<td><p>Run <code class="docutils literal notranslate"><span class="pre">func</span></code> under a deadline, raising <a class="reference internal" href="#tilelang.autotuner.tuner.TimeoutException" title="tilelang.autotuner.tuner.TimeoutException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutException</span></code></a> if exceeded.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.autotuner.tuner.run_with_timeout" title="tilelang.autotuner.tuner.run_with_timeout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_with_timeout</span></code></a>(func, timeout, *args, **kwargs)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.autotuner.tuner.get_available_cpu_count" title="tilelang.autotuner.tuner.get_available_cpu_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_available_cpu_count</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.autotuner.tuner.get_available_cpu_count" title="tilelang.autotuner.tuner.get_available_cpu_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_available_cpu_count</span></code></a>()</p></td>
 <td><p>Gets the number of CPU cores available to the current process.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.autotuner.tuner.autotune" title="tilelang.autotuner.tuner.autotune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autotune</span></code></a>([func, warmup, rep, timeout, supply_type, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.autotuner.tuner.autotune" title="tilelang.autotuner.tuner.autotune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autotune</span></code></a>([func, warmup, rep, timeout, supply_type, ...])</p></td>
 <td><p>Just-In-Time (JIT) compiler decorator for TileLang functions.</p></td>
 </tr>
 </tbody>
@@ -653,14 +651,18 @@ and performance optimization through configuration search.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.autotuner.tuner.timeout_handler">
-<span class="sig-prename descclassname"><span class="pre">tilelang.autotuner.tuner.</span></span><span class="sig-name descname"><span class="pre">timeout_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.autotuner.tuner.timeout_handler" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.autotuner.tuner.run_with_timeout">
 <span class="sig-prename descclassname"><span class="pre">tilelang.autotuner.tuner.</span></span><span class="sig-name descname"><span class="pre">run_with_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.autotuner.tuner.run_with_timeout" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run <code class="docutils literal notranslate"><span class="pre">func</span></code> under a deadline, raising <a class="reference internal" href="#tilelang.autotuner.tuner.TimeoutException" title="tilelang.autotuner.tuner.TimeoutException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutException</span></code></a> if exceeded.</p>
+<p>Picks the strongest available primitive:</p>
+<ul class="simple">
+<li><p><strong>POSIX, main thread</strong>: <code class="docutils literal notranslate"><span class="pre">SIGALRM</span></code>. The deadline truly interrupts
+<code class="docutils literal notranslate"><span class="pre">func</span></code> mid-execution and frees its resources.</p></li>
+<li><p><strong>Otherwise</strong> (Windows, or POSIX off the main thread): a daemon
+<code class="docutils literal notranslate"><span class="pre">ThreadPoolExecutor</span></code>. The deadline only unblocks the caller; the
+runaway worker keeps running until it returns on its own.</p></li>
+</ul>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="tilelang.autotuner.tuner.logger">
@@ -1172,7 +1174,6 @@ instance that can then be applied to a function.</p>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.autotuner.tuner.TimeoutException"><code class="docutils literal notranslate"><span class="pre">TimeoutException</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.autotuner.tuner.timeout_handler"><code class="docutils literal notranslate"><span class="pre">timeout_handler()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.autotuner.tuner.run_with_timeout"><code class="docutils literal notranslate"><span class="pre">run_with_timeout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.autotuner.tuner.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.autotuner.tuner.get_available_cpu_count"><code class="docutils literal notranslate"><span class="pre">get_available_cpu_count()</span></code></a></li>

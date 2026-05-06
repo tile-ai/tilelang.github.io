@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="tilelang.contrib.nvrtc" href="../nvrtc/index.html"><link rel="prev" title="tilelang.contrib.hipcc" href="../hipcc/index.html">
+<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="tilelang.contrib.nvrtc" href="../nvrtc/index.html"><link rel="prev" title="tilelang.contrib.msvc" href="../msvc/index.html">
         <link rel="prefetch" href="../../../../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../../../../_static/img/logo-v2.png" as="image">
 
@@ -345,6 +345,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../dlpack/index.html">tilelang.contrib.dlpack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../hipcc/index.html">tilelang.contrib.hipcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msvc/index.html">tilelang.contrib.msvc</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">tilelang.contrib.nvcc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../nvrtc/index.html">tilelang.contrib.nvrtc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../rocm/index.html">tilelang.contrib.rocm</a></li>
@@ -586,64 +587,67 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.compile_cuda" title="tilelang.contrib.nvcc.compile_cuda"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compile_cuda</span></code></a>(code[, target_format, arch, options, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_nvcc_subprocess_env" title="tilelang.contrib.nvcc.get_nvcc_subprocess_env"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nvcc_subprocess_env</span></code></a>()</p></td>
+<td><p>Return the environment used by NVCC subprocesses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.compile_cuda" title="tilelang.contrib.nvcc.compile_cuda"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compile_cuda</span></code></a>(code[, target_format, arch, options, ...])</p></td>
 <td><p>Compile cuda code with NVCC from env.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.default_compile_options" title="tilelang.contrib.nvcc.default_compile_options"><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_compile_options</span></code></a>([compile_flags])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.default_compile_options" title="tilelang.contrib.nvcc.default_compile_options"><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_compile_options</span></code></a>([compile_flags])</p></td>
 <td><p>Build a set of default NVCC compile options for TileLang generated sources.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_ptx_from_source" title="tilelang.contrib.nvcc.get_ptx_from_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ptx_from_source</span></code></a>(code[, compile_flags, verbose])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_ptx_from_source" title="tilelang.contrib.nvcc.get_ptx_from_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ptx_from_source</span></code></a>(code[, compile_flags, verbose])</p></td>
 <td><p>Compile CUDA C++ source to PTX using NVCC and return as text.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_sass_from_source" title="tilelang.contrib.nvcc.get_sass_from_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sass_from_source</span></code></a>(code[, compile_flags, verbose])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_sass_from_source" title="tilelang.contrib.nvcc.get_sass_from_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sass_from_source</span></code></a>(code[, compile_flags, verbose])</p></td>
 <td><p>Compile CUDA C++ source to CUBIN and disassemble to SASS.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.find_cuda_path" title="tilelang.contrib.nvcc.find_cuda_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_cuda_path</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.find_cuda_path" title="tilelang.contrib.nvcc.find_cuda_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_cuda_path</span></code></a>()</p></td>
 <td><p>Utility function to find cuda path</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_cuda_library_dirs" title="tilelang.contrib.nvcc.get_cuda_library_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cuda_library_dirs</span></code></a>([cuda_path])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_cuda_library_dirs" title="tilelang.contrib.nvcc.get_cuda_library_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cuda_library_dirs</span></code></a>([cuda_path])</p></td>
 <td><p>Return CUDA library directories that nvcc may need for host linking.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_cuda_version" title="tilelang.contrib.nvcc.get_cuda_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cuda_version</span></code></a>([cuda_path])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_cuda_version" title="tilelang.contrib.nvcc.get_cuda_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cuda_version</span></code></a>([cuda_path])</p></td>
 <td><p>Utility function to get cuda version</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_target_compute_version" title="tilelang.contrib.nvcc.get_target_compute_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_target_compute_version</span></code></a>([target])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_target_compute_version" title="tilelang.contrib.nvcc.get_target_compute_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_target_compute_version</span></code></a>([target])</p></td>
 <td><p>Utility function to get compute capability of compilation target.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.parse_compute_version" title="tilelang.contrib.nvcc.parse_compute_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_compute_version</span></code></a>(compute_version)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.parse_compute_version" title="tilelang.contrib.nvcc.parse_compute_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_compute_version</span></code></a>(compute_version)</p></td>
 <td><p>Parse compute capability string to divide major and minor version</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_target_arch" title="tilelang.contrib.nvcc.get_target_arch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_target_arch</span></code></a>(compute_version)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_target_arch" title="tilelang.contrib.nvcc.get_target_arch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_target_arch</span></code></a>(compute_version)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_fp16" title="tilelang.contrib.nvcc.have_fp16"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_fp16</span></code></a>(compute_version)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_fp16" title="tilelang.contrib.nvcc.have_fp16"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_fp16</span></code></a>(compute_version)</p></td>
 <td><p>Either fp16 support is provided in the compute capability or not</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_int8" title="tilelang.contrib.nvcc.have_int8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_int8</span></code></a>(compute_version)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_int8" title="tilelang.contrib.nvcc.have_int8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_int8</span></code></a>(compute_version)</p></td>
 <td><p>Either int8 support is provided in the compute capability or not</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_tensorcore" title="tilelang.contrib.nvcc.have_tensorcore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_tensorcore</span></code></a>([compute_version, target])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_tensorcore" title="tilelang.contrib.nvcc.have_tensorcore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_tensorcore</span></code></a>([compute_version, target])</p></td>
 <td><p>Either TensorCore support is provided in the compute capability or not</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_cudagraph" title="tilelang.contrib.nvcc.have_cudagraph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_cudagraph</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_cudagraph" title="tilelang.contrib.nvcc.have_cudagraph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_cudagraph</span></code></a>()</p></td>
 <td><p>Either CUDA Graph support is provided</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_bf16" title="tilelang.contrib.nvcc.have_bf16"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_bf16</span></code></a>(compute_version)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_bf16" title="tilelang.contrib.nvcc.have_bf16"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_bf16</span></code></a>(compute_version)</p></td>
 <td><p>Either bf16 support is provided in the compute capability or not</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_fp8" title="tilelang.contrib.nvcc.have_fp8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_fp8</span></code></a>(compute_version)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_fp8" title="tilelang.contrib.nvcc.have_fp8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_fp8</span></code></a>(compute_version)</p></td>
 <td><p>Whether fp8 support is provided in the specified compute capability or not</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_tma" title="tilelang.contrib.nvcc.have_tma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_tma</span></code></a>(target)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_tma" title="tilelang.contrib.nvcc.have_tma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_tma</span></code></a>(target)</p></td>
 <td><p>Whether TMA support is provided in the specified compute capability or not</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.is_hopper" title="tilelang.contrib.nvcc.is_hopper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_hopper</span></code></a>(target)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.is_hopper" title="tilelang.contrib.nvcc.is_hopper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_hopper</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_pdl" title="tilelang.contrib.nvcc.have_pdl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_pdl</span></code></a>(target)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.have_pdl" title="tilelang.contrib.nvcc.have_pdl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">have_pdl</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_nvcc_compiler" title="tilelang.contrib.nvcc.get_nvcc_compiler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nvcc_compiler</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_nvcc_compiler" title="tilelang.contrib.nvcc.get_nvcc_compiler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nvcc_compiler</span></code></a>()</p></td>
 <td><p>Get the path to the nvcc compiler</p></td>
 </tr>
 </tbody>
@@ -652,6 +656,19 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.nvcc.get_nvcc_subprocess_env">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.nvcc.</span></span><span class="sig-name descname"><span class="pre">get_nvcc_subprocess_env</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.nvcc.get_nvcc_subprocess_env" title="Link to this definition">¶</a></dt>
+<dd><p>Return the environment used by NVCC subprocesses.</p>
+<p>On Windows, the pip CUDA toolkit can provide nvcc without a system CUDA
+install, but nvcc still needs MSVC’s host compiler environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, str] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.nvcc.compile_cuda">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.nvcc.</span></span><span class="sig-name descname"><span class="pre">compile_cuda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ptx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.nvcc.compile_cuda" title="Link to this definition">¶</a></dt>
@@ -942,14 +959,14 @@ isn’t specified.</p></li>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../hipcc/index.html">
+          <a class="prev-page" href="../msvc/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">tilelang.contrib.hipcc</div>
+                <div class="title">tilelang.contrib.msvc</div>
                 
               </div>
             </a>
@@ -986,6 +1003,7 @@ isn’t specified.</p></li>
 <li><a class="reference internal" href="#">tilelang.contrib.nvcc</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.contrib.nvcc.get_nvcc_subprocess_env"><code class="docutils literal notranslate"><span class="pre">get_nvcc_subprocess_env()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.nvcc.compile_cuda"><code class="docutils literal notranslate"><span class="pre">compile_cuda()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.nvcc.default_compile_options"><code class="docutils literal notranslate"><span class="pre">default_compile_options()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.nvcc.get_ptx_from_source"><code class="docutils literal notranslate"><span class="pre">get_ptx_from_source()</span></code></a></li>

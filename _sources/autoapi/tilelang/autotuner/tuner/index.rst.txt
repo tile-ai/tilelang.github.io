@@ -42,7 +42,6 @@ Functions
 
 .. autoapisummary::
 
-   tilelang.autotuner.tuner.timeout_handler
    tilelang.autotuner.tuner.run_with_timeout
    tilelang.autotuner.tuner.get_available_cpu_count
    tilelang.autotuner.tuner.autotune
@@ -59,9 +58,18 @@ Module Contents
    Common base class for all non-exit exceptions.
 
 
-.. py:function:: timeout_handler(signum, frame)
-
 .. py:function:: run_with_timeout(func, timeout, *args, **kwargs)
+
+   Run ``func`` under a deadline, raising :class:`TimeoutException` if exceeded.
+
+   Picks the strongest available primitive:
+
+   * **POSIX, main thread**: ``SIGALRM``. The deadline truly interrupts
+     ``func`` mid-execution and frees its resources.
+   * **Otherwise** (Windows, or POSIX off the main thread): a daemon
+     ``ThreadPoolExecutor``. The deadline only unblocks the caller; the
+     runaway worker keeps running until it returns on its own.
+
 
 .. py:data:: logger
 

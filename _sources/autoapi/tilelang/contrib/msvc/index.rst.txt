@@ -1,0 +1,47 @@
+tilelang.contrib.msvc
+=====================
+
+.. py:module:: tilelang.contrib.msvc
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.msvc.get_env_path
+   tilelang.contrib.msvc.get_windows_compiler
+   tilelang.contrib.msvc.get_msvc_subprocess_env
+   tilelang.contrib.msvc.get_msvc_environment_error
+   tilelang.contrib.msvc.create_shared
+
+
+Module Contents
+---------------
+
+.. py:function:: get_env_path(compiler_env)
+
+.. py:function:: get_windows_compiler()
+
+   Resolve the preferred Windows host compiler.
+
+   Returns ``(path, kind)`` where ``kind`` is ``"clang-cl"`` or ``"msvc"``.
+   Set the ``TILELANG_DISABLE_CLANG_CL`` env var to force the legacy
+   ``cl.exe`` path.
+
+
+.. py:function:: get_msvc_subprocess_env()
+
+   Return the resolved MSVC subprocess environment.
+
+   Memoized via :func:`functools.cache` (matching ``contrib/cc.py`` and
+   ``cache/kernel_cache.py``). Concurrent first callers may each spawn
+   ``vswhere.exe`` / ``VsDevCmd.bat`` once; ``functools.cache`` keeps only
+   the winning result. Subsequent calls hit the cache directly with no
+   locking.
+
+
+.. py:function:: get_msvc_environment_error()
+
+.. py:function:: create_shared(output, objects, options=None, cc=None, cwd=None, ccache_env=None)
+

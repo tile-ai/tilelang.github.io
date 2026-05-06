@@ -345,6 +345,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/dlpack/index.html">tilelang.contrib.dlpack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/hipcc/index.html">tilelang.contrib.hipcc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/msvc/index.html">tilelang.contrib.msvc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/nvcc/index.html">tilelang.contrib.nvcc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/nvrtc/index.html">tilelang.contrib.nvrtc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/contrib/rocm/index.html">tilelang.contrib.rocm</a></li>
@@ -609,16 +610,17 @@
 <h2>Building from Source<a class="headerlink" href="#building-from-source" title="Link to this heading">¶</a></h2>
 <p><strong>Prerequisites for building from source:</strong></p>
 <ul class="simple">
-<li><p><strong>Operating System</strong>: Linux</p></li>
+<li><p><strong>Operating System</strong>: Linux or Windows</p></li>
 <li><p><strong>Python Version</strong>: &gt;= 3.9</p></li>
 <li><p><strong>CUDA Version</strong>: &gt;= 10.0 (host installation), or pip-provided CUDA toolchain (&gt;= 13.0)</p></li>
 </ul>
-<p>If you prefer Docker, please skip to the <a class="reference internal" href="#install-using-docker">Install Using Docker</a> section. This section focuses on building from source on a native Linux environment.</p>
+<p>If you prefer Docker, please skip to the <a class="reference internal" href="#install-using-docker">Install Using Docker</a> section. The commands below use Ubuntu/Debian as the Linux example; Windows-specific notes are called out where they differ.</p>
 <p>First, install the OS-level prerequisites on Ubuntu/Debian-based systems using the following commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>apt-get<span class="w"> </span>update
 apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>python3<span class="w"> </span>python3-dev<span class="w"> </span>python3-setuptools<span class="w"> </span>gcc<span class="w"> </span>zlib1g-dev<span class="w"> </span>build-essential<span class="w"> </span>cmake<span class="w"> </span>libedit-dev
 </pre></div>
 </div>
+<p>On Windows, install Python 3, CMake, and Visual Studio Build Tools with the MSVC C++ toolchain. Run the <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> commands below from a Visual Studio Developer Command Prompt (or <code class="docutils literal notranslate"><span class="pre">call</span> <span class="pre">VsDevCmd.bat</span></code> first) so that <code class="docutils literal notranslate"><span class="pre">cl.exe</span></code> is on <code class="docutils literal notranslate"><span class="pre">PATH</span></code> and CMake can detect the compiler.</p>
 <p>Then, clone the tilelang repository and install it using pip. The <code class="docutils literal notranslate"><span class="pre">-v</span></code> flag enables verbose output during the build process.</p>
 <blockquote>
 <div><p><strong>Note</strong>: Use the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> flag to include necessary submodules. Tilelang currently depends on a customized version of TVM, which is included as a submodule. If you prefer <a class="reference internal" href="#using-existing-tvm">Building with Existing TVM Installation</a>, you can skip cloning the TVM submodule (but still need other dependencies).</p>
