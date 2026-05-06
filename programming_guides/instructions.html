@@ -585,7 +585,7 @@ level, how they map to hardware concepts, and how to use them correctly.</p>
 <section id="quick-categories">
 <h2>Quick Categories<a class="headerlink" href="#quick-categories" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Data movement: <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.async_copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.c2d_im2col</span></code>, staging Global ↔ Shared ↔ Fragment</p></li>
+<li><p>Data movement: <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.async_copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.tma_copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.c2d_im2col</span></code>, staging Global ↔ Shared ↔ Fragment</p></li>
 <li><p>Compute primitives: <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code>/<code class="docutils literal notranslate"><span class="pre">T.gemm_sp</span></code>, elementwise math (<code class="docutils literal notranslate"><span class="pre">T.exp</span></code>, <code class="docutils literal notranslate"><span class="pre">T.max</span></code>),
 reductions (<code class="docutils literal notranslate"><span class="pre">T.reduce_sum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cumsum</span></code>, warp reducers)</p></li>
 <li><p>Control helpers: <code class="docutils literal notranslate"><span class="pre">T.clear</span></code>/<code class="docutils literal notranslate"><span class="pre">T.fill</span></code>, <code class="docutils literal notranslate"><span class="pre">T.reshape</span></code>/<code class="docutils literal notranslate"><span class="pre">T.view</span></code></p></li>
@@ -614,14 +614,13 @@ vectorization is not required in HL mode.</p></li>
 <li><p>Safety: the LegalizeSafeMemoryAccess pass inserts boundary guards when an
 access may be out‑of‑bounds and drops them when proven safe.</p></li>
 </ul>
-<section id="t-copy-vs-t-async-copy">
-<h3><code class="docutils literal notranslate"><span class="pre">T.copy</span></code> vs <code class="docutils literal notranslate"><span class="pre">T.async_copy</span></code><a class="headerlink" href="#t-copy-vs-t-async-copy" title="Link to this heading">¶</a></h3>
+<section id="lowering-t-copy-to-variants-of-copy-mechanisms">
+<h3>Lowering <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> to variants of copy mechanisms<a class="headerlink" href="#lowering-t-copy-to-variants-of-copy-mechanisms" title="Link to this heading">¶</a></h3>
 <p>TileLang supports both synchronous and explicitly-asynchronous copies.</p>
 <p><code class="docutils literal notranslate"><span class="pre">T.copy(src,</span> <span class="pre">dst,</span> <span class="pre">...)</span></code> (synchronous semantics)</p>
 <ul class="simple">
 <li><p>Intended default for most TileLang programs.</p></li>
-<li><p>The compiler is free to lower it to different mechanisms (SIMT copy, <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code>,
-TMA, <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>, etc.) depending on target/hints, but the observable semantics
+<li><p>The compiler is free to lower it to different mechanisms (synchronous SIMT copy <code class="docutils literal notranslate"><span class="pre">ld.global</span></code>, warp-level copy     <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code>, async copy via TMA <code class="docutils literal notranslate"><span class="pre">cp.async.bulk</span></code>, old async copy <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>, etc.) depending on target/hints, but the   observable semantics
 are <em>synchronous</em>: after the statement, it is safe to use <code class="docutils literal notranslate"><span class="pre">dst</span></code>.</p></li>
 <li><p>If <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> lowers to <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>, TileLang will still preserve synchronous
 semantics by emitting the required <code class="docutils literal notranslate"><span class="pre">commit</span></code>/<code class="docutils literal notranslate"><span class="pre">wait</span></code> (and any required
@@ -738,6 +737,7 @@ signatures, behaviors, constraints, and examples, refer to API Reference
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">T.copy(src,</span> <span class="pre">dst,</span> <span class="pre">...)</span></code>: Move tiles between Global/Shared/Fragment.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.async_copy(src,</span> <span class="pre">dst,</span> <span class="pre">...)</span></code>: Explicit async global→shared copy via <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T.tma_copy(src,</span> <span class="pre">dst,</span> <span class="pre">...)</span></code>: Explicit async global→shared copy via <code class="docutils literal notranslate"><span class="pre">cp.async.bulk</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.transpose(src,</span> <span class="pre">dst)</span></code>: Transpose a 2D shared buffer: <code class="docutils literal notranslate"><span class="pre">dst[j,</span> <span class="pre">i]</span> <span class="pre">=</span> <span class="pre">src[i,</span> <span class="pre">j]</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.c2d_im2col(img,</span> <span class="pre">col,</span> <span class="pre">...)</span></code>: 2D im2col transform for conv.</p></li>
 </ul>
@@ -934,7 +934,7 @@ All are normalized internally. See Type System for details.</p></li>
 <li><a class="reference internal" href="#">Instructions</a><ul>
 <li><a class="reference internal" href="#quick-categories">Quick Categories</a></li>
 <li><a class="reference internal" href="#data-movement">Data Movement</a><ul>
-<li><a class="reference internal" href="#t-copy-vs-t-async-copy"><code class="docutils literal notranslate"><span class="pre">T.copy</span></code> vs <code class="docutils literal notranslate"><span class="pre">T.async_copy</span></code></a></li>
+<li><a class="reference internal" href="#lowering-t-copy-to-variants-of-copy-mechanisms">Lowering <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> to variants of copy mechanisms</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#compute-primitives">Compute Primitives</a></li>
