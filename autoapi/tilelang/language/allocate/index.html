@@ -839,7 +839,7 @@ purposes and some specific purposes.</p>
 <dt class="sig sig-object py" id="tilelang.language.allocate.alloc_tmem">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_tmem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_tmem" title="Link to this definition">¶</a></dt>
 <dd><p>Allocate a Tensor Memory (TMEM) buffer for use with 5th generation Tensor Core operations (e.g., TCGEN5.MMA).</p>
-<p>TMEM is a dedicated on-chip memory introduced in Hopper GPUs, designed to reduce register pressure and enable asynchronous, single-threaded MMA operations. It is organized as a 2D array of 512 columns by 128 rows (lanes), with each cell being 32 bits. Allocation is performed in units of columns, and every lane of a column is allocated together.</p>
+<p>TMEM is a dedicated on-chip memory introduced in Blackwell GPUs, designed to reduce register pressure and enable asynchronous, single-threaded MMA operations. It is organized as a 2D array of 512 columns by 128 rows (lanes), with each cell being 32 bits. Allocation is performed in units of columns, and every lane of a column is allocated together.</p>
 <dl class="simple">
 <dt>Key properties and requirements:</dt><dd><ul class="simple">
 <li><p>The number of columns allocated must be a power of 2 and at least 32.</p></li>
@@ -871,7 +871,7 @@ take manual control of the lifetime.</p></li>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>TMEM is only available on supported architectures (e.g., Hopper and later).</p></li>
+<li><p>TMEM is only available on supported architectures (e.g., Blackwell and later).</p></li>
 <li><p>The buffer returned should be used according to TMEM access restrictions.
 Use <code class="docutils literal notranslate"><span class="pre">T.deallocate_tmem</span></code> only when you need an earlier, explicit release.</p></li>
 </ul>
