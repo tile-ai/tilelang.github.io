@@ -610,7 +610,8 @@ exposes the minimal HIPRTC API subset used by TileLang/TVM.</p></li>
 </section>
 <section id="implementation">
 <h2>Implementation<a class="headerlink" href="#implementation" title="Link to this heading">¶</a></h2>
-<p>The stubs in <code class="docutils literal notranslate"><span class="pre">src/target/stubs/</span></code> implement a lazy-loading mechanism:</p>
+<p>The CUDA stubs in <code class="docutils literal notranslate"><span class="pre">src/backend/cuda/stubs/</span></code> and ROCm stubs in
+<code class="docutils literal notranslate"><span class="pre">src/backend/rocm/stubs/</span></code> implement a lazy-loading mechanism:</p>
 <ul class="simple">
 <li><p><strong>Lazy Loading</strong>: Libraries are loaded via <code class="docutils literal notranslate"><span class="pre">dlopen</span></code> only upon the first API call.</p></li>
 <li><p><strong>Global Symbol Reuse</strong>: For <code class="docutils literal notranslate"><span class="pre">cudart</span></code> and <code class="docutils literal notranslate"><span class="pre">nvrtc</span></code>, the stubs first check the global namespace (<code class="docutils literal notranslate"><span class="pre">RTLD_DEFAULT</span></code>) to use any already loaded symbols (e.g., from PyTorch).</p></li>
