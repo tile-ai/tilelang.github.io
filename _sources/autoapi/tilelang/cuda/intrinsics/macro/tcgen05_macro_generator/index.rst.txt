@@ -1,0 +1,224 @@
+tilelang.cuda.intrinsics.macro.tcgen05_macro_generator
+======================================================
+
+.. py:module:: tilelang.cuda.intrinsics.macro.tcgen05_macro_generator
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.lift
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.SwizzleMode
+   tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TensorCoreIntrinEmitter
+
+
+Module Contents
+---------------
+
+.. py:data:: lift
+
+.. py:class:: SwizzleMode
+
+   Bases: :py:obj:`enum.IntEnum`
+
+
+   Enum where members are also (and must be) ints
+
+
+   .. py:attribute:: NONE
+      :value: 0
+
+
+
+   .. py:attribute:: SWIZZLE_128B
+      :value: 2
+
+
+
+   .. py:attribute:: SWIZZLE_64B
+      :value: 4
+
+
+
+   .. py:attribute:: SWIZZLE_32B
+      :value: 6
+
+
+
+   .. py:method:: is_none()
+
+
+   .. py:method:: is_swizzle_32b()
+
+
+   .. py:method:: is_swizzle_64b()
+
+
+   .. py:method:: is_swizzle_128b()
+
+
+   .. py:method:: swizzle_byte_size()
+
+
+   .. py:method:: swizzle_atom_size()
+
+
+.. py:class:: TensorCoreIntrinEmitter(a_dtype = T.float16, b_dtype = T.float16, accum_dtype = T.float16, a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, thread_var = None)
+
+   Bases: :py:obj:`tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter`
+
+
+   Intrinsic emitter for Blackwell (SM100) TCGEN5MMA instructions.
+
+   Generates TIR macros that lower to ``tcgen05.mma`` PTX instructions for
+   both the SS (Shared-Shared) and TS (TensorMemory-Shared) GEMM variants.
+   Also provides layout helpers for tensor-memory (TMEM) buffers.
+
+
+   .. py:attribute:: tcgen05_prefix
+      :type:  str
+
+
+   .. py:attribute:: a_shared_layout
+      :type:  tilelang.layout.Layout
+      :value: None
+
+
+
+   .. py:attribute:: b_shared_layout
+      :type:  tilelang.layout.Layout
+      :value: None
+
+
+
+   .. py:method:: tcgen05mma(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
+
+      Emit a TCGEN5MMA operation, dispatching to SS or TS variant based on A's memory scope.
+
+      If *A_buf* resides in tensor memory (``shared.tmem``), the TS variant is
+      emitted; otherwise the SS variant is used (both A and B from shared memory).
+
+      :param A_buf: Operand A — either in shared memory (SS) or tensor memory (TS).
+      :type A_buf: Buffer
+      :param B_buf: Operand B in shared memory.
+      :type B_buf: Buffer
+      :param C_local_buf: Accumulator buffer in tensor memory.
+      :type C_local_buf: Buffer
+      :param mbar: Memory barrier used for MMA completion signalling.
+      :type mbar: PrimExpr
+      :param clear_accum: Whether to zero the accumulator before the first MMA.
+      :type clear_accum: PrimExpr
+
+
+
+   .. py:method:: tcgen05mma_ss(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
+
+      Emit the SS (Shared-Shared) variant of TCGEN5MMA.
+
+      Reads operand A and B from shared memory via a descriptor.
+
+      :param A_buf: Operand A in shared memory.
+      :type A_buf: Buffer
+      :param B_buf: Operand B in shared memory.
+      :type B_buf: Buffer
+      :param C_local_buf: Accumulator buffer in tensor memory.
+      :type C_local_buf: Buffer
+      :param mbar: Memory barrier for MMA completion signalling.
+      :type mbar: PrimExpr
+      :param clear_accum: Whether to zero the accumulator before the first MMA.
+      :type clear_accum: PrimExpr
+
+
+
+   .. py:method:: tcgen05mma_ts(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
+
+      Emit the TS (TensorMemory-Shared) variant of TCGEN5MMA.
+
+      Reads operand A directly from tensor memory (TMEM) and operand B from
+      shared memory via a descriptor.  The TMEM column offset for A is
+      computed assuming packed storage (e.g. two ``bfloat16`` values per
+      ``uint32`` column) to match the output of ``tcgen05.st``.
+
+      :param A_buf: Operand A residing in tensor memory (``shared.tmem``).
+      :type A_buf: Buffer
+      :param B_buf: Operand B in shared memory.
+      :type B_buf: Buffer
+      :param C_local_buf: Accumulator buffer in tensor memory.
+      :type C_local_buf: Buffer
+      :param mbar: Memory barrier for MMA completion signalling.
+      :type mbar: PrimExpr
+      :param clear_accum: Whether to zero the accumulator before the first MMA.
+      :type clear_accum: PrimExpr
+
+
+
+   .. py:method:: tcgen05mma_blockscaled(A_buf, B_buf, C_local_buf, SFA_tmem, SFB_tmem, mbar, clear_accum = False, sf_a_id=0, sf_b_id=0)
+
+      Emit a block-scaled TCGEN5MMA (SS variant with TMEM scale factors).
+
+      Uses ``tcgen05.mma.cta_group::1|2.kind::mxf8f6f4.block_scale`` PTX instruction.
+      Scale factors must already reside in tensor memory.
+
+
+
+   .. py:method:: get_tcgen5_blockscaled_instr_desc(atom_m, atom_n, a_is_k_major, b_is_k_major, scale_in_a, scale_in_b, a_sf_id, b_sf_id)
+
+      Build the block-scaled instruction descriptor via FFI.
+
+
+
+   .. py:method:: make_mma_load_layout(local_buf, matrix = 'A')
+      :abstractmethod:
+
+
+      Create a layout function for storing MMA results into a fragment buffer.
+      This layout is used in conjunction with `inverse_mma_store_layout` to
+      map fragment indices to threads and local indices.
+
+      :param local_buf: The local buffer representing a fragment of a matrix.
+      :type local_buf: tir.Buffer
+
+      :returns: A fragment object that describes how threads and indices
+                in `local_buf` are laid out.
+      :rtype: T.Fragment
+
+      :raises AssertionError: If `local_buf` is not detected to be a fragment buffer.
+
+
+
+   .. py:method:: make_mma_store_layout(tmem_buf)
+
+      Create the TCGEN5 tensor-memory layout used to store MMA accumulators.
+
+      :param tmem_buf: The local buffer representing tensormemory of a mma's output
+      :type tmem_buf: tir.Buffer
+
+      :returns: Layout object describing how logical (i, j) coordinates map to the
+                swizzled tensor-memory offsets required by TCGEN5MMA.
+      :rtype: Layout
+
+      :raises AssertionError: If `tmem_buf` is not detected to be a tensor-memory buffer.
+
+
+
+   .. py:method:: get_tcgen5_mma_meta(m, n, k, disable_2cta)
+
+      Query the FFI for TCGEN5MMA atom metadata (atom_m, atom_n, atom_k, enable_ws, enable_2cta), and record them in `self.meta`.
+
+
+
+   .. py:method:: get_tcgen5_instr_desc(atom_m, atom_n, atom_k, a_is_k_major, b_is_k_major, scale_in_a, scale_in_b)
+
+      Build the 64-bit instruction descriptor for a ``tcgen05.mma`` PTX call.
+
+
+

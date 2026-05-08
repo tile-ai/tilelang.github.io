@@ -1,0 +1,64 @@
+tilelang.cuda.op.gemm.gemm_tcgen05
+==================================
+
+.. py:module:: tilelang.cuda.op.gemm.gemm_tcgen05
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.cuda.op.gemm.gemm_tcgen05.GEMM_INST_TCGEN05
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.cuda.op.gemm.gemm_tcgen05.GemmTCGEN5
+
+
+Module Contents
+---------------
+
+.. py:data:: GEMM_INST_TCGEN05
+   :value: 'cuda.tcgen05'
+
+
+.. py:class:: GemmTCGEN5
+
+   Bases: :py:obj:`tilelang.tileop.gemm.gemm_base.GemmBase`
+
+
+   GEMM operator for Blackwell (SM100) TCGEN5MMA instructions.
+
+   Supports the SS (Shared-Shared) and TS (TensorMemory-Shared) variants,
+   as well as block-scaled MXFP8 GEMM when SFA/SFB scale factors are present.
+   Layout inference and lowering are dispatched based on the memory scopes
+   of operands A and B.
+
+
+   .. py:method:: infer_shared_layout(continuity)
+
+      Infer a standard shared-memory swizzle layout for TCGEN05 operands.
+
+
+
+   .. py:method:: infer_layout(target, thread_nums)
+
+      Infer swizzled layouts for operands and accumulator.
+
+      For SS: both A and B get swizzled shared-memory layouts.
+      For TS: A and C get TMEM store layouts, B gets a swizzled shared-memory layout.
+      For block-scaled: same as SS (A and B get swizzle, C gets TMEM store layout).
+
+
+
+   .. py:method:: lower(layout_map, target, thread_bounds, thread_var, mbar_phase_expr = None)
+
+      Lower the GEMM tile-op into a TIR prim_func containing TCGEN5MMA calls.
+
+
+
