@@ -626,10 +626,13 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwizzleMode</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code></a></p></td>
+<td><p>Pre-computed parameters for WGMMA descriptor initialization and atom offset computation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwizzleMode</span></code></a></p></td>
 <td><p>Enum where members are also (and must be) ints</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter</span></code></a></p></td>
 <td><p>To eliminate Python syntax within TIR Macro.</p></td>
 </tr>
 </tbody>
@@ -642,6 +645,61 @@
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.lift">
 <span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">lift</span></span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.lift" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">WGMMADescriptorParams</span></span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="Link to this definition">¶</a></dt>
+<dd><p>Pre-computed parameters for WGMMA descriptor initialization and atom offset computation.</p>
+<p>Returned by <code class="docutils literal notranslate"><span class="pre">compute_wgmma_*_desc_params()</span></code> and consumed by
+<code class="docutils literal notranslate"><span class="pre">init_wgmma_*_desc()</span></code> and <code class="docutils literal notranslate"><span class="pre">wgmma_*_atom()</span></code> methods.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_mode">
+<span class="sig-name descname"><span class="pre">swizzle_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_mode" title="Link to this definition">¶</a></dt>
+<dd><p>SwizzleMode enum value (passed directly to <code class="docutils literal notranslate"><span class="pre">T.initialize_wgmma_descriptor</span></code>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.leading_byte_offset">
+<span class="sig-name descname"><span class="pre">leading_byte_offset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.leading_byte_offset" title="Link to this definition">¶</a></dt>
+<dd><p>LBO &gt;&gt; 4, ready to pass to <code class="docutils literal notranslate"><span class="pre">T.initialize_wgmma_descriptor</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.stride_byte_offset">
+<span class="sig-name descname"><span class="pre">stride_byte_offset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.stride_byte_offset" title="Link to this definition">¶</a></dt>
+<dd><p>SBO &gt;&gt; 4, ready to pass to <code class="docutils literal notranslate"><span class="pre">T.initialize_wgmma_descriptor</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_atom_elems">
+<span class="sig-name descname"><span class="pre">swizzle_atom_elems</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_atom_elems" title="Link to this definition">¶</a></dt>
+<dd><p>Number of elements per swizzle atom along the non-K dimension.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_atom_size">
+<span class="sig-name descname"><span class="pre">k_atom_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_atom_size" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">max(swizzle_atom_elems</span> <span class="pre">//</span> <span class="pre">micro_size_k,</span> <span class="pre">1)</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.elems_in_bytes">
+<span class="sig-name descname"><span class="pre">elems_in_bytes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.elems_in_bytes" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">DataType(dtype).bits</span> <span class="pre">//</span> <span class="pre">8</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Byte width of a single element</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.is_k_major">
+<span class="sig-name descname"><span class="pre">is_k_major</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><span class="pre">bool</span></a></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.is_k_major" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the matrix is stored in K-major order (affects offset formula branching).</p>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode">
@@ -812,6 +870,217 @@
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_num_inst_m">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wgmma_num_inst_m</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_num_inst_m" title="Link to this definition">¶</a></dt>
+<dd><p>Number of WGMMA instruction atoms along the M dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_num_inst_n">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wgmma_num_inst_n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_num_inst_n" title="Link to this definition">¶</a></dt>
+<dd><p>Number of WGMMA instruction atoms along the N dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_num_k_atoms">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wgmma_num_k_atoms</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_num_k_atoms" title="Link to this definition">¶</a></dt>
+<dd><p>Number of K-dimension micro-steps (<code class="docutils literal notranslate"><span class="pre">chunk</span> <span class="pre">//</span> <span class="pre">micro_size_k</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_a_regs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wgmma_a_regs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_a_regs" title="Link to this definition">¶</a></dt>
+<dd><p>Number of 32-bit registers occupied by the A fragment (RS variant).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_accum_regs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wgmma_accum_regs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_accum_regs" title="Link to this definition">¶</a></dt>
+<dd><p>Number of 32-bit registers occupied by the accumulator fragment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.compute_wgmma_b_desc_params">
+<span class="sig-name descname"><span class="pre">compute_wgmma_b_desc_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B_region</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.compute_wgmma_b_desc_params" title="Link to this definition">¶</a></dt>
+<dd><p>Compute B descriptor parameters from the B shared buffer region.</p>
+<p>This is a pure-Python helper – no TIR code is emitted.
+The returned <code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code> is passed to
+<code class="docutils literal notranslate"><span class="pre">init_wgmma_b_desc()</span></code> and <code class="docutils literal notranslate"><span class="pre">wgmma_*_atom()</span></code> methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>B_region</strong> (<em>tvm.tir.BufferRegion</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams">WGMMADescriptorParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.compute_wgmma_a_desc_params">
+<span class="sig-name descname"><span class="pre">compute_wgmma_a_desc_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_region</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.compute_wgmma_a_desc_params" title="Link to this definition">¶</a></dt>
+<dd><p>Compute A descriptor parameters from the A shared buffer region (SS variant).</p>
+<p>This is a pure-Python helper – no TIR code is emitted.
+The returned <code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code> is passed to
+<code class="docutils literal notranslate"><span class="pre">init_wgmma_a_desc()</span></code> and <code class="docutils literal notranslate"><span class="pre">wgmma_ss_atom()</span></code> methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>A_region</strong> (<em>tvm.tir.BufferRegion</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams">WGMMADescriptorParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.init_wgmma_b_desc">
+<span class="sig-name descname"><span class="pre">init_wgmma_b_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.init_wgmma_b_desc" title="Link to this definition">¶</a></dt>
+<dd><p>Emit TIR to initialize a pre-allocated WGMMA B descriptor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>desc_b</strong> (<em>Buffer</em>) – A descriptor buffer allocated via <code class="docutils literal notranslate"><span class="pre">T.alloc_wgmma_desc()</span></code>.</p></li>
+<li><p><strong>B_region</strong> (<em>BufferRegion</em>) – The B operand shared memory region.</p></li>
+<li><p><strong>b_params</strong> (<a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><em>WGMMADescriptorParams</em></a>) – Pre-computed parameters from <code class="docutils literal notranslate"><span class="pre">compute_wgmma_b_desc_params()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.init_wgmma_a_desc">
+<span class="sig-name descname"><span class="pre">init_wgmma_a_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">desc_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.init_wgmma_a_desc" title="Link to this definition">¶</a></dt>
+<dd><p>Emit TIR to initialize a pre-allocated WGMMA A descriptor (SS variant).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>desc_a</strong> (<em>Buffer</em>) – A descriptor buffer allocated via <code class="docutils literal notranslate"><span class="pre">T.alloc_wgmma_desc()</span></code>.</p></li>
+<li><p><strong>A_region</strong> (<em>BufferRegion</em>) – The A operand shared memory region.</p></li>
+<li><p><strong>a_params</strong> (<a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><em>WGMMADescriptorParams</em></a>) – Pre-computed parameters from <code class="docutils literal notranslate"><span class="pre">compute_wgmma_a_desc_params()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_fence_a">
+<span class="sig-name descname"><span class="pre">wgmma_fence_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_buf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_fence_a" title="Link to this definition">¶</a></dt>
+<dd><p>Emit <code class="docutils literal notranslate"><span class="pre">warpgroup_fence_operand</span></code> for the A fragment buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>A_buf</strong> (<em>tvm.tir.Buffer</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_fence_c">
+<span class="sig-name descname"><span class="pre">wgmma_fence_c</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_buf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_fence_c" title="Link to this definition">¶</a></dt>
+<dd><p>Emit <code class="docutils literal notranslate"><span class="pre">warpgroup_fence_operand</span></code> for the accumulator buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>C_buf</strong> (<em>tvm.tir.Buffer</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_arrive">
+<span class="sig-name descname"><span class="pre">wgmma_arrive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_arrive" title="Link to this definition">¶</a></dt>
+<dd><p>Emit <code class="docutils literal notranslate"><span class="pre">warpgroup_arrive()</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_commit">
+<span class="sig-name descname"><span class="pre">wgmma_commit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_commit" title="Link to this definition">¶</a></dt>
+<dd><p>Emit <code class="docutils literal notranslate"><span class="pre">warpgroup_commit_batch()</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_wait">
+<span class="sig-name descname"><span class="pre">wgmma_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_wait" title="Link to this definition">¶</a></dt>
+<dd><p>Emit <code class="docutils literal notranslate"><span class="pre">warpgroup_wait(n)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_rs_atom">
+<span class="sig-name descname"><span class="pre">wgmma_rs_atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inst_m_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inst_n_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_rs_atom" title="Link to this definition">¶</a></dt>
+<dd><p>Emit a single WGMMA RS instruction for atom <code class="docutils literal notranslate"><span class="pre">(inst_m_idx,</span> <span class="pre">inst_n_idx,</span> <span class="pre">ki)</span></code>.</p>
+<p>Must be called between a <code class="docutils literal notranslate"><span class="pre">wgmma_fence_a</span></code>/<code class="docutils literal notranslate"><span class="pre">wgmma_fence_c</span></code>/<code class="docutils literal notranslate"><span class="pre">wgmma_arrive</span></code>
+sequence and a <code class="docutils literal notranslate"><span class="pre">wgmma_commit</span></code>/<code class="docutils literal notranslate"><span class="pre">wgmma_wait</span></code> sequence.</p>
+<p>Calling this for every <code class="docutils literal notranslate"><span class="pre">(j,</span> <span class="pre">i,</span> <span class="pre">ki)</span></code> in
+<code class="docutils literal notranslate"><span class="pre">T.grid(wgmma_num_inst_n,</span> <span class="pre">wgmma_num_inst_m,</span> <span class="pre">wgmma_num_k_atoms)</span></code>
+produces identical TIR to <code class="docutils literal notranslate"><span class="pre">wgmma_rs()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A_buf</strong> (<em>Buffer</em>) – Fragment buffer for operand A (in registers).</p></li>
+<li><p><strong>desc_b</strong> (<em>Buffer</em>) – Initialized B descriptor (from <code class="docutils literal notranslate"><span class="pre">init_wgmma_b_desc</span></code>).</p></li>
+<li><p><strong>C_buf</strong> (<em>Buffer</em>) – Accumulator fragment buffer.</p></li>
+<li><p><strong>inst_m_idx</strong> (<em>int</em>) – M-dimension atom index (0 .. wgmma_num_inst_m - 1).</p></li>
+<li><p><strong>inst_n_idx</strong> (<em>int</em>) – N-dimension atom index (0 .. wgmma_num_inst_n - 1).</p></li>
+<li><p><strong>ki</strong> (<em>int</em>) – K-dimension atom index (0 .. wgmma_num_k_atoms - 1).</p></li>
+<li><p><strong>b_params</strong> (<a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><em>WGMMADescriptorParams</em></a>) – Pre-computed B descriptor parameters.</p></li>
+<li><p><strong>clear_accum</strong> (<em>PrimExpr</em>) – Whether to zero the accumulator on the first K atom.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_ss_atom">
+<span class="sig-name descname"><span class="pre">wgmma_ss_atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">desc_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inst_m_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inst_n_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_ss_atom" title="Link to this definition">¶</a></dt>
+<dd><p>Emit a single WGMMA SS instruction for atom <code class="docutils literal notranslate"><span class="pre">(inst_m_idx,</span> <span class="pre">inst_n_idx,</span> <span class="pre">ki)</span></code>.</p>
+<p>Must be called between fence/arrive and commit/wait sequences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>desc_a</strong> (<em>Buffer</em>) – Initialized A descriptor (from <code class="docutils literal notranslate"><span class="pre">init_wgmma_a_desc</span></code>).</p></li>
+<li><p><strong>desc_b</strong> (<em>Buffer</em>) – Initialized B descriptor (from <code class="docutils literal notranslate"><span class="pre">init_wgmma_b_desc</span></code>).</p></li>
+<li><p><strong>C_buf</strong> (<em>Buffer</em>) – Accumulator fragment buffer.</p></li>
+<li><p><strong>inst_m_idx</strong> (<em>int</em>) – M-dimension atom index (0 .. wgmma_num_inst_m - 1).</p></li>
+<li><p><strong>inst_n_idx</strong> (<em>int</em>) – N-dimension atom index (0 .. wgmma_num_inst_n - 1).</p></li>
+<li><p><strong>ki</strong> (<em>int</em>) – K-dimension atom index (0 .. wgmma_num_k_atoms - 1).</p></li>
+<li><p><strong>a_params</strong> (<a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><em>WGMMADescriptorParams</em></a>) – Pre-computed A descriptor parameters.</p></li>
+<li><p><strong>b_params</strong> (<a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><em>WGMMADescriptorParams</em></a>) – Pre-computed B descriptor parameters.</p></li>
+<li><p><strong>clear_accum</strong> (<em>PrimExpr</em>) – Whether to zero the accumulator on the first K atom.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.make_mma_load_layout">
 <span class="sig-name descname"><span class="pre">make_mma_load_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.make_mma_load_layout" title="Link to this definition">¶</a></dt>
@@ -926,6 +1195,16 @@ in <cite>local_buf</cite> are laid out.</p>
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.lift"><code class="docutils literal notranslate"><span class="pre">lift</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_mode"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.swizzle_mode</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.leading_byte_offset"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.leading_byte_offset</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.stride_byte_offset"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.stride_byte_offset</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_atom_elems"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.swizzle_atom_elems</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_atom_size"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.k_atom_size</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.elems_in_bytes"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.elems_in_bytes</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.is_k_major"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.is_k_major</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode"><code class="docutils literal notranslate"><span class="pre">SwizzleMode</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.NONE"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.NONE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.SWIZZLE_128B"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.SWIZZLE_128B</span></code></a></li>
@@ -947,6 +1226,22 @@ in <cite>local_buf</cite> are laid out.</p>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.b_shared_layout"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.b_shared_layout</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_rs"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_rs()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_num_inst_m"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_num_inst_m</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_num_inst_n"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_num_inst_n</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_num_k_atoms"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_num_k_atoms</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_a_regs"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_a_regs</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_accum_regs"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_accum_regs</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.compute_wgmma_b_desc_params"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.compute_wgmma_b_desc_params()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.compute_wgmma_a_desc_params"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.compute_wgmma_a_desc_params()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.init_wgmma_b_desc"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.init_wgmma_b_desc()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.init_wgmma_a_desc"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.init_wgmma_a_desc()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_fence_a"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_fence_a()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_fence_c"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_fence_c()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_arrive"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_arrive()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_commit"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_commit()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_wait"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_wait()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_rs_atom"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_rs_atom()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_ss_atom"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_ss_atom()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.make_mma_load_layout"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.make_mma_load_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.make_mma_store_layout"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.make_mma_store_layout()</span></code></a></li>
 </ul>

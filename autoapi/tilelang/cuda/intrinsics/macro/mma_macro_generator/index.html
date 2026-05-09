@@ -854,6 +854,49 @@ Otherwise, it is in the form of [warp_size, block_col_warps (split m), block_row
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.mma_num_inst_m">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mma_num_inst_m</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.mma_num_inst_m" title="Link to this definition">¶</a></dt>
+<dd><p>Number of MMA instruction atoms along the M dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.mma_num_inst_n">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mma_num_inst_n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.mma_num_inst_n" title="Link to this definition">¶</a></dt>
+<dd><p>Number of MMA instruction atoms along the N dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.mma_atom">
+<span class="sig-name descname"><span class="pre">mma_atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inst_m_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inst_n_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.mma_atom" title="Link to this definition">¶</a></dt>
+<dd><p>Emit a single MMA atom for tile (inst_m_idx, inst_n_idx).</p>
+<p>This is the atomic building block of <code class="docutils literal notranslate"><span class="pre">mma()</span></code>.  Calling this method
+for every <code class="docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">j)</span></code> in <code class="docutils literal notranslate"><span class="pre">T.grid(mma_num_inst_m,</span> <span class="pre">mma_num_inst_n)</span></code>
+produces identical TIR to a single <code class="docutils literal notranslate"><span class="pre">mma()</span></code> call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A_local_buf</strong> (<em>Buffer</em>) – Fragment buffer for operand A.</p></li>
+<li><p><strong>B_local_buf</strong> (<em>Buffer</em>) – Fragment buffer for operand B.</p></li>
+<li><p><strong>C_local_buf</strong> (<em>Buffer</em>) – Accumulator fragment buffer.</p></li>
+<li><p><strong>inst_m_idx</strong> (<em>int</em><em> or </em><em>PrimExpr</em>) – M-dimension atom index (0 .. mma_num_inst_m - 1).</p></li>
+<li><p><strong>inst_n_idx</strong> (<em>int</em><em> or </em><em>PrimExpr</em>) – N-dimension atom index (0 .. mma_num_inst_n - 1).</p></li>
+<li><p><strong>k_inner</strong> (<em>int</em><em> or </em><em>PrimExpr</em>) – K-inner step index used to offset A/B fragments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.stmatrix">
 <span class="sig-name descname"><span class="pre">stmatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.stmatrix" title="Link to this definition">¶</a></dt>
@@ -1045,6 +1088,9 @@ With Ladder Transform Plugin.</p>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.ldmatrix_a"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.ldmatrix_a()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.ldmatrix_b"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.ldmatrix_b()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.mma"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.mma()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.mma_num_inst_m"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.mma_num_inst_m</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.mma_num_inst_n"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.mma_num_inst_n</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.mma_atom"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.mma_atom()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.stmatrix"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.stmatrix()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.make_mma_load_layout"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.make_mma_load_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.make_mma_store_layout"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.make_mma_store_layout()</span></code></a></li>

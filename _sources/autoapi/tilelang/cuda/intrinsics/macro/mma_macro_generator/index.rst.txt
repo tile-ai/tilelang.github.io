@@ -154,6 +154,43 @@ Module Contents
    .. py:method:: mma(A_local_buf, B_local_buf, C_local_buf, k_inner = 0)
 
 
+   .. py:property:: mma_num_inst_m
+      :type: int
+
+
+      Number of MMA instruction atoms along the M dimension.
+
+
+   .. py:property:: mma_num_inst_n
+      :type: int
+
+
+      Number of MMA instruction atoms along the N dimension.
+
+
+   .. py:method:: mma_atom(A_local_buf, B_local_buf, C_local_buf, inst_m_idx, inst_n_idx, k_inner = 0)
+
+      Emit a single MMA atom for tile (inst_m_idx, inst_n_idx).
+
+      This is the atomic building block of ``mma()``.  Calling this method
+      for every ``(i, j)`` in ``T.grid(mma_num_inst_m, mma_num_inst_n)``
+      produces identical TIR to a single ``mma()`` call.
+
+      :param A_local_buf: Fragment buffer for operand A.
+      :type A_local_buf: Buffer
+      :param B_local_buf: Fragment buffer for operand B.
+      :type B_local_buf: Buffer
+      :param C_local_buf: Accumulator fragment buffer.
+      :type C_local_buf: Buffer
+      :param inst_m_idx: M-dimension atom index (0 .. mma_num_inst_m - 1).
+      :type inst_m_idx: int or PrimExpr
+      :param inst_n_idx: N-dimension atom index (0 .. mma_num_inst_n - 1).
+      :type inst_n_idx: int or PrimExpr
+      :param k_inner: K-inner step index used to offset A/B fragments.
+      :type k_inner: int or PrimExpr
+
+
+
    .. py:method:: stmatrix(C_local_buf, C_buf, pid_m=None, pid_n=None)
 
 

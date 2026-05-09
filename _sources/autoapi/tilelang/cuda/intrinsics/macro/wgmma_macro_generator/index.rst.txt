@@ -17,6 +17,7 @@ Classes
 
 .. autoapisummary::
 
+   tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams
    tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode
    tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter
 
@@ -25,6 +26,58 @@ Module Contents
 ---------------
 
 .. py:data:: lift
+
+.. py:class:: WGMMADescriptorParams
+
+   Pre-computed parameters for WGMMA descriptor initialization and atom offset computation.
+
+   Returned by ``compute_wgmma_*_desc_params()`` and consumed by
+   ``init_wgmma_*_desc()`` and ``wgmma_*_atom()`` methods.
+
+
+   .. py:attribute:: swizzle_mode
+      :type:  int
+
+      SwizzleMode enum value (passed directly to ``T.initialize_wgmma_descriptor``).
+
+
+   .. py:attribute:: leading_byte_offset
+      :type:  int
+
+      LBO >> 4, ready to pass to ``T.initialize_wgmma_descriptor``.
+
+
+   .. py:attribute:: stride_byte_offset
+      :type:  int
+
+      SBO >> 4, ready to pass to ``T.initialize_wgmma_descriptor``.
+
+
+   .. py:attribute:: swizzle_atom_elems
+      :type:  int
+
+      Number of elements per swizzle atom along the non-K dimension.
+
+
+   .. py:attribute:: k_atom_size
+      :type:  int
+
+      ``max(swizzle_atom_elems // micro_size_k, 1)``.
+
+
+   .. py:attribute:: elems_in_bytes
+      :type:  int
+
+      ``DataType(dtype).bits // 8``.
+
+      :type: Byte width of a single element
+
+
+   .. py:attribute:: is_k_major
+      :type:  bool
+
+      Whether the matrix is stored in K-major order (affects offset formula branching).
+
 
 .. py:class:: SwizzleMode
 
@@ -108,6 +161,174 @@ Module Contents
 
 
    .. py:method:: wgmma_rs(A_region, B_region, C_region, clear_accum = False, wg_wait = 0)
+
+
+   .. py:property:: wgmma_num_inst_m
+      :type: int
+
+
+      Number of WGMMA instruction atoms along the M dimension.
+
+
+   .. py:property:: wgmma_num_inst_n
+      :type: int
+
+
+      Number of WGMMA instruction atoms along the N dimension.
+
+
+   .. py:property:: wgmma_num_k_atoms
+      :type: int
+
+
+      Number of K-dimension micro-steps (``chunk // micro_size_k``).
+
+
+   .. py:property:: wgmma_a_regs
+      :type: int
+
+
+      Number of 32-bit registers occupied by the A fragment (RS variant).
+
+
+   .. py:property:: wgmma_accum_regs
+      :type: int
+
+
+      Number of 32-bit registers occupied by the accumulator fragment.
+
+
+   .. py:method:: compute_wgmma_b_desc_params(B_region)
+
+      Compute B descriptor parameters from the B shared buffer region.
+
+      This is a pure-Python helper -- no TIR code is emitted.
+      The returned ``WGMMADescriptorParams`` is passed to
+      ``init_wgmma_b_desc()`` and ``wgmma_*_atom()`` methods.
+
+
+
+   .. py:method:: compute_wgmma_a_desc_params(A_region)
+
+      Compute A descriptor parameters from the A shared buffer region (SS variant).
+
+      This is a pure-Python helper -- no TIR code is emitted.
+      The returned ``WGMMADescriptorParams`` is passed to
+      ``init_wgmma_a_desc()`` and ``wgmma_ss_atom()`` methods.
+
+
+
+   .. py:method:: init_wgmma_b_desc(desc_b, B_region, b_params)
+
+      Emit TIR to initialize a pre-allocated WGMMA B descriptor.
+
+      :param desc_b: A descriptor buffer allocated via ``T.alloc_wgmma_desc()``.
+      :type desc_b: Buffer
+      :param B_region: The B operand shared memory region.
+      :type B_region: BufferRegion
+      :param b_params: Pre-computed parameters from ``compute_wgmma_b_desc_params()``.
+      :type b_params: WGMMADescriptorParams
+
+
+
+   .. py:method:: init_wgmma_a_desc(desc_a, A_region, a_params)
+
+      Emit TIR to initialize a pre-allocated WGMMA A descriptor (SS variant).
+
+      :param desc_a: A descriptor buffer allocated via ``T.alloc_wgmma_desc()``.
+      :type desc_a: Buffer
+      :param A_region: The A operand shared memory region.
+      :type A_region: BufferRegion
+      :param a_params: Pre-computed parameters from ``compute_wgmma_a_desc_params()``.
+      :type a_params: WGMMADescriptorParams
+
+
+
+   .. py:method:: wgmma_fence_a(A_buf)
+
+      Emit ``warpgroup_fence_operand`` for the A fragment buffer.
+
+
+
+   .. py:method:: wgmma_fence_c(C_buf)
+
+      Emit ``warpgroup_fence_operand`` for the accumulator buffer.
+
+
+
+   .. py:method:: wgmma_arrive()
+
+      Emit ``warpgroup_arrive()``.
+
+
+
+   .. py:method:: wgmma_commit()
+
+      Emit ``warpgroup_commit_batch()``.
+
+
+
+   .. py:method:: wgmma_wait(n = 0)
+
+      Emit ``warpgroup_wait(n)``.
+
+
+
+   .. py:method:: wgmma_rs_atom(A_buf, desc_b, C_buf, inst_m_idx, inst_n_idx, ki, b_params, clear_accum = False)
+
+      Emit a single WGMMA RS instruction for atom ``(inst_m_idx, inst_n_idx, ki)``.
+
+      Must be called between a ``wgmma_fence_a``/``wgmma_fence_c``/``wgmma_arrive``
+      sequence and a ``wgmma_commit``/``wgmma_wait`` sequence.
+
+      Calling this for every ``(j, i, ki)`` in
+      ``T.grid(wgmma_num_inst_n, wgmma_num_inst_m, wgmma_num_k_atoms)``
+      produces identical TIR to ``wgmma_rs()``.
+
+      :param A_buf: Fragment buffer for operand A (in registers).
+      :type A_buf: Buffer
+      :param desc_b: Initialized B descriptor (from ``init_wgmma_b_desc``).
+      :type desc_b: Buffer
+      :param C_buf: Accumulator fragment buffer.
+      :type C_buf: Buffer
+      :param inst_m_idx: M-dimension atom index (0 .. wgmma_num_inst_m - 1).
+      :type inst_m_idx: int
+      :param inst_n_idx: N-dimension atom index (0 .. wgmma_num_inst_n - 1).
+      :type inst_n_idx: int
+      :param ki: K-dimension atom index (0 .. wgmma_num_k_atoms - 1).
+      :type ki: int
+      :param b_params: Pre-computed B descriptor parameters.
+      :type b_params: WGMMADescriptorParams
+      :param clear_accum: Whether to zero the accumulator on the first K atom.
+      :type clear_accum: PrimExpr
+
+
+
+   .. py:method:: wgmma_ss_atom(desc_a, desc_b, C_buf, inst_m_idx, inst_n_idx, ki, a_params, b_params, clear_accum = False)
+
+      Emit a single WGMMA SS instruction for atom ``(inst_m_idx, inst_n_idx, ki)``.
+
+      Must be called between fence/arrive and commit/wait sequences.
+
+      :param desc_a: Initialized A descriptor (from ``init_wgmma_a_desc``).
+      :type desc_a: Buffer
+      :param desc_b: Initialized B descriptor (from ``init_wgmma_b_desc``).
+      :type desc_b: Buffer
+      :param C_buf: Accumulator fragment buffer.
+      :type C_buf: Buffer
+      :param inst_m_idx: M-dimension atom index (0 .. wgmma_num_inst_m - 1).
+      :type inst_m_idx: int
+      :param inst_n_idx: N-dimension atom index (0 .. wgmma_num_inst_n - 1).
+      :type inst_n_idx: int
+      :param ki: K-dimension atom index (0 .. wgmma_num_k_atoms - 1).
+      :type ki: int
+      :param a_params: Pre-computed A descriptor parameters.
+      :type a_params: WGMMADescriptorParams
+      :param b_params: Pre-computed B descriptor parameters.
+      :type b_params: WGMMADescriptorParams
+      :param clear_accum: Whether to zero the accumulator on the first K atom.
+      :type clear_accum: PrimExpr
+
 
 
    .. py:method:: make_mma_load_layout(local_buf, matrix = 'A')

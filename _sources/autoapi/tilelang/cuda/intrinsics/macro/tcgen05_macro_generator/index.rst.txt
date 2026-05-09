@@ -17,6 +17,7 @@ Classes
 
 .. autoapisummary::
 
+   tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams
    tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.SwizzleMode
    tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TensorCoreIntrinEmitter
 
@@ -25,6 +26,58 @@ Module Contents
 ---------------
 
 .. py:data:: lift
+
+.. py:class:: TCGEN05DescriptorParams
+
+   Pre-computed parameters for TCGEN05 descriptor initialization and atom offset computation.
+
+   Returned by ``compute_tcgen05_*_desc_params()`` and consumed by
+   ``init_tcgen05_*_desc()`` and ``tcgen05_*_atom()`` methods.
+
+
+   .. py:attribute:: swizzle_mode
+      :type:  int
+
+      SwizzleMode enum value (passed directly to ``T.initialize_tcgen05_descriptor``).
+
+
+   .. py:attribute:: leading_byte_offset
+      :type:  int
+
+      LBO >> 4, ready to pass to ``T.initialize_tcgen05_descriptor``.
+
+
+   .. py:attribute:: stride_byte_offset
+      :type:  int
+
+      SBO >> 4, ready to pass to ``T.initialize_tcgen05_descriptor``.
+
+
+   .. py:attribute:: swizzle_atom_elems
+      :type:  int
+
+      Number of elements per swizzle atom along the non-K dimension.
+
+
+   .. py:attribute:: k_atom_size
+      :type:  int
+
+      ``max(swizzle_atom_elems // micro_size_k, 1)``.
+
+
+   .. py:attribute:: elems_in_bytes
+      :type:  int
+
+      ``(DataType(dtype).bits + 7) // 8``.
+
+      :type: Byte width of a single element
+
+
+   .. py:attribute:: is_k_major
+      :type:  bool
+
+      Whether the matrix is stored in K-major order (affects offset formula branching).
+
 
 .. py:class:: SwizzleMode
 
@@ -219,6 +272,187 @@ Module Contents
    .. py:method:: get_tcgen5_instr_desc(atom_m, atom_n, atom_k, a_is_k_major, b_is_k_major, scale_in_a, scale_in_b)
 
       Build the 64-bit instruction descriptor for a ``tcgen05.mma`` PTX call.
+
+
+
+   .. py:property:: tcgen05_meta_unpacked
+      :type: tuple
+
+
+      Return ``(atom_m, atom_n, atom_k, enable_ws, enable_2cta)`` as ints.
+
+      Requires ``self.meta`` to have been set via ``get_tcgen5_mma_meta()``.
+
+
+   .. py:property:: tcgen05_num_inst_m
+      :type: int
+
+
+      Number of TCGEN05MMA instruction atoms along M (SS variant).
+
+
+   .. py:property:: tcgen05_num_inst_n
+      :type: int
+
+
+      Number of TCGEN05MMA instruction atoms along N.
+
+
+   .. py:property:: tcgen05_num_k_atoms
+      :type: int
+
+
+      Number of K-dimension micro-steps (``chunk // micro_size_k``).
+
+
+   .. py:method:: compute_tcgen05_b_desc_params(B_buf)
+
+      Compute B descriptor parameters from the B shared buffer.
+
+      This is a pure-Python helper -- no TIR code is emitted.
+      The returned ``TCGEN05DescriptorParams`` is passed to
+      ``init_tcgen05_b_desc()`` and ``tcgen05_*_atom()`` methods.
+
+      :param B_buf: The B operand in shared memory.
+      :type B_buf: Buffer or BufferRegion
+
+
+
+   .. py:method:: compute_tcgen05_a_desc_params(A_buf)
+
+      Compute A descriptor parameters from the A shared buffer (SS variant).
+
+      This is a pure-Python helper -- no TIR code is emitted.
+
+      :param A_buf: The A operand in shared memory.
+      :type A_buf: Buffer or BufferRegion
+
+
+
+   .. py:method:: init_tcgen05_b_desc(desc_b, B_buf, b_params)
+
+      Emit TIR to initialize a pre-allocated TCGEN05 B descriptor.
+
+      :param desc_b: A descriptor buffer allocated via ``T.alloc_tcgen05_smem_desc()``.
+      :type desc_b: Buffer
+      :param B_buf: The B operand in shared memory.
+      :type B_buf: Buffer or BufferRegion
+      :param b_params: Pre-computed parameters from ``compute_tcgen05_b_desc_params()``.
+      :type b_params: TCGEN05DescriptorParams
+
+
+
+   .. py:method:: init_tcgen05_a_desc(desc_a, A_buf, a_params)
+
+      Emit TIR to initialize a pre-allocated TCGEN05 A descriptor (SS variant).
+
+      :param desc_a: A descriptor buffer allocated via ``T.alloc_tcgen05_smem_desc()``.
+      :type desc_a: Buffer
+      :param A_buf: The A operand in shared memory.
+      :type A_buf: Buffer or BufferRegion
+      :param a_params: Pre-computed parameters from ``compute_tcgen05_a_desc_params()``.
+      :type a_params: TCGEN05DescriptorParams
+
+
+
+   .. py:method:: compute_tcgen05_instr_desc()
+
+      Compute the 64-bit instruction descriptor using current meta.
+
+      Requires ``self.meta`` to have been set via ``get_tcgen5_mma_meta()``.
+
+
+
+   .. py:method:: tcgen05_atom_arrive(mbar)
+
+      Emit ``tcgen05_mma_arrive(mbar)``.
+
+
+
+   .. py:method:: tcgen05_ss_atom(desc_a, desc_b, C_local_buf, inst_m_idx, inst_n_idx, ki, a_params, b_params, instr_desc, clear_accum = False)
+
+      Emit a single TCGEN05MMA SS instruction for atom ``(inst_m_idx, inst_n_idx, ki)``.
+
+      Must be called after descriptor initialization and before ``tcgen05_atom_arrive()``.
+
+      :param desc_a: Initialized A and B descriptors.
+      :type desc_a: Buffer
+      :param desc_b: Initialized A and B descriptors.
+      :type desc_b: Buffer
+      :param C_local_buf: Accumulator buffer in tensor memory.
+      :type C_local_buf: Buffer
+      :param inst_m_idx: M-dimension atom index (0 .. tcgen05_num_inst_m - 1).
+      :type inst_m_idx: int
+      :param inst_n_idx: N-dimension atom index (0 .. tcgen05_num_inst_n - 1).
+      :type inst_n_idx: int
+      :param ki: K-dimension atom index (0 .. tcgen05_num_k_atoms - 1).
+      :type ki: int
+      :param a_params: Pre-computed A descriptor parameters.
+      :type a_params: TCGEN05DescriptorParams
+      :param b_params: Pre-computed B descriptor parameters.
+      :type b_params: TCGEN05DescriptorParams
+      :param instr_desc: Instruction descriptor from ``compute_tcgen05_instr_desc()``.
+      :type instr_desc: PrimExpr
+      :param clear_accum: Whether to zero the accumulator on the first K atom.
+      :type clear_accum: PrimExpr
+
+
+
+   .. py:method:: tcgen05_ts_atom(a_tmem_data, desc_b, C_local_buf, inst_m_idx, inst_n_idx, ki, b_params, instr_desc, clear_accum = False)
+
+      Emit a single TCGEN05MMA TS instruction for atom ``(inst_m_idx, inst_n_idx, ki)``.
+
+      A resides in tensor memory; B in shared memory.
+
+      :param a_tmem_data: Data pointer for the A operand in tensor memory (e.g., ``A_buf.data``).
+      :type a_tmem_data: Var
+      :param desc_b: Initialized B descriptor.
+      :type desc_b: Buffer
+      :param C_local_buf: Accumulator buffer in tensor memory.
+      :type C_local_buf: Buffer
+      :param inst_m_idx: M-dimension atom index.
+      :type inst_m_idx: int
+      :param inst_n_idx: N-dimension atom index.
+      :type inst_n_idx: int
+      :param ki: K-dimension atom index.
+      :type ki: int
+      :param b_params: Pre-computed B descriptor parameters.
+      :type b_params: TCGEN05DescriptorParams
+      :param instr_desc: Instruction descriptor from ``compute_tcgen05_instr_desc()``.
+      :type instr_desc: PrimExpr
+      :param clear_accum: Whether to zero the accumulator on the first K atom.
+      :type clear_accum: PrimExpr
+
+
+
+   .. py:method:: tcgen05_blockscaled_atom(desc_a, desc_b, C_local_buf, sfa_data, sfb_data, inst_m_idx, inst_n_idx, ki, a_params, b_params, instr_desc, clear_accum = False)
+
+      Emit a single TCGEN05MMA block-scaled SS instruction.
+
+      :param desc_a: Initialized A and B descriptors.
+      :type desc_a: Buffer
+      :param desc_b: Initialized A and B descriptors.
+      :type desc_b: Buffer
+      :param C_local_buf: Accumulator buffer in tensor memory.
+      :type C_local_buf: Buffer
+      :param sfa_data: Scale factor data pointers in tensor memory.
+      :type sfa_data: Var
+      :param sfb_data: Scale factor data pointers in tensor memory.
+      :type sfb_data: Var
+      :param inst_m_idx: Atom indices.
+      :type inst_m_idx: int
+      :param inst_n_idx: Atom indices.
+      :type inst_n_idx: int
+      :param ki: Atom indices.
+      :type ki: int
+      :param a_params: Pre-computed descriptor parameters.
+      :type a_params: TCGEN05DescriptorParams
+      :param b_params: Pre-computed descriptor parameters.
+      :type b_params: TCGEN05DescriptorParams
+      :param instr_desc: Block-scaled instruction descriptor (with SF IDs already encoded).
+      :type instr_desc: PrimExpr
+      :param clear_accum: Whether to zero the accumulator on the first K atom.
+      :type clear_accum: PrimExpr
 
 
 
