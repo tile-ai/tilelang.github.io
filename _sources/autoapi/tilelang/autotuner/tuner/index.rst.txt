@@ -121,6 +121,11 @@ Module Contents
 
 
 
+   .. py:attribute:: jit_elaborate
+      :value: None
+
+
+
    .. py:property:: cache_dir
       :type: pathlib.Path
 
@@ -195,13 +200,18 @@ Module Contents
 
 
 
-   .. py:method:: run(warmup = 25, rep = 100, timeout = 30)
+   .. py:method:: run(warmup = 25, rep = 100, timeout = 180, use_pipeline = False, enable_grouped_compile = False, group_compile_size = 2, benchmark_devices = None, benchmark_multi_gpu = False)
 
       Run the auto-tuning process.
 
       :param warmup: Number of warmup iterations.
       :param rep: Number of repetitions for timing.
       :param timeout: Maximum time per configuration.
+      :param use_pipeline: Whether to pipeline benchmarking with compilation.
+      :param enable_grouped_compile: Whether to enable grouped compilation.
+      :param group_compile_size: Number of configurations in one compile unit.
+      :param benchmark_devices: CUDA device ordinals used for benchmark workers when benchmark_multi_gpu=True.
+      :param benchmark_multi_gpu: Whether to benchmark configurations across multiple CUDA GPUs.
 
       :returns: Results of the auto-tuning process.
       :rtype: AutotuneResult

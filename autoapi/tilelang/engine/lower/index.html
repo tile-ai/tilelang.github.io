@@ -248,6 +248,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../autodd/index.html">tilelang.autodd</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../autotuner/index.html">tilelang.autotuner</a><input aria-label="Toggle navigation of tilelang.autotuner" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../autotuner/capture/index.html">tilelang.autotuner.capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../autotuner/grouped_compile/index.html">tilelang.autotuner.grouped_compile</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../autotuner/param/index.html">tilelang.autotuner.param</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../autotuner/tuner/index.html">tilelang.autotuner.tuner</a></li>
 </ul>
@@ -657,7 +658,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.lower.device_codegen_without_compile" title="tilelang.engine.lower.device_codegen_without_compile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_codegen_without_compile</span></code></a>(device_mod, target)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.lower.lower" title="tilelang.engine.lower.lower"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lower</span></code></a>(func_or_mod[, target, target_host, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.lower.lower_to_host_device_ir" title="tilelang.engine.lower.lower_to_host_device_ir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lower_to_host_device_ir</span></code></a>(func_or_mod[, target, ...])</p></td>
+<td><p>Lower input TIR to split host/device IRModules without backend codegen.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.lower.lower" title="tilelang.engine.lower.lower"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lower</span></code></a>(func_or_mod[, target, target_host, ...])</p></td>
 <td><p>enable_host_codegen: whether to enable host codegen, default is False, as we have our</p></td>
 </tr>
 </tbody>
@@ -827,6 +831,25 @@ contains the Metal/MPS synchronisation logic.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.engine.lower.lower_to_host_device_ir">
+<span class="sig-prename descclassname"><span class="pre">tilelang.engine.lower.</span></span><span class="sig-name descname"><span class="pre">lower_to_host_device_ir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_or_mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runtime_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.lower.lower_to_host_device_ir" title="Link to this definition">¶</a></dt>
+<dd><p>Lower input TIR to split host/device IRModules without backend codegen.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func_or_mod</strong> (<em>tvm.tir.PrimFunc</em><em> | </em><em>tilelang.tvm.IRModule</em>)</p></li>
+<li><p><strong>target</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em>)</p></li>
+<li><p><strong>target_host</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>runtime_only</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[tilelang.tvm.IRModule, tilelang.tvm.IRModule, list[<a class="reference internal" href="../param/index.html#tilelang.engine.param.KernelParam" title="tilelang.engine.param.KernelParam">tilelang.engine.param.KernelParam</a>] | None, tvm.target.Target, tvm.target.Target]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.engine.lower.lower">
 <span class="sig-prename descclassname"><span class="pre">tilelang.engine.lower.</span></span><span class="sig-name descname"><span class="pre">lower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_or_mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runtime_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_host_codegen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_device_compile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.lower.lower" title="Link to this definition">¶</a></dt>
 <dd><p>enable_host_codegen: whether to enable host codegen, default is False, as we have our
@@ -922,6 +945,7 @@ own device codegen implementation in jit.</p>
 <li><a class="reference internal" href="#tilelang.engine.lower.host_codegen"><code class="docutils literal notranslate"><span class="pre">host_codegen()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.lower.device_codegen"><code class="docutils literal notranslate"><span class="pre">device_codegen()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.lower.device_codegen_without_compile"><code class="docutils literal notranslate"><span class="pre">device_codegen_without_compile()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.engine.lower.lower_to_host_device_ir"><code class="docutils literal notranslate"><span class="pre">lower_to_host_device_ir()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.engine.lower.lower"><code class="docutils literal notranslate"><span class="pre">lower()</span></code></a></li>
 </ul>
 </li>

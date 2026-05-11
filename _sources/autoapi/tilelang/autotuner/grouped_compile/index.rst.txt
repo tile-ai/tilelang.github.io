@@ -1,0 +1,47 @@
+tilelang.autotuner.grouped_compile
+==================================
+
+.. py:module:: tilelang.autotuner.grouped_compile
+
+.. autoapi-nested-parse::
+
+   Grouped compilation helpers for autotuner.
+
+   This module isolates backend-aware grouped compilation logic from AutoTuner.run
+   so tuner.py can stay focused on orchestration.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.autotuner.grouped_compile.CompileUnitResult
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.autotuner.grouped_compile.compile_grouped_unit_tvm_ffi
+
+
+Module Contents
+---------------
+
+.. py:data:: CompileUnitResult
+
+.. py:function:: compile_grouped_unit_tvm_ffi(unit_items, compile_args, elaborate_func)
+
+   Compile one grouped unit for CUDA+tvm_ffi backend.
+
+   Flow:
+   1. Elaborate each config into a PrimFunc.
+   2. Lower each PrimFunc into host/device IR modules.
+   3. Merge all device IR into one IRModule and compile device code once.
+   4. Build host runtime module per config and import shared device module.
+   5. Construct per-config JITKernel objects that share the grouped device module.
+
+
