@@ -269,6 +269,7 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../carver/arch/metal/index.html">tilelang.carver.arch.metal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../carver/arch/rdna/index.html">tilelang.carver.arch.rdna</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../carver/common_schedules/index.html">tilelang.carver.common_schedules</a></li>
@@ -618,6 +619,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.SUPPORTED_TARGETS" title="tilelang.utils.target.SUPPORTED_TARGETS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SUPPORTED_TARGETS</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.ROCM_MTRIPLE" title="tilelang.utils.target.ROCM_MTRIPLE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ROCM_MTRIPLE</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -627,6 +631,18 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.normalize_rocm_arch" title="tilelang.utils.target.normalize_rocm_arch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_rocm_arch</span></code></a>(arch)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.target_get_mcpu" title="tilelang.utils.target.target_get_mcpu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_get_mcpu</span></code></a>(target)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.rocm_warp_size_for_arch" title="tilelang.utils.target.rocm_warp_size_for_arch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rocm_warp_size_for_arch</span></code></a>(arch)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.with_rocm_target_attrs" title="tilelang.utils.target.with_rocm_target_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">with_rocm_target_attrs</span></code></a>(target)</p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.describe_supported_targets" title="tilelang.utils.target.describe_supported_targets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">describe_supported_targets</span></code></a>()</p></td>
 <td><p>Return a mapping of supported target names to usage descriptions.</p></td>
 </tr>
@@ -678,22 +694,28 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.target_is_cdna" title="tilelang.utils.target.target_is_cdna"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_is_cdna</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.target_is_gfx950" title="tilelang.utils.target.target_is_gfx950"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_is_gfx950</span></code></a>(target)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.target_is_rdna" title="tilelang.utils.target.target_is_rdna"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_is_rdna</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.target_has_async_copy" title="tilelang.utils.target.target_has_async_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_has_async_copy</span></code></a>(target)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.target_is_gfx950" title="tilelang.utils.target.target_is_gfx950"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_is_gfx950</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.target_has_ldmatrix" title="tilelang.utils.target.target_has_ldmatrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_has_ldmatrix</span></code></a>(target)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.target_has_async_copy" title="tilelang.utils.target.target_has_async_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_has_async_copy</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.target_has_stmatrix" title="tilelang.utils.target.target_has_stmatrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_has_stmatrix</span></code></a>(target)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.target_has_ldmatrix" title="tilelang.utils.target.target_has_ldmatrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_has_ldmatrix</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.target_has_bulk_copy" title="tilelang.utils.target.target_has_bulk_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_has_bulk_copy</span></code></a>(target)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.target_has_stmatrix" title="tilelang.utils.target.target_has_stmatrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_has_stmatrix</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.target_get_warp_size" title="tilelang.utils.target.target_get_warp_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_get_warp_size</span></code></a>(target)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.target_has_bulk_copy" title="tilelang.utils.target.target_has_bulk_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_has_bulk_copy</span></code></a>(target)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.target_get_warp_size" title="tilelang.utils.target.target_get_warp_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_get_warp_size</span></code></a>(target)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.target_get_rdna_generation" title="tilelang.utils.target.target_get_rdna_generation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_get_rdna_generation</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -706,6 +728,63 @@
 <dt class="sig sig-object py" id="tilelang.utils.target.SUPPORTED_TARGETS">
 <span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">SUPPORTED_TARGETS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.utils.target.SUPPORTED_TARGETS" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.utils.target.ROCM_MTRIPLE">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">ROCM_MTRIPLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'amdgcn-amd-amdhsa-hcc'</span></em><a class="headerlink" href="#tilelang.utils.target.ROCM_MTRIPLE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.normalize_rocm_arch">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">normalize_rocm_arch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.target.normalize_rocm_arch" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arch</strong> (<em>str</em><em> | </em><em>None</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.target_get_mcpu">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">target_get_mcpu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.target.target_get_mcpu" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em><em> | </em><em>None</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.rocm_warp_size_for_arch">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">rocm_warp_size_for_arch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.target.rocm_warp_size_for_arch" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arch</strong> (<em>str</em><em> | </em><em>None</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.with_rocm_target_attrs">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">with_rocm_target_attrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.target.with_rocm_target_attrs" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target</strong> (<em>tvm.target.Target</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.target.Target</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.utils.target.describe_supported_targets">
@@ -942,6 +1021,19 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.target_is_rdna">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">target_is_rdna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.target.target_is_rdna" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target</strong> (<em>tvm.target.Target</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.utils.target.target_is_gfx950">
 <span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">target_is_gfx950</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.target.target_is_gfx950" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -1019,6 +1111,19 @@
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.target.target_get_rdna_generation">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">target_get_rdna_generation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.target.target_get_rdna_generation" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target</strong> (<em>tvm.target.Target</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -1082,6 +1187,11 @@
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.utils.target.SUPPORTED_TARGETS"><code class="docutils literal notranslate"><span class="pre">SUPPORTED_TARGETS</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.ROCM_MTRIPLE"><code class="docutils literal notranslate"><span class="pre">ROCM_MTRIPLE</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.normalize_rocm_arch"><code class="docutils literal notranslate"><span class="pre">normalize_rocm_arch()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.target_get_mcpu"><code class="docutils literal notranslate"><span class="pre">target_get_mcpu()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.rocm_warp_size_for_arch"><code class="docutils literal notranslate"><span class="pre">rocm_warp_size_for_arch()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.with_rocm_target_attrs"><code class="docutils literal notranslate"><span class="pre">with_rocm_target_attrs()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.describe_supported_targets"><code class="docutils literal notranslate"><span class="pre">describe_supported_targets()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.check_cuda_availability"><code class="docutils literal notranslate"><span class="pre">check_cuda_availability()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.check_hip_availability"><code class="docutils literal notranslate"><span class="pre">check_hip_availability()</span></code></a></li>
@@ -1099,12 +1209,14 @@
 <li><a class="reference internal" href="#tilelang.utils.target.target_is_hopper"><code class="docutils literal notranslate"><span class="pre">target_is_hopper()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.target_is_sm120"><code class="docutils literal notranslate"><span class="pre">target_is_sm120()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.target_is_cdna"><code class="docutils literal notranslate"><span class="pre">target_is_cdna()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.target_is_rdna"><code class="docutils literal notranslate"><span class="pre">target_is_rdna()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.target_is_gfx950"><code class="docutils literal notranslate"><span class="pre">target_is_gfx950()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.target_has_async_copy"><code class="docutils literal notranslate"><span class="pre">target_has_async_copy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.target_has_ldmatrix"><code class="docutils literal notranslate"><span class="pre">target_has_ldmatrix()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.target_has_stmatrix"><code class="docutils literal notranslate"><span class="pre">target_has_stmatrix()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.target_has_bulk_copy"><code class="docutils literal notranslate"><span class="pre">target_has_bulk_copy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.target_get_warp_size"><code class="docutils literal notranslate"><span class="pre">target_get_warp_size()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.target_get_rdna_generation"><code class="docutils literal notranslate"><span class="pre">target_get_rdna_generation()</span></code></a></li>
 </ul>
 </li>
 </ul>
