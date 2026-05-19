@@ -29,6 +29,7 @@ Attributes
    tilelang.jit.adapter.cutedsl.wrapper.CPP_KERNEL_INIT_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_TMA_LAUNCH_INIT_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_KERNEL_LAUNCH_TEMPLATE
+   tilelang.jit.adapter.cutedsl.wrapper.CPP_PDL_KERNEL_LAUNCH_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_COOPERATIVE_KERNEL_LAUNCH_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_LAUNCHER_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CUBIN_TMA_ATOM_INIT_TEMPLATE
@@ -260,6 +261,56 @@ Module Contents
           );
           if (result != CUDA_SUCCESS) {{
             std::cerr << "Failed to launch kernel {kernel_name} on device " << device_id << ": " << result << "\n";
+            return result;
+          }}
+        }}
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: CPP_PDL_KERNEL_LAUNCH_TEMPLATE
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """  // Launch kernel {kernel_idx}: {kernel_name} (PDL)
+        {{
+          // Get the kernel for current device
+          auto kernels_it = g_device_kernels.find(device_id);
+          if (kernels_it == g_device_kernels.end()) {{
+            std::cerr << "Kernels not initialized for device " << device_id << "\n";
+            return CUDA_ERROR_NOT_INITIALIZED;
+          }}
+          const std::vector<CUfunction>& kernels = kernels_it->second;
+      
+          void* args[] = {{{kernel_args}}};
+          CUlaunchAttribute attrs[1];
+          attrs[0].id = CU_LAUNCH_ATTRIBUTE_PROGRAMMATIC_STREAM_SERIALIZATION;
+          attrs[0].value.programmaticStreamSerializationAllowed = 1;
+      
+          CUlaunchConfig config = {{}};
+          config.gridDimX = {grid_x};
+          config.gridDimY = {grid_y};
+          config.gridDimZ = {grid_z};
+          config.blockDimX = {block_x};
+          config.blockDimY = {block_y};
+          config.blockDimZ = {block_z};
+          config.sharedMemBytes = {smem_size};
+          config.hStream = stream;
+          config.attrs = attrs;
+          config.numAttrs = 1;
+      
+          result = cuLaunchKernelEx(&config, kernels[{kernel_idx}], args, nullptr);
+          if (result != CUDA_SUCCESS) {{
+            std::cerr << "Failed to launch PDL kernel {kernel_name} on device " << device_id << ": " << result << "\n";
             return result;
           }}
         }}
@@ -644,6 +695,7 @@ Module Contents
             block=[{block_x}, {block_y}, {block_z}],
             smem={smem_size},
             stream=stream,
+            use_pdl={use_pdl},
           )"""
 
    .. raw:: html
@@ -683,7 +735,7 @@ Module Contents
           _kernel_wrapper = cute.compile(
               kernel_wrapper,
               {compile_args},
-              options=f"--enable-tvm-ffi --keep-cubin --dump-dir={{_staging_dir.as_posix()}}",
+              options=f"--enable-tvm-ffi --keep-cubin --gpu-arch={target_arch} --dump-dir={{_staging_dir.as_posix()}}",
           )
       
           # CuTeDSL generates a long, mangled cubin filename that includes argument/type info,
