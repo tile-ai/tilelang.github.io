@@ -362,6 +362,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../macro/mma_sp_macro_generator/index.html">tilelang.cuda.intrinsics.macro.mma_sp_macro_generator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../macro/tcgen05_macro_generator/index.html">tilelang.cuda.intrinsics.macro.tcgen05_macro_generator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../macro/wgmma_macro_generator/index.html">tilelang.cuda.intrinsics.macro.wgmma_macro_generator</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../macro/wgmma_sp_macro_generator/index.html">tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator</a></li>
 </ul>
 </li>
 </ul>
@@ -376,6 +377,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../op/gemm_sp/index.html">tilelang.cuda.op.gemm_sp</a><input aria-label="Toggle navigation of tilelang.cuda.op.gemm_sp" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../op/gemm_sp/gemm_sp_mma/index.html">tilelang.cuda.op.gemm_sp.gemm_sp_mma</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../op/gemm_sp/gemm_sp_wgmma/index.html">tilelang.cuda.op.gemm_sp.gemm_sp_wgmma</a></li>
 </ul>
 </li>
 </ul>
@@ -452,7 +454,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../language/experimental/index.html">tilelang.language.experimental</a><input aria-label="Toggle navigation of tilelang.language.experimental" class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../../language/experimental/gemm_sp/index.html">tilelang.language.experimental.gemm_sp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../language/experimental/gemm_sp_op/index.html">tilelang.language.experimental.gemm_sp_op</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../language/fastmath/index.html">tilelang.language.fastmath</a></li>
@@ -534,6 +536,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../tileop/gemm_sp/index.html">tilelang.tileop.gemm_sp</a><input aria-label="Toggle navigation of tilelang.tileop.gemm_sp" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../tileop/gemm_sp/gemm_sp_base/index.html">tilelang.tileop.gemm_sp.gemm_sp_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../tileop/gemm_sp/gemm_sp_wgmma/index.html">tilelang.tileop.gemm_sp.gemm_sp_wgmma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../tileop/gemm_sp/registry/index.html">tilelang.tileop.gemm_sp.registry</a></li>
 </ul>
 </li>
@@ -670,7 +673,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.get_logical_id_8bit" title="tilelang.cuda.intrinsics.layout.mma_sp_layout.get_logical_id_8bit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_logical_id_8bit</span></code></a>(thread_id)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x4_layout_8bit" title="tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x4_layout_8bit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata_8bit_load_32x4_to_shared_16x4_layout_8bit</span></code></a>(...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x8_layout_8bit" title="tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x8_layout_8bit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata_8bit_load_32x4_to_shared_16x8_layout_8bit</span></code></a>(...)</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_16bit_load_32x2_to_shared_16x4_layout_8bit" title="tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_16bit_load_32x2_to_shared_16x4_layout_8bit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata_16bit_load_32x2_to_shared_16x4_layout_8bit</span></code></a>(...)</p></td>
@@ -851,8 +854,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x4_layout_8bit">
-<span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.layout.mma_sp_layout.</span></span><span class="sig-name descname"><span class="pre">metadata_8bit_load_32x4_to_shared_16x4_layout_8bit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x4_layout_8bit" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x8_layout_8bit">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.layout.mma_sp_layout.</span></span><span class="sig-name descname"><span class="pre">metadata_8bit_load_32x4_to_shared_16x8_layout_8bit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x8_layout_8bit" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1011,7 +1014,7 @@
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x4_layout_16bit"><code class="docutils literal notranslate"><span class="pre">metadata_8bit_load_32x4_to_shared_16x4_layout_16bit()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_16bit_load_32x2_to_shared_16x2_layout_16bit"><code class="docutils literal notranslate"><span class="pre">metadata_16bit_load_32x2_to_shared_16x2_layout_16bit()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.get_logical_id_8bit"><code class="docutils literal notranslate"><span class="pre">get_logical_id_8bit()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x4_layout_8bit"><code class="docutils literal notranslate"><span class="pre">metadata_8bit_load_32x4_to_shared_16x4_layout_8bit()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_8bit_load_32x4_to_shared_16x8_layout_8bit"><code class="docutils literal notranslate"><span class="pre">metadata_8bit_load_32x4_to_shared_16x8_layout_8bit()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_16bit_load_32x2_to_shared_16x4_layout_8bit"><code class="docutils literal notranslate"><span class="pre">metadata_16bit_load_32x2_to_shared_16x4_layout_8bit()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.metadata_32bit_load_32x1_to_shared_16x2_layout_8bit"><code class="docutils literal notranslate"><span class="pre">metadata_32bit_load_32x1_to_shared_16x2_layout_8bit()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.layout.mma_sp_layout.ldmatrix_trans_32x8_to_shared_16x16_layout"><code class="docutils literal notranslate"><span class="pre">ldmatrix_trans_32x8_to_shared_16x16_layout()</span></code></a></li>

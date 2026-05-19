@@ -362,6 +362,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../cuda/intrinsics/macro/mma_sp_macro_generator/index.html">tilelang.cuda.intrinsics.macro.mma_sp_macro_generator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../cuda/intrinsics/macro/tcgen05_macro_generator/index.html">tilelang.cuda.intrinsics.macro.tcgen05_macro_generator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../cuda/intrinsics/macro/wgmma_macro_generator/index.html">tilelang.cuda.intrinsics.macro.wgmma_macro_generator</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../cuda/intrinsics/macro/wgmma_sp_macro_generator/index.html">tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator</a></li>
 </ul>
 </li>
 </ul>
@@ -376,6 +377,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../cuda/op/gemm_sp/index.html">tilelang.cuda.op.gemm_sp</a><input aria-label="Toggle navigation of tilelang.cuda.op.gemm_sp" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../cuda/op/gemm_sp/gemm_sp_mma/index.html">tilelang.cuda.op.gemm_sp.gemm_sp_mma</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../cuda/op/gemm_sp/gemm_sp_wgmma/index.html">tilelang.cuda.op.gemm_sp.gemm_sp_wgmma</a></li>
 </ul>
 </li>
 </ul>
@@ -452,7 +454,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../experimental/index.html">tilelang.language.experimental</a><input aria-label="Toggle navigation of tilelang.language.experimental" class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../experimental/gemm_sp/index.html">tilelang.language.experimental.gemm_sp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../experimental/gemm_sp_op/index.html">tilelang.language.experimental.gemm_sp_op</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../fastmath/index.html">tilelang.language.fastmath</a></li>
@@ -534,6 +536,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../tileop/gemm_sp/index.html">tilelang.tileop.gemm_sp</a><input aria-label="Toggle navigation of tilelang.tileop.gemm_sp" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm_sp/gemm_sp_base/index.html">tilelang.tileop.gemm_sp.gemm_sp_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm_sp/gemm_sp_wgmma/index.html">tilelang.tileop.gemm_sp.gemm_sp_wgmma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../tileop/gemm_sp/registry/index.html">tilelang.tileop.gemm_sp.registry</a></li>
 </ul>
 </li>
@@ -758,6 +761,12 @@
 <td><p>TVM intrinsic for ptx tensor core wmma instructions</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_rs" title="tilelang.language.tir.op.ptx_wgmma_rs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_wgmma_rs</span></code></a>(dtype, wgmma_prefix, b_is_k_major, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_sp_ss" title="tilelang.language.tir.op.ptx_wgmma_sp_ss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_wgmma_sp_ss</span></code></a>(dtype, wgmma_prefix, a_is_k_major, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_sp_rs" title="tilelang.language.tir.op.ptx_wgmma_sp_rs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_wgmma_sp_rs</span></code></a>(dtype, wgmma_prefix, b_is_k_major, ...)</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.ptx_tcgen05_mma_ss" title="tilelang.language.tir.op.ptx_tcgen05_mma_ss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_tcgen05_mma_ss</span></code></a>(kind_dtype, desc_a, A_offset, ...)</p></td>
@@ -1966,6 +1975,16 @@ the intrinsic translation rule.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.tir.op.ptx_wgmma_rs">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_wgmma_rs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wgmma_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_wgmma_rs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.tir.op.ptx_wgmma_sp_ss">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_wgmma_sp_ss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wgmma_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse_selector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_wgmma_sp_ss" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.tir.op.ptx_wgmma_sp_rs">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">ptx_wgmma_sp_rs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wgmma_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_is_k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype_abbrv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse_selector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_in_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.ptx_wgmma_sp_rs" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -4207,6 +4226,8 @@ list_handle: Var</p>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_mma_sp"><code class="docutils literal notranslate"><span class="pre">ptx_mma_sp()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_ss"><code class="docutils literal notranslate"><span class="pre">ptx_wgmma_ss()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_rs"><code class="docutils literal notranslate"><span class="pre">ptx_wgmma_rs()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_sp_ss"><code class="docutils literal notranslate"><span class="pre">ptx_wgmma_sp_ss()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.tir.op.ptx_wgmma_sp_rs"><code class="docutils literal notranslate"><span class="pre">ptx_wgmma_sp_rs()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_tcgen05_mma_ss"><code class="docutils literal notranslate"><span class="pre">ptx_tcgen05_mma_ss()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_tcgen05_mma_ts"><code class="docutils literal notranslate"><span class="pre">ptx_tcgen05_mma_ts()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.op.ptx_tcgen05_mma_blockscaled_ss"><code class="docutils literal notranslate"><span class="pre">ptx_tcgen05_mma_blockscaled_ss()</span></code></a></li>

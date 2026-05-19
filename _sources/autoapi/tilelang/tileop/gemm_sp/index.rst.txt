@@ -11,6 +11,7 @@ Submodules
    :maxdepth: 1
 
    /autoapi/tilelang/tileop/gemm_sp/gemm_sp_base/index
+   /autoapi/tilelang/tileop/gemm_sp/gemm_sp_wgmma/index
    /autoapi/tilelang/tileop/gemm_sp/registry/index
 
 
@@ -19,26 +20,13 @@ Classes
 
 .. autoapisummary::
 
-   tilelang.tileop.gemm_sp.GemmSPPy
-
-
-Functions
----------
-
-.. autoapisummary::
-
-   tilelang.tileop.gemm_sp.gemm_sp_py_infer_layout
-   tilelang.tileop.gemm_sp.gemm_sp_py_lower
+   tilelang.tileop.gemm_sp.GemmSP
 
 
 Package Contents
 ----------------
 
-.. py:function:: gemm_sp_py_infer_layout(gemm_sp_py, target, thread_bounds)
-
-.. py:function:: gemm_sp_py_lower(gemm_sp_py, target, thread_bounds, thread_var)
-
-.. py:class:: GemmSPPy
+.. py:class:: GemmSP
 
    Bases: :py:obj:`tvm.ir.base.Node`, :py:obj:`tvm.runtime.Scriptable`
 
@@ -59,20 +47,20 @@ Package Contents
       :type:  tvm.tir.Buffer
 
 
-   .. py:attribute:: APtr
-      :type:  tvm.tir.PrimExpr
+   .. py:attribute:: aRegion
+      :type:  tvm.tir.BufferRegion
 
 
-   .. py:attribute:: EPtr
-      :type:  tvm.tir.PrimExpr
+   .. py:attribute:: eRegion
+      :type:  tvm.tir.BufferRegion
 
 
-   .. py:attribute:: BPtr
-      :type:  tvm.tir.PrimExpr
+   .. py:attribute:: bRegion
+      :type:  tvm.tir.BufferRegion
 
 
-   .. py:attribute:: CPtr
-      :type:  tvm.tir.PrimExpr
+   .. py:attribute:: cRegion
+      :type:  tvm.tir.BufferRegion
 
 
    .. py:attribute:: M
@@ -92,6 +80,10 @@ Package Contents
 
 
    .. py:attribute:: trans_B
+      :type:  bool
+
+
+   .. py:attribute:: trans_E
       :type:  bool
 
 
@@ -115,7 +107,7 @@ Package Contents
       :type:  bool
 
 
-   .. py:attribute:: k_pack
+   .. py:attribute:: kPack
       :type:  int
 
 
@@ -124,12 +116,18 @@ Package Contents
 
 
    .. py:attribute:: policy
-      :type:  tilelang.tileop.base.GemmWarpPolicy
+      :type:  tilelang.ir.GemmSPWarpPolicy
+
+
+   .. py:method:: gemm_sp_infer_layout(target, thread_bounds)
+
+
+   .. py:method:: gemm_sp_lower(target, layout_map, thread_bounds, thread_var)
 
 
    .. py:method:: infer_layout(target, thread_nums)
 
 
-   .. py:method:: lower(target, thread_nums, thread_var)
+   .. py:method:: lower(target, layout_map, thread_nums, thread_var)
 
 

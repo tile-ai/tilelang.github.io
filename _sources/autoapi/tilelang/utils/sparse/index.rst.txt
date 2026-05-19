@@ -9,7 +9,7 @@ Attributes
 
 .. autoapisummary::
 
-   tilelang.utils.sparse.compress_util
+   tilelang.utils.sparse.GROUP_CONFIG
 
 
 Functions
@@ -17,8 +17,9 @@ Functions
 
 .. autoapisummary::
 
-   tilelang.utils.sparse.compress_sm90
-   tilelang.utils.sparse.compress_sm80
+   tilelang.utils.sparse.get_e_factor
+   tilelang.utils.sparse.get_e_replicate_factor
+   tilelang.utils.sparse.torch_compress
    tilelang.utils.sparse.compress
    tilelang.utils.sparse.randn_semi_sparse
    tilelang.utils.sparse.randint_semi_sparse
@@ -28,18 +29,33 @@ Functions
 Module Contents
 ---------------
 
-.. py:data:: compress_util
+.. py:data:: GROUP_CONFIG
+   :type:  dict[tilelang.language.dtypes.dtype, tuple[int, int]]
 
-.. py:function:: compress_sm90(A, block_k, transposed)
+.. py:function:: get_e_factor(a_dtype, meta_dtype)
 
-.. py:function:: compress_sm80(A, transposed)
-
-.. py:function:: compress(A, transposed, arch = None, **kwargs)
-
-   Compress a tensor using the appropriate method based on the CUDA architecture.
+   Return how many a_dtype elements are indexed by one meta_dtype element.
 
 
-.. py:function:: randn_semi_sparse(M, K, dtype=torch.float16, device='cuda', transposed = False)
+.. py:function:: get_e_replicate_factor(a_dtype)
+
+   Return how many consecutive threads share the same logical metadata value.
+
+
+.. py:function:: torch_compress(dense, meta_dtype = None)
+
+   Reference 2:4 sparse compressor in pure PyTorch with natural row-major metadata. Modified from https://github.com/pytorch/pytorch/blob/bfa6895a345f6568624a4769238af6a9225e3fb8/torch/sparse/_semi_structured_conversions.py#L47
+
+   Each 4-bit chunk of the metadata integer encodes the two nonzero positions
+   within one group of 4 consecutive elements:
+       bits [1:0] = index of first  nonzero (0-3)
+       bits [3:2] = index of second nonzero (0-3)
+
+
+
+.. py:function:: compress(A, meta_dtype = None, block_m = None, block_k = None)
+
+.. py:function:: randn_semi_sparse(M, K, dtype = torch.float16, device = 'cuda', transposed = False)
 
    Generate a random semi-sparse tensor. The generated tensor will have 2:4 sparsity along the K dimension.
    :param M: Number of rows
@@ -52,7 +68,7 @@ Module Contents
    :type transposed: bool
 
 
-.. py:function:: randint_semi_sparse(M, K, low, high, dtype=torch.int32, device='cuda', transposed = False)
+.. py:function:: randint_semi_sparse(M, K, low, high, dtype = torch.int32, device = 'cuda', transposed = False)
 
    Generate a random semi-sparse integer tensor. The generated tensor will have 2:4 sparsity along the K dimension.
    :param M: Number of rows
@@ -69,7 +85,7 @@ Module Contents
    :type transposed: bool
 
 
-.. py:function:: arange_semi_sparse(M, K, dtype=torch.float16, device='cuda', transposed = False)
+.. py:function:: arange_semi_sparse(M, K, dtype = torch.float16, device = 'cuda', transposed = False)
 
    Generate a semi-sparse tensor with values from 0 to M*K-1. The generated tensor will have 2:4 sparsity along the K dimension.
    :param M: Number of rows

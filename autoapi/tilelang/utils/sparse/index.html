@@ -362,6 +362,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/intrinsics/macro/mma_sp_macro_generator/index.html">tilelang.cuda.intrinsics.macro.mma_sp_macro_generator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/intrinsics/macro/tcgen05_macro_generator/index.html">tilelang.cuda.intrinsics.macro.tcgen05_macro_generator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/intrinsics/macro/wgmma_macro_generator/index.html">tilelang.cuda.intrinsics.macro.wgmma_macro_generator</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cuda/intrinsics/macro/wgmma_sp_macro_generator/index.html">tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator</a></li>
 </ul>
 </li>
 </ul>
@@ -376,6 +377,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../cuda/op/gemm_sp/index.html">tilelang.cuda.op.gemm_sp</a><input aria-label="Toggle navigation of tilelang.cuda.op.gemm_sp" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/op/gemm_sp/gemm_sp_mma/index.html">tilelang.cuda.op.gemm_sp.gemm_sp_mma</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cuda/op/gemm_sp/gemm_sp_wgmma/index.html">tilelang.cuda.op.gemm_sp.gemm_sp_wgmma</a></li>
 </ul>
 </li>
 </ul>
@@ -452,7 +454,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../language/experimental/index.html">tilelang.language.experimental</a><input aria-label="Toggle navigation of tilelang.language.experimental" class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../language/experimental/gemm_sp/index.html">tilelang.language.experimental.gemm_sp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../language/experimental/gemm_sp_op/index.html">tilelang.language.experimental.gemm_sp_op</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../language/fastmath/index.html">tilelang.language.fastmath</a></li>
@@ -534,6 +536,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../tileop/gemm_sp/index.html">tilelang.tileop.gemm_sp</a><input aria-label="Toggle navigation of tilelang.tileop.gemm_sp" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm_sp/gemm_sp_base/index.html">tilelang.tileop.gemm_sp.gemm_sp_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm_sp/gemm_sp_wgmma/index.html">tilelang.tileop.gemm_sp.gemm_sp_wgmma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tileop/gemm_sp/registry/index.html">tilelang.tileop.gemm_sp.registry</a></li>
 </ul>
 </li>
@@ -616,7 +619,7 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.compress_util" title="tilelang.utils.sparse.compress_util"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress_util</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.GROUP_CONFIG" title="tilelang.utils.sparse.GROUP_CONFIG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GROUP_CONFIG</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -628,22 +631,25 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.compress_sm90" title="tilelang.utils.sparse.compress_sm90"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress_sm90</span></code></a>(A, block_k, transposed)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.get_e_factor" title="tilelang.utils.sparse.get_e_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_e_factor</span></code></a>(a_dtype, meta_dtype)</p></td>
+<td><p>Return how many a_dtype elements are indexed by one meta_dtype element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.sparse.get_e_replicate_factor" title="tilelang.utils.sparse.get_e_replicate_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_e_replicate_factor</span></code></a>(a_dtype)</p></td>
+<td><p>Return how many consecutive threads share the same logical metadata value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.torch_compress" title="tilelang.utils.sparse.torch_compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_compress</span></code></a>(dense[, meta_dtype])</p></td>
+<td><p>Reference 2:4 sparse compressor in pure PyTorch with natural row-major metadata. Modified from <a class="reference external" href="https://github.com/pytorch/pytorch/blob/bfa6895a345f6568624a4769238af6a9225e3fb8/torch/sparse/_semi_structured_conversions.py#L47">https://github.com/pytorch/pytorch/blob/bfa6895a345f6568624a4769238af6a9225e3fb8/torch/sparse/_semi_structured_conversions.py#L47</a></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.sparse.compress" title="tilelang.utils.sparse.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>(A[, meta_dtype, block_m, block_k])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.sparse.compress_sm80" title="tilelang.utils.sparse.compress_sm80"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress_sm80</span></code></a>(A, transposed)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.compress" title="tilelang.utils.sparse.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>(A, transposed[, arch])</p></td>
-<td><p>Compress a tensor using the appropriate method based on the CUDA architecture.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.sparse.randn_semi_sparse" title="tilelang.utils.sparse.randn_semi_sparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randn_semi_sparse</span></code></a>(M, K[, dtype, device, transposed])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.randn_semi_sparse" title="tilelang.utils.sparse.randn_semi_sparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randn_semi_sparse</span></code></a>(M, K[, dtype, device, transposed])</p></td>
 <td><p>Generate a random semi-sparse tensor. The generated tensor will have 2:4 sparsity along the K dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.randint_semi_sparse" title="tilelang.utils.sparse.randint_semi_sparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randint_semi_sparse</span></code></a>(M, K, low, high[, dtype, device, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.sparse.randint_semi_sparse" title="tilelang.utils.sparse.randint_semi_sparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randint_semi_sparse</span></code></a>(M, K, low, high[, dtype, device, ...])</p></td>
 <td><p>Generate a random semi-sparse integer tensor. The generated tensor will have 2:4 sparsity along the K dimension.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.sparse.arange_semi_sparse" title="tilelang.utils.sparse.arange_semi_sparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arange_semi_sparse</span></code></a>(M, K[, dtype, device, transposed])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.sparse.arange_semi_sparse" title="tilelang.utils.sparse.arange_semi_sparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arange_semi_sparse</span></code></a>(M, K[, dtype, device, transposed])</p></td>
 <td><p>Generate a semi-sparse tensor with values from 0 to M*K-1. The generated tensor will have 2:4 sparsity along the K dimension.</p></td>
 </tr>
 </tbody>
@@ -653,35 +659,56 @@
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py data">
-<dt class="sig sig-object py" id="tilelang.utils.sparse.compress_util">
-<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">compress_util</span></span><a class="headerlink" href="#tilelang.utils.sparse.compress_util" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.utils.sparse.GROUP_CONFIG">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">GROUP_CONFIG</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.dtype" title="tilelang.language.dtypes.dtype"><span class="pre">tilelang.language.dtypes.dtype</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.utils.sparse.GROUP_CONFIG" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.utils.sparse.compress_sm90">
-<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">compress_sm90</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.sparse.compress_sm90" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="tilelang.utils.sparse.get_e_factor">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">get_e_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.sparse.get_e_factor" title="Link to this definition">¶</a></dt>
+<dd><p>Return how many a_dtype elements are indexed by one meta_dtype element.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>torch.Tensor</em>)</p></li>
-<li><p><strong>block_k</strong> (<em>int</em>)</p></li>
-<li><p><strong>transposed</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>a_dtype</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.dtype" title="tilelang.language.dtypes.dtype"><em>tilelang.language.dtypes.dtype</em></a>)</p></li>
+<li><p><strong>meta_dtype</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.dtype" title="tilelang.language.dtypes.dtype"><em>tilelang.language.dtypes.dtype</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple[torch.Tensor, torch.Tensor]</p>
+<dd class="field-even"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.utils.sparse.compress_sm80">
-<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">compress_sm80</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.sparse.compress_sm80" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="tilelang.utils.sparse.get_e_replicate_factor">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">get_e_replicate_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.sparse.get_e_replicate_factor" title="Link to this definition">¶</a></dt>
+<dd><p>Return how many consecutive threads share the same logical metadata value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a_dtype</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.dtype" title="tilelang.language.dtypes.dtype"><em>tilelang.language.dtypes.dtype</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.sparse.torch_compress">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">torch_compress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dense</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.sparse.torch_compress" title="Link to this definition">¶</a></dt>
+<dd><p>Reference 2:4 sparse compressor in pure PyTorch with natural row-major metadata. Modified from <a class="reference external" href="https://github.com/pytorch/pytorch/blob/bfa6895a345f6568624a4769238af6a9225e3fb8/torch/sparse/_semi_structured_conversions.py#L47">https://github.com/pytorch/pytorch/blob/bfa6895a345f6568624a4769238af6a9225e3fb8/torch/sparse/_semi_structured_conversions.py#L47</a></p>
+<p>Each 4-bit chunk of the metadata integer encodes the two nonzero positions
+within one group of 4 consecutive elements:</p>
+<blockquote>
+<div><p>bits [1:0] = index of first  nonzero (0-3)
+bits [3:2] = index of second nonzero (0-3)</p>
+</div></blockquote>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>torch.Tensor</em>)</p></li>
-<li><p><strong>transposed</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>dense</strong> (<em>torch.Tensor</em>)</p></li>
+<li><p><strong>meta_dtype</strong> (<em>Optional</em><em>[</em><em>torch.dtype</em><em>]</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -692,14 +719,14 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.utils.sparse.compress">
-<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">compress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.sparse.compress" title="Link to this definition">¶</a></dt>
-<dd><p>Compress a tensor using the appropriate method based on the CUDA architecture.</p>
-<dl class="field-list simple">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.sparse.</span></span><span class="sig-name descname"><span class="pre">compress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.sparse.compress" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>A</strong> (<em>torch.Tensor</em>)</p></li>
-<li><p><strong>transposed</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
-<li><p><strong>arch</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>meta_dtype</strong> (<em>Optional</em><em>[</em><em>torch.dtype</em><em>]</em>)</p></li>
+<li><p><strong>block_m</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>block_k</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -725,6 +752,8 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>int</em>)</p></li>
 <li><p><strong>K</strong> (<em>int</em>)</p></li>
+<li><p><strong>dtype</strong> (<em>torch.dtype</em>)</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>)</p></li>
 <li><p><strong>transposed</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
@@ -754,6 +783,8 @@
 <li><p><strong>K</strong> (<em>int</em>)</p></li>
 <li><p><strong>low</strong> (<em>int</em>)</p></li>
 <li><p><strong>high</strong> (<em>int</em>)</p></li>
+<li><p><strong>dtype</strong> (<em>torch.dtype</em>)</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>)</p></li>
 <li><p><strong>transposed</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
@@ -777,6 +808,8 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>int</em>)</p></li>
 <li><p><strong>K</strong> (<em>int</em>)</p></li>
+<li><p><strong>dtype</strong> (<em>torch.dtype</em>)</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>)</p></li>
 <li><p><strong>transposed</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
@@ -845,9 +878,10 @@
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#tilelang.utils.sparse.compress_util"><code class="docutils literal notranslate"><span class="pre">compress_util</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.utils.sparse.compress_sm90"><code class="docutils literal notranslate"><span class="pre">compress_sm90()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.utils.sparse.compress_sm80"><code class="docutils literal notranslate"><span class="pre">compress_sm80()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.sparse.GROUP_CONFIG"><code class="docutils literal notranslate"><span class="pre">GROUP_CONFIG</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.sparse.get_e_factor"><code class="docutils literal notranslate"><span class="pre">get_e_factor()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.sparse.get_e_replicate_factor"><code class="docutils literal notranslate"><span class="pre">get_e_replicate_factor()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.sparse.torch_compress"><code class="docutils literal notranslate"><span class="pre">torch_compress()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.sparse.compress"><code class="docutils literal notranslate"><span class="pre">compress()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.sparse.randn_semi_sparse"><code class="docutils literal notranslate"><span class="pre">randn_semi_sparse()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.sparse.randint_semi_sparse"><code class="docutils literal notranslate"><span class="pre">randint_semi_sparse()</span></code></a></li>

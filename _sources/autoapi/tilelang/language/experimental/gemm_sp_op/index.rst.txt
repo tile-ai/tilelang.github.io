@@ -1,0 +1,105 @@
+tilelang.language.experimental.gemm_sp_op
+=========================================
+
+.. py:module:: tilelang.language.experimental.gemm_sp_op
+
+.. autoapi-nested-parse::
+
+   Sparse GEMM operators exposed on the TileLang language surface.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.experimental.gemm_sp_op.gemm_sp
+   tilelang.language.experimental.gemm_sp_op.wgmma_gemm_sp
+   tilelang.language.experimental.gemm_sp_op.tcgen05_gemm_sp
+
+
+Module Contents
+---------------
+
+.. py:function:: gemm_sp(A_sparse, E, B, C, transpose_A = False, transpose_E = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, k_pack = 1, wg_wait = 0)
+
+   TileLang sparse GEMM operator.
+
+   This is the default synchronous sparse GEMM interface. On Hopper, if the
+   compiler selects WGMMA SP lowering, TileLang inserts the corresponding wait
+   implicitly.
+
+   For manual asynchronous scheduling, use ``T.wgmma_gemm_sp(...)`` with
+   ``T.wait_wgmma(...)`` on Hopper, or ``T.tcgen05_gemm_sp(...)`` on Blackwell.
+
+   :param A_sparse: Compressed sparse matrix containing only non-zero elements.
+   :param E: Metadata tensor encoding the sparsity pattern of A.
+   :param B: Dense input matrix.
+   :param C: Output accumulator matrix.
+   :param transpose_A: Whether to transpose A. Defaults to False.
+   :param transpose_E: Whether to transpose E. Defaults to False.
+   :param transpose_B: Whether to transpose B. Defaults to False.
+   :param policy: Warp partition policy. Defaults to GemmSPWarpPolicy.Square.
+   :param clear_accum: Whether to zero the accumulator before computation. Defaults to False.
+   :param k_pack: Number of K dimensions packed per warp. Defaults to 1.
+   :param wg_wait: Warp group wait count. Defaults to 0.
+
+   :returns: A handle to the sparse GEMM operation.
+   :rtype: tir.Call
+
+
+.. py:function:: wgmma_gemm_sp(A_sparse, E, B, C, transpose_A = False, transpose_E = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False)
+
+   Explicit Hopper WGMMA sparse GEMM without an implicit wait.
+
+   This is the explicit asynchronous Hopper WGMMA counterpart to the default
+   synchronous ``T.gemm_sp(...)`` interface, with two stricter guarantees:
+   - it always requests the WGMMA SP lowering path
+   - it never auto-emits an inlined ``warpgroup_wait``
+
+   If the current target or operand pattern cannot use Hopper WGMMA SP,
+   compilation fails instead of silently falling back to MMA SP.
+
+   :param A_sparse: Compressed sparse matrix containing only non-zero elements.
+   :param E: Metadata tensor encoding the sparsity pattern of A.
+   :param B: Dense input matrix.
+   :param C: Output accumulator matrix.
+   :param transpose_A: Whether to transpose A. Defaults to False.
+   :param transpose_E: Whether to transpose E. Defaults to False.
+   :param transpose_B: Whether to transpose B. Defaults to False.
+   :param policy: Warp partition policy. Defaults to GemmSPWarpPolicy.Square.
+   :param clear_accum: Whether to zero the accumulator before computation. Defaults to False.
+
+   :returns: A handle to the sparse GEMM operation.
+   :rtype: tir.Call
+
+
+.. py:function:: tcgen05_gemm_sp(A_sparse, E, B, C, transpose_A = False, transpose_E = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False)
+
+   Explicit Blackwell TCGEN05 sparse GEMM without an implicit wait.
+
+   This is the explicit asynchronous Blackwell TCGEN05 counterpart to the
+   default synchronous ``T.gemm_sp(...)`` interface, with two stricter
+   guarantees:
+   - it always requests the TCGEN05 SP lowering path
+   - it never auto-emits an inlined ``mbarrier_wait_parity``
+
+   If the current target or operand pattern cannot use Blackwell TCGEN05 SP,
+   compilation fails instead of silently falling back to another sparse GEMM
+   path.
+
+   :param A_sparse: Compressed sparse matrix containing only non-zero elements.
+   :param E: Metadata tensor encoding the sparsity pattern of A.
+   :param B: Dense input matrix.
+   :param C: Output accumulator matrix.
+   :param transpose_A: Whether to transpose A. Defaults to False.
+   :param transpose_E: Whether to transpose E. Defaults to False.
+   :param transpose_B: Whether to transpose B. Defaults to False.
+   :param policy: Warp partition policy. Defaults to GemmSPWarpPolicy.Square.
+   :param clear_accum: Whether to zero the accumulator before computation. Defaults to False.
+
+   :returns: A handle to the sparse GEMM operation.
+   :rtype: tir.Call
+
+

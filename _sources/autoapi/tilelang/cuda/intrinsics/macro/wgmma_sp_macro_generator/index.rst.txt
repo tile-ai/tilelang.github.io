@@ -1,0 +1,92 @@
+tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator
+=======================================================
+
+.. py:module:: tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter
+
+
+Module Contents
+---------------
+
+.. py:class:: WGSparseTensorCoreIntrinEmitter(a_dtype = T.float16, e_dtype = T.uint8, b_dtype = T.float16, accum_dtype = T.float16, a_transposed = False, b_transposed = False, e_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, warp_k = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, thread_var = None)
+
+   Bases: :py:obj:`tilelang.cuda.intrinsics.macro.mma_sp_macro_generator.SparseTensorCoreIntrinEmitter`
+
+
+   To eliminate Python syntax within TIR Macro.
+
+
+   .. py:attribute:: wgmma_prefix
+      :type:  str
+
+
+   .. py:attribute:: wgmma_inst_m
+      :type:  int
+
+
+   .. py:attribute:: wgmma_inst_n
+      :type:  int
+
+
+   .. py:attribute:: a_shared_layout
+      :type:  tilelang.layout.Layout
+      :value: None
+
+
+
+   .. py:attribute:: b_shared_layout
+      :type:  tilelang.layout.Layout
+      :value: None
+
+
+
+   .. py:method:: wgmma_ss(A_region, E_region, B_region, C_region, clear_accum = False, wg_wait = 0)
+
+
+   .. py:method:: wgmma_rs(A_region, E_region, B_region, C_region, clear_accum = False, wg_wait = 0)
+
+
+   .. py:method:: ldmatrix_e(E_local_buf, E_shared_buf, inst_i, warp_m, ki, ki_slot)
+
+
+   .. py:method:: make_mma_load_layout(local_buf, matrix = 'A')
+
+      Create a layout function for storing MMA results into a fragment buffer.
+      This layout is used in conjunction with `inverse_mma_store_layout` to
+      map fragment indices to threads and local indices.
+
+      :param local_buf: The local buffer representing a fragment of a matrix.
+      :type local_buf: tir.Buffer
+
+      :returns: A fragment object that describes how threads and indices
+                in `local_buf` are laid out.
+      :rtype: T.Fragment
+
+      :raises AssertionError: If `local_buf` is not detected to be a fragment buffer.
+
+
+
+   .. py:method:: make_mma_store_layout(local_buf)
+
+      Create a layout function for storing MMA results into a fragment buffer.
+      This layout is used in conjunction with `inverse_mma_store_layout` to
+      map fragment indices to threads and local indices.
+
+      :param local_buf: The local buffer representing a fragment of a matrix.
+      :type local_buf: tir.Buffer
+
+      :returns: A fragment object that describes how threads and indices
+                in `local_buf` are laid out.
+      :rtype: T.Fragment
+
+      :raises AssertionError: If `local_buf` is not detected to be a fragment buffer.
+
+
+
