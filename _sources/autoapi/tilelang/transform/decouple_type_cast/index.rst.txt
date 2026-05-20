@@ -50,6 +50,7 @@ Attributes
 
 .. autoapisummary::
 
+   tilelang.transform.decouple_type_cast.BindEnv
    tilelang.transform.decouple_type_cast.CastEntry
 
 
@@ -70,7 +71,7 @@ Functions
 
    tilelang.transform.decouple_type_cast.is_local_buffer
    tilelang.transform.decouple_type_cast.is_global_or_shared_buffer
-   tilelang.transform.decouple_type_cast.inline_let_stmts
+   tilelang.transform.decouple_type_cast.normalize_flat_binds
    tilelang.transform.decouple_type_cast.extract_if_condition
    tilelang.transform.decouple_type_cast.DecoupleTypeCast
 
@@ -90,7 +91,7 @@ Module Contents
 
 .. py:class:: MemoryAccessCollector(loop_var)
 
-   Bases: :py:obj:`tvm.tir.PyStmtExprVisitor`
+   Bases: :py:obj:`tvm.tirx.PyStmtExprVisitor`
 
 
    Collect shared/global BufferStore and BufferLoad nodes.
@@ -110,13 +111,13 @@ Module Contents
 
 
    .. py:attribute:: stores
-      :type:  list[tvm.tir.BufferStore]
+      :type:  list[tvm.tirx.BufferStore]
       :value: []
 
 
 
    .. py:attribute:: loads
-      :type:  list[tvm.tir.BufferLoad]
+      :type:  list[tvm.tirx.BufferLoad]
       :value: []
 
 
@@ -130,13 +131,11 @@ Module Contents
    .. py:method:: visit_call_(op)
 
 
-.. py:function:: inline_let_stmts(stmt)
+.. py:data:: BindEnv
 
-   Inline all LetStmt bindings in *stmt* so that downstream visitors can
-   see the original BufferLoad nodes that were hidden behind Var references.
+.. py:function:: normalize_flat_binds(stmt)
 
-   Used before collecting memory accesses so that BufferLoads inside LetStmt
-   values are visible to ``MemoryAccessCollector``.
+   Return ``stmt`` with dominating flat Bind values substituted into uses.
 
 
 .. py:function:: extract_if_condition(stmt)
@@ -150,7 +149,7 @@ Module Contents
 
 .. py:class:: DecoupleTypeCastMutator
 
-   Bases: :py:obj:`tvm.tir.PyStmtExprMutator`
+   Bases: :py:obj:`tvm.tirx.PyStmtExprMutator`
 
 
    Mutator that decouples type cast vectorization constraints.
@@ -168,7 +167,7 @@ Module Contents
 
 .. py:class:: AccessReplacer(store_entries, load_entries, loop_var)
 
-   Bases: :py:obj:`tvm.tir.PyStmtExprMutator`
+   Bases: :py:obj:`tvm.tirx.PyStmtExprMutator`
 
 
    Mutator to replace memory BufferStores/BufferLoads with cast buffer accesses.

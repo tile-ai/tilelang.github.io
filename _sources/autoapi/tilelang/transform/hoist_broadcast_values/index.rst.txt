@@ -25,7 +25,7 @@ Module Contents
 
 .. py:class:: HoistBroadcastValuesMutator
 
-   Bases: :py:obj:`tvm.tir.PyStmtExprMutator`
+   Bases: :py:obj:`tvm.tirx.PyStmtExprMutator`
 
 
    .. py:attribute:: pending_defs
@@ -44,7 +44,7 @@ Module Contents
    .. py:method:: visit_buffer_store_(op)
 
 
-   .. py:method:: visit_let_stmt_(op)
+   .. py:method:: visit_bind_(op)
 
 
 .. py:function:: HoistBroadcastValues()
@@ -52,7 +52,7 @@ Module Contents
    TVM Pass: HoistBroadcastValues.
 
    This pass scans the TIR for Broadcast operations involving immediate constants (IntImm, FloatImm).
-   It extracts these constants into variables defined via LetStmt immediately surrounding
+   It extracts these constants into variables defined via Bind immediately preceding
    the statement where the broadcast occurs.
 
    Example Transformation:

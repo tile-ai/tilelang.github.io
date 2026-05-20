@@ -381,10 +381,8 @@ Module Contents
       such as `dst[i] = f(src[i])`, avoiding implicit aliasing:
 
       ```
-      read = T.allocate([1], T.int32, "local.var")
-      write = T.allocate([1], T.int32, "local.var")
-      read_buf = T.Buffer((1,), T.int32, data=read, scope="local.var")
-      write_buf = T.Buffer((1,), T.int32, data=write, scope="local.var")
+      read_buf = T.alloc_buffer((1,), T.int32, scope="local.var")
+      write_buf = T.alloc_buffer((1,), T.int32, scope="local.var")
       write_buf[0] = read_buf[0] * 2
       f(write_buf[0])
       ```
@@ -394,8 +392,7 @@ Module Contents
       like:
 
       ```
-      read = T.allocate([1], T.int32, "local.var")
-      read_buf = T.Buffer((1,), T.int32, data=read, scope="local.var")
+      read_buf = T.alloc_buffer((1,), T.int32, scope="local.var")
       read_buf[0] = read_buf[0] * 2
       f(read_buf[0])
       ```
@@ -424,7 +421,7 @@ Module Contents
 
 
    .. py:attribute:: TIR_DISABLE_CSE
-      :value: 'tir.disable_cse_tir'
+      :value: 'tirx.disable_cse_tir'
 
 
       False
@@ -433,7 +430,7 @@ Module Contents
 
 
    .. py:attribute:: TIR_SIMPLIFY
-      :value: 'tir.Simplify'
+      :value: 'tirx.Simplify'
 
 
       True
@@ -442,7 +439,7 @@ Module Contents
 
 
    .. py:attribute:: TIR_DISABLE_STORAGE_REWRITE
-      :value: 'tir.disable_storage_rewrite'
+      :value: 'tirx.disable_storage_rewrite'
 
 
       False
@@ -451,7 +448,7 @@ Module Contents
 
 
    .. py:attribute:: TIR_DISABLE_VECTORIZE
-      :value: 'tir.disable_vectorize'
+      :value: 'tirx.disable_vectorize'
 
 
       False
@@ -460,7 +457,7 @@ Module Contents
 
 
    .. py:attribute:: TIR_USE_ASYNC_COPY
-      :value: 'tir.use_async_copy'
+      :value: 'tirx.use_async_copy'
 
 
       True
@@ -469,7 +466,7 @@ Module Contents
 
 
    .. py:attribute:: TIR_ENABLE_DEBUG
-      :value: 'tir.enable_debug'
+      :value: 'tirx.enable_debug'
 
 
       False
@@ -478,7 +475,7 @@ Module Contents
 
 
    .. py:attribute:: TIR_MERGE_STATIC_SMEM
-      :value: 'tir.merge_static_smem'
+      :value: 'tirx.merge_static_smem'
 
 
       True
@@ -487,7 +484,7 @@ Module Contents
 
 
    .. py:attribute:: TIR_ADD_LOWER_PASS
-      :value: 'tir.add_lower_pass'
+      :value: 'tirx.add_lower_pass'
 
 
       None
@@ -496,7 +493,7 @@ Module Contents
 
 
    .. py:attribute:: TIR_NOALIAS
-      :value: 'tir.noalias'
+      :value: 'tirx.noalias'
 
 
       True

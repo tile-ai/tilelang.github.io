@@ -51,9 +51,9 @@ Module Contents
    Perform a reduction operation on a buffer along a specified dimension.
 
    :param buffer: Input buffer to reduce
-   :type buffer: tir.Buffer
+   :type buffer: tirx.Buffer
    :param out: Output buffer to store results
-   :type out: tir.Buffer
+   :type out: tirx.Buffer
    :param reduce_type: Type of reduction ('max', 'min', 'sum', 'abssum')
    :type reduce_type: str
    :param dim: Dimension along which to perform reduction
@@ -101,9 +101,9 @@ Module Contents
    Perform reduce min on input buffer, store the result to output buffer.
 
    :param buffer: The input buffer
-   :type buffer: tir.Buffer
+   :type buffer: tirx.Buffer
    :param out: The output buffer
-   :type out: tir.Buffer
+   :type out: tirx.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
    :param clear: If True, output buffer will be initialized to inf. Defaults to True.
@@ -116,7 +116,7 @@ Module Contents
    :type nan_propagate: bool, optional
 
    :returns: Handle to the reduction operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: reduce_sum(buffer, out, dim = -1, clear = True, batch = 1)
@@ -124,9 +124,9 @@ Module Contents
    Perform reduce sum on input buffer, store the result to output buffer.
 
    :param buffer: The input buffer
-   :type buffer: tir.Buffer
+   :type buffer: tirx.Buffer
    :param out: The output buffer
-   :type out: tir.Buffer
+   :type out: tirx.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
    :param clear: If True, output buffer will be cleared before reduction.
@@ -145,7 +145,7 @@ Module Contents
        4. Add temp buffer to out
 
    :returns: Handle to the reduction operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: reduce_abssum(buffer, out, dim = -1, batch = 1)
@@ -153,16 +153,16 @@ Module Contents
    Perform reduce absolute sum on input buffer, store the result to output buffer.
 
    :param buffer: The input buffer
-   :type buffer: tir.Buffer
+   :type buffer: tirx.Buffer
    :param out: The output buffer
-   :type out: tir.Buffer
+   :type out: tirx.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
    :param batch: Number of output elements per batched AllReduce call (default 1).
    :type batch: int
 
    :returns: Handle to the reduction operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: reduce_absmax(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False)
@@ -170,9 +170,9 @@ Module Contents
    Perform reduce absolute max on input buffer, store the result to output buffer.
 
    :param buffer: The input buffer
-   :type buffer: tir.Buffer
+   :type buffer: tirx.Buffer
    :param out: The output buffer
-   :type out: tir.Buffer
+   :type out: tirx.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
    :param batch: Number of output elements per batched AllReduce call (default 1).
@@ -183,7 +183,7 @@ Module Contents
    :type nan_propagate: bool, optional
 
    :returns: Handle to the reduction operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: reduce_bitand(buffer, out, dim = -1, clear = True, batch = 1)
@@ -191,16 +191,16 @@ Module Contents
    Perform reduce bitwise-and on input buffer, store the result to output buffer.
 
    :param buffer: The input buffer
-   :type buffer: tir.Buffer
+   :type buffer: tirx.Buffer
    :param out: The output buffer
-   :type out: tir.Buffer
+   :type out: tirx.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
    :param batch: Number of output elements per batched AllReduce call (default 1).
    :type batch: int
 
    :returns: Handle to the reduction operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: reduce_bitor(buffer, out, dim = -1, clear = True, batch = 1)
@@ -208,16 +208,16 @@ Module Contents
    Perform reduce bitwise-or on input buffer, store the result to output buffer.
 
    :param buffer: The input buffer
-   :type buffer: tir.Buffer
+   :type buffer: tirx.Buffer
    :param out: The output buffer
-   :type out: tir.Buffer
+   :type out: tirx.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
    :param batch: Number of output elements per batched AllReduce call (default 1).
    :type batch: int
 
    :returns: Handle to the reduction operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: reduce_bitxor(buffer, out, dim = -1, clear = True, batch = 1)
@@ -225,14 +225,14 @@ Module Contents
    Perform reduce bitwise-xor on input buffer, store the result to output buffer.
 
    :param buffer: The input buffer
-   :type buffer: tir.Buffer
+   :type buffer: tirx.Buffer
    :param out: The output buffer
-   :type out: tir.Buffer
+   :type out: tirx.Buffer
    :param dim: The dimension to perform reduce on
    :type dim: int
 
    :returns: Handle to the reduction operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: cumsum_fragment(src, dst, dim, reverse)
@@ -290,18 +290,18 @@ Module Contents
    ...         T.cumsum(InputG_fragment[i * chunk_size:(i + 1) * chunk_size], dim=0)
 
    :returns: A handle to the emitted cumulative-sum operation.
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: finalize_reducer(reducer, batch = 1)
 
    Finalize a reducer buffer by emitting the `tl.tileop.finalize_reducer` intrinsic.
 
-   This returns a TVM `tir.Call` handle that finalizes the given reducer using its writable pointer.
+   This returns a TVM `tirx.Call` handle that finalizes the given reducer using its writable pointer.
    The call does not modify Python objects directly; it produces the low-level intrinsic call used by the IR.
 
    :param reducer: Reducer buffer whose writable pointer will be finalized.
-   :type reducer: tir.Buffer
+   :type reducer: tirx.Buffer
    :param batch: Batch size for the AllReduce call (default 1 = scalar path,
                  matching the T.reduce default).  When batch > 1, the compiler emits a
                  single batched AllReduce call covering `batch` output elements at a
@@ -310,7 +310,7 @@ Module Contents
    :type batch: int
 
    :returns: Handle to the finalize reducer intrinsic call.
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: warp_reduce_sum(value)
@@ -322,10 +322,10 @@ Module Contents
    will have the sum of all values across the warp.
 
    :param value: The input register value to reduce
-   :type value: tir.PrimExpr
+   :type value: tirx.PrimExpr
 
    :returns: The reduced sum value (same on all threads in the warp)
-   :rtype: tir.PrimExpr
+   :rtype: tirx.PrimExpr
 
 
 .. py:function:: warp_reduce_max(value)
@@ -337,10 +337,10 @@ Module Contents
    will have the max of all values across the warp.
 
    :param value: The input register value to reduce
-   :type value: tir.PrimExpr
+   :type value: tirx.PrimExpr
 
    :returns: The reduced max value (same on all threads in the warp)
-   :rtype: tir.PrimExpr
+   :rtype: tirx.PrimExpr
 
 
 .. py:function:: warp_reduce_min(value)
@@ -352,10 +352,10 @@ Module Contents
    will have the min of all values across the warp.
 
    :param value: The input register value to reduce
-   :type value: tir.PrimExpr
+   :type value: tirx.PrimExpr
 
    :returns: The reduced min value (same on all threads in the warp)
-   :rtype: tir.PrimExpr
+   :rtype: tirx.PrimExpr
 
 
 .. py:function:: warp_reduce_bitand(value)
@@ -367,10 +367,10 @@ Module Contents
    will have the bitwise-and of all values across the warp.
 
    :param value: The input register value to reduce
-   :type value: tir.PrimExpr
+   :type value: tirx.PrimExpr
 
    :returns: The reduced bitwise-and value (same on all threads in the warp)
-   :rtype: tir.PrimExpr
+   :rtype: tirx.PrimExpr
 
 
 .. py:function:: warp_reduce_bitor(value)
@@ -382,9 +382,9 @@ Module Contents
    will have the bitwise-or of all values across the warp.
 
    :param value: The input register value to reduce
-   :type value: tir.PrimExpr
+   :type value: tirx.PrimExpr
 
    :returns: The reduced bitwise-or value (same on all threads in the warp)
-   :rtype: tir.PrimExpr
+   :rtype: tirx.PrimExpr
 
 

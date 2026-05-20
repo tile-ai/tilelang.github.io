@@ -664,7 +664,10 @@ memory access.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.transform.decouple_type_cast.CastEntry" title="tilelang.transform.decouple_type_cast.CastEntry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CastEntry</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.transform.decouple_type_cast.BindEnv" title="tilelang.transform.decouple_type_cast.BindEnv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BindEnv</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.transform.decouple_type_cast.CastEntry" title="tilelang.transform.decouple_type_cast.CastEntry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CastEntry</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -700,8 +703,8 @@ memory access.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.transform.decouple_type_cast.is_global_or_shared_buffer" title="tilelang.transform.decouple_type_cast.is_global_or_shared_buffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_global_or_shared_buffer</span></code></a>(buffer)</p></td>
 <td><p>Check if a buffer is a global or shared buffer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.transform.decouple_type_cast.inline_let_stmts" title="tilelang.transform.decouple_type_cast.inline_let_stmts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inline_let_stmts</span></code></a>(stmt)</p></td>
-<td><p>Inline all LetStmt bindings in <em>stmt</em> so that downstream visitors can</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.transform.decouple_type_cast.normalize_flat_binds" title="tilelang.transform.decouple_type_cast.normalize_flat_binds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_flat_binds</span></code></a>(stmt)</p></td>
+<td><p>Return <code class="docutils literal notranslate"><span class="pre">stmt</span></code> with dominating flat Bind values substituted into uses.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.transform.decouple_type_cast.extract_if_condition" title="tilelang.transform.decouple_type_cast.extract_if_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_if_condition</span></code></a>(stmt)</p></td>
 <td><p>Extract IfThenElse condition from statement if present.</p></td>
@@ -721,7 +724,7 @@ memory access.</p>
 <dd><p>Check if a buffer is local (register-level), including local.var.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em>)</p>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tirx.Buffer</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
@@ -735,7 +738,7 @@ memory access.</p>
 <dd><p>Check if a buffer is a global or shared buffer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tir.Buffer</em>)</p>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>tvm.tirx.Buffer</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
@@ -746,7 +749,7 @@ memory access.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.MemoryAccessCollector">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.transform.decouple_type_cast.</span></span><span class="sig-name descname"><span class="pre">MemoryAccessCollector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loop_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.MemoryAccessCollector" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.tir.PyStmtExprVisitor</span></code></p>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.tirx.PyStmtExprVisitor</span></code></p>
 <p>Collect shared/global BufferStore and BufferLoad nodes.</p>
 <p>Skips indices traversal so that index expressions (which may contain
 BufferLoads to index buffers) do not pollute the result.</p>
@@ -757,7 +760,7 @@ because they are scalar accesses (e.g. <code class="docutils literal notranslate
 in the compute loop as broadcasts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>loop_var</strong> (<em>tvm.tir.Var</em>)</p>
+<dd class="field-odd"><p><strong>loop_var</strong> (<em>tvm.tirx.Var</em>)</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -767,12 +770,12 @@ in the compute loop as broadcasts.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.MemoryAccessCollector.stores">
-<span class="sig-name descname"><span class="pre">stores</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.tir.BufferStore</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.transform.decouple_type_cast.MemoryAccessCollector.stores" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">stores</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.tirx.BufferStore</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.transform.decouple_type_cast.MemoryAccessCollector.stores" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.MemoryAccessCollector.loads">
-<span class="sig-name descname"><span class="pre">loads</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.tir.BufferLoad</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.transform.decouple_type_cast.MemoryAccessCollector.loads" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">loads</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tvm.tirx.BufferLoad</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.transform.decouple_type_cast.MemoryAccessCollector.loads" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -780,7 +783,7 @@ in the compute loop as broadcasts.</p>
 <span class="sig-name descname"><span class="pre">visit_buffer_store_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.MemoryAccessCollector.visit_buffer_store_" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tir.BufferStore</em>)</p>
+<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tirx.BufferStore</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
@@ -793,7 +796,7 @@ in the compute loop as broadcasts.</p>
 <span class="sig-name descname"><span class="pre">visit_buffer_load_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.MemoryAccessCollector.visit_buffer_load_" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tir.BufferLoad</em>)</p>
+<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tirx.BufferLoad</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
@@ -806,7 +809,7 @@ in the compute loop as broadcasts.</p>
 <span class="sig-name descname"><span class="pre">visit_call_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.MemoryAccessCollector.visit_call_" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tir.Call</em>)</p>
+<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tirx.Call</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
@@ -816,19 +819,21 @@ in the compute loop as broadcasts.</p>
 
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.BindEnv">
+<span class="sig-prename descclassname"><span class="pre">tilelang.transform.decouple_type_cast.</span></span><span class="sig-name descname"><span class="pre">BindEnv</span></span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.BindEnv" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.inline_let_stmts">
-<span class="sig-prename descclassname"><span class="pre">tilelang.transform.decouple_type_cast.</span></span><span class="sig-name descname"><span class="pre">inline_let_stmts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stmt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.inline_let_stmts" title="Link to this definition">¶</a></dt>
-<dd><p>Inline all LetStmt bindings in <em>stmt</em> so that downstream visitors can
-see the original BufferLoad nodes that were hidden behind Var references.</p>
-<p>Used before collecting memory accesses so that BufferLoads inside LetStmt
-values are visible to <code class="docutils literal notranslate"><span class="pre">MemoryAccessCollector</span></code>.</p>
+<dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.normalize_flat_binds">
+<span class="sig-prename descclassname"><span class="pre">tilelang.transform.decouple_type_cast.</span></span><span class="sig-name descname"><span class="pre">normalize_flat_binds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stmt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.normalize_flat_binds" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">stmt</span></code> with dominating flat Bind values substituted into uses.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>stmt</strong> (<em>tvm.tir.Stmt</em>)</p>
+<dd class="field-odd"><p><strong>stmt</strong> (<em>tvm.tirx.Stmt</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.Stmt</p>
+<dd class="field-even"><p>tvm.tirx.Stmt</p>
 </dd>
 </dl>
 </dd></dl>
@@ -842,10 +847,10 @@ values are visible to <code class="docutils literal notranslate"><span class="pr
 <dd class="field-odd"><p>A tuple of (condition, inner_body). If no IfThenElse, returns (None, stmt).</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>stmt</strong> (<em>tvm.tir.Stmt</em>)</p>
+<dd class="field-even"><p><strong>stmt</strong> (<em>tvm.tirx.Stmt</em>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple[tvm.tir.PrimExpr | None, tvm.tir.Stmt]</p>
+<dd class="field-odd"><p>tuple[tvm.tirx.PrimExpr | None, tvm.tirx.Stmt]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -858,7 +863,7 @@ values are visible to <code class="docutils literal notranslate"><span class="pr
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.DecoupleTypeCastMutator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.transform.decouple_type_cast.</span></span><span class="sig-name descname"><span class="pre">DecoupleTypeCastMutator</span></span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.DecoupleTypeCastMutator" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.tir.PyStmtExprMutator</span></code></p>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.tirx.PyStmtExprMutator</span></code></p>
 <p>Mutator that decouples type cast vectorization constraints.</p>
 <p>This mutator transforms vectorized loops that have mixed-precision
 operations (detected by the presence of Cast nodes) by inserting local
@@ -869,10 +874,10 @@ cache buffers as intermediate stages.</p>
 <dd><p>Visit For nodes, transforming vectorized loops with mixed-type stores.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tir.For</em>)</p>
+<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tirx.For</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.Stmt</p>
+<dd class="field-even"><p>tvm.tirx.Stmt</p>
 </dd>
 </dl>
 </dd></dl>
@@ -882,7 +887,7 @@ cache buffers as intermediate stages.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.AccessReplacer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.transform.decouple_type_cast.</span></span><span class="sig-name descname"><span class="pre">AccessReplacer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">store_entries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_entries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.AccessReplacer" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.tir.PyStmtExprMutator</span></code></p>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.tirx.PyStmtExprMutator</span></code></p>
 <p>Mutator to replace memory BufferStores/BufferLoads with cast buffer accesses.</p>
 <p>Matches by both buffer and indices (structural equality) so that accesses
 like a[i] and a[i+32] from the same buffer map to different cast buffers.</p>
@@ -891,7 +896,7 @@ like a[i] and a[i+32] from the same buffer map to different cast buffers.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>store_entries</strong> (<em>list</em><em>[</em><em>CastEntry</em><em>]</em>)</p></li>
 <li><p><strong>load_entries</strong> (<em>list</em><em>[</em><em>CastEntry</em><em>]</em>)</p></li>
-<li><p><strong>loop_var</strong> (<em>tvm.tir.Var</em>)</p></li>
+<li><p><strong>loop_var</strong> (<em>tvm.tirx.Var</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -915,10 +920,10 @@ like a[i] and a[i+32] from the same buffer map to different cast buffers.</p>
 <span class="sig-name descname"><span class="pre">visit_buffer_store_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.AccessReplacer.visit_buffer_store_" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tir.BufferStore</em>)</p>
+<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tirx.BufferStore</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.Stmt</p>
+<dd class="field-even"><p>tvm.tirx.Stmt</p>
 </dd>
 </dl>
 </dd></dl>
@@ -928,10 +933,10 @@ like a[i] and a[i+32] from the same buffer map to different cast buffers.</p>
 <span class="sig-name descname"><span class="pre">visit_buffer_load_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.AccessReplacer.visit_buffer_load_" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tir.BufferLoad</em>)</p>
+<dd class="field-odd"><p><strong>op</strong> (<em>tvm.tirx.BufferLoad</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1033,7 +1038,8 @@ while the IR still uses BufferLoad/BufferStore (not tvm_access_ptr).</p>
 <li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.MemoryAccessCollector.visit_call_"><code class="docutils literal notranslate"><span class="pre">MemoryAccessCollector.visit_call_()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.inline_let_stmts"><code class="docutils literal notranslate"><span class="pre">inline_let_stmts()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.BindEnv"><code class="docutils literal notranslate"><span class="pre">BindEnv</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.normalize_flat_binds"><code class="docutils literal notranslate"><span class="pre">normalize_flat_binds()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.extract_if_condition"><code class="docutils literal notranslate"><span class="pre">extract_if_condition()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.CastEntry"><code class="docutils literal notranslate"><span class="pre">CastEntry</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.DecoupleTypeCastMutator"><code class="docutils literal notranslate"><span class="pre">DecoupleTypeCastMutator</span></code></a><ul>

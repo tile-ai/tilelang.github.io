@@ -96,17 +96,17 @@ Module Contents
 
    This is a frontend convenience wrapper that keeps a `BufferLoad` argument
    in the resulting call so downstream passes can recover the referenced
-   `tir.Buffer` (including strides/storage scope) *and* the `rw_mask`
+   `tirx.Buffer` (including strides/storage scope) *and* the `rw_mask`
    (read/write intent) required by synchronization and safety checks.
 
    The returned `tl.access_ptr` is expected to be lowered to
-   `tir.builtin.tvm_access_ptr` later in the TileLang compilation pipeline.
+   `tirx.builtin.tvm_access_ptr` later in the TileLang compilation pipeline.
 
    :param base: The base location to take the address of. Supported:
-                - `tir.BufferLoad` (e.g. `A[i, j]`): pointer to that element
-                - `tir.BufferRegion`: pointer to the region minima
-                - `tir.Buffer`: pointer to the beginning of the buffer
-                - `tir.Var` with let-binding to one of the above (inside TileLang frame)
+                - `tirx.BufferLoad` (e.g. `A[i, j]`): pointer to that element
+                - `tirx.BufferRegion`: pointer to the region minima
+                - `tirx.Buffer`: pointer to the beginning of the buffer
+                - `tirx.Var` with let-binding to one of the above (inside TileLang frame)
    :type base: BufferLikeType
    :param access_type: Access mask for the pointer. Common string forms: `"r"`, `"w"`, `"rw"`.
                        Integer bitmask is also accepted (1=read, 2=write, 3=read-write).
@@ -130,7 +130,7 @@ Module Contents
                             when treating an N-D buffer as a view of its trailing sub-tensor.
    :type ignore_last_ndim: int
 
-   :returns: **ptr** -- A handle-typed `tir.Call` to `tl.access_ptr`.
+   :returns: **ptr** -- A handle-typed `tirx.Call` to `tl.access_ptr`.
    :rtype: PrimExpr
 
 
@@ -166,7 +166,7 @@ Module Contents
    Total arguments: 7 + 4 * rank.
 
    :returns: A handle to the created TMA descriptor
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: tma_load(*args)
@@ -178,7 +178,7 @@ Module Contents
        tma_load(descriptor, mbarrier, smem_addr, coord_0, ..., coord_n, eviction_policy)
 
    :returns: A handle to the TMA load operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: tma_load_2sm(*args)
@@ -189,7 +189,7 @@ Module Contents
    the ``use_2cta`` annotation enabled for 2-CTA cooperative loading.
 
    :returns: A handle to the TMA load operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: fence_proxy_async()
@@ -200,7 +200,7 @@ Module Contents
    to subsequent memory accesses. Maps to ``fence.proxy.async.shared::cta``.
 
    :returns: A handle to the fence operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: tma_store_arrive()
@@ -211,7 +211,7 @@ Module Contents
    Maps to ``cp.async.bulk.commit_group``.
 
    :returns: A handle to the store arrive operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: tma_store_wait(count = 0)
@@ -226,7 +226,7 @@ Module Contents
    :type count: int
 
    :returns: A handle to the store wait operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: set_max_nreg(reg_count, is_inc)
@@ -242,7 +242,7 @@ Module Contents
                   0 if decrement, 1 if increment
 
    :returns: A handle to the register setting operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: inc_max_nreg(reg_count)
@@ -323,7 +323,7 @@ Module Contents
            T.mbarrier_arrive(mbars[1])
 
    :returns: A handle to the barrier wait operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: mbarrier_arrive(mbarrier, cta_id = None)
@@ -347,7 +347,7 @@ Module Contents
               The expected transaction count
 
    :returns: A handle to the barrier expectation operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: mbarrier_arrive_expect_tx(mbarrier, tx)
@@ -360,7 +360,7 @@ Module Contents
    Signal warpgroup readiness for subsequent WGMMA operations.
 
    :returns: A handle to the warpgroup arrive operation.
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: warpgroup_commit_batch()
@@ -368,7 +368,7 @@ Module Contents
    Commit the current warpgroup batch for WGMMA operations.
 
    :returns: A handle to the warpgroup commit batch operation.
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: warpgroup_wait(num_mma)
@@ -379,7 +379,7 @@ Module Contents
                    Identifier of the warpgroup MMA batch to wait on.
 
    :returns: A handle to the warpgroup wait operation.
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: get_lane_idx(warp_size = None)
@@ -501,7 +501,7 @@ Module Contents
                  passing a raw pointer expression that cannot be inferred.
 
    :returns: A handle to the warpgroup fence operation.
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: wait_wgmma(id)
@@ -512,7 +512,7 @@ Module Contents
               The id of the WGMMA operation to wait for
 
    :returns: A handle to the WGMMA wait operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
 
 .. py:function:: barrier_wait(mbarrier, parity)
@@ -525,7 +525,7 @@ Module Contents
                   The parity value to wait for
 
    :returns: A handle to the barrier wait operation
-   :rtype: tir.Call
+   :rtype: tirx.Call
 
    Current implementation is a sugar syntax for mbarrier_wait_parity, as we only support parity 0 and 1.
 
@@ -715,7 +715,7 @@ Module Contents
    Signal UMMA (TCGEN05) barrier arrival for a shared-memory mbarrier pointer.
 
    :param mbar: The mbarrier object in shared memory (e.g., Barrier*) or its address.
-   :type mbar: tir.Buffer | BufferLoad | PrimExpr
+   :type mbar: tirx.Buffer | BufferLoad | PrimExpr
    :param arrive_2cta: Whether to also arrive at the peer CTA's barrier.
                        If set, will be lowered to umma_arrive_multicast_2x1SM.
    :type arrive_2cta: bool

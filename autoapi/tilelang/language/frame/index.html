@@ -637,6 +637,12 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.frame.register_let_value" title="tilelang.language.frame.register_let_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_let_value</span></code></a>(var, value)</p></td>
+<td><p>Record the value behind a flat tirx Bind.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.frame.clear_let_values" title="tilelang.language.frame.clear_let_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_let_values</span></code></a>()</p></td>
+<td><p>Clear all Python-side bindings recorded for the current thread.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.frame.has_let_value" title="tilelang.language.frame.has_let_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_let_value</span></code></a>(var)</p></td>
 <td><p>Check if a variable has a binding in the current let frame stack.</p></td>
 </tr>
@@ -696,6 +702,18 @@ value lookups.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.frame.FrameStack.set_value">
+<span class="sig-name descname"><span class="pre">set_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.FrameStack.set_value" title="Link to this definition">¶</a></dt>
+<dd><p>Record a variable binding that is not represented by a scoped frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.frame.FrameStack.clear_values">
+<span class="sig-name descname"><span class="pre">clear_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.FrameStack.clear_values" title="Link to this definition">¶</a></dt>
+<dd><p>Clear all tracked variable bindings.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.language.frame.FrameStack.has_value">
 <span class="sig-name descname"><span class="pre">has_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.FrameStack.has_value" title="Link to this definition">¶</a></dt>
 <dd><p>Check if a variable has an associated value.</p>
@@ -741,10 +759,33 @@ e.g., ‘if stack: …’</p>
 
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.frame.register_let_value">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.frame.</span></span><span class="sig-name descname"><span class="pre">register_let_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.register_let_value" title="Link to this definition">¶</a></dt>
+<dd><p>Record the value behind a flat tirx Bind.</p>
+<p>The legacy LetFrame path updated FrameStack through __enter__/__exit__.
+tirx emits flat Bind statements instead, so callers that need to recover
+BufferRegion aliases must explicitly register the Python-side mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var</strong> (<em>tvm.tirx.Var</em>)</p></li>
+<li><p><strong>value</strong> (<em>tvm.tirx.PrimExpr</em><em> | </em><em>tvm.tirx.BufferRegion</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.frame.clear_let_values">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.frame.</span></span><span class="sig-name descname"><span class="pre">clear_let_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.frame.clear_let_values" title="Link to this definition">¶</a></dt>
+<dd><p>Clear all Python-side bindings recorded for the current thread.</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.language.frame.LetFrame">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.frame.</span></span><span class="sig-name descname"><span class="pre">LetFrame</span></span><a class="headerlink" href="#tilelang.language.frame.LetFrame" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.script.ir_builder.tir.frame.TIRFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.tirx.script.builder.frame.TIRFrame</span></code></p>
 <p>A TIR frame for let bindings that manages variable scope and value tracking.</p>
 <p>This frame type extends TIRFrame to provide variable binding functionality and
 maintains a global stack of active bindings.</p>
@@ -927,12 +968,16 @@ maintains a global stack of active bindings.</p>
 <li><a class="reference internal" href="#tilelang.language.frame.FrameStack.push"><code class="docutils literal notranslate"><span class="pre">FrameStack.push()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.frame.FrameStack.pop"><code class="docutils literal notranslate"><span class="pre">FrameStack.pop()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.frame.FrameStack.get_value"><code class="docutils literal notranslate"><span class="pre">FrameStack.get_value()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.frame.FrameStack.set_value"><code class="docutils literal notranslate"><span class="pre">FrameStack.set_value()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.frame.FrameStack.clear_values"><code class="docutils literal notranslate"><span class="pre">FrameStack.clear_values()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.frame.FrameStack.has_value"><code class="docutils literal notranslate"><span class="pre">FrameStack.has_value()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.frame.FrameStack.top"><code class="docutils literal notranslate"><span class="pre">FrameStack.top()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.frame.FrameStack.__len__"><code class="docutils literal notranslate"><span class="pre">FrameStack.__len__()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.frame.FrameStack.__bool__"><code class="docutils literal notranslate"><span class="pre">FrameStack.__bool__()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#tilelang.language.frame.register_let_value"><code class="docutils literal notranslate"><span class="pre">register_let_value()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.frame.clear_let_values"><code class="docutils literal notranslate"><span class="pre">clear_let_values()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.frame.LetFrame"><code class="docutils literal notranslate"><span class="pre">LetFrame</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.language.frame.LetFrame.__enter__"><code class="docutils literal notranslate"><span class="pre">LetFrame.__enter__()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.frame.LetFrame.__exit__"><code class="docutils literal notranslate"><span class="pre">LetFrame.__exit__()</span></code></a></li>

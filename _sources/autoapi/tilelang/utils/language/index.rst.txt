@@ -20,6 +20,7 @@ Functions
    tilelang.utils.language.array_reduce
    tilelang.utils.language.retrieve_func_from_module
    tilelang.utils.language.to_buffer_region
+   tilelang.utils.language.to_tile_region
    tilelang.utils.language.retrieve_shape
    tilelang.utils.language.retrieve_stride
    tilelang.utils.language.retrive_ptr_from_buffer_region
@@ -141,10 +142,16 @@ Module Contents
 
 .. py:function:: to_buffer_region(obj, access_type = 'rw', extents = None)
 
-   Convert to/from the tl.region representation.
+   Normalize a buffer-like object to BufferRegion, or encode a tl.region call.
 
-   - Buffer/BufferLoad/BufferRegion -> returns a tl.region call (PrimExpr)
+   - Buffer/BufferLoad/BufferRegion -> returns BufferRegion when extents is None
+   - Buffer/BufferLoad/BufferRegion -> returns a tl.region call when extents is provided
    - tl.region Call -> returns the decoded BufferRegion for analysis
+
+
+.. py:function:: to_tile_region(obj, access_type = 'rw', extents = None)
+
+   Encode a buffer-like object as a tl.region call for tile-op arguments.
 
 
 .. py:function:: retrieve_shape(obj)
@@ -239,7 +246,7 @@ Module Contents
      - if x == y: keep both
      - elif x == 1: set x = y
      - elif y == 1: set y = x
-     - else: promote both to tir.max(x, y) to handle dynamic-vs-static safely
+     - else: promote both to tirx.max(x, y) to handle dynamic-vs-static safely
 
    Leading unmatched dimensions are kept as-is.
 

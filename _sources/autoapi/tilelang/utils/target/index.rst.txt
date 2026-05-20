@@ -9,6 +9,8 @@ Attributes
 
 .. autoapisummary::
 
+   tilelang.utils.target.TargetConfig
+   tilelang.utils.target.TargetLike
    tilelang.utils.target.SUPPORTED_TARGETS
    tilelang.utils.target.ROCM_MTRIPLE
 
@@ -51,6 +53,10 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:data:: TargetConfig
+
+.. py:data:: TargetLike
 
 .. py:data:: SUPPORTED_TARGETS
    :type:  dict[str, str]
@@ -105,11 +111,11 @@ Module Contents
 
    :param target: User-specified target.
                   - If "auto", the system will automatically detect whether CUDA or HIP is available.
-                  - If a string or Target, it is directly validated.
-   :type target: Union[str, Target, Literal["auto"]]
+                  - If a string, dict, or Target, it is directly validated.
+   :type target: Union[str, dict, Target, Literal["auto"]]
 
-   :returns: The selected target ("cuda", "hip", or a valid Target object).
-   :rtype: Union[str, Target]
+   :returns: The selected target ("cuda", "hip", a config dict, or a Target object).
+   :rtype: Union[str, dict, Target]
 
    :raises ValueError: If no CUDA or HIP is available and the target is "auto".
    :raises AssertionError: If the target is invalid.

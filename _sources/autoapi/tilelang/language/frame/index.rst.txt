@@ -23,6 +23,8 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.language.frame.register_let_value
+   tilelang.language.frame.clear_let_values
    tilelang.language.frame.has_let_value
    tilelang.language.frame.get_let_value
 
@@ -67,6 +69,18 @@ Module Contents
 
 
 
+   .. py:method:: set_value(var, value)
+
+      Record a variable binding that is not represented by a scoped frame.
+
+
+
+   .. py:method:: clear_values()
+
+      Clear all tracked variable bindings.
+
+
+
    .. py:method:: has_value(var)
 
       Check if a variable has an associated value.
@@ -101,9 +115,23 @@ Module Contents
 
 
 
+.. py:function:: register_let_value(var, value)
+
+   Record the value behind a flat tirx Bind.
+
+   The legacy LetFrame path updated FrameStack through __enter__/__exit__.
+   tirx emits flat Bind statements instead, so callers that need to recover
+   BufferRegion aliases must explicitly register the Python-side mapping.
+
+
+.. py:function:: clear_let_values()
+
+   Clear all Python-side bindings recorded for the current thread.
+
+
 .. py:class:: LetFrame
 
-   Bases: :py:obj:`tvm.script.ir_builder.tir.frame.TIRFrame`
+   Bases: :py:obj:`tvm.tirx.script.builder.frame.TIRFrame`
 
 
    A TIR frame for let bindings that manages variable scope and value tracking.

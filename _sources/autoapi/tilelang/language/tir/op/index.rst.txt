@@ -1366,7 +1366,7 @@ Module Contents
 
    .. seealso::
 
-      :obj:`tvm.tir.call_packed`
+      :obj:`tvm.tirx.call_packed`
           Creates packed function.
 
 
@@ -1815,12 +1815,16 @@ Module Contents
    :rtype: PrimExpr
 
 
-.. py:function:: round(x, span=None)
+.. py:function:: round(x, rounding_mode='ties-to-even', span=None)
 
    Round elements of the array to the nearest integer.
 
    :param x: Input argument.
    :type x: PrimExpr
+   :param rounding_mode: Rounding mode to use. Supported values are ``"ties-to-even"`` and
+                         ``"ties-away-from-zero"``. ``"ties-to-even"`` is the default and matches
+                         the existing TileLang/TVM semantics.
+   :type rounding_mode: str
    :param span: The location of this operator in the source code.
    :type span: Optional[Span]
 
@@ -2289,7 +2293,7 @@ Module Contents
        n = te.var("n")
        m = te.var("m")
        mysum = te.comm_reducer(lambda x, y: x+y,
-           lambda t: tvm.tir.const(0, dtype=t), name="mysum")
+           lambda t: tvm.tirx.const(0, dtype=t), name="mysum")
        A = te.placeholder((n, m), name="A")
        k = te.reduce_axis((0, m), name="k")
        B = te.compute((n,), lambda i: mysum(A[i, k], axis=k), name="B")

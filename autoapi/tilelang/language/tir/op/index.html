@@ -966,7 +966,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.bitwise_xor" title="tilelang.language.tir.op.bitwise_xor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bitwise_xor</span></code></a>(x, y[, span])</p></td>
 <td><p>Take bitwise xor of two values</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.round" title="tilelang.language.tir.op.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a>(x[, span])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.op.round" title="tilelang.language.tir.op.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a>(x[, rounding_mode, span])</p></td>
 <td><p>Round elements of the array to the nearest integer.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.op.nearbyint" title="tilelang.language.tir.op.nearbyint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nearbyint</span></code></a>(x[, span])</p></td>
@@ -2601,7 +2601,7 @@ tvm.default_trace_action is used.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.tir.call_packed</span></code></dt><dd><p>Creates packed function.</p>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.tirx.call_packed</span></code></dt><dd><p>Creates packed function.</p>
 </dd>
 </dl>
 </div>
@@ -3284,12 +3284,15 @@ nearest integer i which is closer to zero than x is.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.tir.op.round">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">round</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.round" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.op.</span></span><span class="sig-name descname"><span class="pre">round</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounding_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ties-to-even'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.op.round" title="Link to this definition">¶</a></dt>
 <dd><p>Round elements of the array to the nearest integer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>PrimExpr</em>) – Input argument.</p></li>
+<li><p><strong>rounding_mode</strong> (<em>str</em>) – Rounding mode to use. Supported values are <code class="docutils literal notranslate"><span class="pre">&quot;ties-to-even&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">&quot;ties-away-from-zero&quot;</span></code>. <code class="docutils literal notranslate"><span class="pre">&quot;ties-to-even&quot;</span></code> is the default and matches
+the existing TileLang/TVM semantics.</p></li>
 <li><p><strong>span</strong> (<em>Optional</em><em>[</em><em>Span</em><em>]</em>) – The location of this operator in the source code.</p></li>
 </ul>
 </dd>
@@ -3950,7 +3953,7 @@ specified axis;</p></li>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="n">te</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
 <span class="n">m</span> <span class="o">=</span> <span class="n">te</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">)</span>
 <span class="n">mysum</span> <span class="o">=</span> <span class="n">te</span><span class="o">.</span><span class="n">comm_reducer</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span>
-    <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tir</span><span class="o">.</span><span class="n">const</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">t</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mysum&quot;</span><span class="p">)</span>
+    <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">const</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">t</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mysum&quot;</span><span class="p">)</span>
 <span class="n">A</span> <span class="o">=</span> <span class="n">te</span><span class="o">.</span><span class="n">placeholder</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
 <span class="n">k</span> <span class="o">=</span> <span class="n">te</span><span class="o">.</span><span class="n">reduce_axis</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">m</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
 <span class="n">B</span> <span class="o">=</span> <span class="n">te</span><span class="o">.</span><span class="n">compute</span><span class="p">((</span><span class="n">n</span><span class="p">,),</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">mysum</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">k</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>

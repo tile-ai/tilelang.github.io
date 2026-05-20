@@ -847,18 +847,18 @@
 <dd><p>Create a TileLang <cite>tl.access_ptr</cite> from a buffer-like base location.</p>
 <p>This is a frontend convenience wrapper that keeps a <cite>BufferLoad</cite> argument
 in the resulting call so downstream passes can recover the referenced
-<cite>tir.Buffer</cite> (including strides/storage scope) <em>and</em> the <cite>rw_mask</cite>
+<cite>tirx.Buffer</cite> (including strides/storage scope) <em>and</em> the <cite>rw_mask</cite>
 (read/write intent) required by synchronization and safety checks.</p>
 <p>The returned <cite>tl.access_ptr</cite> is expected to be lowered to
-<cite>tir.builtin.tvm_access_ptr</cite> later in the TileLang compilation pipeline.</p>
+<cite>tirx.builtin.tvm_access_ptr</cite> later in the TileLang compilation pipeline.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>base</strong> (<em>BufferLikeType</em>) – The base location to take the address of. Supported:
-- <cite>tir.BufferLoad</cite> (e.g. <cite>A[i, j]</cite>): pointer to that element
-- <cite>tir.BufferRegion</cite>: pointer to the region minima
-- <cite>tir.Buffer</cite>: pointer to the beginning of the buffer
-- <cite>tir.Var</cite> with let-binding to one of the above (inside TileLang frame)</p></li>
+- <cite>tirx.BufferLoad</cite> (e.g. <cite>A[i, j]</cite>): pointer to that element
+- <cite>tirx.BufferRegion</cite>: pointer to the region minima
+- <cite>tirx.Buffer</cite>: pointer to the beginning of the buffer
+- <cite>tirx.Var</cite> with let-binding to one of the above (inside TileLang frame)</p></li>
 <li><p><strong>access_type</strong> (<em>str</em><em> | </em><em>int</em>) – Access mask for the pointer. Common string forms: <cite>“r”</cite>, <cite>“w”</cite>, <cite>“rw”</cite>.
 Integer bitmask is also accepted (1=read, 2=write, 3=read-write).</p></li>
 <li><p><strong>*extents</strong> (<em>PrimExpr</em><em> | </em><em>int</em>) – <p>Optional per-axis extents. When provided and <cite>extent</cite> is not specified,
@@ -878,7 +878,7 @@ when treating an N-D buffer as a view of its trailing sub-tensor.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ptr</strong> – A handle-typed <cite>tir.Call</cite> to <cite>tl.access_ptr</cite>.</p>
+<dd class="field-even"><p><strong>ptr</strong> – A handle-typed <cite>tirx.Call</cite> to <cite>tl.access_ptr</cite>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PrimExpr</p>
@@ -905,7 +905,7 @@ block; deallocating too early or conditionally is the user’s responsibility.</
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tmem</strong> (<em>tvm.tir.Buffer</em>) – A TMEM buffer previously returned by <code class="docutils literal notranslate"><span class="pre">T.alloc_tmem</span></code>.</p>
+<dd class="field-odd"><p><strong>tmem</strong> (<em>tvm.tirx.Buffer</em>) – A TMEM buffer previously returned by <code class="docutils literal notranslate"><span class="pre">T.alloc_tmem</span></code>.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
@@ -932,7 +932,7 @@ interleave, swizzle, l2_promotion, oob_fill)</p>
 <dd class="field-odd"><p>A handle to the created TMA descriptor</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tir.Call</p>
+<dd class="field-even"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -950,7 +950,7 @@ interleave, swizzle, l2_promotion, oob_fill)</p>
 <dd class="field-odd"><p>A handle to the TMA load operation</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tir.Call</p>
+<dd class="field-even"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -966,7 +966,7 @@ the <code class="docutils literal notranslate"><span class="pre">use_2cta</span>
 <dd class="field-odd"><p>A handle to the TMA load operation</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tir.Call</p>
+<dd class="field-even"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -982,7 +982,7 @@ to subsequent memory accesses. Maps to <code class="docutils literal notranslate
 <dd class="field-odd"><p>A handle to the fence operation</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tir.Call</p>
+<dd class="field-even"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -998,7 +998,7 @@ Maps to <code class="docutils literal notranslate"><span class="pre">cp.async.bu
 <dd class="field-odd"><p>A handle to the store arrive operation</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tir.Call</p>
+<dd class="field-even"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1018,7 +1018,7 @@ to remain in flight. Defaults to 0 (wait for all stores to complete).</p>
 <dd class="field-even"><p>A handle to the store wait operation</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dd class="field-odd"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1043,7 +1043,7 @@ Whether to increment or decrement the register count
 <dd class="field-even"><p>A handle to the register setting operation</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dd class="field-odd"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1113,7 +1113,7 @@ Whether to increment or decrement the register count
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mbarrier</strong> (<em>tilelang._typing.BarrierType</em>) – BarrierType
 The memory barrier to arrive at</p></li>
-<li><p><strong>cta_id</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em>) – int | Var
+<li><p><strong>cta_id</strong> (<em>int</em><em> | </em><em>tvm.tirx.Var</em>) – int | Var
 The peer CTA rank in cluster to arrive at.</p></li>
 </ul>
 </dd>
@@ -1133,7 +1133,7 @@ The peer CTA rank in cluster to arrive at.</p></li>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em>)</p></li>
+<li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tirx.Var</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1168,12 +1168,12 @@ The peer CTA rank in cluster to arrive at.</p></li>
 <dd class="field-odd"><p>A handle to the barrier wait operation</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tir.Call</p>
+<dd class="field-even"><p>tirx.Call</p>
 </dd>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mbarrier</strong> (<em>tilelang._typing.BarrierType</em>)</p></li>
-<li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em>)</p></li>
+<li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tirx.Var</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1188,7 +1188,7 @@ The peer CTA rank in cluster to arrive at.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mbarrier</strong> (<em>tilelang._typing.BarrierType</em>) – BarrierType
 The memory barrier to arrive at</p></li>
-<li><p><strong>cta_id</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em><em> | </em><em>None</em>) – int | Var | None
+<li><p><strong>cta_id</strong> (<em>int</em><em> | </em><em>tvm.tirx.Var</em><em> | </em><em>None</em>) – int | Var | None
 The peer CTA rank in cluster to arrive at. (Only valid for cluster barriers)
 If not provided, will arrive on current CTA’s barrier.</p></li>
 </ul>
@@ -1213,7 +1213,7 @@ The expected transaction count</p></li>
 <dd class="field-even"><p>A handle to the barrier expectation operation</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dd class="field-odd"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1241,7 +1241,7 @@ The expected transaction count</p></li>
 <dd class="field-odd"><p>A handle to the warpgroup arrive operation.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tir.Call</p>
+<dd class="field-even"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1255,7 +1255,7 @@ The expected transaction count</p></li>
 <dd class="field-odd"><p>A handle to the warpgroup commit batch operation.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tir.Call</p>
+<dd class="field-even"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1273,7 +1273,7 @@ Identifier of the warpgroup MMA batch to wait on.</p>
 <dd class="field-even"><p>A handle to the warpgroup wait operation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dd class="field-odd"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1287,7 +1287,7 @@ Identifier of the warpgroup MMA batch to wait on.</p>
 <dd class="field-odd"><p><strong>warp_size</strong> (<em>Optional</em><em>[</em><em>int</em><em>, </em><em>PrimExpr</em><em>]</em>) – Logical warp (or wavefront) size. Defaults to 32 on NVIDIA and 64 on AMD.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1312,7 +1312,7 @@ linear thread id using the provided <cite>warp_size</cite>.</p>
 <dd class="field-odd"><p><strong>warp_size</strong> (<em>Optional</em><em>[</em><em>int</em><em>, </em><em>PrimExpr</em><em>]</em>) – Logical warp size used for the index calculation.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1336,7 +1336,7 @@ thread id by <cite>warp_size</cite>, matching the semantics of CUTLASS’ canoni
 <dd class="field-odd"><p><strong>warp_size</strong> (<em>Optional</em><em>[</em><em>int</em><em>, </em><em>PrimExpr</em><em>]</em>) – Logical warp size used for the index calculation.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1363,7 +1363,7 @@ thread id by the provided <cite>warp_size</cite> without requiring warp converge
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1389,7 +1389,7 @@ matching the canonical ordering while allowing architecture-specific overrides.<
 Passing 0 elects a single lane in the entire thread block.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1415,13 +1415,13 @@ WGMMA operations by issuing an empty inline assembly barrier on every register.<
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>buffer_or_ptr</strong> (<em>tilelang._typing.BufferLikeType</em><em> | </em><em>tvm.tir.PrimExpr</em>) – BufferLikeType | PrimExpr
+<li><p><strong>buffer_or_ptr</strong> (<em>tilelang._typing.BufferLikeType</em><em> | </em><em>tvm.tirx.PrimExpr</em>) – BufferLikeType | PrimExpr
 A buffer representing the accumulator fragment, a buffer load/region
 that identifies a starting element within the fragment, or a pointer expression
 (e.g., tvm_access_ptr/address_of/typed Var).</p></li>
-<li><p><strong>offset</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>) – int | PrimExpr
+<li><p><strong>offset</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>) – int | PrimExpr
 Element offset from the start of the accumulator fragment.</p></li>
-<li><p><strong>num_regs</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>) – int | PrimExpr | None
+<li><p><strong>num_regs</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em><em> | </em><em>None</em>) – int | PrimExpr | None
 Number of 32-bit registers to fence. If None and a Buffer is provided, it will be
 derived from the buffer shape and dtype.</p></li>
 <li><p><strong>dtype</strong> (<em>tilelang._typing.DType</em><em> | </em><em>None</em>) – DType | None
@@ -1434,7 +1434,7 @@ passing a raw pointer expression that cannot be inferred.</p></li>
 <dd class="field-even"><p>A handle to the warpgroup fence operation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dd class="field-odd"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1452,7 +1452,7 @@ The id of the WGMMA operation to wait for</p>
 <dd class="field-even"><p>A handle to the WGMMA wait operation</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dd class="field-odd"><p>tirx.Call</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1466,7 +1466,7 @@ The id of the WGMMA operation to wait for</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mbarrier</strong> (<em>tilelang._typing.BarrierType</em>) – BarrierType
 The memory barrier to wait on</p></li>
-<li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tir.Var</em>) – int | Var
+<li><p><strong>parity</strong> (<em>int</em><em> | </em><em>tvm.tirx.Var</em>) – int | Var
 The parity value to wait for</p></li>
 </ul>
 </dd>
@@ -1474,7 +1474,7 @@ The parity value to wait for</p></li>
 <dd class="field-even"><p>A handle to the barrier wait operation</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tir.Call</p>
+<dd class="field-odd"><p>tirx.Call</p>
 </dd>
 </dl>
 <p>Current implementation is a sugar syntax for mbarrier_wait_parity, as we only support parity 0 and 1.</p>
@@ -1500,10 +1500,10 @@ The memory barrier to arrive at</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
-<li><p><strong>delta</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
-<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em><em> | </em><em>tvm.tirx.Call</em>)</p></li>
+<li><p><strong>delta</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em><em> | </em><em>tvm.tirx.Call</em>)</p></li>
+<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1517,10 +1517,10 @@ The memory barrier to arrive at</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
-<li><p><strong>delta</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
-<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em><em> | </em><em>tvm.tirx.Call</em>)</p></li>
+<li><p><strong>delta</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em><em> | </em><em>tvm.tirx.Call</em>)</p></li>
+<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1534,10 +1534,10 @@ The memory barrier to arrive at</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
-<li><p><strong>delta</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>tvm.tir.Call</em>)</p></li>
-<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em><em> | </em><em>tvm.tirx.Call</em>)</p></li>
+<li><p><strong>delta</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em><em> | </em><em>tvm.tirx.Call</em>)</p></li>
+<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1577,10 +1577,10 @@ on HIP).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>srcLane</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>srcLane</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>width</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1596,8 +1596,8 @@ convergent).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Integer condition to test.</p></li>
-<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Warp lane mask (defaults to <code class="docutils literal notranslate"><span class="pre">0xFFFFFFFF</span></code>, i.e. all 32 lanes).</p></li>
+<li><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>) – Integer condition to test.</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>) – Warp lane mask (defaults to <code class="docutils literal notranslate"><span class="pre">0xFFFFFFFF</span></code>, i.e. all 32 lanes).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1618,8 +1618,8 @@ on HIP.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Integer condition to test.</p></li>
-<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>) – Warp lane mask (defaults to <code class="docutils literal notranslate"><span class="pre">0xFFFFFFFF</span></code>, i.e. all 32 lanes).</p></li>
+<li><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>) – Integer condition to test.</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>) – Warp lane mask (defaults to <code class="docutils literal notranslate"><span class="pre">0xFFFFFFFF</span></code>, i.e. all 32 lanes).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1648,8 +1648,8 @@ HIP: <code class="docutils literal notranslate"><span class="pre">__ballot(predi
 </dd>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1668,7 +1668,7 @@ HIP: <code class="docutils literal notranslate"><span class="pre">__ballot(predi
 <dd class="field-even"><p>uint64</p>
 </dd>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p>
+<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1681,7 +1681,7 @@ HIP: <code class="docutils literal notranslate"><span class="pre">__ballot(predi
 <code class="docutils literal notranslate"><span class="pre">__ballot(1)</span></code> on HIP.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
+<dd class="field-odd"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1693,10 +1693,10 @@ HIP: <code class="docutils literal notranslate"><span class="pre">__ballot(predi
 evaluates to non-zero (<code class="docutils literal notranslate"><span class="pre">__syncthreads_count</span></code> on CUDA and HIP).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p>
+<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1708,10 +1708,10 @@ evaluates to non-zero (<code class="docutils literal notranslate"><span class="p
 <code class="docutils literal notranslate"><span class="pre">predicate</span></code> (<code class="docutils literal notranslate"><span class="pre">__syncthreads_and</span></code> on CUDA and HIP).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p>
+<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1723,10 +1723,10 @@ evaluates to non-zero (<code class="docutils literal notranslate"><span class="p
 <code class="docutils literal notranslate"><span class="pre">predicate</span></code> (<code class="docutils literal notranslate"><span class="pre">__syncthreads_or</span></code> on CUDA and HIP).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p>
+<dd class="field-odd"><p><strong>predicate</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1740,12 +1740,12 @@ the calling lane’s value. Lowers to <code class="docutils literal notranslate"
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1761,12 +1761,12 @@ on HIP.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
-<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>value</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>mask</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1790,15 +1790,15 @@ on HIP.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>descriptor</strong> (<em>tvm.tir.Buffer</em>)</p></li>
-<li><p><strong>start_address</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>descriptor</strong> (<em>tvm.tirx.Buffer</em>)</p></li>
+<li><p><strong>start_address</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
 <li><p><strong>layout_type_</strong> (<em>int</em>)</p></li>
 <li><p><strong>leading_byte_offset</strong> (<em>int</em>)</p></li>
 <li><p><strong>stride_byte_offset</strong> (<em>int</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1810,8 +1810,8 @@ on HIP.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>descriptor</strong> (<em>tvm.tir.Buffer</em>)</p></li>
-<li><p><strong>start_address</strong> (<em>tvm.tir.PrimExpr</em>)</p></li>
+<li><p><strong>descriptor</strong> (<em>tvm.tirx.Buffer</em>)</p></li>
+<li><p><strong>start_address</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
 <li><p><strong>leading_byte_offset</strong> (<em>int</em>)</p></li>
 <li><p><strong>stride_byte_offset</strong> (<em>int</em>)</p></li>
 <li><p><strong>base_offset</strong> (<em>int</em>)</p></li>
@@ -1820,7 +1820,7 @@ on HIP.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tir.PrimExpr</p>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1869,7 +1869,7 @@ on HIP.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mbar</strong> (<em>tir.Buffer</em><em> | </em><em>BufferLoad</em><em> | </em><em>PrimExpr</em>) – The mbarrier object in shared memory (e.g., Barrier*) or its address.</p></li>
+<li><p><strong>mbar</strong> (<em>tirx.Buffer</em><em> | </em><em>BufferLoad</em><em> | </em><em>PrimExpr</em>) – The mbarrier object in shared memory (e.g., Barrier*) or its address.</p></li>
 <li><p><strong>arrive_2cta</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether to also arrive at the peer CTA’s barrier.
 If set, will be lowered to umma_arrive_multicast_2x1SM.</p></li>
 </ul>
@@ -2014,7 +2014,7 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
-<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tirx.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2041,7 +2041,7 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
-<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tirx.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2068,7 +2068,7 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
-<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tirx.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2095,7 +2095,7 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite>.</p></li>
-<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tirx.PrimExpr</em>) – Optional predicate condition. If False, the load is skipped.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2122,8 +2122,8 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
-<li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 32-bit value to store.</p></li>
-<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
+<li><p><strong>value</strong> (<em>tvm.tirx.PrimExpr</em>) – The 32-bit value to store.</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tirx.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -2146,8 +2146,8 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
-<li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 64-bit value to store (e.g., uint2).</p></li>
-<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
+<li><p><strong>value</strong> (<em>tvm.tirx.PrimExpr</em>) – The 64-bit value to store (e.g., uint2).</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tirx.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -2170,8 +2170,8 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
-<li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 128-bit value to store (e.g., uint4).</p></li>
-<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
+<li><p><strong>value</strong> (<em>tvm.tirx.PrimExpr</em>) – The 128-bit value to store (e.g., uint4).</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tirx.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -2194,8 +2194,8 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – A <cite>Buffer</cite>, <cite>BufferRegion</cite>, or <cite>BufferLoad</cite> indicating the destination.</p></li>
-<li><p><strong>value</strong> (<em>tvm.tir.PrimExpr</em>) – The 256-bit value to store (e.g., ulonglong4).</p></li>
-<li><p><strong>pred</strong> (<em>tvm.tir.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
+<li><p><strong>value</strong> (<em>tvm.tirx.PrimExpr</em>) – The 256-bit value to store (e.g., ulonglong4).</p></li>
+<li><p><strong>pred</strong> (<em>tvm.tirx.PrimExpr</em>) – Optional predicate condition. If False, the store is skipped.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

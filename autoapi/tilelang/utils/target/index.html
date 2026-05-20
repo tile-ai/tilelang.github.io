@@ -621,6 +621,12 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.TargetConfig" title="tilelang.utils.target.TargetConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TargetConfig</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.target.TargetLike" title="tilelang.utils.target.TargetLike"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TargetLike</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.target.SUPPORTED_TARGETS" title="tilelang.utils.target.SUPPORTED_TARGETS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SUPPORTED_TARGETS</span></code></a></p></td>
 <td><p></p></td>
 </tr>
@@ -729,6 +735,16 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.utils.target.TargetConfig">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">TargetConfig</span></span><a class="headerlink" href="#tilelang.utils.target.TargetConfig" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.utils.target.TargetLike">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">TargetLike</span></span><a class="headerlink" href="#tilelang.utils.target.TargetLike" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py data">
 <dt class="sig sig-object py" id="tilelang.utils.target.SUPPORTED_TARGETS">
 <span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">SUPPORTED_TARGETS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.utils.target.SUPPORTED_TARGETS" title="Link to this definition">¶</a></dt>
@@ -872,7 +888,7 @@
 <span class="sig-prename descclassname"><span class="pre">tilelang.utils.target.</span></span><span class="sig-name descname"><span class="pre">normalize_cutedsl_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.target.normalize_cutedsl_target" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>target</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em>)</p>
+<dd class="field-odd"><p><strong>target</strong> (<em>TargetLike</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>tvm.target.Target | None</p>
@@ -887,17 +903,17 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Target</em><em>, </em><em>Literal</em><em>[</em><em>&quot;auto&quot;</em><em>]</em><em>]</em>) – User-specified target.
+<li><p><strong>target</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>, </em><em>Target</em><em>, </em><em>Literal</em><em>[</em><em>&quot;auto&quot;</em><em>]</em><em>]</em>) – User-specified target.
 - If “auto”, the system will automatically detect whether CUDA or HIP is available.
-- If a string or Target, it is directly validated.</p></li>
+- If a string, dict, or Target, it is directly validated.</p></li>
 <li><p><strong>return_object</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The selected target (“cuda”, “hip”, or a valid Target object).</p>
+<dd class="field-even"><p>The selected target (“cuda”, “hip”, a config dict, or a Target object).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Union[str, Target]</p>
+<dd class="field-odd"><p>Union[str, dict, Target]</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -1191,6 +1207,8 @@
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.utils.target.TargetConfig"><code class="docutils literal notranslate"><span class="pre">TargetConfig</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.target.TargetLike"><code class="docutils literal notranslate"><span class="pre">TargetLike</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.SUPPORTED_TARGETS"><code class="docutils literal notranslate"><span class="pre">SUPPORTED_TARGETS</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.ROCM_MTRIPLE"><code class="docutils literal notranslate"><span class="pre">ROCM_MTRIPLE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.target.normalize_rocm_arch"><code class="docutils literal notranslate"><span class="pre">normalize_rocm_arch()</span></code></a></li>

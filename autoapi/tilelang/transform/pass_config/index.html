@@ -1024,10 +1024,8 @@ Acceptable values: “pdf”, “png”, “svg”, “all”</p>
 <p>When False (default) StorageRewrite keeps distinct temporaries for patterns
 such as <cite>dst[i] = f(src[i])</cite>, avoiding implicit aliasing:</p>
 <p><code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">read</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">T.int32,</span> <span class="pre">&quot;local.var&quot;)</span>
-<span class="pre">write</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">T.int32,</span> <span class="pre">&quot;local.var&quot;)</span>
-<span class="pre">read_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">T.int32,</span> <span class="pre">data=read,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
-<span class="pre">write_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">T.int32,</span> <span class="pre">data=write,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
+<span class="pre">read_buf</span> <span class="pre">=</span> <span class="pre">T.alloc_buffer((1,),</span> <span class="pre">T.int32,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
+<span class="pre">write_buf</span> <span class="pre">=</span> <span class="pre">T.alloc_buffer((1,),</span> <span class="pre">T.int32,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
 <span class="pre">write_buf[0]</span> <span class="pre">=</span> <span class="pre">read_buf[0]</span> <span class="pre">*</span> <span class="pre">2</span>
 <span class="pre">f(write_buf[0])</span>
 <span class="pre">`</span></code></p>
@@ -1035,8 +1033,7 @@ such as <cite>dst[i] = f(src[i])</cite>, avoiding implicit aliasing:</p>
 for the write when it can prove the update is safely inplace, producing IR
 like:</p>
 <p><code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">read</span> <span class="pre">=</span> <span class="pre">T.allocate([1],</span> <span class="pre">T.int32,</span> <span class="pre">&quot;local.var&quot;)</span>
-<span class="pre">read_buf</span> <span class="pre">=</span> <span class="pre">T.Buffer((1,),</span> <span class="pre">T.int32,</span> <span class="pre">data=read,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
+<span class="pre">read_buf</span> <span class="pre">=</span> <span class="pre">T.alloc_buffer((1,),</span> <span class="pre">T.int32,</span> <span class="pre">scope=&quot;local.var&quot;)</span>
 <span class="pre">read_buf[0]</span> <span class="pre">=</span> <span class="pre">read_buf[0]</span> <span class="pre">*</span> <span class="pre">2</span>
 <span class="pre">f(read_buf[0])</span>
 <span class="pre">`</span></code></p>
@@ -1066,7 +1063,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_CSE">
-<span class="sig-name descname"><span class="pre">TIR_DISABLE_CSE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tir.disable_cse_tir'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_CSE" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">TIR_DISABLE_CSE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tirx.disable_cse_tir'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_CSE" title="Link to this definition">¶</a></dt>
 <dd><p>False</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1077,7 +1074,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TIR_SIMPLIFY">
-<span class="sig-name descname"><span class="pre">TIR_SIMPLIFY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tir.Simplify'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_SIMPLIFY" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">TIR_SIMPLIFY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tirx.Simplify'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_SIMPLIFY" title="Link to this definition">¶</a></dt>
 <dd><p>True</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1088,7 +1085,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_STORAGE_REWRITE">
-<span class="sig-name descname"><span class="pre">TIR_DISABLE_STORAGE_REWRITE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tir.disable_storage_rewrite'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_STORAGE_REWRITE" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">TIR_DISABLE_STORAGE_REWRITE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tirx.disable_storage_rewrite'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_STORAGE_REWRITE" title="Link to this definition">¶</a></dt>
 <dd><p>False</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1099,7 +1096,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_VECTORIZE">
-<span class="sig-name descname"><span class="pre">TIR_DISABLE_VECTORIZE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tir.disable_vectorize'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_VECTORIZE" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">TIR_DISABLE_VECTORIZE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tirx.disable_vectorize'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_DISABLE_VECTORIZE" title="Link to this definition">¶</a></dt>
 <dd><p>False</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1110,7 +1107,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TIR_USE_ASYNC_COPY">
-<span class="sig-name descname"><span class="pre">TIR_USE_ASYNC_COPY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tir.use_async_copy'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_USE_ASYNC_COPY" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">TIR_USE_ASYNC_COPY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tirx.use_async_copy'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_USE_ASYNC_COPY" title="Link to this definition">¶</a></dt>
 <dd><p>True</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1121,7 +1118,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TIR_ENABLE_DEBUG">
-<span class="sig-name descname"><span class="pre">TIR_ENABLE_DEBUG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tir.enable_debug'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_ENABLE_DEBUG" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">TIR_ENABLE_DEBUG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tirx.enable_debug'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_ENABLE_DEBUG" title="Link to this definition">¶</a></dt>
 <dd><p>False</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1132,7 +1129,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TIR_MERGE_STATIC_SMEM">
-<span class="sig-name descname"><span class="pre">TIR_MERGE_STATIC_SMEM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tir.merge_static_smem'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_MERGE_STATIC_SMEM" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">TIR_MERGE_STATIC_SMEM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tirx.merge_static_smem'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_MERGE_STATIC_SMEM" title="Link to this definition">¶</a></dt>
 <dd><p>True</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1143,7 +1140,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TIR_ADD_LOWER_PASS">
-<span class="sig-name descname"><span class="pre">TIR_ADD_LOWER_PASS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tir.add_lower_pass'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_ADD_LOWER_PASS" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">TIR_ADD_LOWER_PASS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tirx.add_lower_pass'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_ADD_LOWER_PASS" title="Link to this definition">¶</a></dt>
 <dd><p>None</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1154,7 +1151,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TIR_NOALIAS">
-<span class="sig-name descname"><span class="pre">TIR_NOALIAS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tir.noalias'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_NOALIAS" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">TIR_NOALIAS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tirx.noalias'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TIR_NOALIAS" title="Link to this definition">¶</a></dt>
 <dd><p>True</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -1215,7 +1212,7 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 <dd><p>Canonicalize known pass-config keys and emit compatibility warnings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>pass_configs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p>
+<dd class="field-odd"><p><strong>pass_configs</strong> (<em>dict</em><em>[</em><em>str</em><em> | </em><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey" title="tilelang.transform.pass_config.PassConfigKey"><em>PassConfigKey</em></a><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict[str, Any]</p>

@@ -620,10 +620,10 @@
 The target determines which code generator is used (CUDA, HIP, Metal, LLVM, …) and allows you to pass
 device-specific options such as GPU architecture flags. This page summarises how to pick and customise a target
 when compiling TileLang programs.</p>
-<section id="common-target-strings">
-<h2>Common target strings<a class="headerlink" href="#common-target-strings" title="Link to this heading">¶</a></h2>
-<p>TileLang ships with a small set of common targets; each accepts the full range of TVM options so you can fine-tune
-the generated code. The most frequent choices are listed below:</p>
+<section id="common-targets">
+<h2>Common targets<a class="headerlink" href="#common-targets" title="Link to this heading">¶</a></h2>
+<p>TileLang ships with a small set of common target kinds. Use a bare string for the kind, or a TVM target config
+dictionary when you need options such as GPU architecture or CPU model. The most frequent choices are listed below:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -636,19 +636,19 @@ the generated code. The most frequent choices are listed below:</p>
 <td><p>Detects CUDA → HIP → Metal in that order. Useful when running the same script across machines.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cuda</span></code></p></td>
-<td><p>NVIDIA GPUs. Supports options such as <code class="docutils literal notranslate"><span class="pre">-arch=sm_80</span></code>, <code class="docutils literal notranslate"><span class="pre">-max_num_threads=1024</span></code>, etc.</p></td>
+<td><p>NVIDIA GPUs. Use a config dict for options such as <code class="docutils literal notranslate"><span class="pre">{&quot;kind&quot;:</span> <span class="pre">&quot;cuda&quot;,</span> <span class="pre">&quot;arch&quot;:</span> <span class="pre">&quot;sm_80&quot;}</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cutedsl</span></code></p></td>
-<td><p>NVIDIA CUTLASS/CuTe DSL backend. Requires <code class="docutils literal notranslate"><span class="pre">nvidia-cutlass-dsl</span></code>. <code class="docutils literal notranslate"><span class="pre">cuda</span></code> options can also be applied to this target.</p></td>
+<td><p>NVIDIA CUTLASS/CuTe DSL backend. Requires <code class="docutils literal notranslate"><span class="pre">nvidia-cutlass-dsl</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hip</span></code></p></td>
-<td><p>AMD GPUs via ROCm. Options like <code class="docutils literal notranslate"><span class="pre">-mcpu=gfx90a</span></code> can be appended.</p></td>
+<td><p>AMD GPUs via ROCm. Use a config dict for options such as <code class="docutils literal notranslate"><span class="pre">{&quot;kind&quot;:</span> <span class="pre">&quot;hip&quot;,</span> <span class="pre">&quot;mcpu&quot;:</span> <span class="pre">&quot;gfx90a&quot;}</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metal</span></code></p></td>
 <td><p>Apple Silicon GPUs (arm64 Macs).</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">llvm</span></code></p></td>
-<td><p>CPU execution; accepts the standard TVM LLVM switches.</p></td>
+<td><p>CPU execution. Use a config dict for options such as <code class="docutils literal notranslate"><span class="pre">{&quot;kind&quot;:</span> <span class="pre">&quot;llvm&quot;,</span> <span class="pre">&quot;mtriple&quot;:</span> <span class="pre">&quot;x86_64-linux-gnu&quot;}</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">webgpu</span></code></p></td>
 <td><p>Browser / WebGPU runtimes.</p></td>
@@ -659,8 +659,8 @@ the generated code. The most frequent choices are listed below:</p>
 </tbody>
 </table>
 </div>
-<p>To add options, append them after the base name, separated by spaces. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;cuda -arch=sm_90&quot;</span>
+<p>To add options, pass a target config dictionary. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="s2">&quot;arch&quot;</span><span class="p">:</span> <span class="s2">&quot;sm_90&quot;</span><span class="p">}</span>
 <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">execution_backend</span><span class="o">=</span><span class="s2">&quot;cython&quot;</span><span class="p">)</span>
 <span class="c1"># or</span>
 <span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
@@ -668,16 +668,15 @@ the generated code. The most frequent choices are listed below:</p>
     <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The same convention works for HIP or LLVM (e.g. <code class="docutils literal notranslate"><span class="pre">hip</span> <span class="pre">-mcpu=gfx940</span></code>, <code class="docutils literal notranslate"><span class="pre">llvm</span> <span class="pre">-mtriple=x86_64-linux-gnu</span></code>).</p>
 <section id="advanced-specify-exact-hardware">
 <h3>Advanced: Specify Exact Hardware<a class="headerlink" href="#advanced-specify-exact-hardware" title="Link to this heading">¶</a></h3>
-<p>When you already know the precise GPU model, you can encode it in the target string—either via <code class="docutils literal notranslate"><span class="pre">-arch=sm_XX</span></code> or by
-using one of TVM’s pre-defined target tags such as <code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-h100</span></code>.  Supplying this detail is optional for
+<p>When you already know the precise GPU model, you can encode it in the target config via <code class="docutils literal notranslate"><span class="pre">arch=&quot;sm_XX&quot;</span></code> or by
+using one of TVM’s pre-defined target tags such as <code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-h100</span></code>. Supplying this detail is optional for
 TileLang in general use, but it becomes valuable when the TVM cost model is enabled (e.g. during autotuning).  The
 cost model uses the extra attributes to make better scheduling predictions.  If you skip this step (or do not use the
 cost model), generic targets like <code class="docutils literal notranslate"><span class="pre">cuda</span></code> or <code class="docutils literal notranslate"><span class="pre">auto</span></code> are perfectly fine.</p>
 <p>All CUDA compute capabilities recognised by TVM’s target registry are listed below.  Pick the one that matches your
-GPU and append it to the target string or use the corresponding target tag—for example <code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-a100</span></code>.</p>
+GPU and set it in the target config or use the corresponding target tag—for example <code class="docutils literal notranslate"><span class="pre">nvidia/nvidia-a100</span></code>.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -755,12 +754,11 @@ GPU and append it to the target string or use the corresponding target tag—for
 </section>
 <section id="creating-targets-programmatically">
 <h2>Creating targets programmatically<a class="headerlink" href="#creating-targets-programmatically" title="Link to this heading">¶</a></h2>
-<p>If you prefer working with TVM’s <code class="docutils literal notranslate"><span class="pre">Target</span></code> objects, TileLang exposes the helper
-<code class="docutils literal notranslate"><span class="pre">tilelang.utils.target.determine_target</span></code> (returns a canonical target string by default, or the <code class="docutils literal notranslate"><span class="pre">Target</span></code>
-object when <code class="docutils literal notranslate"><span class="pre">return_object=True</span></code>):</p>
+<p>TileLang exposes the helper <code class="docutils literal notranslate"><span class="pre">tilelang.utils.target.determine_target</span></code> (returns a canonical target string or config
+by default, or the <code class="docutils literal notranslate"><span class="pre">Target</span></code> object when <code class="docutils literal notranslate"><span class="pre">return_object=True</span></code>):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.utils.target</span><span class="w"> </span><span class="kn">import</span> <span class="n">determine_target</span>
 
-<span class="n">tvm_target</span> <span class="o">=</span> <span class="n">determine_target</span><span class="p">(</span><span class="s2">&quot;cuda -arch=sm_80&quot;</span><span class="p">,</span> <span class="n">return_object</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tvm_target</span> <span class="o">=</span> <span class="n">determine_target</span><span class="p">({</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="s2">&quot;arch&quot;</span><span class="p">:</span> <span class="s2">&quot;sm_80&quot;</span><span class="p">},</span> <span class="n">return_object</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">tvm_target</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -768,13 +766,11 @@ object when <code class="docutils literal notranslate"><span class="pre">return_
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tvm.target</span><span class="w"> </span><span class="kn">import</span> <span class="n">Target</span>
 
 <span class="n">target</span> <span class="o">=</span> <span class="n">Target</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
-<span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">with_host</span><span class="p">(</span><span class="n">Target</span><span class="p">(</span><span class="s2">&quot;llvm -mcpu=skylake&quot;</span><span class="p">))</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">with_host</span><span class="p">(</span><span class="n">Target</span><span class="p">({</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;llvm&quot;</span><span class="p">,</span> <span class="s2">&quot;mcpu&quot;</span><span class="p">:</span> <span class="s2">&quot;skylake&quot;</span><span class="p">}))</span>
 </pre></div>
 </div>
-<p>TileLang accepts either <code class="docutils literal notranslate"><span class="pre">str</span></code> or <code class="docutils literal notranslate"><span class="pre">Target</span></code> inputs; internally they are normalised and cached using the canonical
-string representation.  <strong>In user code we strongly recommend passing target strings rather than
-<code class="docutils literal notranslate"><span class="pre">tvm.target.Target</span></code> instances—strings keep cache keys compact and deterministic across runs, whereas constructing
-fresh <code class="docutils literal notranslate"><span class="pre">Target</span></code> objects may lead to slightly higher hashing overhead or inconsistent identity semantics.</strong></p>
+<p>TileLang accepts bare target strings, target config dictionaries, and <code class="docutils literal notranslate"><span class="pre">Target</span></code> inputs. For targets with options,
+prefer config dictionaries over CLI-style strings.</p>
 </section>
 <section id="discovering-supported-targets-in-code">
 <h2>Discovering supported targets in code<a class="headerlink" href="#discovering-supported-targets-in-code" title="Link to this heading">¶</a></h2>
@@ -790,11 +786,11 @@ fresh <code class="docutils literal notranslate"><span class="pre">Target</span>
 <section id="troubleshooting-tips">
 <h2>Troubleshooting tips<a class="headerlink" href="#troubleshooting-tips" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>If you see <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">cuda</span> <span class="pre">-arch=sm_80</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">supported</span></code>, double-check the spellings and that the option is valid for
-TVM. Any invalid switch will surface as a target-construction error.</p></li>
-<li><p>Runtime errors such as “no kernel image is available” usually mean the <code class="docutils literal notranslate"><span class="pre">-arch</span></code> flag does not match the GPU you are
+<li><p>If you see <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">{'kind':</span> <span class="pre">'cuda',</span> <span class="pre">'arch':</span> <span class="pre">'sm_80'}</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">supported</span></code>, double-check the spellings and that the option is valid for
+TVM. Any invalid option will surface as a target-construction error.</p></li>
+<li><p>Runtime errors such as “no kernel image is available” usually mean the <code class="docutils literal notranslate"><span class="pre">arch</span></code> value does not match the GPU you are
 running on. Try dropping the flag or switching to the correct compute capability.</p></li>
-<li><p>When targeting multiple environments, use <code class="docutils literal notranslate"><span class="pre">auto</span></code> for convenience and override with an explicit string only when
+<li><p>When targeting multiple environments, use <code class="docutils literal notranslate"><span class="pre">auto</span></code> for convenience and override with an explicit config only when
 you need architecture-specific tuning.</p></li>
 </ul>
 </section>
@@ -856,7 +852,7 @@ you need architecture-specific tuning.</p></li>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Understanding Targets</a><ul>
-<li><a class="reference internal" href="#common-target-strings">Common target strings</a><ul>
+<li><a class="reference internal" href="#common-targets">Common targets</a><ul>
 <li><a class="reference internal" href="#advanced-specify-exact-hardware">Advanced: Specify Exact Hardware</a></li>
 </ul>
 </li>
