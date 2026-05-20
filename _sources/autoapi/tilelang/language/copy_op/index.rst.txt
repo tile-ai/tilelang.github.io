@@ -18,6 +18,9 @@ Functions
    tilelang.language.copy_op.copy_cluster
    tilelang.language.copy_op.async_copy
    tilelang.language.copy_op.tma_copy
+   tilelang.language.copy_op.tma_gather4
+   tilelang.language.copy_op.tma_gather4_bytes
+   tilelang.language.copy_op.tma_scatter4
    tilelang.language.copy_op.transpose
    tilelang.language.copy_op.c2d_im2col
 
@@ -147,6 +150,38 @@ Module Contents
 
    :returns: A handle to the tma_copy operation
    :rtype: tir.Call
+
+
+.. py:function:: tma_gather4(src, dst, col, rows, *, barrier, swizzle=None, eviction_policy = None)
+
+   Issue a TMA tile::gather4 load (sm_100a, Blackwell).
+
+   Loads four arbitrary rows of a 2D global tensor ``src`` into a 2D shared
+   tile ``dst`` of shape ``(4, K_box)``. The CUtensorMap descriptor (dtype +
+   swizzle) is built by the compiler from buffer + layout info.
+
+   Caller must wrap this with ``T.shuffle_elect`` and pair it with
+   ``T.mbarrier_expect_tx`` (use :func:`tma_gather4_bytes`) before, and
+   ``barrier_arrive`` / ``mbarrier_wait_parity`` after.
+
+   The ``swizzle`` kwarg is deprecated; mark the shared tile via
+   ``T.annotate_layout`` for non-default swizzle.
+
+
+.. py:function:: tma_gather4_bytes(K_box, dtype)
+
+   Transaction byte count for a 4-row gather4 of width ``K_box``. Pass
+   to ``T.mbarrier_expect_tx`` immediately before ``T.tma_gather4``.
+
+
+.. py:function:: tma_scatter4(src, dst, col, rows, *, swizzle=None, eviction_policy = None)
+
+   Issue a TMA tile::scatter4 store (sm_100a, Blackwell).
+
+   Stores a 2D shared tile of shape ``(4, K_box)`` to four arbitrary rows of
+   a 2D global tensor ``dst``. Caller is responsible for ``tma_store_arrive``
+   / ``tma_store_wait`` and the ``T.shuffle_elect`` guard. See
+   :func:`tma_gather4` for descriptor / swizzle inference details.
 
 
 .. py:function:: transpose(src, dst)
