@@ -15,6 +15,7 @@ Functions
 .. autoapisummary::
 
    tilelang.language.copy_op.copy
+   tilelang.language.copy_op.copy_cluster
    tilelang.language.copy_op.async_copy
    tilelang.language.copy_op.tma_copy
    tilelang.language.copy_op.transpose
@@ -69,6 +70,30 @@ Module Contents
    - The finalized extents are encoded with `tl.region` via `to_buffer_region`
      and passed through to the backend; low-level loop construction and any
      scope-specific decisions happen during lowering.
+
+
+.. py:function:: copy_cluster(src, dst, *, dst_block = None, cluster_mask = None, remote_barrier = None, eviction_policy = None, coalesced_width = None, loop_layout = None)
+
+   Cluster-aware copy for TMA multicast or SM-to-SM shared-memory copy.
+
+   :param src: Source memory region.
+   :param dst: Destination memory region.
+   :param dst_block: Destination CTA rank in the cluster for SM-to-SM copy.
+   :param cluster_mask: Bitmask of CTAs that participate in TMA multicast.
+   :param remote_barrier: Shared-memory mbarrier for asynchronous SM-to-SM copy
+                          completion signalling.  The destination CTA should wait on its
+                          local copy of this barrier.
+   :param eviction_policy: Cache eviction hint passed to the TMA instruction.
+                           Only relevant for the TMA multicast path (``cluster_mask`` set).
+   :param coalesced_width: Vectorization width (in elements) for the SIMT loop
+                           used on the SM-to-SM fallback path (``dst_block`` set, no fast
+                           bulk-async route available).
+   :param loop_layout: Parallel loop layout hint (Fragment) for the SIMT loop on
+                       the SM-to-SM fallback path. Incompatible with the TMA multicast
+                       path (``cluster_mask`` set).
+
+   :returns: A handle to the copy operation.
+   :rtype: tir.Call
 
 
 .. py:function:: async_copy(src, dst, *, coalesced_width = None, annotations = None, loop_layout = None)

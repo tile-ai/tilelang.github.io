@@ -625,16 +625,19 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.copy" title="tilelang.language.copy_op.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>(src, dst, *[, coalesced_width, disable_tma, ...])</p></td>
 <td><p>Copy data between memory regions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.async_copy" title="tilelang.language.copy_op.async_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">async_copy</span></code></a>(src, dst, *[, coalesced_width, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.copy_cluster" title="tilelang.language.copy_op.copy_cluster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_cluster</span></code></a>(src, dst, *[, dst_block, cluster_mask, ...])</p></td>
+<td><p>Cluster-aware copy for TMA multicast or SM-to-SM shared-memory copy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.async_copy" title="tilelang.language.copy_op.async_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">async_copy</span></code></a>(src, dst, *[, coalesced_width, ...])</p></td>
 <td><p>Asynchronous copy primitive lowered through cp.async.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.tma_copy" title="tilelang.language.copy_op.tma_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_copy</span></code></a>(src, dst, *[, barrier, eviction_policy, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.tma_copy" title="tilelang.language.copy_op.tma_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_copy</span></code></a>(src, dst, *[, barrier, eviction_policy, ...])</p></td>
 <td><p>TMA copy with user-managed synchronization.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.transpose" title="tilelang.language.copy_op.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>(src, dst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.transpose" title="tilelang.language.copy_op.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>(src, dst)</p></td>
 <td><p>Transpose a 2D buffer in shared memory: dst[j, i] = src[i, j].</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
 <td><p>Perform im2col transformation for 2D convolution.</p></td>
 </tr>
 </tbody>
@@ -694,6 +697,39 @@ support something like “broadcast”.</p></li>
 and passed through to the backend; low-level loop construction and any
 scope-specific decisions happen during lowering.</p></li>
 </ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy_op.copy_cluster">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">copy_cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_barrier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coalesced_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.copy_cluster" title="Link to this definition">¶</a></dt>
+<dd><p>Cluster-aware copy for TMA multicast or SM-to-SM shared-memory copy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – Source memory region.</p></li>
+<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – Destination memory region.</p></li>
+<li><p><strong>dst_block</strong> (<em>int</em><em> | </em><em>tvm.tir.PrimExpr</em><em> | </em><em>None</em>) – Destination CTA rank in the cluster for SM-to-SM copy.</p></li>
+<li><p><strong>cluster_mask</strong> (<em>int</em><em> | </em><em>None</em>) – Bitmask of CTAs that participate in TMA multicast.</p></li>
+<li><p><strong>remote_barrier</strong> (<em>tvm.tir.BufferLoad</em><em> | </em><em>None</em>) – Shared-memory mbarrier for asynchronous SM-to-SM copy
+completion signalling.  The destination CTA should wait on its
+local copy of this barrier.</p></li>
+<li><p><strong>eviction_policy</strong> (<em>Literal</em><em>[</em><em>'evict_normal'</em><em>, </em><em>'evict_first'</em><em>, </em><em>'evict_last'</em><em>] </em><em>| </em><em>None</em>) – Cache eviction hint passed to the TMA instruction.
+Only relevant for the TMA multicast path (<code class="docutils literal notranslate"><span class="pre">cluster_mask</span></code> set).</p></li>
+<li><p><strong>coalesced_width</strong> (<em>int</em><em> | </em><em>None</em>) – Vectorization width (in elements) for the SIMT loop
+used on the SM-to-SM fallback path (<code class="docutils literal notranslate"><span class="pre">dst_block</span></code> set, no fast
+bulk-async route available).</p></li>
+<li><p><strong>loop_layout</strong> (<em>Any</em><em> | </em><em>None</em>) – Parallel loop layout hint (Fragment) for the SIMT loop on
+the SM-to-SM fallback path. Incompatible with the TMA multicast
+path (<code class="docutils literal notranslate"><span class="pre">cluster_mask</span></code> set).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle to the copy operation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tir.Call</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -872,6 +908,7 @@ If src has shape (M, N), dst should have shape (N, M).</p>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.language.copy_op.copy"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.copy_op.copy_cluster"><code class="docutils literal notranslate"><span class="pre">copy_cluster()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.async_copy"><code class="docutils literal notranslate"><span class="pre">async_copy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.tma_copy"><code class="docutils literal notranslate"><span class="pre">tma_copy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.transpose"><code class="docutils literal notranslate"><span class="pre">transpose()</span></code></a></li>
