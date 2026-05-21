@@ -647,8 +647,11 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.transpose" title="tilelang.language.copy_op.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>(src, dst)</p></td>
 <td><p>Transpose a 2D buffer in shared memory: dst[j, i] = src[i, j].</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.im2col" title="tilelang.language.copy_op.im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
 <td><p>Perform im2col transformation for 2D convolution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col" title="tilelang.language.copy_op.c2d_im2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2d_im2col</span></code></a>(img, col, nhw_step, c_step, kernel, stride, ...)</p></td>
+<td><p>Deprecated alias for <a class="reference internal" href="#tilelang.language.copy_op.im2col" title="tilelang.language.copy_op.im2col"><code class="xref py py-func docutils literal notranslate"><span class="pre">im2col()</span></code></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -889,8 +892,8 @@ If src has shape (M, N), dst should have shape (N, M).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.copy_op.c2d_im2col">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">c2d_im2col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nhw_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dilation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.c2d_im2col" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.language.copy_op.im2col">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">im2col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nhw_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dilation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.im2col" title="Link to this definition">¶</a></dt>
 <dd><p>Perform im2col transformation for 2D convolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -911,6 +914,35 @@ If src has shape (M, N), dst should have shape (N, M).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tirx.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.copy_op.c2d_im2col">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">c2d_im2col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nhw_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dilation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.c2d_im2col" title="Link to this definition">¶</a></dt>
+<dd><p>Deprecated alias for <a class="reference internal" href="#tilelang.language.copy_op.im2col" title="tilelang.language.copy_op.im2col"><code class="xref py py-func docutils literal notranslate"><span class="pre">im2col()</span></code></a>.</p>
+<dl class="simple">
+<dt>Deprecated:</dt><dd><p>Use <a class="reference internal" href="#tilelang.language.copy_op.im2col" title="tilelang.language.copy_op.im2col"><code class="xref py py-func docutils literal notranslate"><span class="pre">im2col()</span></code></a> instead. This alias is scheduled for removal in
+TileLang 0.14.0.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>tilelang._typing.BufferLikeType</em>)</p></li>
+<li><p><strong>col</strong> (<em>tilelang._typing.BufferLikeType</em>)</p></li>
+<li><p><strong>nhw_step</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>c_step</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>kernel</strong> (<em>int</em>)</p></li>
+<li><p><strong>stride</strong> (<em>int</em>)</p></li>
+<li><p><strong>dilation</strong> (<em>int</em>)</p></li>
+<li><p><strong>pad</strong> (<em>int</em>)</p></li>
+<li><p><strong>eviction_policy</strong> (<em>Literal</em><em>[</em><em>'evict_normal'</em><em>, </em><em>'evict_first'</em><em>, </em><em>'evict_last'</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -984,6 +1016,7 @@ If src has shape (M, N), dst should have shape (N, M).</p>
 <li><a class="reference internal" href="#tilelang.language.copy_op.tma_gather4_bytes"><code class="docutils literal notranslate"><span class="pre">tma_gather4_bytes()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.tma_scatter4"><code class="docutils literal notranslate"><span class="pre">tma_scatter4()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.transpose"><code class="docutils literal notranslate"><span class="pre">transpose()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.copy_op.im2col"><code class="docutils literal notranslate"><span class="pre">im2col()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.copy_op.c2d_im2col"><code class="docutils literal notranslate"><span class="pre">c2d_im2col()</span></code></a></li>
 </ul>
 </li>
