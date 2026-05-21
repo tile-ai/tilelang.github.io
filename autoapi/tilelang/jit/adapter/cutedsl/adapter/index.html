@@ -635,7 +635,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter" title="tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter</span></code></a></p></td>
-<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+<td><p>Runtime adapter for generated CuTeDSL Python modules.</p></td>
 </tr>
 </tbody>
 </table>
@@ -652,14 +652,13 @@
 <dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.cutedsl.adapter.</span></span><span class="sig-name descname"><span class="pre">CuTeDSLKernelAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_or_mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_mod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_mod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_kernel_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_kernel_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../../base/index.html#tilelang.jit.adapter.base.BaseKernelAdapter" title="tilelang.jit.adapter.base.BaseKernelAdapter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.jit.adapter.base.BaseKernelAdapter</span></code></a></p>
-<p>Helper class that provides a standard way to create an ABC using
-inheritance.</p>
+<p>Runtime adapter for generated CuTeDSL Python modules.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>params</strong> (<em>list</em><em>[</em><a class="reference internal" href="../../../../engine/param/index.html#tilelang.engine.param.KernelParam" title="tilelang.engine.param.KernelParam"><em>tilelang.engine.param.KernelParam</em></a><em>]</em>)</p></li>
 <li><p><strong>result_idx</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
-<li><p><strong>target</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em>)</p></li>
+<li><p><strong>target</strong> (<em>str</em><em> | </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>object</em><em>] </em><em>| </em><em>tvm.target.Target</em>)</p></li>
 <li><p><strong>func_or_mod</strong> (<em>tvm.tirx.PrimFunc</em><em> | </em><em>tilelang.tvm.IRModule</em>)</p></li>
 <li><p><strong>host_mod</strong> (<em>tilelang.tvm.IRModule</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>device_mod</strong> (<em>tilelang.tvm.IRModule</em><em> | </em><em>None</em>)</p></li>
@@ -694,6 +693,16 @@ inheritance.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.device_kernel_source">
 <span class="sig-name descname"><span class="pre">device_kernel_source</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.device_kernel_source" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.kernel_global_source">
+<span class="sig-name descname"><span class="pre">kernel_global_source</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.kernel_global_source" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.generated_module_source">
+<span class="sig-name descname"><span class="pre">generated_module_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.generated_module_source" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -751,20 +760,16 @@ inheritance.</p>
 <span class="sig-name descname"><span class="pre">libpath</span></span><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.libpath" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.kernel_global_source">
-<span class="sig-name descname"><span class="pre">kernel_global_source</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.kernel_global_source" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.from_database">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_or_mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_kernel_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_kernel_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_lib_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.from_database" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Rebuild a CuTeDSL adapter from persisted cache artifacts.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>params</strong> (<em>list</em><em>[</em><a class="reference internal" href="../../../../engine/param/index.html#tilelang.engine.param.KernelParam" title="tilelang.engine.param.KernelParam"><em>tilelang.engine.param.KernelParam</em></a><em>]</em>)</p></li>
 <li><p><strong>result_idx</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
-<li><p><strong>target</strong> (<em>str</em>)</p></li>
+<li><p><strong>target</strong> (<em>str</em><em> | </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>object</em><em>] </em><em>| </em><em>tvm.target.Target</em>)</p></li>
 <li><p><strong>func_or_mod</strong> (<em>tvm.tirx.PrimFunc</em><em> | </em><em>tilelang.tvm.IRModule</em>)</p></li>
 <li><p><strong>host_kernel_source</strong> (<em>str</em>)</p></li>
 <li><p><strong>device_kernel_source</strong> (<em>str</em>)</p></li>
@@ -778,9 +783,31 @@ inheritance.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.get_host_source">
+<span class="sig-name descname"><span class="pre">get_host_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.get_host_source" title="Link to this definition">¶</a></dt>
+<dd><p>Get the generated Python host wrapper source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.get_generated_module_source">
+<span class="sig-name descname"><span class="pre">get_generated_module_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.get_generated_module_source" title="Link to this definition">¶</a></dt>
+<dd><p>Get the importable generated CuTeDSL Python module source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.get_kernel_source">
 <span class="sig-name descname"><span class="pre">get_kernel_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.get_kernel_source" title="Link to this definition">¶</a></dt>
-<dd><p>Get the CUDA kernel source code.</p>
+<dd><p>Get the CuTeDSL device source, optionally with host wrapper source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The kernel source code, or None if not available</p>
@@ -885,6 +912,8 @@ without waiting for garbage collection. Useful in Jupyter notebooks or tests.</p
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.result_idx"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.result_idx</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.host_kernel_source"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.host_kernel_source</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.device_kernel_source"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.device_kernel_source</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.kernel_global_source"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.kernel_global_source</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.generated_module_source"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.generated_module_source</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.param_dtypes"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.param_dtypes</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.param_shapes"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.param_shapes</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.target"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.target</span></code></a></li>
@@ -896,8 +925,9 @@ without waiting for garbage collection. Useful in Jupyter notebooks or tests.</p
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.launcher_lib_name"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.launcher_lib_name</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.lib_generator"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.lib_generator</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.libpath"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.libpath</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.kernel_global_source"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.kernel_global_source</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.from_database"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.from_database()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.get_host_source"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.get_host_source()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.get_generated_module_source"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.get_generated_module_source()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.get_kernel_source"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.get_kernel_source()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.cleanup"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.cleanup()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.cutedsl.adapter.CuTeDSLKernelAdapter.prim_func"><code class="docutils literal notranslate"><span class="pre">CuTeDSLKernelAdapter.prim_func</span></code></a></li>

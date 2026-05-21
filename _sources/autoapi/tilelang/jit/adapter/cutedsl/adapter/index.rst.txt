@@ -30,8 +30,7 @@ Module Contents
    Bases: :py:obj:`tilelang.jit.adapter.base.BaseKernelAdapter`
 
 
-   Helper class that provides a standard way to create an ABC using
-   inheritance.
+   Runtime adapter for generated CuTeDSL Python modules.
 
 
    .. py:attribute:: pymodule
@@ -51,6 +50,17 @@ Module Contents
 
 
    .. py:attribute:: device_kernel_source
+      :value: None
+
+
+
+   .. py:attribute:: kernel_global_source
+      :value: None
+
+
+
+   .. py:attribute:: generated_module_source
+      :type:  str | None
       :value: None
 
 
@@ -92,19 +102,29 @@ Module Contents
    .. py:attribute:: libpath
 
 
-   .. py:attribute:: kernel_global_source
-      :value: None
-
-
-
    .. py:method:: from_database(params, result_idx, target, func_or_mod, host_kernel_source, device_kernel_source, kernel_lib_path, verbose = False, pass_configs = None, compile_flags = None)
       :classmethod:
+
+
+      Rebuild a CuTeDSL adapter from persisted cache artifacts.
+
+
+
+   .. py:method:: get_host_source()
+
+      Get the generated Python host wrapper source.
+
+
+
+   .. py:method:: get_generated_module_source()
+
+      Get the importable generated CuTeDSL Python module source.
 
 
 
    .. py:method:: get_kernel_source(kernel_only = True)
 
-      Get the CUDA kernel source code.
+      Get the CuTeDSL device source, optionally with host wrapper source.
 
       :returns: The kernel source code, or None if not available
       :rtype: str | None
