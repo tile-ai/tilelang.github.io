@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Tensor Checks (Host-Side Auto-Validation)" href="tensor_checks.html"><link rel="prev" title="LetStmt Inlining in TileLang" href="letstmt_inline.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Python Compatibility" href="python_compatibility.html"><link rel="prev" title="Control Flow" href="control_flow.html">
         <link rel="prefetch" href="../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../_static/img/logo-v2.png" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
-        <title>InjectFenceProxy Pass - TileLang 0.1.9 documentation</title>
+        <title>Software Pipeline Annotations - TileLang 0.1.9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -212,15 +212,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/logging.html">Logging in Tilelang/TVM</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">PROGRAMMING GUIDES</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/overview.html">Programming Guides Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/language_basics.html">Language Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/instructions.html">Instructions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/control_flow.html">Control Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/software_pipeline.html">Software Pipeline Annotations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/python_compatibility.html">Python Compatibility</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/autotuning.html">Autotuning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../programming_guides/type_system.html">Type System</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Programming Guides Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_basics.html">Language Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instructions.html">Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="control_flow.html">Control Flow</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Software Pipeline Annotations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_compatibility.html">Python Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autotuning.html">Autotuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_system.html">Type System</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">DEEP LEARNING OPERATORS</span></p>
 <ul>
@@ -231,10 +231,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../deeplearning_operators/deepseek_mla.html">🚀 Write High Performance FlashMLA with TileLang on Hopper</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">COMPILER INTERNALS</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">InjectFenceProxy Pass</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tensor_checks.html">Tensor Checks (Host-Side Auto-Validation)</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compiler_internals/tensor_checks.html">Tensor Checks (Host-Side Auto-Validation)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -597,7 +597,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/compiler_internals/inject_fence_proxy.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/programming_guides/software_pipeline.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -615,115 +615,288 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="injectfenceproxy-pass">
-<h1>InjectFenceProxy Pass<a class="headerlink" href="#injectfenceproxy-pass" title="Link to this heading">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">tl.InjectFenceProxy</span></code> is a TIR-level transform that keeps the GPU proxy state consistent on NVIDIA Hopper (SM90+) by inserting <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> instructions when execution switches from <strong>generic proxy</strong> memory operations to <strong>async proxy</strong> operations.</p>
-<section id="why-fences-are-needed">
-<h2>Why Fences Are Needed<a class="headerlink" href="#why-fences-are-needed" title="Link to this heading">¶</a></h2>
-<p>Hopper separates memory instructions into generic and asynchronous proxy paths. When an asynchronous instruction (for example, <code class="docutils literal notranslate"><span class="pre">wgmma</span></code>, <code class="docutils literal notranslate"><span class="pre">tma.load</span></code>, or <code class="docutils literal notranslate"><span class="pre">cp.async.bulk</span></code>) issues after generic traffic (like <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>, or <strong>shared-memory</strong> buffer stores), the hardware requires a <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> to guarantee ordering. Missing fences can lead to race conditions or undefined behavior.</p>
-</section>
-<section id="what-the-pass-does">
-<h2>What the Pass Does<a class="headerlink" href="#what-the-pass-does" title="Link to this heading">¶</a></h2>
+          <section id="software-pipeline-annotations">
+<h1>Software Pipeline Annotations<a class="headerlink" href="#software-pipeline-annotations" title="Link to this heading">¶</a></h1>
+<p>TileLang can infer common producer/consumer pipelines from
+<code class="docutils literal notranslate"><span class="pre">T.Pipelined(...,</span> <span class="pre">num_stages=...)</span></code>. For regular GEMM-like kernels, this is the
+preferred entry point:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">BK</span><span class="p">),</span> <span class="n">num_stages</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">BM</span><span class="p">,</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">BN</span><span class="p">],</span> <span class="n">B_shared</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For kernels whose loop body has unusual ordering, extra post-processing, or
+manual async-copy grouping, you can provide explicit pipeline annotations. This
+guide explains how to write those annotations and why replayable scalar <code class="docutils literal notranslate"><span class="pre">Bind</span></code>
+statements are not part of the user-visible schedule.</p>
+<section id="the-user-model">
+<h2>The User Model<a class="headerlink" href="#the-user-model" title="Link to this heading">¶</a></h2>
+<p>Pipeline annotations describe executable pipeline statements, not every IR node
+inside the loop body.</p>
+<p>Annotate the statements that do work:</p>
 <ul class="simple">
-<li><p>Walks statements in execution order while tracking a (may-)state of the last proxy kind (<strong>generic</strong>, <strong>async</strong>, or <strong>none/reset</strong>). Control-flow joins (e.g. <code class="docutils literal notranslate"><span class="pre">if</span></code>) merge states conservatively.</p></li>
-<li><p>Normalizes <code class="docutils literal notranslate"><span class="pre">tma_store</span></code> by ensuring the required <code class="docutils literal notranslate"><span class="pre">tma_store_arrive</span></code> / <code class="docutils literal notranslate"><span class="pre">tma_store_wait</span></code> handshake exists immediately after the store.</p></li>
-<li><p>Injects <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> right before an async-proxy instruction whenever the preceding state can be generic.</p></li>
+<li><p>copies, including global-to-shared and TMA copies</p></li>
+<li><p>fills</p></li>
+<li><p>GEMM or other tile operations</p></li>
+<li><p>reductions</p></li>
+<li><p>stores and atomics</p></li>
+<li><p>explicit waits, commits, or synchronization statements when they are part of
+the manual pipeline</p></li>
 </ul>
-<p>By default, unknown/external calls do <strong>not</strong> affect proxy state. Opaque calls that may write into <strong>shared memory</strong> (e.g. via <code class="docutils literal notranslate"><span class="pre">tvm_access_ptr</span></code> / <code class="docutils literal notranslate"><span class="pre">address_of</span></code>) are treated as generic proxy traffic so a later async-proxy op will still be fenced.</p>
-<section id="timeline-view">
-<h3>Timeline View<a class="headerlink" href="#timeline-view" title="Link to this heading">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>generic shared-store (or ldmatrix/stmatrix/cp.async) → async op (wgmma / tma / cp.async.bulk)
-                 │                                  │
-                 └─ generic proxy                   └─ async proxy
-                             │        fence inserted here   ↑
-                             └──────────────────────────────┘
+<p>Do not annotate replayable scalar aliases:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">base</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span> <span class="o">=</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span>
+<span class="n">offset</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="n">tx</span>
 </pre></div>
 </div>
-<p>The proxy tracker effectively scans the program in execution order. The moment it detects a possible transition from generic to async (between the store and the async op above), it synthesizes a <code class="docutils literal notranslate"><span class="pre">fence.proxy.async</span></code> to reset the hardware proxy state before the async path runs.</p>
+<p>These <code class="docutils literal notranslate"><span class="pre">Bind</span></code> statements are value definitions, not materialized storage. The
+compiler places them automatically at each use.</p>
 </section>
-</section>
-<section id="coverage-of-intrinsics">
-<h2>Coverage of Intrinsics<a class="headerlink" href="#coverage-of-intrinsics" title="Link to this heading">¶</a></h2>
-<p>The tracker understands the TileLang intrinsics for TMA load/store, shared-memory MMA (<code class="docutils literal notranslate"><span class="pre">wgmma</span></code>), and TVM/PTX SM90 async copy intrinsics (<code class="docutils literal notranslate"><span class="pre">cp.async.bulk</span></code> family). Generic operations currently include <code class="docutils literal notranslate"><span class="pre">ldmatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">stmatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">cp.async</span></code>, and <strong>shared-memory</strong> <code class="docutils literal notranslate"><span class="pre">BufferStore</span></code> statements. Structured control flow (loops, blocks, branches) is handled by propagating and conservatively merging proxy state.</p>
-</section>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
-<p>The pass is part of the default TileLang lowering pipeline. To apply it manually:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang</span><span class="w"> </span><span class="kn">import</span> <span class="n">tl</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tvm</span><span class="w"> </span><span class="kn">import</span> <span class="n">IRModule</span>
-
-<span class="n">mod</span> <span class="o">=</span> <span class="n">IRModule</span><span class="p">({</span><span class="s2">&quot;main&quot;</span><span class="p">:</span> <span class="n">prim_func</span><span class="p">})</span>
-<span class="k">with</span> <span class="n">tvm</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">PassContext</span><span class="p">():</span>
-    <span class="n">mod</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">InjectFenceProxy</span><span class="p">()(</span><span class="n">mod</span><span class="p">)</span>
+<section id="stage-and-order">
+<h2>Stage and Order<a class="headerlink" href="#stage-and-order" title="Link to this heading">¶</a></h2>
+<p>Each scheduled statement has two numbers:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">stage</span></code>: the logical pipeline stage.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">order</span></code>: the order used when emitting scheduled statements.</p></li>
+</ul>
+<p>Lower stages run earlier in the pipeline. A typical copy/compute pipeline has
+copy statements in stage 0 and compute statements in stage 1:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">BK</span><span class="p">),</span>
+    <span class="n">stage</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+<span class="p">):</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">],</span> <span class="n">B_shared</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="end-to-end-example">
-<h2>End-to-End Example<a class="headerlink" href="#end-to-end-example" title="Link to this heading">¶</a></h2>
-<p>Before the pass:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">():</span>
-    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">&quot;uint64&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;local.descriptor&quot;</span><span class="p">)</span>
-        <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;shared&quot;</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">initialize_wgmma_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
-        <span class="n">smem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">ptx_wgmma_ss</span><span class="p">(</span>
-            <span class="s2">&quot;float16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;m64n64k16&quot;</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">smem</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">1</span><span class="p">,</span>
-        <span class="p">)</span>
+<p>The two arrays are aligned to the scheduled statements in source order. In the
+example above:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>statement 0: copy A  -&gt; stage 0, order 0
+statement 1: copy B  -&gt; stage 0, order 1
+statement 2: gemm    -&gt; stage 1, order 2
 </pre></div>
 </div>
-<p>After <code class="docutils literal notranslate"><span class="pre">tl.transform.InjectFenceProxy</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">():</span>
-    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">&quot;uint64&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;local.descriptor&quot;</span><span class="p">)</span>
-        <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;shared&quot;</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">initialize_wgmma_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
-        <span class="n">smem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">fence_proxy_async</span><span class="p">()</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">ptx_wgmma_ss</span><span class="p">(</span>
-            <span class="s2">&quot;float16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;m64n64k16&quot;</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">smem</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">1</span><span class="p">,</span>
-        <span class="p">)</span>
+<p>The compiler checks buffer dependencies after applying the annotations. If one
+scheduled statement produces data for another, the producer must not be placed
+after the consumer. In practice:</p>
+<ul class="simple">
+<li><p>If producer and consumer are in the same stage, producer order must be smaller
+than consumer order.</p></li>
+<li><p>If they are in different stages, producer stage must be less than or equal to
+consumer stage.</p></li>
+</ul>
+<p>When <code class="docutils literal notranslate"><span class="pre">stage</span></code> and <code class="docutils literal notranslate"><span class="pre">order</span></code> are provided manually, do not also set <code class="docutils literal notranslate"><span class="pre">num_stages</span></code> in
+normal code. The pipeline depth is inferred from the stage list as
+<code class="docutils literal notranslate"><span class="pre">max(stage)</span> <span class="pre">+</span> <span class="pre">1</span></code>. Use <code class="docutils literal notranslate"><span class="pre">num_stages</span></code> by itself for compiler-inferred pipelines,
+and use <code class="docutils literal notranslate"><span class="pre">stage</span></code> / <code class="docutils literal notranslate"><span class="pre">order</span></code> by themselves for manually scheduled pipelines.</p>
+</section>
+<section id="annotating-a-reordered-pipeline">
+<h2>Annotating a Reordered Pipeline<a class="headerlink" href="#annotating-a-reordered-pipeline" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">order</span></code> array is useful when the pipeline should issue a future-iteration
+producer before a current-iteration consumer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span>
+    <span class="n">num_tiles</span><span class="p">,</span>
+    <span class="n">stage</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="p">):</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The only change is the <code class="docutils literal notranslate"><span class="pre">fence_proxy_async</span></code> between the generic descriptor setup / shared-memory write and the async <code class="docutils literal notranslate"><span class="pre">wgmma</span></code>. In larger kernels the pass performs the same operation across nested blocks, loops, and conditional branches.</p>
+<p>This says there are two scheduled statements:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>copy -&gt; stage 0, order 1
+gemm -&gt; stage 1, order 0
+</pre></div>
+</div>
+<p>During pipeline rewriting, the compiler emits prologue, steady-state body, and
+epilogue pieces with the proper logical iteration for each stage. The source
+order still determines which annotation entry belongs to which scheduled
+statement; <code class="docutils literal notranslate"><span class="pre">order</span></code> controls the emission order after the statements have been
+classified.</p>
 </section>
-<section id="extending-the-pass">
-<h2>Extending the Pass<a class="headerlink" href="#extending-the-pass" title="Link to this heading">¶</a></h2>
-<p>If you introduce a new intrinsic that behaves like an async proxy, add it to <code class="docutils literal notranslate"><span class="pre">IsAsyncIntrinsic</span></code> in <code class="docutils literal notranslate"><span class="pre">src/transform/inject_fence_proxy.cc</span></code>. Likewise, extend <code class="docutils literal notranslate"><span class="pre">IsKnownGeneric</span></code> for additional generic operations.</p>
-<p>Most calls default to <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> (no proxy-state effect). <code class="docutils literal notranslate"><span class="pre">IsNonProxyIntrinsic</span></code> exists for well-known synchronization / scheduling helpers and to document intent, but it is not required for correctness if an op is neither generic nor async.
-For custom/opaque ops, you must lower them into known intrinsics (or manually insert <code class="docutils literal notranslate"><span class="pre">fence_proxy_async</span></code>) if they participate in proxy switching.</p>
+<section id="replayable-scalar-bind-statements">
+<h2>Replayable Scalar Bind Statements<a class="headerlink" href="#replayable-scalar-bind-statements" title="Link to this heading">¶</a></h2>
+<p>A replayable scalar <code class="docutils literal notranslate"><span class="pre">Bind</span></code> may appear as a statement in the loop body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span>
+    <span class="n">num_tiles</span><span class="p">,</span>
+    <span class="n">stage</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="p">):</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span> <span class="o">=</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="n">tx</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">])</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">stage</span></code> and <code class="docutils literal notranslate"><span class="pre">order</span></code> arrays contain two entries, not three. They annotate the
+copy and the GEMM. The <code class="docutils literal notranslate"><span class="pre">base</span></code> definition is intentionally omitted.</p>
+<p>This rule matters because a replayable <code class="docutils literal notranslate"><span class="pre">Bind</span></code> does not have a unique pipeline
+position. It is closer to an SSA value or a local alias than to an executable
+operation. If the same scalar is used by statements in different stages, each
+consumer may need the value under a different logical pipeline iteration.</p>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span>
+    <span class="n">num_tiles</span><span class="p">,</span>
+    <span class="n">stage</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="p">):</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span> <span class="o">=</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="n">tx</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">])</span>
+    <span class="n">B</span><span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="n">tx</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>After pipeline rewriting, the copy may need <code class="docutils literal notranslate"><span class="pre">base</span></code> for a future producer
+iteration while the store needs <code class="docutils literal notranslate"><span class="pre">base</span></code> for the current consumer iteration. A
+single user-selected stage/order for <code class="docutils literal notranslate"><span class="pre">base</span></code> would either be out of scope or
+would describe the wrong logical iteration for one of the uses.</p>
+<p>TileLang therefore treats replayable scalar <code class="docutils literal notranslate"><span class="pre">Bind</span></code> as non-schedulable:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>stage/order annotate only scheduled, effectful statements
+replayable Bind definitions are replayed at each consumer
+</pre></div>
+</div>
+<p>The replay is use-driven. If a consumer statement references a scalar bound in
+the pipeline body, the compiler recreates the needed <code class="docutils literal notranslate"><span class="pre">Bind</span></code> immediately before
+that consumer and substitutes the consumer’s logical access index.</p>
+<p>A replayable scalar <code class="docutils literal notranslate"><span class="pre">Bind</span></code> may contain a read from a buffer that is not written
+inside the pipeline body:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">idx</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span> <span class="o">=</span> <span class="n">Ids</span><span class="p">[</span><span class="n">ko</span><span class="p">]</span>
+<span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">)</span>
+<span class="n">B</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_shared</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Here <code class="docutils literal notranslate"><span class="pre">idx</span></code> is still a value alias. If both scheduled statements use it, TileLang
+replays <code class="docutils literal notranslate"><span class="pre">idx</span> <span class="pre">=</span> <span class="pre">Ids[logical_ko]</span></code> for each consumer. This may duplicate the load
+from <code class="docutils literal notranslate"><span class="pre">Ids</span></code>, but it preserves the alias semantics of <code class="docutils literal notranslate"><span class="pre">Bind</span></code>: the value is
+computed at the consumer’s logical pipeline iteration.</p>
+<p>This is different from a materialized producer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">idx_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ids</span><span class="p">[</span><span class="n">ko</span><span class="p">]</span>
+<span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">idx_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">]],</span> <span class="n">A_shared</span><span class="p">)</span>
+<span class="n">B</span><span class="p">[</span><span class="n">idx_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">]]</span> <span class="o">=</span> <span class="n">A_shared</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The store to <code class="docutils literal notranslate"><span class="pre">idx_shared</span></code> creates storage and a real producer/consumer
+dependency. It should be counted as a scheduled statement and, when needed,
+versioned like other pipeline buffers.</p>
+<p>If a <code class="docutils literal notranslate"><span class="pre">Bind</span></code> reads a buffer that is written inside the same pipeline body, it is
+not treated as replayable:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">)</span>
+<span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span> <span class="o">=</span> <span class="n">A_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span>
+<span class="n">C</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span> <span class="o">+</span> <span class="n">tx</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>The load from <code class="docutils literal notranslate"><span class="pre">A_shared</span></code> depends on a pipeline producer. TileLang keeps this
+<code class="docutils literal notranslate"><span class="pre">Bind</span></code> in the scheduled statement list, so it needs a <code class="docutils literal notranslate"><span class="pre">stage</span></code> and <code class="docutils literal notranslate"><span class="pre">order</span></code> entry.
+Because a scalar <code class="docutils literal notranslate"><span class="pre">Bind</span></code> has no storage versioning, a scheduled <code class="docutils literal notranslate"><span class="pre">Bind</span></code> must be in
+the same stage as every consumer that uses its value. If the intended semantics
+are “load once and share across later stages”, materialize the value explicitly
+with a buffer/register write instead of relying on <code class="docutils literal notranslate"><span class="pre">Bind</span></code> replay.</p>
+</section>
+<section id="bind-dependencies">
+<h2>Bind Dependencies<a class="headerlink" href="#bind-dependencies" title="Link to this heading">¶</a></h2>
+<p>Replayable binds can depend on earlier replayable binds:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">base</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span> <span class="o">=</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span>
+<span class="n">offset</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="n">tx</span>
+<span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">offset</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The compiler replays dependencies before their users:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>base
+offset
+consumer statement
+</pre></div>
+</div>
+<p>This keeps manual annotations focused on actual pipeline operations while still
+preserving the lexical scalar dependencies from the original loop body.</p>
+</section>
+<section id="legacy-annotation-form">
+<h2>Legacy Annotation Form<a class="headerlink" href="#legacy-annotation-form" title="Link to this heading">¶</a></h2>
+<p>Older code may include replayable scalar <code class="docutils literal notranslate"><span class="pre">Bind</span></code> statements in the annotation
+arrays:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span>
+    <span class="n">num_tiles</span><span class="p">,</span>
+    <span class="n">stage</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="p">):</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span> <span class="o">=</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="n">tx</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">])</span>
+    <span class="n">B</span><span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="n">tx</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This form is accepted for compatibility. The scalar <code class="docutils literal notranslate"><span class="pre">Bind</span></code> entry is ignored,
+and the remaining entries are applied to the scheduled statements:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>base Bind -&gt; ignored
+copy      -&gt; stage 0, order 2
+store     -&gt; stage 1, order 0
+</pre></div>
+</div>
+<p>When a legacy replayable scalar <code class="docutils literal notranslate"><span class="pre">Bind</span></code> annotation is used by multiple scheduled
+statements, TileLang may warn that the scalar annotation is ignored and the bind
+is replayed at each use. New code should prefer the shorter annotation arrays
+that omit replayable scalar binds entirely.</p>
+</section>
+<section id="manual-t-serial-annotations">
+<h2>Manual <code class="docutils literal notranslate"><span class="pre">T.serial</span></code> Annotations<a class="headerlink" href="#manual-t-serial-annotations" title="Link to this heading">¶</a></h2>
+<p>Most user code should use <code class="docutils literal notranslate"><span class="pre">T.Pipelined</span></code>. Lower-level tests or transform-level
+code may use the raw loop annotations directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">serial</span><span class="p">(</span>
+    <span class="mi">0</span><span class="p">,</span>
+    <span class="n">num_tiles</span><span class="p">,</span>
+    <span class="n">annotations</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;software_pipeline_stage&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="s2">&quot;software_pipeline_order&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;software_pipeline_async_stages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">):</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span> <span class="o">=</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="n">tx</span><span class="p">],</span> <span class="n">A_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">])</span>
+    <span class="n">B</span><span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="n">tx</span><span class="p">]</span> <span class="o">=</span> <span class="n">A_shared</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The same rule applies: <code class="docutils literal notranslate"><span class="pre">software_pipeline_stage</span></code> and
+<code class="docutils literal notranslate"><span class="pre">software_pipeline_order</span></code> describe only scheduled statements. Replayable scalar
+<code class="docutils literal notranslate"><span class="pre">Bind</span></code> statements do not need entries.</p>
+</section>
+<section id="design-rationale">
+<h2>Design Rationale<a class="headerlink" href="#design-rationale" title="Link to this heading">¶</a></h2>
+<p>The pipeline pass separates the loop body into two concepts:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>scheduled statements: executable operations controlled by stage/order
+replayable scalar bindings: local value aliases placed by use-def analysis
+</pre></div>
+</div>
+<p>This split keeps the API stable for users and avoids ambiguous schedules. A
+real pipeline operation has a clear execution point, can read or write buffers,
+and may require async-copy bookkeeping or synchronization. It is appropriate for
+the user to assign a stage and order to that operation.</p>
+<p>A replayable scalar <code class="docutils literal notranslate"><span class="pre">Bind</span></code> has none of those properties:</p>
+<ul class="simple">
+<li><p>It has no side effect.</p></li>
+<li><p>It owns no buffer storage.</p></li>
+<li><p>It can be used by multiple scheduled statements.</p></li>
+<li><p>Its correct value may depend on the consumer’s logical pipeline iteration.</p></li>
+</ul>
+<p>Forcing users to annotate such a statement would require them to choose one
+stage/order even when there is no single correct answer. Replaying scalar binds
+at each consumer makes the alias semantics explicit in the generated IR and
+keeps the user-facing schedule focused on real pipeline work.</p>
+</section>
+<section id="checklist">
+<h2>Checklist<a class="headerlink" href="#checklist" title="Link to this heading">¶</a></h2>
+<p>When writing manual pipeline annotations:</p>
+<ul class="simple">
+<li><p>Count only scheduled statements when building <code class="docutils literal notranslate"><span class="pre">stage</span></code> and <code class="docutils literal notranslate"><span class="pre">order</span></code>.</p></li>
+<li><p>Omit replayable scalar aliases such as <code class="docutils literal notranslate"><span class="pre">base</span> <span class="pre">=</span> <span class="pre">ko</span> <span class="pre">*</span> <span class="pre">BK</span></code> or
+<code class="docutils literal notranslate"><span class="pre">idx</span> <span class="pre">=</span> <span class="pre">Ids[ko]</span></code> when <code class="docutils literal notranslate"><span class="pre">Ids</span></code> is not written in the pipeline.</p></li>
+<li><p>Count a <code class="docutils literal notranslate"><span class="pre">Bind</span></code> as a scheduled statement if it reads a buffer written inside
+the pipeline body.</p></li>
+<li><p>Keep each scheduled statement’s <code class="docutils literal notranslate"><span class="pre">order</span></code> unique.</p></li>
+<li><p>Keep producers before consumers according to stage/order dependency rules.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">software_pipeline_async_producers</span></code> and
+<code class="docutils literal notranslate"><span class="pre">software_pipeline_async_producer_groups</span></code> with the same length as the
+scheduled statement list.</p></li>
+<li><p>Prefer the bind-free form for replayable aliases in new code; rely on legacy
+bind slots only when maintaining old kernels.</p></li>
+</ul>
 </section>
 </section>
 
@@ -732,23 +905,23 @@ For custom/opaque ops, you must lower them into known intrinsics (or manually in
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="tensor_checks.html">
+          <a class="next-page" href="python_compatibility.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Tensor Checks (Host-Side Auto-Validation)</div>
+                <div class="title">Python Compatibility</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="letstmt_inline.html">
+          <a class="prev-page" href="control_flow.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">LetStmt Inlining in TileLang</div>
+                <div class="title">Control Flow</div>
                 
               </div>
             </a>
@@ -782,16 +955,16 @@ For custom/opaque ops, you must lower them into known intrinsics (or manually in
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">InjectFenceProxy Pass</a><ul>
-<li><a class="reference internal" href="#why-fences-are-needed">Why Fences Are Needed</a></li>
-<li><a class="reference internal" href="#what-the-pass-does">What the Pass Does</a><ul>
-<li><a class="reference internal" href="#timeline-view">Timeline View</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#coverage-of-intrinsics">Coverage of Intrinsics</a></li>
-<li><a class="reference internal" href="#usage">Usage</a></li>
-<li><a class="reference internal" href="#end-to-end-example">End-to-End Example</a></li>
-<li><a class="reference internal" href="#extending-the-pass">Extending the Pass</a></li>
+<li><a class="reference internal" href="#">Software Pipeline Annotations</a><ul>
+<li><a class="reference internal" href="#the-user-model">The User Model</a></li>
+<li><a class="reference internal" href="#stage-and-order">Stage and Order</a></li>
+<li><a class="reference internal" href="#annotating-a-reordered-pipeline">Annotating a Reordered Pipeline</a></li>
+<li><a class="reference internal" href="#replayable-scalar-bind-statements">Replayable Scalar Bind Statements</a></li>
+<li><a class="reference internal" href="#bind-dependencies">Bind Dependencies</a></li>
+<li><a class="reference internal" href="#legacy-annotation-form">Legacy Annotation Form</a></li>
+<li><a class="reference internal" href="#manual-t-serial-annotations">Manual <code class="docutils literal notranslate"><span class="pre">T.serial</span></code> Annotations</a></li>
+<li><a class="reference internal" href="#design-rationale">Design Rationale</a></li>
+<li><a class="reference internal" href="#checklist">Checklist</a></li>
 </ul>
 </li>
 </ul>
