@@ -1,0 +1,121 @@
+tilelang.contrib.hip_resource_info
+==================================
+
+.. py:module:: tilelang.contrib.hip_resource_info
+
+.. autoapi-nested-parse::
+
+   Parse AMD GPU per-kernel resource usage out of clang's
+   ``-Rpass-analysis=kernel-resource-usage`` remarks and expose them on
+   JITKernel.
+
+   clang emits a block like::
+       remark: src.cc:9:0: Function Name: main_kernel [-Rpass-analysis=kernel-resource-usage]
+       remark: src.cc:9:0:     TotalSGPRs: 16 [-Rpass-analysis=kernel-resource-usage]
+       remark: src.cc:9:0:     VGPRs: 5 [-Rpass-analysis=kernel-resource-usage]
+       remark: src.cc:9:0:     ScratchSize [bytes/lane]: 0 [-Rpass-analysis=kernel-resource-usage]
+       remark: src.cc:9:0:     SGPRs Spill: 0 [-Rpass-analysis=kernel-resource-usage]
+       remark: src.cc:9:0:     VGPRs Spill: 0 [-Rpass-analysis=kernel-resource-usage]
+       ...
+
+   right alongside any real warnings/errors. We *parse and strip* those
+   lines before printing or raising, so autotune logs don't drown in
+   hundreds of remark blocks while real diagnostics still surface.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.contrib.hip_resource_info.KernelResourceUsage
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.hip_resource_info.hipcc_remark_flag
+   tilelang.contrib.hip_resource_info.reset_recorder
+   tilelang.contrib.hip_resource_info.pop_recorded
+   tilelang.contrib.hip_resource_info.filter_and_record
+   tilelang.contrib.hip_resource_info.dump_to_file
+   tilelang.contrib.hip_resource_info.load_from_file
+
+
+Module Contents
+---------------
+
+.. py:class:: KernelResourceUsage
+
+   Resource counts as reported by clang's kernel-resource-usage pass.
+
+   Field names mirror the remark labels (lower-cased, normalized) so we
+   can extend without breaking callers.
+
+
+   .. py:attribute:: n_regs
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: n_spills
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: scratch_bytes
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: n_max_threads
+      :type:  int | None
+      :value: None
+
+
+
+   .. py:attribute:: extra
+      :type:  dict[str, str]
+
+
+.. py:function:: hipcc_remark_flag()
+
+   The clang flag callers should pass to hipcc to enable the remark
+   output we parse here.
+
+
+.. py:function:: reset_recorder()
+
+   Begin a fresh recording window on this thread.
+
+
+.. py:function:: pop_recorded()
+
+   Return everything recorded since the last ``reset_recorder`` and
+   clear the buffer.
+
+
+.. py:function:: filter_and_record(output)
+
+   Strip kernel-resource-usage remarks from ``output``, parse them,
+   and append the parsed entries to the active recorder (if any).
+   Returns the filtered output with the remark lines removed.
+
+
+.. py:function:: dump_to_file(usage, path)
+
+   Persist parsed resource usage so it survives kernel-cache hits.
+
+
+.. py:function:: load_from_file(path)
+
+   Inverse of ``dump_to_file``. Tolerant of missing / unknown fields
+   so older cache entries keep working when the dataclass evolves.
+
+
