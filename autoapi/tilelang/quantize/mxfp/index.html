@@ -637,6 +637,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.mxfp.decode_f4_to_bf16_twiddling" title="tilelang.quantize.mxfp.decode_f4_to_bf16_twiddling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_f4_to_bf16_twiddling</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.quantize.mxfp.decode_f4_to_bf16_twiddling_hip" title="tilelang.quantize.mxfp.decode_f4_to_bf16_twiddling_hip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_f4_to_bf16_twiddling_hip</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.quantize.mxfp.decode_f4_to_bf16_simple_hip" title="tilelang.quantize.mxfp.decode_f4_to_bf16_simple_hip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_f4_to_bf16_simple_hip</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -706,9 +712,110 @@
 </div>
 </details></dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.mxfp.decode_f4_to_bf16_twiddling_hip">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.mxfp.</span></span><span class="sig-name descname"><span class="pre">decode_f4_to_bf16_twiddling_hip</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.mxfp.decode_f4_to_bf16_twiddling_hip" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">// N = number of 4-element groups (4 packed bytes = 8 FP4 values each)</span>
+<span class="sd">// This implementation uses only standard C++ types (uint16_t, uint32_t, float)</span>
+<span class="sd">// so it compiles without any HIP type headers.</span>
+<span class="sd">template&lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_fp4_to_bf16_twiddling(T1 *B_local, T2 *B_local_decode, const int N = 8) {</span>
+<span class="sd">  // Multiply two packed BF16 values stored as uint16 each.</span>
+<span class="sd">  // BF16 layout: [sign(1)|exp(8)|mant(7)] -- upper 16 bits of IEEE float32.</span>
+<span class="sd">  // We convert to float, multiply, then convert back via bit manipulation.</span>
+<span class="sd">  auto bf16_to_float = [](uint16_t b) -&gt; float {</span>
+<span class="sd">    uint32_t f = (uint32_t)b &lt;&lt; 16u;</span>
+<span class="sd">    float r;</span>
+<span class="sd">    __builtin_memcpy(&amp;r, &amp;f, 4);</span>
+<span class="sd">    return r;</span>
+<span class="sd">  };</span>
+<span class="sd">  auto float_to_bf16 = [](float f) -&gt; uint16_t {</span>
+<span class="sd">    uint32_t u;</span>
+<span class="sd">    __builtin_memcpy(&amp;u, &amp;f, 4);</span>
+<span class="sd">    return (uint16_t)(u &gt;&gt; 16u);</span>
+<span class="sd">  };</span>
+<span class="sd">  // Multiply two packed uint32 BF16x2 words element-wise.</span>
+<span class="sd">  auto bf16x2_mul = [&amp;](uint32_t a, uint32_t b) -&gt; uint32_t {</span>
+<span class="sd">    uint16_t a_lo = (uint16_t)(a &amp; 0xFFFFu), a_hi = (uint16_t)(a &gt;&gt; 16u);</span>
+<span class="sd">    uint16_t b_lo = (uint16_t)(b &amp; 0xFFFFu), b_hi = (uint16_t)(b &gt;&gt; 16u);</span>
+<span class="sd">    uint16_t r_lo = float_to_bf16(bf16_to_float(a_lo) * bf16_to_float(b_lo));</span>
+<span class="sd">    uint16_t r_hi = float_to_bf16(bf16_to_float(a_hi) * bf16_to_float(b_hi));</span>
+<span class="sd">    return (uint32_t)r_lo | ((uint32_t)r_hi &lt;&lt; 16u);</span>
+<span class="sd">  };</span>
+
+<span class="sd">  #pragma unroll</span>
+<span class="sd">  for (int i = 0; i &lt; N; ++i) {</span>
+<span class="sd">    uint32_t packed;</span>
+<span class="sd">    __builtin_memcpy(&amp;packed, (const uint8_t*)B_local + (i &lt;&lt; 2), 4);</span>
+
+<span class="sd">    // Byte-reverse (endianness compensation).</span>
+<span class="sd">    uint32_t tmp = ((packed &amp; 0xFFu) &lt;&lt; 24u)</span>
+<span class="sd">                 | (((packed &gt;&gt; 8u)  &amp; 0xFFu) &lt;&lt; 16u)</span>
+<span class="sd">                 | (((packed &gt;&gt; 16u) &amp; 0xFFu) &lt;&lt; 8u)</span>
+<span class="sd">                 |  ((packed &gt;&gt; 24u) &amp; 0xFFu);</span>
+
+<span class="sd">    // bias = 0x7e80_7e80 = two packed BF16 words each equal to 2^126.</span>
+<span class="sd">    const uint32_t bias = 0x7e807e80u;</span>
+<span class="sd">    // Mask for sign+exp[1] bits in each packed BF16 pair: 0b10000001_11000000_10000001_11000000</span>
+<span class="sd">    const uint32_t mask_e = 0x81C081C0u;</span>
+
+<span class="sd">    uint32_t d[4];</span>
+<span class="sd">    d[0] = bf16x2_mul(tmp &amp; mask_e, bias);</span>
+<span class="sd">    d[1] = bf16x2_mul((tmp &lt;&lt; 3u) &amp; mask_e, bias);</span>
+<span class="sd">    d[2] = bf16x2_mul((tmp &lt;&lt; 6u) &amp; mask_e, bias);</span>
+<span class="sd">    {</span>
+<span class="sd">      // Mantissa bits (from CUDA: shl.b32+and combos for each nibble position)</span>
+<span class="sd">      uint32_t t1 = (tmp &lt;&lt; 1u) &amp; 0x80008000u;</span>
+<span class="sd">      uint32_t t2 = (tmp &gt;&gt; 3u) &amp; 0x01800180u;</span>
+<span class="sd">      uint32_t t3 = (tmp &gt;&gt; 7u) &amp; 0x00400040u;</span>
+<span class="sd">      d[3] = bf16x2_mul(t1 | t2 | t3, bias);</span>
+<span class="sd">    }</span>
+
+<span class="sd">    // Store 8 BF16 results (big-endian nibble order matching CUDA reference).</span>
+<span class="sd">    for (int j = 0; j &lt; 4; ++j) {</span>
+<span class="sd">      reinterpret_cast&lt;T2*&gt;(B_local_decode)[(i &lt;&lt; 3) + j]     = reinterpret_cast&lt;T2*&gt;(&amp;d[j])[1];</span>
+<span class="sd">      reinterpret_cast&lt;T2*&gt;(B_local_decode)[(i &lt;&lt; 3) + j + 4] = reinterpret_cast&lt;T2*&gt;(&amp;d[j])[0];</span>
+<span class="sd">    }</span>
+<span class="sd">  }</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.quantize.mxfp.decode_f4_to_bf16_simple_hip">
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.mxfp.</span></span><span class="sig-name descname"><span class="pre">decode_f4_to_bf16_simple_hip</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.quantize.mxfp.decode_f4_to_bf16_simple_hip" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">template&lt;typename T1, typename T2&gt;</span>
+<span class="sd">__device__ void decode_fp4_to_bf16(T1 *B_local, T2 *B_local_decode, const int N = 8) {</span>
+<span class="sd">  // FP4 E2M1 lookup: nibble index -&gt; BF16 value (via float).</span>
+<span class="sd">  // Nibble layout: bit3=sign, bits[2:1]=exp, bit0=mant.</span>
+<span class="sd">  static const float fp4_lut[16] = {</span>
+<span class="sd">     0.0f,  0.5f,  1.0f,  1.5f,  2.0f,  3.0f,  4.0f,  6.0f,</span>
+<span class="sd">    -0.0f, -0.5f, -1.0f, -1.5f, -2.0f, -3.0f, -4.0f, -6.0f,</span>
+<span class="sd">  };</span>
+<span class="sd">  #pragma unroll</span>
+<span class="sd">  for (int i = 0; i &lt; N; ++i) {</span>
+<span class="sd">    const uint8_t* src = (const uint8_t*)B_local + (i &lt;&lt; 2);</span>
+<span class="sd">    // Each byte holds 2 nibbles: low nibble first, high nibble second.</span>
+<span class="sd">    // Output order matches the CUDA twiddling reference (interleaved by 4).</span>
+<span class="sd">    for (int b = 0; b &lt; 4; ++b) {</span>
+<span class="sd">      uint8_t byte = src[b];</span>
+<span class="sd">      reinterpret_cast&lt;T2*&gt;(B_local_decode)[(i &lt;&lt; 3) + b]     = (T2)fp4_lut[byte &amp; 0xFu];</span>
+<span class="sd">      reinterpret_cast&lt;T2*&gt;(B_local_decode)[(i &lt;&lt; 3) + b + 4] = (T2)fp4_lut[(byte &gt;&gt; 4u) &amp; 0xFu];</span>
+<span class="sd">    }</span>
+<span class="sd">  }</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.quantize.mxfp.get_mxfp_intrin_group">
-<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.mxfp.</span></span><span class="sig-name descname"><span class="pre">get_mxfp_intrin_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">T.bfloat16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">T.uint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_bit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">T.uint8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_twiddling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.quantize.mxfp.get_mxfp_intrin_group" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.quantize.mxfp.</span></span><span class="sig-name descname"><span class="pre">get_mxfp_intrin_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">T.bfloat16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">T.uint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_bit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">T.uint8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_twiddling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.quantize.mxfp.get_mxfp_intrin_group" title="Link to this definition">¶</a></dt>
 <dd><p>Return metadata for an MXFP decoding intrinsic: function name and C source string.</p>
 <p>Validates the requested output dtype, source format, and storage dtype, then constructs
 a lookup key of the form <cite>fp{source_bit}_to_{f16|bf16}</cite> (appending <cite>_twiddling</cite> when
@@ -807,6 +914,8 @@ function name <cite>decode_fp{source_bit}_to_{f16|bf16}</cite> (also optionally 
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.quantize.mxfp.decode_f4_to_bf16_twiddling"><code class="docutils literal notranslate"><span class="pre">decode_f4_to_bf16_twiddling</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.mxfp.decode_f4_to_bf16_twiddling_hip"><code class="docutils literal notranslate"><span class="pre">decode_f4_to_bf16_twiddling_hip</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.quantize.mxfp.decode_f4_to_bf16_simple_hip"><code class="docutils literal notranslate"><span class="pre">decode_f4_to_bf16_simple_hip</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.quantize.mxfp.get_mxfp_intrin_group"><code class="docutils literal notranslate"><span class="pre">get_mxfp_intrin_group()</span></code></a></li>
 </ul>
 </li>
