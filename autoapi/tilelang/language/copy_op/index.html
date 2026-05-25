@@ -644,7 +644,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.async_copy" title="tilelang.language.copy_op.async_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">async_copy</span></code></a>(src, dst, *[, coalesced_width, ...])</p></td>
 <td><p>Asynchronous copy primitive lowered through cp.async.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.tma_copy" title="tilelang.language.copy_op.tma_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_copy</span></code></a>(src, dst, *[, barrier, eviction_policy, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.copy_op.tma_copy" title="tilelang.language.copy_op.tma_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_copy</span></code></a>(src, dst, *[, barrier, leader_scope_threads, ...])</p></td>
 <td><p>TMA copy with user-managed synchronization.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.copy_op.tma_gather4" title="tilelang.language.copy_op.tma_gather4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_gather4</span></code></a>(src, dst, col, rows, *, barrier[, ...])</p></td>
@@ -788,7 +788,7 @@ The backend enforces cp.async constraints and emits:</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.copy_op.tma_copy">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">tma_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">barrier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.tma_copy" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.copy_op.</span></span><span class="sig-name descname"><span class="pre">tma_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">barrier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leader_scope_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.copy_op.tma_copy" title="Link to this definition">¶</a></dt>
 <dd><p>TMA copy with user-managed synchronization.</p>
 <p>For <strong>loads</strong> (global -&gt; shared): issues expect_tx + tma_load (no wait).
 Unlike T.copy() which emits a full synchronous TMA sequence (arrive + load + wait),
@@ -808,6 +808,8 @@ calling T.tma_store_wait() explicitly. <code class="docutils literal notranslate
 Required for loads (global -&gt; shared). Not needed for stores.
 The TMA load will arrive at this barrier with expected byte count.
 The user must wait on the same barrier via T.mbarrier_wait_parity().</p></li>
+<li><p><strong>leader_scope_threads</strong> (<em>int</em><em> | </em><em>None</em>) – Number of threads in each TMA leader-election scope
+(e.g., 32 for per-warp). Defaults to the full block size if not specified.</p></li>
 <li><p><strong>eviction_policy</strong> (<em>Literal</em><em>[</em><em>'evict_normal'</em><em>, </em><em>'evict_first'</em><em>, </em><em>'evict_last'</em><em>] </em><em>| </em><em>None</em>) – Cache eviction policy. Defaults to None.</p></li>
 <li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>) – Additional annotations dict. Values in annotations take
 precedence over individual arguments.</p></li>

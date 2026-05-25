@@ -124,7 +124,7 @@ Module Contents
    :rtype: tirx.Call
 
 
-.. py:function:: tma_copy(src, dst, *, barrier=None, eviction_policy = None, annotations = None)
+.. py:function:: tma_copy(src, dst, *, barrier=None, leader_scope_threads = None, eviction_policy = None, annotations = None)
 
    TMA copy with user-managed synchronization.
 
@@ -145,6 +145,8 @@ Module Contents
                    Required for loads (global -> shared). Not needed for stores.
                    The TMA load will arrive at this barrier with expected byte count.
                    The user must wait on the same barrier via T.mbarrier_wait_parity().
+   :param leader_scope_threads: Number of threads in each TMA leader-election scope
+                                (e.g., 32 for per-warp). Defaults to the full block size if not specified.
    :param eviction_policy: Cache eviction policy. Defaults to None.
    :param annotations: Additional annotations dict. Values in annotations take
                        precedence over individual arguments.
