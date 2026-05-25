@@ -681,6 +681,11 @@ params.pkl: The compiled kernel parameters</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.prim_func_path">
+<span class="sig-name descname"><span class="pre">prim_func_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'prim_func.pkl'</span></em><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.prim_func_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.resource_usage_path">
 <span class="sig-name descname"><span class="pre">resource_usage_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'resource_usage.json'</span></em><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.resource_usage_path" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -688,6 +693,11 @@ params.pkl: The compiled kernel parameters</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.cache_root_dir">
 <span class="sig-name descname"><span class="pre">cache_root_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'kernels'</span></em><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.cache_root_dir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.frontend_cache_root_dir">
+<span class="sig-name descname"><span class="pre">frontend_cache_root_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'frontend'</span></em><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.frontend_cache_root_dir" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -739,6 +749,45 @@ and execution backend resolution should happen. All compilation paths go through
 <dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.clear_cache">
 <span class="sig-name descname"><span class="pre">clear_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.clear_cache" title="Link to this definition">¶</a></dt>
 <dd><p>Clears the entire kernel cache, including both in-memory and disk cache.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.load_frontend_cached">
+<span class="sig-name descname"><span class="pre">load_frontend_cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frontend_key</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tvm_ffi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.load_frontend_cached" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frontend_key</strong> (<em>str</em>)</p></li>
+<li><p><strong>target</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em>)</p></li>
+<li><p><strong>target_host</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>out_idx</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>execution_backend</strong> (<em>Literal</em><em>[</em><em>'tvm_ffi'</em><em>, </em><em>'cython'</em><em>, </em><em>'nvrtc'</em><em>, </em><em>'torch'</em><em>, </em><em>'cutedsl'</em><em>]</em>)</p></li>
+<li><p><strong>pass_configs</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>compile_flags</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tilelang.jit.JITKernel | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.store_frontend_cache">
+<span class="sig-name descname"><span class="pre">store_frontend_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frontend_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_key</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.store_frontend_cache" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frontend_key</strong> (<em>str</em>)</p></li>
+<li><p><strong>kernel_key</strong> (<em>str</em>)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -810,11 +859,15 @@ and execution backend resolution should happen. All compilation paths go through
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.host_kernel_path"><code class="docutils literal notranslate"><span class="pre">KernelCache.host_kernel_path</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.kernel_lib_path"><code class="docutils literal notranslate"><span class="pre">KernelCache.kernel_lib_path</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.params_path"><code class="docutils literal notranslate"><span class="pre">KernelCache.params_path</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.prim_func_path"><code class="docutils literal notranslate"><span class="pre">KernelCache.prim_func_path</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.resource_usage_path"><code class="docutils literal notranslate"><span class="pre">KernelCache.resource_usage_path</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.cache_root_dir"><code class="docutils literal notranslate"><span class="pre">KernelCache.cache_root_dir</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.frontend_cache_root_dir"><code class="docutils literal notranslate"><span class="pre">KernelCache.frontend_cache_root_dir</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.staging_root_dir"><code class="docutils literal notranslate"><span class="pre">KernelCache.staging_root_dir</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.cached"><code class="docutils literal notranslate"><span class="pre">KernelCache.cached()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.clear_cache"><code class="docutils literal notranslate"><span class="pre">KernelCache.clear_cache()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.load_frontend_cached"><code class="docutils literal notranslate"><span class="pre">KernelCache.load_frontend_cached()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.store_frontend_cache"><code class="docutils literal notranslate"><span class="pre">KernelCache.store_frontend_cache()</span></code></a></li>
 </ul>
 </li>
 </ul>

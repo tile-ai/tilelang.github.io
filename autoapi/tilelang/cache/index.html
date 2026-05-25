@@ -646,6 +646,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cache.cached" title="tilelang.cache.cached"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cached</span></code></a>([func, out_idx, target, target_host, ...])</p></td>
 <td><p>Caches and reuses compiled kernels (using KernelCache class).</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cache.load_frontend_cached" title="tilelang.cache.load_frontend_cached"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_frontend_cached</span></code></a>(frontend_key_data, *[, out_idx, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cache.store_frontend_cache" title="tilelang.cache.store_frontend_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">store_frontend_cache</span></code></a>(frontend_key_data, kernel_key, *)</p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cache.clear_cache" title="tilelang.cache.clear_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_cache</span></code></a>()</p></td>
 <td><p>Disabled helper that previously removed the entire kernel cache.</p></td>
 </tr>
@@ -674,6 +680,51 @@
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>tilelang.jit.JITKernel</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cache.load_frontend_cached">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cache.</span></span><span class="sig-name descname"><span class="pre">load_frontend_cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frontend_key_data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.load_frontend_cached" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frontend_key_data</strong> (<em>dict</em>)</p></li>
+<li><p><strong>out_idx</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>target</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>target_host</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>execution_backend</strong> (<em>Literal</em><em>[</em><em>'auto'</em><em>, </em><em>'tvm_ffi'</em><em>, </em><em>'cython'</em><em>, </em><em>'nvrtc'</em><em>, </em><em>'torch'</em><em>, </em><em>'cutedsl'</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference internal" href="../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>pass_configs</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>compile_flags</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tilelang.jit.JITKernel | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cache.store_frontend_cache">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cache.</span></span><span class="sig-name descname"><span class="pre">store_frontend_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frontend_key_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_key</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.store_frontend_cache" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frontend_key_data</strong> (<em>dict</em>)</p></li>
+<li><p><strong>kernel_key</strong> (<em>str</em>)</p></li>
+<li><p><strong>out_idx</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>target</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>target_host</strong> (<em>str</em><em> | </em><em>tvm.target.Target</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>execution_backend</strong> (<em>Literal</em><em>[</em><em>'auto'</em><em>, </em><em>'tvm_ffi'</em><em>, </em><em>'cython'</em><em>, </em><em>'nvrtc'</em><em>, </em><em>'torch'</em><em>, </em><em>'cutedsl'</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference internal" href="../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>pass_configs</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>compile_flags</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -752,6 +803,8 @@
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.cache.cached"><code class="docutils literal notranslate"><span class="pre">cached()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.load_frontend_cached"><code class="docutils literal notranslate"><span class="pre">load_frontend_cached()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.store_frontend_cache"><code class="docutils literal notranslate"><span class="pre">store_frontend_cache()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.clear_cache"><code class="docutils literal notranslate"><span class="pre">clear_cache()</span></code></a></li>
 </ul>
 </li>
