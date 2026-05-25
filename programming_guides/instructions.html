@@ -487,6 +487,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/proxy/index.html">tilelang.language.proxy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/random/index.html">tilelang.language.random</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/reduce_op/index.html">tilelang.language.reduce_op</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/scan_op/index.html">tilelang.language.scan_op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/language/symbolics/index.html">tilelang.language.symbolics</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/language/tir/index.html">tilelang.language.tir</a><input aria-label="Toggle navigation of tilelang.language.tir" class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/language/tir/entry/index.html">tilelang.language.tir.entry</a></li>
@@ -636,7 +637,7 @@ level, how they map to hardware concepts, and how to use them correctly.</p>
 <ul class="simple">
 <li><p>Data movement: <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.async_copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.tma_copy</span></code>, <code class="docutils literal notranslate"><span class="pre">T.c2d_im2col</span></code>, staging Global ↔ Shared ↔ Fragment</p></li>
 <li><p>Compute primitives: <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code>/<code class="docutils literal notranslate"><span class="pre">T.gemm_sp</span></code>, elementwise math (<code class="docutils literal notranslate"><span class="pre">T.exp</span></code>, <code class="docutils literal notranslate"><span class="pre">T.max</span></code>),
-reductions (<code class="docutils literal notranslate"><span class="pre">T.reduce_sum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cumsum</span></code>, warp reducers)</p></li>
+reductions and scans (<code class="docutils literal notranslate"><span class="pre">T.reduce_sum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cumsum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cummax</span></code>, warp reducers)</p></li>
 <li><p>Control helpers: <code class="docutils literal notranslate"><span class="pre">T.clear</span></code>/<code class="docutils literal notranslate"><span class="pre">T.fill</span></code>, <code class="docutils literal notranslate"><span class="pre">T.reshape</span></code>/<code class="docutils literal notranslate"><span class="pre">T.view</span></code></p></li>
 <li><p>Diagnostics: <code class="docutils literal notranslate"><span class="pre">T.print</span></code>, <code class="docutils literal notranslate"><span class="pre">T.device_assert</span></code></p></li>
 <li><p>Advanced: atomics, memory barriers, warp‑group ops</p></li>
@@ -727,7 +728,7 @@ inputs and a fragment accumulator; lowered to target‑specific tensor cores.</p
 </ul>
 <p>Reductions and scans</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T.reduce_sum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.reduce_max</span></code>, <code class="docutils literal notranslate"><span class="pre">T.reduce_min</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cumsum</span></code>, plus warp
+<li><p><code class="docutils literal notranslate"><span class="pre">T.reduce_sum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.reduce_max</span></code>, <code class="docutils literal notranslate"><span class="pre">T.reduce_min</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cumsum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cummax</span></code>, plus warp
 reducers (<code class="docutils literal notranslate"><span class="pre">T.warp_reduce_sum</span></code>, etc.).</p></li>
 <li><p>Allocate and initialize accumulators via <code class="docutils literal notranslate"><span class="pre">T.alloc_fragment</span></code> + <code class="docutils literal notranslate"><span class="pre">T.clear</span></code> or
 <code class="docutils literal notranslate"><span class="pre">T.fill</span></code>.</p></li>
@@ -813,7 +814,7 @@ signatures, behaviors, constraints, and examples, refer to API Reference
 <li><p><code class="docutils literal notranslate"><span class="pre">T.gemm(A_s,</span> <span class="pre">B_s,</span> <span class="pre">C_f)</span></code>: Tile GEMM into fragment accumulator.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.gemm_sp(...)</span></code>: Sparse (2:4) tensor core GEMM.</p></li>
 <li><p>Reductions: <code class="docutils literal notranslate"><span class="pre">T.reduce_sum/max/min/abssum/absmax</span></code>, bitwise <code class="docutils literal notranslate"><span class="pre">and/or/xor</span></code>.</p></li>
-<li><p>Scans: <code class="docutils literal notranslate"><span class="pre">T.cumsum</span></code>, finalize: <code class="docutils literal notranslate"><span class="pre">T.finalize_reducer</span></code>.</p></li>
+<li><p>Scans: <code class="docutils literal notranslate"><span class="pre">T.cumsum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cummax</span></code>, finalize: <code class="docutils literal notranslate"><span class="pre">T.finalize_reducer</span></code>.</p></li>
 <li><p>Warp reducers: <code class="docutils literal notranslate"><span class="pre">T.warp_reduce_sum/max/min/bitand/bitor</span></code>.</p></li>
 <li><p>Elementwise math: TIR ops (<code class="docutils literal notranslate"><span class="pre">T.exp</span></code>, <code class="docutils literal notranslate"><span class="pre">T.log</span></code>, <code class="docutils literal notranslate"><span class="pre">T.max</span></code>, <code class="docutils literal notranslate"><span class="pre">T.min</span></code>, <code class="docutils literal notranslate"><span class="pre">T.rsqrt</span></code>, …).</p></li>
 <li><p>Fast math: <code class="docutils literal notranslate"><span class="pre">T.__log/__log2/__log10/__exp/__exp2/__exp10/__sin/__cos/__tan</span></code>.</p></li>

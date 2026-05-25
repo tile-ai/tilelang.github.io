@@ -23,6 +23,8 @@ Classes
    tilelang.contrib.cutedsl.reduce.BitXorOp
    tilelang.contrib.cutedsl.reduce.CumSum1D
    tilelang.contrib.cutedsl.reduce.CumSum2D
+   tilelang.contrib.cutedsl.reduce.CumMax1D
+   tilelang.contrib.cutedsl.reduce.CumMax2D
    tilelang.contrib.cutedsl.reduce.NamedBarrier
 
 
@@ -120,7 +122,7 @@ Module Contents
 .. py:class:: CumSum1D(threads, reverse)
 
    1D cumulative sum operation.
-   Based on tl::CumSum1D from reduce.h
+   Based on tl::CumSum1D from scan.h
 
    Template params:
        threads: Number of threads
@@ -151,7 +153,7 @@ Module Contents
 .. py:class:: CumSum2D(threads, dim, reverse)
 
    2D cumulative sum operation.
-   Based on tl::CumSum2D from reduce.h
+   Based on tl::CumSum2D from scan.h
 
    Template params:
        threads: Number of threads (must be power of 2, 32-1024)
@@ -185,6 +187,49 @@ Module Contents
       :param H: Number of rows
       :param W: Number of columns (should be <= 32 for single-segment case)
 
+
+
+.. py:class:: CumMax1D(threads, reverse)
+
+   1D cumulative maximum operation.
+   Based on tl::CumMax1D from scan.h
+
+
+   .. py:attribute:: threads
+
+
+   .. py:attribute:: reverse
+
+
+   .. py:attribute:: SEG
+      :value: 32
+
+
+
+   .. py:method:: run(src, dst, N)
+
+
+.. py:class:: CumMax2D(threads, dim, reverse)
+
+   2D cumulative maximum operation.
+   Based on tl::CumMax2D from scan.h
+
+
+   .. py:attribute:: threads
+
+
+   .. py:attribute:: dim
+
+
+   .. py:attribute:: reverse
+
+
+   .. py:attribute:: SEG
+      :value: 32
+
+
+
+   .. py:method:: run(src, dst, H, W)
 
 
 .. py:class:: NamedBarrier(all_threads)

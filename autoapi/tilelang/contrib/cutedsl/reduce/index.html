@@ -487,6 +487,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../language/proxy/index.html">tilelang.language.proxy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/random/index.html">tilelang.language.random</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/reduce_op/index.html">tilelang.language.reduce_op</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../language/scan_op/index.html">tilelang.language.scan_op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../language/symbolics/index.html">tilelang.language.symbolics</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../language/tir/index.html">tilelang.language.tir</a><input aria-label="Toggle navigation of tilelang.language.tir" class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../language/tir/entry/index.html">tilelang.language.tir.entry</a></li>
@@ -660,6 +661,12 @@ Based on tl_templates/cuda/reduce.h</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumSum2D" title="tilelang.contrib.cutedsl.reduce.CumSum2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CumSum2D</span></code></a></p></td>
 <td><p>2D cumulative sum operation.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax1D" title="tilelang.contrib.cutedsl.reduce.CumMax1D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CumMax1D</span></code></a></p></td>
+<td><p>1D cumulative maximum operation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax2D" title="tilelang.contrib.cutedsl.reduce.CumMax2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CumMax2D</span></code></a></p></td>
+<td><p>2D cumulative maximum operation.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.NamedBarrier" title="tilelang.contrib.cutedsl.reduce.NamedBarrier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NamedBarrier</span></code></a></p></td>
 <td><p>Named barrier policy for AllReduce, uses bar.sync instead of __syncthreads.</p></td>
 </tr>
@@ -787,7 +794,7 @@ Falls back to integer path if float conversion fails (signless int types).</p>
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumSum1D">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">CumSum1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumSum1D" title="Link to this definition">¶</a></dt>
 <dd><p>1D cumulative sum operation.
-Based on tl::CumSum1D from reduce.h</p>
+Based on tl::CumSum1D from scan.h</p>
 <dl class="simple">
 <dt>Template params:</dt><dd><p>threads: Number of threads
 reverse: Whether to cumsum in reverse order</p>
@@ -837,7 +844,7 @@ reverse: Whether to cumsum in reverse order</p>
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumSum2D">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">CumSum2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumSum2D" title="Link to this definition">¶</a></dt>
 <dd><p>2D cumulative sum operation.
-Based on tl::CumSum2D from reduce.h</p>
+Based on tl::CumSum2D from scan.h</p>
 <dl class="simple">
 <dt>Template params:</dt><dd><p>threads: Number of threads (must be power of 2, 32-1024)
 dim: Axis along which to cumsum (0 or 1)
@@ -889,6 +896,98 @@ reverse: Whether to cumsum in reverse order</p>
 <li><p><strong>dst</strong> (<em>cutlass.cute.Pointer</em>) – Destination pointer</p></li>
 <li><p><strong>H</strong> – Number of rows</p></li>
 <li><p><strong>W</strong> – Number of columns (should be &lt;= 32 for single-segment case)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax1D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">CumMax1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax1D" title="Link to this definition">¶</a></dt>
+<dd><p>1D cumulative maximum operation.
+Based on tl::CumMax1D from scan.h</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>threads</strong> (<em>cutlass.Constexpr</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>reverse</strong> (<em>cutlass.Constexpr</em><em>[</em><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax1D.threads">
+<span class="sig-name descname"><span class="pre">threads</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax1D.threads" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax1D.reverse">
+<span class="sig-name descname"><span class="pre">reverse</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax1D.reverse" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax1D.SEG">
+<span class="sig-name descname"><span class="pre">SEG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax1D.SEG" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax1D.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax1D.run" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>dst</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax2D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">CumMax2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax2D" title="Link to this definition">¶</a></dt>
+<dd><p>2D cumulative maximum operation.
+Based on tl::CumMax2D from scan.h</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>threads</strong> (<em>cutlass.Constexpr</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>dim</strong> (<em>cutlass.Constexpr</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>reverse</strong> (<em>cutlass.Constexpr</em><em>[</em><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax2D.threads">
+<span class="sig-name descname"><span class="pre">threads</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.threads" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax2D.dim">
+<span class="sig-name descname"><span class="pre">dim</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.dim" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax2D.reverse">
+<span class="sig-name descname"><span class="pre">reverse</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.reverse" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax2D.SEG">
+<span class="sig-name descname"><span class="pre">SEG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.SEG" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax2D.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.run" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>dst</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1035,6 +1134,21 @@ Based on tl::AllReduce from reduce.h</p>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumSum2D.SEG"><code class="docutils literal notranslate"><span class="pre">CumSum2D.SEG</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumSum2D.TILE_H"><code class="docutils literal notranslate"><span class="pre">CumSum2D.TILE_H</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumSum2D.run"><code class="docutils literal notranslate"><span class="pre">CumSum2D.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax1D"><code class="docutils literal notranslate"><span class="pre">CumMax1D</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax1D.threads"><code class="docutils literal notranslate"><span class="pre">CumMax1D.threads</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax1D.reverse"><code class="docutils literal notranslate"><span class="pre">CumMax1D.reverse</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax1D.SEG"><code class="docutils literal notranslate"><span class="pre">CumMax1D.SEG</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax1D.run"><code class="docutils literal notranslate"><span class="pre">CumMax1D.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax2D"><code class="docutils literal notranslate"><span class="pre">CumMax2D</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.threads"><code class="docutils literal notranslate"><span class="pre">CumMax2D.threads</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.dim"><code class="docutils literal notranslate"><span class="pre">CumMax2D.dim</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.reverse"><code class="docutils literal notranslate"><span class="pre">CumMax2D.reverse</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.SEG"><code class="docutils literal notranslate"><span class="pre">CumMax2D.SEG</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.run"><code class="docutils literal notranslate"><span class="pre">CumMax2D.run()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.NamedBarrier"><code class="docutils literal notranslate"><span class="pre">NamedBarrier</span></code></a><ul>

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="tilelang.language.symbolics" href="../symbolics/index.html"><link rel="prev" title="tilelang.language.random" href="../random/index.html">
+<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="tilelang.language.scan_op" href="../scan_op/index.html"><link rel="prev" title="tilelang.language.random" href="../random/index.html">
         <link rel="prefetch" href="../../../../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../../../../_static/img/logo-v2.png" as="image">
 
@@ -487,6 +487,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../proxy/index.html">tilelang.language.proxy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../random/index.html">tilelang.language.random</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">tilelang.language.reduce_op</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scan_op/index.html">tilelang.language.scan_op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../symbolics/index.html">tilelang.language.symbolics</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../tir/index.html">tilelang.language.tir</a><input aria-label="Toggle navigation of tilelang.language.tir" class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../tir/entry/index.html">tilelang.language.tir.entry</a></li>
@@ -673,12 +674,6 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.reduce_bitxor" title="tilelang.language.reduce_op.reduce_bitxor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce_bitxor</span></code></a>(buffer, out[, dim, clear, batch])</p></td>
 <td><p>Perform reduce bitwise-xor on input buffer, store the result to output buffer.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.cumsum_fragment" title="tilelang.language.reduce_op.cumsum_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum_fragment</span></code></a>(src, dst, dim, reverse)</p></td>
-<td><p>Compute cumulative sum for fragment buffers by copying to shared memory first.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.cumsum" title="tilelang.language.reduce_op.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a>(src[, dst, dim, reverse])</p></td>
-<td><p>Compute the cumulative sum of <cite>src</cite> along <cite>dim</cite>, writing results to <cite>dst</cite>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.finalize_reducer" title="tilelang.language.reduce_op.finalize_reducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize_reducer</span></code></a>(reducer[, batch])</p></td>
 <td><p>Finalize a reducer buffer by emitting the <cite>tl.tileop.finalize_reducer</cite> intrinsic.</p></td>
@@ -960,83 +955,6 @@ are ignored. CUDA-only.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.reduce_op.cumsum_fragment">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce_op.</span></span><span class="sig-name descname"><span class="pre">cumsum_fragment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce_op.cumsum_fragment" title="Link to this definition">¶</a></dt>
-<dd><p>Compute cumulative sum for fragment buffers by copying to shared memory first.</p>
-<p>This macro handles cumulative sum operations on fragment buffers by first copying
-the data to shared memory, performing the cumsum operation, and then copying back.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>) – Source buffer (Buffer, BufferRegion, or BufferLoad) containing input data.</p></li>
-<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – Destination buffer (Buffer, BufferRegion, or BufferLoad) for output data.</p></li>
-<li><p><strong>dim</strong> (<em>int</em>) – Dimension along which to compute cumulative sum.</p></li>
-<li><p><strong>reverse</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – If True, compute cumulative sum in reverse order.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.reduce_op.cumsum">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce_op.</span></span><span class="sig-name descname"><span class="pre">cumsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce_op.cumsum" title="Link to this definition">¶</a></dt>
-<dd><p>Compute the cumulative sum of <cite>src</cite> along <cite>dim</cite>, writing results to <cite>dst</cite>.</p>
-<p>Negative <cite>dim</cite> indices are normalized (Python-style). If <cite>dst</cite> is None, the operation is performed in-place into <cite>src</cite>. Raises ValueError when <cite>dim</cite> is out of bounds for <cite>src.shape</cite>. When <cite>src.scope() == “local.fragment”</cite>, this delegates to <cite>cumsum_fragment</cite>; otherwise it emits the <cite>tl.cumsum</cite> intrinsic.</p>
-<p>Supports Buffer, BufferRegion, and BufferLoad inputs, allowing operations on buffer slices/regions.</p>
-<p class="rubric">Examples</p>
-<p>A 1D inclusive scan that writes the result into a separate shared-memory buffer:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-<span class="gp">... </span>    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">A_shared</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="n">T</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>A 2D prefix sum along the last dimension with reverse accumulation:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">kernel2d</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span> <span class="s2">&quot;float16&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span> <span class="s2">&quot;float16&quot;</span><span class="p">)):</span>
-<span class="gp">... </span>    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="n">tile</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span> <span class="s2">&quot;float16&quot;</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">tile</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="n">T</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">tile</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tile</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Operating on a buffer region (slice):</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">kernel_region</span><span class="p">(</span><span class="n">InputG_fragment</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="n">i</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="n">T</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">InputG_fragment</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">chunk_size</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">chunk_size</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A handle to the emitted cumulative-sum operation.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tirx.Call</p>
-</dd>
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tilelang._typing.BufferLikeType</em>)</p></li>
-<li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>dim</strong> (<em>int</em>)</p></li>
-<li><p><strong>reverse</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.reduce_op.finalize_reducer">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce_op.</span></span><span class="sig-name descname"><span class="pre">finalize_reducer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reducer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce_op.finalize_reducer" title="Link to this definition">¶</a></dt>
 <dd><p>Finalize a reducer buffer by emitting the <cite>tl.tileop.finalize_reducer</cite> intrinsic.</p>
@@ -1170,12 +1088,12 @@ will have the bitwise-or of all values across the warp.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../symbolics/index.html">
+          <a class="next-page" href="../scan_op/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">tilelang.language.symbolics</div>
+                <div class="title">tilelang.language.scan_op</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -1234,8 +1152,6 @@ will have the bitwise-or of all values across the warp.</p>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.reduce_bitand"><code class="docutils literal notranslate"><span class="pre">reduce_bitand()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.reduce_bitor"><code class="docutils literal notranslate"><span class="pre">reduce_bitor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.reduce_bitxor"><code class="docutils literal notranslate"><span class="pre">reduce_bitxor()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.reduce_op.cumsum_fragment"><code class="docutils literal notranslate"><span class="pre">cumsum_fragment()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.reduce_op.cumsum"><code class="docutils literal notranslate"><span class="pre">cumsum()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.finalize_reducer"><code class="docutils literal notranslate"><span class="pre">finalize_reducer()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.warp_reduce_sum"><code class="docutils literal notranslate"><span class="pre">warp_reduce_sum()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.warp_reduce_max"><code class="docutils literal notranslate"><span class="pre">warp_reduce_max()</span></code></a></li>
