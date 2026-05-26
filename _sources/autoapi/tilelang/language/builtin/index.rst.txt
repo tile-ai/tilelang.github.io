@@ -50,6 +50,7 @@ Functions
    tilelang.language.builtin.shfl_down
    tilelang.language.builtin.shfl_up
    tilelang.language.builtin.sync_threads
+   tilelang.language.builtin.named_barrier_arrive
    tilelang.language.builtin.sync_warp
    tilelang.language.builtin.shfl_sync
    tilelang.language.builtin.any_sync
@@ -559,6 +560,33 @@ Module Contents
 .. py:function:: sync_threads(barrier_id = None, arrive_count = None)
 
    Synchronize all threads in a block.
+
+
+.. py:function:: named_barrier_arrive(barrier_id, thread_count)
+
+   CTA named barrier one-sided arrive (bar.arrive).
+
+   Signals that the calling threads have arrived at the named barrier without
+   waiting for other participants.  Unlike ``T.sync_threads(barrier_id, n)``
+   which maps to ``bar.sync`` (arrive + wait), this call only *arrives* and
+   returns immediately, allowing the calling warp group to continue working
+   while the other side waits.
+
+   This is useful in warp-specialized producer/consumer pipelines:
+
+   .. code-block:: python
+
+       # Producer warp group: signal readiness, keep going
+       T.named_barrier_arrive(ready_barrier, total_threads)
+
+       # Consumer warp group: block until producer has arrived
+       T.sync_threads(ready_barrier, total_threads)
+
+   :param barrier_id: Named barrier index (0-15). May be a variable (PrimExpr).
+   :param thread_count: Total number of CTA threads participating in the barrier.
+                        May be a variable (PrimExpr).
+
+   Lowers to: ``asm volatile("bar.arrive %0, %1;" : : "r"(id), "r"(cnt));``
 
 
 .. py:function:: sync_warp(mask = None)
