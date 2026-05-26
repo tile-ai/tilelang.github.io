@@ -335,6 +335,20 @@ Module Contents
       This is more aggressive and may increase code size. Default: False.
 
 
+   .. py:attribute:: TL_IF_STMT_BINDING_INLINE_REPLAYABLE_BINDS
+      :value: 'tl.if_stmt_binding_inline_replayable_binds'
+
+
+      Inline replayable scalar Bind statements while distributing if conditions.
+
+      When True (default), IfStmtBinding may rewrite a guarded sequence such as
+      ``if cond: idx = ids[i]; copy(idx); gemm()`` into separately guarded
+      statements with ``idx`` substituted at each use, provided the Bind does not
+      read a buffer written inside the same guarded body. This exposes copy and
+      compute statements to pipeline planning while preserving non-replayable
+      Bind scopes.
+
+
    .. py:attribute:: TL_DISABLE_THREAD_STORAGE_SYNC
       :value: 'tl.disable_thread_storage_sync'
 
