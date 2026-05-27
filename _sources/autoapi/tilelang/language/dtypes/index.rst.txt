@@ -33,6 +33,12 @@ Functions
    tilelang.language.dtypes.__dtype_as_torch__
    tilelang.language.dtypes.__dtype_new__
    tilelang.language.dtypes.__dtype_bytes__
+   tilelang.language.dtypes.__dtype_is_float4_e2m1fn__
+   tilelang.language.dtypes.__dtype_is_float4_e2m1_unpacked__
+   tilelang.language.dtypes.__dtype_is_float4__
+   tilelang.language.dtypes.is_float4_e2m1fn
+   tilelang.language.dtypes.is_float4_e2m1_unpacked
+   tilelang.language.dtypes.is_float4
    tilelang.language.dtypes.get_tvm_dtype
 
 
@@ -77,6 +83,15 @@ Module Contents
    .. py:method:: as_torch()
 
 
+   .. py:method:: is_float4_e2m1fn()
+
+
+   .. py:method:: is_float4_e2m1_unpacked()
+
+
+   .. py:method:: is_float4()
+
+
 .. py:data:: AnyDType
 
 .. py:data:: dtype_name
@@ -97,6 +112,46 @@ Module Contents
 .. py:function:: __dtype_bytes__(self)
 
    Return the number of bytes for this dtype.
+
+
+.. py:function:: __dtype_is_float4_e2m1fn__(self)
+
+   Packed 4-bit FP4 E2M1 (CUTLASS float_e2m1_t).
+
+   Use for pure FP4 workloads on tcgen05 mxf4 / mxf4nvf4 (packed SMEM, half
+   the footprint). Global tensors and packed SMEM roundtrips use this dtype.
+   TMA: ``CU_TENSOR_MAP_DATA_TYPE_16U4_ALIGN8B``.
+
+
+.. py:function:: __dtype_is_float4_e2m1_unpacked__(self)
+
+   8-bit FP4 E2M1 unpacked storage (CUTLASS float_e2m1_unpacksmem_t).
+
+   Only for tcgen05 ``kind::f8f6f4`` and block-scaled ``kind::mxf8f6f4``
+   mixed-precision paths where sub-byte types share 16-byte SMEM/TMEM padding
+   (one byte per FP4 element). Not for mxf4 / mxf4nvf4 packed FP4 kernels.
+   Pair with ``T.tma_copy`` from packed global FP4; TMA:
+   ``CU_TENSOR_MAP_DATA_TYPE_16U4_ALIGN16B``.
+
+
+.. py:function:: __dtype_is_float4__(self)
+
+   Whether this is any FP4 E2M1 logical variant (packed or unpacked storage).
+
+
+.. py:function:: is_float4_e2m1fn(value)
+
+   Whether *value* is the packed 4-bit FP4 E2M1 variant.
+
+
+.. py:function:: is_float4_e2m1_unpacked(value)
+
+   Whether *value* is the 8-bit FP4 E2M1 unpacked shared-memory storage variant.
+
+
+.. py:function:: is_float4(value)
+
+   Whether *value* is any FP4 E2M1 logical variant (packed or unpacked).
 
 
 .. py:function:: get_tvm_dtype(value)
