@@ -1086,6 +1086,9 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.tir.ir.grid" title="tilelang.language.tir.ir.grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grid</span></code></a>(*extents)</p></td>
 <td><p>The grid For statement.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.tir.ir.cast" title="tilelang.language.tir.ir.cast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cast</span></code></a>(value, dtype[, round, sat, rbits, span])</p></td>
+<td><p>Cast <code class="docutils literal notranslate"><span class="pre">value</span></code> to <code class="docutils literal notranslate"><span class="pre">dtype</span></code> with optional PTX-style rounding hints.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1895,6 +1898,33 @@
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.ir.</span></span><span class="sig-name descname"><span class="pre">tvm_rdna_wmma_store</span></span><a class="headerlink" href="#tilelang.language.tir.ir.tvm_rdna_wmma_store" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.tir.ir.cast">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.tir.ir.</span></span><span class="sig-name descname"><span class="pre">cast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rbits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.tir.ir.cast" title="Link to this definition">¶</a></dt>
+<dd><p>Cast <code class="docutils literal notranslate"><span class="pre">value</span></code> to <code class="docutils literal notranslate"><span class="pre">dtype</span></code> with optional PTX-style rounding hints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>object</em>) – The source operand.</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>) – The target data type.</p></li>
+<li><p><strong>round</strong> (<em>str</em><em>, </em><em>optional</em>) – PTX rounding modifier (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;rn&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rz&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rp&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rm&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;rs&quot;</span></code>). Empty string means use the backend default. Currently
+only <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;rs&quot;</span></code> are lowered by the CUDA backend; the other
+modifiers are reserved.</p></li>
+<li><p><strong>sat</strong> (<a class="reference internal" href="../../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>, </em><em>optional</em>) – Saturate to finite (<code class="docutils literal notranslate"><span class="pre">True</span></code> = PTX <code class="docutils literal notranslate"><span class="pre">.satfinite</span></code>, default).</p></li>
+<li><p><strong>rbits</strong> (<em>PrimExpr</em><em>, </em><em>optional</em>) – Random bits operand for stochastic rounding (<code class="docutils literal notranslate"><span class="pre">round=&quot;rs&quot;</span></code>).</p></li>
+<li><p><strong>span</strong> (<em>Optional</em><em>[</em><em>Span</em><em>]</em>) – The location of this operator in the source.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>op</strong> – The cast expression.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tir.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -2099,6 +2129,7 @@
 <li><a class="reference internal" href="#tilelang.language.tir.ir.tvm_mfma_store"><code class="docutils literal notranslate"><span class="pre">tvm_mfma_store</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.ir.tvm_rdna_wmma"><code class="docutils literal notranslate"><span class="pre">tvm_rdna_wmma</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.tir.ir.tvm_rdna_wmma_store"><code class="docutils literal notranslate"><span class="pre">tvm_rdna_wmma_store</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.tir.ir.cast"><code class="docutils literal notranslate"><span class="pre">cast()</span></code></a></li>
 </ul>
 </li>
 </ul>

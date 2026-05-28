@@ -158,6 +158,7 @@ Functions
    tilelang.language.tir.ir.unroll
    tilelang.language.tir.ir.thread_binding
    tilelang.language.tir.ir.grid
+   tilelang.language.tir.ir.cast
 
 
 Module Contents
@@ -522,4 +523,28 @@ Module Contents
 .. py:data:: tvm_rdna_wmma
 
 .. py:data:: tvm_rdna_wmma_store
+
+.. py:function:: cast(value, dtype, round = '', sat = True, rbits=None, span=None)
+
+   Cast ``value`` to ``dtype`` with optional PTX-style rounding hints.
+
+   :param value: The source operand.
+   :type value: object
+   :param dtype: The target data type.
+   :type dtype: str
+   :param round: PTX rounding modifier (e.g. ``"rn"``, ``"rz"``, ``"rp"``, ``"rm"``,
+                 ``"rs"``). Empty string means use the backend default. Currently
+                 only ``""`` and ``"rs"`` are lowered by the CUDA backend; the other
+                 modifiers are reserved.
+   :type round: str, optional
+   :param sat: Saturate to finite (``True`` = PTX ``.satfinite``, default).
+   :type sat: bool, optional
+   :param rbits: Random bits operand for stochastic rounding (``round="rs"``).
+   :type rbits: PrimExpr, optional
+   :param span: The location of this operator in the source.
+   :type span: Optional[Span]
+
+   :returns: **op** -- The cast expression.
+   :rtype: tvm.tir.PrimExpr
+
 
