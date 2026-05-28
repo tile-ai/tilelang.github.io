@@ -1,0 +1,69 @@
+tilelang.backend.pass_pipeline.pipeline
+=======================================
+
+.. py:module:: tilelang.backend.pass_pipeline.pipeline
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.backend.pass_pipeline.pipeline.LowerFunc
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.backend.pass_pipeline.pipeline.PassPipeline
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.backend.pass_pipeline.pipeline.register_pipeline
+   tilelang.backend.pass_pipeline.pipeline.get_pipeline
+   tilelang.backend.pass_pipeline.pipeline.resolve_pipeline
+
+
+Module Contents
+---------------
+
+.. py:data:: LowerFunc
+
+.. py:class:: PassPipeline(name, lower)
+
+   Lowering pass pipeline for a specific backend.
+
+   Each backend should register its own Pipeline so that the compiler can
+   resolve the correct pass sequence from the target at runtime.
+
+
+   .. py:attribute:: name
+
+
+   .. py:method:: lower(mod, target)
+
+
+.. py:function:: register_pipeline(pipeline)
+
+   Register a lowering pipeline for a backend.
+
+   The pipeline name should match ``target.kind.name`` (e.g. ``"cuda"``,
+   ``"hip"``, ``"c"``, ``"llvm"``).
+
+
+.. py:function:: get_pipeline(name)
+
+   Return the registered Pipeline for *name*.
+
+
+.. py:function:: resolve_pipeline(target)
+
+   Resolve the lowering pipeline from a TVM target.
+
+
