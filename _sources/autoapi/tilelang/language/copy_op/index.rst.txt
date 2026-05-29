@@ -29,7 +29,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: copy(src, dst, *, coalesced_width = None, disable_tma = False, eviction_policy = None, annotations = None, loop_layout = None)
+.. py:function:: copy(src, dst, *, coalesced_width = None, disable_tma = False, eviction_policy = None, prefer_instruction = None, annotations = None, loop_layout = None)
 
    Copy data between memory regions.
 
@@ -43,8 +43,15 @@ Module Contents
    :type disable_tma: bool, keyword-only
    :param eviction_policy: Cache eviction policy. Defaults to None.
    :type eviction_policy: Optional[str], keyword-only
+   :param prefer_instruction: Backend-specific preferred lowering
+                              instruction category. For CUDA, recognized values include "tma", "cp_async", and
+                              "sync". For "tma", T.copy keeps synchronous copy semantics; global -> shared copies
+                              lower through TMA with an automatically allocated barrier and wait when constraints
+                              are satisfied.
+   :type prefer_instruction: Optional[str], keyword-only
    :param annotations: Additional annotations dict. If provided,
-                       coalesced_width, disable_tma, and eviction_policy can also be specified here.
+                       coalesced_width, disable_tma, eviction_policy, and prefer_instruction can also
+                       be specified here.
                        Values in annotations take precedence over individual arguments.
    :type annotations: Optional[dict], keyword-only
    :param loop_layout: A parallel loop layout hint for the SIMT copy
