@@ -215,16 +215,20 @@ Module Contents
    :rtype: tirx.Call
 
 
-.. py:function:: tma_store_wait(count = 0)
+.. py:function:: tma_store_wait(count = 0, read = True)
 
    Wait for completion of TMA store operations.
 
    Waits until the number of outstanding TMA store groups is at most ``count``.
-   Maps to the PTX instruction ``cp.async.bulk.wait_group.read <count>``.
+   Maps to ``cp.async.bulk.wait_group.read <count>`` by default, or
+   ``cp.async.bulk.wait_group <count>`` when ``read`` is false.
 
    :param count: The maximum number of outstanding store groups allowed
                  to remain in flight. Defaults to 0 (wait for all stores to complete).
    :type count: int
+   :param read: Whether to use the PTX ``.read`` modifier, which only
+                waits for the source reads to complete. Defaults to True.
+   :type read: bool
 
    :returns: A handle to the store wait operation
    :rtype: tirx.Call

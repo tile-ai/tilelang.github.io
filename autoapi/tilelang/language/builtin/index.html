@@ -673,7 +673,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.tma_store_arrive" title="tilelang.language.builtin.tma_store_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store_arrive</span></code></a>()</p></td>
 <td><p>Signal the arrival of a TMA store operation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.tma_store_wait" title="tilelang.language.builtin.tma_store_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store_wait</span></code></a>([count])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.tma_store_wait" title="tilelang.language.builtin.tma_store_wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store_wait</span></code></a>([count, read])</p></td>
 <td><p>Wait for completion of TMA store operations.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.set_max_nreg" title="tilelang.language.builtin.set_max_nreg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_max_nreg</span></code></a>(reg_count, is_inc)</p></td>
@@ -1038,14 +1038,19 @@ Maps to <code class="docutils literal notranslate"><span class="pre">cp.async.bu
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.tma_store_wait">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_store_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_store_wait" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">tma_store_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.tma_store_wait" title="Link to this definition">¶</a></dt>
 <dd><p>Wait for completion of TMA store operations.</p>
 <p>Waits until the number of outstanding TMA store groups is at most <code class="docutils literal notranslate"><span class="pre">count</span></code>.
-Maps to the PTX instruction <code class="docutils literal notranslate"><span class="pre">cp.async.bulk.wait_group.read</span> <span class="pre">&lt;count&gt;</span></code>.</p>
+Maps to <code class="docutils literal notranslate"><span class="pre">cp.async.bulk.wait_group.read</span> <span class="pre">&lt;count&gt;</span></code> by default, or
+<code class="docutils literal notranslate"><span class="pre">cp.async.bulk.wait_group</span> <span class="pre">&lt;count&gt;</span></code> when <code class="docutils literal notranslate"><span class="pre">read</span></code> is false.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>count</strong> (<em>int</em>) – The maximum number of outstanding store groups allowed
-to remain in flight. Defaults to 0 (wait for all stores to complete).</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>count</strong> (<em>int</em>) – The maximum number of outstanding store groups allowed
+to remain in flight. Defaults to 0 (wait for all stores to complete).</p></li>
+<li><p><strong>read</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether to use the PTX <code class="docutils literal notranslate"><span class="pre">.read</span></code> modifier, which only
+waits for the source reads to complete. Defaults to True.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A handle to the store wait operation</p>

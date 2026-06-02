@@ -41,12 +41,6 @@ Functions
    tilelang.transform.IfStmtBinding
    tilelang.transform.MergeIfStmt
    tilelang.transform.LoopUnswitching
-   tilelang.transform.ProducerConsumerWarpSpecialized
-   tilelang.transform.ProducerConsumerWarpSpecializedTiled
-   tilelang.transform.AnnotateWarpGroupRegAlloc
-   tilelang.transform.FuseMBarrierArriveExpectTx
-   tilelang.transform.InjectFenceProxy
-   tilelang.transform.InjectTcgen05Fence
    tilelang.transform.LegalizeVectorizedLoop
    tilelang.transform.LegalizeSafeMemoryAccess
    tilelang.transform.LowerAccessPtr
@@ -60,8 +54,6 @@ Functions
    tilelang.transform.ConfigIndexBitwidth
    tilelang.transform.FlattenBuffer
    tilelang.transform.MergeSharedMemoryAllocations
-   tilelang.transform.MarkCudaSyncCalls
-   tilelang.transform.LowerSharedBarrier
    tilelang.transform.PlanAndUpdateBufferAllocationLocation
    tilelang.transform.HoistGlobalBufferAllocations
    tilelang.transform.HoistNonRestrictParams
@@ -70,11 +62,8 @@ Functions
    tilelang.transform.LowerThreadAllreduce
    tilelang.transform.LowerIntrin
    tilelang.transform.LowerDeviceKernelLaunch
-   tilelang.transform.LowerSharedTmem
    tilelang.transform.LayoutReducer
    tilelang.transform.UnrollLoop
-   tilelang.transform.LowerLDGSTG
-   tilelang.transform.LowerBlackwell2SM
 
 
 Package Contents
@@ -200,69 +189,6 @@ Package Contents
    :rtype: tvm.transform.Pass
 
 
-.. py:function:: ProducerConsumerWarpSpecialized()
-
-   Producer-consumer warp specialization at the tile-op level.
-
-   This pass runs before LayoutInference and LowerTileOp. It rewrites
-   eligible pipelined tile-op loops into warp-specialized producer and
-   consumer branches with explicit barrier synchronization.
-
-   :returns: **fpass** -- The result pass
-   :rtype: tvm.transform.Pass
-
-
-.. py:function:: ProducerConsumerWarpSpecializedTiled()
-
-   Compatibility alias for ``ProducerConsumerWarpSpecialized``.
-
-   The tiled tile-op implementation is now the canonical
-   ``ProducerConsumerWarpSpecialized`` pass.
-
-   :returns: **fpass** -- The result pass
-   :rtype: tvm.transform.Pass
-
-
-.. py:function:: AnnotateWarpGroupRegAlloc()
-
-   Inject set_max_nreg calls into warp-specialized functions.
-
-   This pass analyzes the function to collect register hints from set_max_nreg
-   and no_set_max_nreg calls, then injects appropriate set_max_nreg calls into
-   producer and consumer branches of warp-specialized code.
-
-   :returns: **fpass** -- The result pass
-   :rtype: tvm.transform.Pass
-
-
-.. py:function:: FuseMBarrierArriveExpectTx()
-
-   Fuse simple expect_tx -> TMA issue -> arrive back into arrive_and_expect_tx.
-
-
-.. py:function:: InjectFenceProxy()
-
-   InjectFenceProxy
-
-   :returns: **fpass** -- The result pass
-   :rtype: tvm.transform.Pass
-
-
-.. py:function:: InjectTcgen05Fence()
-
-   Inject tcgen05.fence::before_thread_sync / after_thread_sync at
-   conservative TCGEN05/TMEM synchronization boundaries on Blackwell
-   (SM100+) targets.
-
-   The current pass wraps CTA-wide shared-memory syncs and also inserts
-   fences around linear mbarrier wait/use and use/arrive handoff patterns.
-   It is intentionally conservative and does not try to infer arbitrary
-   barrier protocols.
-
-   :returns: **fpass** -- The result pass
-   :rtype: tvm.transform.Pass
-
-
 .. py:function:: LegalizeVectorizedLoop()
 
    LegalizeLoopVectorize
@@ -376,16 +302,6 @@ Package Contents
    :rtype: tvm.transform.Pass
 
 
-.. py:function:: MarkCudaSyncCalls(have_pdl = False)
-
-   MarkCudaSyncCalls
-
-
-.. py:function:: LowerSharedBarrier()
-
-   LowerSharedBarrier
-
-
 .. py:function:: PlanAndUpdateBufferAllocationLocation()
 
    Plan and update buffer allocation locations within PrimFuncs.
@@ -438,11 +354,6 @@ Package Contents
    :rtype: tvm.transform.Pass
 
 
-.. py:function:: LowerSharedTmem()
-
-   LowerSharedTmem
-
-
 .. py:function:: LayoutReducer()
 
    Return a TVM transform pass that performs layout reduction/normalization.
@@ -465,35 +376,5 @@ Package Contents
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
-
-
-.. py:function:: LowerLDGSTG()
-
-   Lower Ramp-based global memory load/store to ldg/stg intrinsics.
-
-   This pass transforms vectorized global memory loads and stores (using Ramp indices)
-   into explicit ldg32/64/128/256 and stg32/64/128/256 intrinsics for better codegen.
-
-   Key behaviors:
-   - Converts Ramp-based global BufferLoad to ldg intrinsics
-   - Converts Ramp-based global BufferStore to stg intrinsics
-   - Supports predicated loads (if_then_else with else=0)
-   - Supports predicated stores (if in then case)
-   - Skips loads in async scope (will be lowered to cp.async)
-   - Only enabled for CUDA targets
-
-   :returns: **fpass** -- The result pass
-   :rtype: tvm.transform.Pass
-
-
-.. py:function:: LowerBlackwell2SM()
-
-   Lower 2SM TCGEN5MMA and related on Blackwell target
-
-   :returns:
-
-             tvm.transform.Pass
-                 The result pass
-   :rtype: fpass
 
 

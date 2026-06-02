@@ -702,7 +702,7 @@
 </pre></div>
 </div>
 <p>The TileLang lower process might yield an error such as:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>File &quot;/root/TileLang/src/target/codegen_cuda.cc&quot;, line 1257
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>File &quot;/root/TileLang/src/cuda/codegen/codegen_cuda.cc&quot;, line 1257
 ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is not allowed.
 </pre></div>
 </div>
@@ -721,7 +721,7 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 </ol>
 <section id="post-processing-callbacks-for-generated-source">
 <h3>Post-Processing Callbacks for Generated Source<a class="headerlink" href="#post-processing-callbacks-for-generated-source" title="Link to this heading">¶</a></h3>
-<p>After code generation (in the codegen pass), TileLang calls a callback function (if registered) to allow post-processing of the generated source code. In <code class="docutils literal notranslate"><span class="pre">src/target/rt_mod_cuda.cc</span></code>:</p>
+<p>After code generation (in the codegen pass), TileLang calls a callback function (if registered) to allow post-processing of the generated source code. In <code class="docutils literal notranslate"><span class="pre">src/cuda/codegen/rt_mod_cuda.cc</span></code>:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg</span><span class="p">.</span><span class="n">Finish</span><span class="p">();</span>
 <span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">*</span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Registry</span><span class="o">::</span><span class="n">Get</span><span class="p">(</span><span class="s">&quot;tilelang_callback_cuda_postproc&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">f</span><span class="p">)(</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">).</span><span class="k">operator</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">();</span>
