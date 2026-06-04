@@ -65,12 +65,10 @@ Module Contents
       ``max(swizzle_atom_elems // micro_size_k, 1)``.
 
 
-   .. py:attribute:: elems_in_bytes
+   .. py:attribute:: elem_bits
       :type:  int
 
-      ``(DataType(dtype).bits + 7) // 8``.
-
-      :type: Byte width of a single element
+      Bit width of a single logical element.
 
 
    .. py:attribute:: is_k_major
@@ -214,7 +212,7 @@ Module Contents
 
 
 
-   .. py:method:: tcgen05mma_blockscaled(A_buf, B_buf, C_local_buf, SFA_tmem, SFB_tmem, mbar, clear_accum = False, sf_a_id=0, sf_b_id=0)
+   .. py:method:: tcgen05mma_blockscaled(A_buf, B_buf, C_local_buf, SFA_tmem, SFB_tmem, mbar, sf_k_start, sf_a_granularity_k, sf_b_granularity_k, clear_accum = False)
 
       Emit a block-scaled TCGEN5MMA (SS variant with TMEM scale factors).
 
@@ -263,7 +261,7 @@ Module Contents
 
 
 
-   .. py:method:: get_tcgen5_mma_meta(m, n, k, disable_2cta)
+   .. py:method:: get_tcgen5_mma_meta(m, n, k, disable_2cta, disable_ws = False)
 
       Query the FFI for TCGEN5MMA atom metadata (atom_m, atom_n, atom_k, enable_ws, enable_2cta), and record them in `self.meta`.
 

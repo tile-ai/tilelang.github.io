@@ -770,7 +770,7 @@ compilation fails instead of silently falling back to another GEMM path.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.gemm_op.tcgen05_gemm_blockscaled">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm_op.</span></span><span class="sig-name descname"><span class="pre">tcgen05_gemm_blockscaled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFA_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFB_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wg_wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_a_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_b_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.gemm_op.tcgen05_gemm_blockscaled" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm_op.</span></span><span class="sig-name descname"><span class="pre">tcgen05_gemm_blockscaled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFA_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFB_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wg_wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_a_granularity_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_b_granularity_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.gemm_op.tcgen05_gemm_blockscaled" title="Link to this definition">¶</a></dt>
 <dd><p>Explicit Blackwell TCGEN05 block-scaled GEMM without an implicit wait.</p>
 <p>This is the explicit asynchronous Blackwell TCGEN5MMA block-scaled
 counterpart to <cite>T.tcgen05_gemm(…)</cite>. It never auto-emits an inlined
@@ -779,15 +779,20 @@ back if the requested ISA path is unavailable.</p>
 <p>With <code class="docutils literal notranslate"><span class="pre">use_2cta=True</span></code>, this lowers to the true 2CTA block-scaled TCGEN05
 path only; there is no fallback or emulation. That mode requires
 <code class="docutils literal notranslate"><span class="pre">cluster_dims</span></code> to be <code class="docutils literal notranslate"><span class="pre">(2,1,1)</span></code> or <code class="docutils literal notranslate"><span class="pre">(1,2,1)</span></code>.</p>
-<p>A and B are FP8 (E4M3/E5M2) in shared memory, C is the accumulator in
-tensor memory, and SFA/SFB are E8M0 scale factors already resident in
-tensor memory. As with <cite>T.tcgen05_gemm(…)</cite>, this API is explicit-async:
-it issues the MMA and leaves synchronization to the user schedule.</p>
+<p>A and B are FP8/FP6/FP4 mxf8f6f4 operands in shared memory, C is the
+accumulator in tensor memory, and SFA/SFB are E8M0 scale factors already
+resident in tensor memory. As with <cite>T.tcgen05_gemm(…)</cite>, this API is
+explicit-async: it issues the MMA and leaves synchronization to the user
+schedule.</p>
+<p><code class="docutils literal notranslate"><span class="pre">k_start</span></code> is the logical K-axis start offset for this MMA tile.
+<code class="docutils literal notranslate"><span class="pre">sf_a_granularity_k</span></code> and <code class="docutils literal notranslate"><span class="pre">sf_b_granularity_k</span></code> describe how many K
+elements one packed scale factor covers. The compiler derives the PTX
+scale-factor A/B IDs for each internal K32 MMA atom from these values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>tilelang._typing.BufferLikeType</em>) – FP8 input buffer A in shared memory.</p></li>
-<li><p><strong>B</strong> (<em>tilelang._typing.BufferLikeType</em>) – FP8 input buffer B in shared memory.</p></li>
+<li><p><strong>A</strong> (<em>tilelang._typing.BufferLikeType</em>) – FP8/FP6/FP4 input buffer A in shared memory.</p></li>
+<li><p><strong>B</strong> (<em>tilelang._typing.BufferLikeType</em>) – FP8/FP6/FP4 input buffer B in shared memory.</p></li>
 <li><p><strong>C</strong> (<em>tilelang._typing.BufferLikeType</em>) – Accumulator in tensor memory.</p></li>
 <li><p><strong>SFA_tmem</strong> (<em>tilelang._typing.BufferLikeType</em>) – Scale factors for A in tensor memory.</p></li>
 <li><p><strong>SFB_tmem</strong> (<em>tilelang._typing.BufferLikeType</em>) – Scale factors for B in tensor memory.</p></li>
@@ -796,8 +801,9 @@ it issues the MMA and leaves synchronization to the user schedule.</p>
 <li><p><strong>clear_accum</strong> – Whether to zero the accumulator.</p></li>
 <li><p><strong>wg_wait</strong> (<em>int</em>) – Warp group wait identifier.</p></li>
 <li><p><strong>mbar</strong> (<em>tilelang._typing.BarrierType</em><em> | </em><em>None</em>) – Mbarrier for MMA completion signaling.</p></li>
-<li><p><strong>sf_a_id</strong> (<em>int</em>) – Scale factor ID for A (0-3).</p></li>
-<li><p><strong>sf_b_id</strong> (<em>int</em>) – Scale factor ID for B (0-3).</p></li>
+<li><p><strong>k_start</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>) – Logical K-axis start offset for this MMA tile.</p></li>
+<li><p><strong>sf_a_granularity_k</strong> (<em>int</em>) – K elements covered by one A scale factor.</p></li>
+<li><p><strong>sf_b_granularity_k</strong> (<em>int</em>) – K elements covered by one B scale factor.</p></li>
 <li><p><strong>use_2cta</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Whether to request true <code class="docutils literal notranslate"><span class="pre">cta_group::2</span></code> lowering.</p></li>
 </ul>
 </dd>

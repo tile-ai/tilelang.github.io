@@ -720,14 +720,9 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.elems_in_bytes">
-<span class="sig-name descname"><span class="pre">elems_in_bytes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.elems_in_bytes" title="Link to this definition">¶</a></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">(DataType(dtype).bits</span> <span class="pre">+</span> <span class="pre">7)</span> <span class="pre">//</span> <span class="pre">8</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Byte width of a single element</p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.elem_bits">
+<span class="sig-name descname"><span class="pre">elem_bits</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.elem_bits" title="Link to this definition">¶</a></dt>
+<dd><p>Bit width of a single logical element.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -928,7 +923,7 @@ computed assuming packed storage (e.g. two <code class="docutils literal notrans
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TensorCoreIntrinEmitter.tcgen05mma_blockscaled">
-<span class="sig-name descname"><span class="pre">tcgen05mma_blockscaled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFA_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFB_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_a_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_b_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TensorCoreIntrinEmitter.tcgen05mma_blockscaled" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">tcgen05mma_blockscaled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFA_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFB_tmem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_k_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_a_granularity_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_b_granularity_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TensorCoreIntrinEmitter.tcgen05mma_blockscaled" title="Link to this definition">¶</a></dt>
 <dd><p>Emit a block-scaled TCGEN5MMA (SS variant with TMEM scale factors).</p>
 <p>Uses <code class="docutils literal notranslate"><span class="pre">tcgen05.mma.cta_group::1|2.kind::mxf8f6f4.block_scale</span></code> PTX instruction.
 Scale factors must already reside in tensor memory.</p>
@@ -938,6 +933,9 @@ Scale factors must already reside in tensor memory.</p>
 <li><p><strong>A_buf</strong> (<em>tvm.tirx.Buffer</em>)</p></li>
 <li><p><strong>B_buf</strong> (<em>tvm.tirx.Buffer</em>)</p></li>
 <li><p><strong>C_local_buf</strong> (<em>tvm.tirx.Buffer</em>)</p></li>
+<li><p><strong>sf_k_start</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>sf_a_granularity_k</strong> (<em>int</em>)</p></li>
+<li><p><strong>sf_b_granularity_k</strong> (<em>int</em>)</p></li>
 <li><p><strong>clear_accum</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
 </ul>
 </dd>
@@ -1016,7 +1014,7 @@ swizzled tensor-memory offsets required by TCGEN5MMA.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TensorCoreIntrinEmitter.get_tcgen5_mma_meta">
-<span class="sig-name descname"><span class="pre">get_tcgen5_mma_meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_2cta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TensorCoreIntrinEmitter.get_tcgen5_mma_meta" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_tcgen5_mma_meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_2cta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TensorCoreIntrinEmitter.get_tcgen5_mma_meta" title="Link to this definition">¶</a></dt>
 <dd><p>Query the FFI for TCGEN5MMA atom metadata (atom_m, atom_n, atom_k, enable_ws, enable_2cta), and record them in <cite>self.meta</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1025,6 +1023,7 @@ swizzled tensor-memory offsets required by TCGEN5MMA.</p>
 <li><p><strong>n</strong> (<em>int</em>)</p></li>
 <li><p><strong>k</strong> (<em>int</em>)</p></li>
 <li><p><strong>disable_2cta</strong> (<a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>disable_ws</strong> (<a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1317,7 +1316,7 @@ The returned <code class="docutils literal notranslate"><span class="pre">TCGEN0
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.stride_byte_offset"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.stride_byte_offset</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.swizzle_atom_elems"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.swizzle_atom_elems</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.k_atom_size"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.k_atom_size</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.elems_in_bytes"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.elems_in_bytes</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.elem_bits"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.elem_bits</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.is_k_major"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.is_k_major</span></code></a></li>
 </ul>
 </li>

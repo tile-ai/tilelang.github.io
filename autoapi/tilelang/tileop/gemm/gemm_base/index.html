@@ -673,6 +673,26 @@ underlying <code class="docutils literal notranslate"><span class="pre">gemm_nod
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.__post_init__">
+<span class="sig-name descname"><span class="pre">__post_init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.__post_init__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.allow_f8f6f4_mixed_dtypes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">allow_f8f6f4_mixed_dtypes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><span class="pre">bool</span></a></em><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.allow_f8f6f4_mixed_dtypes" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.infer_layout">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">infer_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_nums</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.infer_layout" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -807,16 +827,15 @@ underlying <code class="docutils literal notranslate"><span class="pre">gemm_nod
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.in_dtype">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">in_dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.in_dtype" title="Link to this definition">¶</a></dt>
-<dd><p>Input data type for the multiplication.</p>
-<p>For the TS variant, A resides in TMEM with the accumulator dtype, so
-the actual input dtype is derived from B.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.a_dtype">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">a_dtype</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.a_dtype" title="Link to this definition">¶</a></dt>
+<dd><p>A operand dtype.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.b_dtype">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">b_dtype</span></span><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.b_dtype" title="Link to this definition">¶</a></dt>
+<dd><p>B operand dtype.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1010,18 +1029,8 @@ the actual input dtype is derived from B.</p>
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.sf_a_id">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sf_a_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tvm.ir.PrimExpr</span></em><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.sf_a_id" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tvm.ir.PrimExpr</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.sf_b_id">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sf_b_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tvm.ir.PrimExpr</span></em><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.sf_b_id" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.tileop.gemm.gemm_base.GemmBase.sf_k_start">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sf_k_start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tvm.ir.PrimExpr</span></em><a class="headerlink" href="#tilelang.tileop.gemm.gemm_base.GemmBase.sf_k_start" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tvm.ir.PrimExpr</p>
@@ -1138,6 +1147,8 @@ this returns [ko % 2, 0, 0]</p>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase"><code class="docutils literal notranslate"><span class="pre">GemmBase</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.gemm_node"><code class="docutils literal notranslate"><span class="pre">GemmBase.gemm_node</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.__post_init__"><code class="docutils literal notranslate"><span class="pre">GemmBase.__post_init__()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.allow_f8f6f4_mixed_dtypes"><code class="docutils literal notranslate"><span class="pre">GemmBase.allow_f8f6f4_mixed_dtypes</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.infer_layout"><code class="docutils literal notranslate"><span class="pre">GemmBase.infer_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.lower"><code class="docutils literal notranslate"><span class="pre">GemmBase.lower()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.is_gemm_ss"><code class="docutils literal notranslate"><span class="pre">GemmBase.is_gemm_ss()</span></code></a></li>
@@ -1150,7 +1161,8 @@ this returns [ko % 2, 0, 0]</p>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.K"><code class="docutils literal notranslate"><span class="pre">GemmBase.K</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.trans_A"><code class="docutils literal notranslate"><span class="pre">GemmBase.trans_A</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.trans_B"><code class="docutils literal notranslate"><span class="pre">GemmBase.trans_B</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.in_dtype"><code class="docutils literal notranslate"><span class="pre">GemmBase.in_dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.a_dtype"><code class="docutils literal notranslate"><span class="pre">GemmBase.a_dtype</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.b_dtype"><code class="docutils literal notranslate"><span class="pre">GemmBase.b_dtype</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.accum_dtype"><code class="docutils literal notranslate"><span class="pre">GemmBase.accum_dtype</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.chunk"><code class="docutils literal notranslate"><span class="pre">GemmBase.chunk</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.A"><code class="docutils literal notranslate"><span class="pre">GemmBase.A</span></code></a></li>
@@ -1173,8 +1185,7 @@ this returns [ko % 2, 0, 0]</p>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.C_coords"><code class="docutils literal notranslate"><span class="pre">GemmBase.C_coords</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.SFARegion"><code class="docutils literal notranslate"><span class="pre">GemmBase.SFARegion</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.SFBRegion"><code class="docutils literal notranslate"><span class="pre">GemmBase.SFBRegion</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.sf_a_id"><code class="docutils literal notranslate"><span class="pre">GemmBase.sf_a_id</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.sf_b_id"><code class="docutils literal notranslate"><span class="pre">GemmBase.sf_b_id</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.sf_k_start"><code class="docutils literal notranslate"><span class="pre">GemmBase.sf_k_start</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.is_blockscaled"><code class="docutils literal notranslate"><span class="pre">GemmBase.is_blockscaled</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.get_region_base_offsets"><code class="docutils literal notranslate"><span class="pre">GemmBase.get_region_base_offsets()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tileop.gemm.gemm_base.GemmBase.A_base_offsets"><code class="docutils literal notranslate"><span class="pre">GemmBase.A_base_offsets</span></code></a></li>

@@ -39,6 +39,8 @@ Functions
    tilelang.language.dtypes.is_float4_e2m1fn
    tilelang.language.dtypes.is_float4_e2m1_unpacked
    tilelang.language.dtypes.is_float4
+   tilelang.language.dtypes.is_f8f6f4_family
+   tilelang.language.dtypes.validate_gemm_ab_dtypes
    tilelang.language.dtypes.get_tvm_dtype
 
 
@@ -125,13 +127,13 @@ Module Contents
 
 .. py:function:: __dtype_is_float4_e2m1_unpacked__(self)
 
-   8-bit FP4 E2M1 unpacked storage (CUTLASS float_e2m1_unpacksmem_t).
+   8-bit FP4 E2M1 unpacked shared-memory storage.
 
    Only for tcgen05 ``kind::f8f6f4`` and block-scaled ``kind::mxf8f6f4``
-   mixed-precision paths where sub-byte types share 16-byte SMEM/TMEM padding
-   (one byte per FP4 element). Not for mxf4 / mxf4nvf4 packed FP4 kernels.
-   Pair with ``T.tma_copy`` from packed global FP4; TMA:
-   ``CU_TENSOR_MAP_DATA_TYPE_16U4_ALIGN16B``.
+   mixed-precision paths. It models the SMEM-side unpacked layout, one FP4
+   value per byte slot, and pairs with TMA
+   ``CU_TENSOR_MAP_DATA_TYPE_16U4_ALIGN16B``. Not for mxf4 / mxf4nvf4 packed
+   FP4 kernels or general SIMT copy/cast paths.
 
 
 .. py:function:: __dtype_is_float4__(self)
@@ -146,12 +148,25 @@ Module Contents
 
 .. py:function:: is_float4_e2m1_unpacked(value)
 
-   Whether *value* is the 8-bit FP4 E2M1 unpacked shared-memory storage variant.
+   Whether *value* is the 8-bit FP4 E2M1 unpacked shared-memory variant.
 
 
 .. py:function:: is_float4(value)
 
    Whether *value* is any FP4 E2M1 logical variant (packed or unpacked).
+
+
+.. py:function:: is_f8f6f4_family(value)
+
+   Whether *value* is a tcgen05 ``kind::f8f6f4`` / ``mxf8f6f4`` operand dtype.
+
+
+.. py:function:: validate_gemm_ab_dtypes(a_dtype, b_dtype, *, a_in_tmem = False, allow_f8f6f4_mixed = False)
+
+   Validate mixed A/B dtypes for GEMM tile ops.
+
+   TS variants (A in TMEM) skip validation because A/B dtypes may legitimately
+   differ. Only TCGEN05 f8f6f4-family paths should opt in to mixed A/B dtypes.
 
 
 .. py:function:: get_tvm_dtype(value)

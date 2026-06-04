@@ -821,7 +821,10 @@ T.mbarrier_wait_parity(). <code class="docutils literal notranslate"><span class
 <p>For <strong>stores</strong> (shared -&gt; global): issues tma_store + tma_store_arrive (no wait).
 Unlike T.copy() which emits tma_store + tma_store_arrive + tma_store_wait,
 T.tma_copy() omits the wait so the user can batch multiple stores before
-calling T.tma_store_wait() explicitly. <code class="docutils literal notranslate"><span class="pre">barrier</span></code> is not needed for stores.</p>
+calling T.tma_store_wait() explicitly. <code class="docutils literal notranslate"><span class="pre">barrier</span></code> is not needed for stores.
+FP4 unpacked shared-memory storage is load-only for TMA: packed global
+<code class="docutils literal notranslate"><span class="pre">float4_e2m1fn</span></code> may be loaded into unpacked shared
+<code class="docutils literal notranslate"><span class="pre">float4_e2m1_unpacked</span></code>, but the reverse TMA store is not supported.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -832,7 +835,7 @@ Required for loads (global -&gt; shared). Not needed for stores.
 The TMA load will arrive at this barrier with expected byte count.
 The user must wait on the same barrier via T.mbarrier_wait_parity().</p></li>
 <li><p><strong>leader_scope_threads</strong> (<em>int</em><em> | </em><em>None</em>) – Number of threads in each TMA leader-election scope
-(e.g., 32 for per-warp). Defaults to the full block size if not specified.</p></li>
+(e.g., 32 for per-warp). Defaults to the thread extend in the current context if not specified.</p></li>
 <li><p><strong>eviction_policy</strong> (<em>Literal</em><em>[</em><em>'evict_normal'</em><em>, </em><em>'evict_first'</em><em>, </em><em>'evict_last'</em><em>] </em><em>| </em><em>None</em>) – Cache eviction policy. Defaults to None.</p></li>
 <li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>) – Additional annotations dict. Values in annotations take
 precedence over individual arguments.</p></li>
