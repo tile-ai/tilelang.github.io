@@ -652,7 +652,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter" title="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MPSIntrinEmitter</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Metal simdgroup MMA intrinsic emitter for GEMM operations.</p></td>
 </tr>
 </tbody>
 </table>
@@ -663,7 +663,8 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.metal.intrinsics.metal_macro_generator.</span></span><span class="sig-name descname"><span class="pre">MPSIntrinEmitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_row_warps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_col_warps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_row_tiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_col_tiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Metal simdgroup MMA intrinsic emitter for GEMM operations.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>a_dtype</strong> (<em>str</em>)</p></li>
@@ -768,12 +769,14 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.get_thread_binding">
 <span class="sig-name descname"><span class="pre">get_thread_binding</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.get_thread_binding" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the thread index expression for the current kernel.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_a">
 <span class="sig-name descname"><span class="pre">ldmatrix_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_shared_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_a" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Load matrix A tiles from shared memory into simdgroup local buffers.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>A_shared_buf</strong> (<em>tvm.tirx.Buffer</em><em> | </em><em>tvm.tirx.BufferRegion</em>)</p>
 </dd>
@@ -783,7 +786,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_b">
 <span class="sig-name descname"><span class="pre">ldmatrix_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_shared_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_b" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Load matrix B tiles from shared memory into simdgroup local buffers.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>B_shared_buf</strong> (<em>tvm.tirx.Buffer</em><em> | </em><em>tvm.tirx.BufferRegion</em>)</p>
 </dd>
@@ -793,22 +797,26 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.mma">
 <span class="sig-name descname"><span class="pre">mma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_local_buf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.mma" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Perform simdgroup matrix multiply-accumulate: C += A * B.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simdgroup_copy">
 <span class="sig-name descname"><span class="pre">simdgroup_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_simd_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_store</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simdgroup_copy" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Copy between simdgroup local buffers and shared/global memory.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simd_store">
 <span class="sig-name descname"><span class="pre">simd_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_simd_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_dst</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simd_store" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Store simdgroup local buffer to shared/global memory.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simd_load">
 <span class="sig-name descname"><span class="pre">simd_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_simd_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simd_load" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Load shared/global memory into simdgroup local buffer.</p>
+</dd></dl>
 
 </dd></dl>
 

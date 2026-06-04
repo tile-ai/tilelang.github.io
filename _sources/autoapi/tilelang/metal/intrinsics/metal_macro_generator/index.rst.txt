@@ -17,6 +17,9 @@ Module Contents
 
 .. py:class:: MPSIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float32', a_transposed = False, b_transposed = False, block_row_warps = 1, block_col_warps = 1, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 32, thread_var = None)
 
+   Metal simdgroup MMA intrinsic emitter for GEMM operations.
+
+
    .. py:attribute:: WARP_SIZE
       :value: 32
 
@@ -104,22 +107,43 @@ Module Contents
 
    .. py:method:: get_thread_binding()
 
+      Return the thread index expression for the current kernel.
+
+
 
    .. py:method:: ldmatrix_a(A_local_buf, A_shared_buf, ki)
+
+      Load matrix A tiles from shared memory into simdgroup local buffers.
+
 
 
    .. py:method:: ldmatrix_b(B_local_buf, B_shared_buf, ki)
 
+      Load matrix B tiles from shared memory into simdgroup local buffers.
+
+
 
    .. py:method:: mma(A_local_buf, B_local_buf, C_local_buf)
+
+      Perform simdgroup matrix multiply-accumulate: C += A * B.
+
 
 
    .. py:method:: simdgroup_copy(C_simd_buf, C_dst, is_store=True)
 
+      Copy between simdgroup local buffers and shared/global memory.
+
+
 
    .. py:method:: simd_store(C_simd_buf, C_dst)
 
+      Store simdgroup local buffer to shared/global memory.
+
+
 
    .. py:method:: simd_load(C_simd_buf, C_src)
+
+      Load shared/global memory into simdgroup local buffer.
+
 
 
