@@ -1,0 +1,86 @@
+tilelang.backend.execution_backend
+==================================
+
+.. py:module:: tilelang.backend.execution_backend
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.backend.execution_backend.TargetPredicate
+   tilelang.backend.execution_backend.AvailabilityCheck
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.backend.execution_backend.ExecutionBackendSpec
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.backend.execution_backend.canonicalize_execution_backend
+   tilelang.backend.execution_backend.register_execution_backend
+   tilelang.backend.execution_backend.register_lazy_execution_backends
+   tilelang.backend.execution_backend.allowed_backends_for_target
+   tilelang.backend.execution_backend.resolve_execution_backend
+   tilelang.backend.execution_backend.resolve_execution_backend_spec
+
+
+Module Contents
+---------------
+
+.. py:data:: TargetPredicate
+
+.. py:data:: AvailabilityCheck
+
+.. py:function:: canonicalize_execution_backend(name)
+
+.. py:class:: ExecutionBackendSpec
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: is_available
+      :type:  AvailabilityCheck
+
+
+   .. py:attribute:: supports_target
+      :type:  TargetPredicate | None
+      :value: None
+
+
+
+   .. py:attribute:: enable_host_codegen
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: enable_device_compile
+      :type:  bool
+      :value: False
+
+
+
+   .. py:method:: matches(target)
+
+
+.. py:function:: register_execution_backend(target_kind, spec, *, override = False)
+
+.. py:function:: register_lazy_execution_backends(target_kind, import_path)
+
+.. py:function:: allowed_backends_for_target(target, *, include_unavailable = True)
+
+.. py:function:: resolve_execution_backend(requested, target)
+
+.. py:function:: resolve_execution_backend_spec(requested, target)
+
