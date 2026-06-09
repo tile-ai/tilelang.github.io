@@ -689,19 +689,22 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.transform.LowerLDGSTG" title="tilelang.cuda.transform.LowerLDGSTG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerLDGSTG</span></code></a>()</p></td>
 <td><p>Lower Ramp-based global memory load/store to ldg/stg intrinsics.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.transform.MarkCudaSyncCalls" title="tilelang.cuda.transform.MarkCudaSyncCalls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MarkCudaSyncCalls</span></code></a>([have_pdl])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.transform.LowerPTXAsyncCopy" title="tilelang.cuda.transform.LowerPTXAsyncCopy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerPTXAsyncCopy</span></code></a>()</p></td>
+<td><p>Lower eligible global-&gt;shared copies into PTX <cite>cp.async</cite> on CUDA.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.transform.MarkCudaSyncCalls" title="tilelang.cuda.transform.MarkCudaSyncCalls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MarkCudaSyncCalls</span></code></a>([have_pdl])</p></td>
 <td><p>MarkCudaSyncCalls</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.transform.InjectFenceProxy" title="tilelang.cuda.transform.InjectFenceProxy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InjectFenceProxy</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.transform.InjectFenceProxy" title="tilelang.cuda.transform.InjectFenceProxy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InjectFenceProxy</span></code></a>()</p></td>
 <td><p>InjectFenceProxy</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.transform.InjectTcgen05Fence" title="tilelang.cuda.transform.InjectTcgen05Fence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InjectTcgen05Fence</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.transform.InjectTcgen05Fence" title="tilelang.cuda.transform.InjectTcgen05Fence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InjectTcgen05Fence</span></code></a>()</p></td>
 <td><p>Inject tcgen05.fence::before_thread_sync / after_thread_sync at</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.transform.AnnotateWarpGroupRegAlloc" title="tilelang.cuda.transform.AnnotateWarpGroupRegAlloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AnnotateWarpGroupRegAlloc</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.transform.AnnotateWarpGroupRegAlloc" title="tilelang.cuda.transform.AnnotateWarpGroupRegAlloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AnnotateWarpGroupRegAlloc</span></code></a>()</p></td>
 <td><p>Inject set_max_nreg calls into warp-specialized functions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.transform.PersistThreadblock" title="tilelang.cuda.transform.PersistThreadblock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PersistThreadblock</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.transform.PersistThreadblock" title="tilelang.cuda.transform.PersistThreadblock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PersistThreadblock</span></code></a>()</p></td>
 <td><p>PersistThreadblock</p></td>
 </tr>
 </tbody>
@@ -804,6 +807,27 @@ into explicit ldg32/64/128/256 and stg32/64/128/256 intrinsics for better codege
 - Supports predicated stores (if in then case)
 - Skips loads in async scope (will be lowered to cp.async)
 - Only enabled for CUDA targets</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fpass</strong> – The result pass</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.transform.Pass</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cuda.transform.LowerPTXAsyncCopy">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cuda.transform.</span></span><span class="sig-name descname"><span class="pre">LowerPTXAsyncCopy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.transform.LowerPTXAsyncCopy" title="Link to this definition">¶</a></dt>
+<dd><p>Lower eligible global-&gt;shared copies into PTX <cite>cp.async</cite> on CUDA.</p>
+<p>When enabled (pass config <cite>tl.enable_async_copy</cite>, default True), this pass
+may rewrite plain user-written global-&gt;shared <cite>BufferStore</cite> patterns (e.g.
+SIMT copies in <cite>T.Parallel</cite>) into <cite>tir.ptx_cp_async</cite>, and insert
+<cite>tir.ptx_commit_group</cite> + <cite>tir.ptx_wait_group(0)</cite> to preserve synchronous
+semantics for normal stores. If explicit commit/wait intrinsics already
+exist, the pass avoids duplicating them (and may insert a missing commit
+immediately before an existing wait to cover injected <cite>cp.async</cite>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fpass</strong> – The result pass</p>
@@ -952,6 +976,7 @@ producer and consumer branches of warp-specialized code.</p>
 <li><a class="reference internal" href="#tilelang.cuda.transform.LowerSharedBarrier"><code class="docutils literal notranslate"><span class="pre">LowerSharedBarrier()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.transform.FuseMBarrierArriveExpectTx"><code class="docutils literal notranslate"><span class="pre">FuseMBarrierArriveExpectTx()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.transform.LowerLDGSTG"><code class="docutils literal notranslate"><span class="pre">LowerLDGSTG()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.transform.LowerPTXAsyncCopy"><code class="docutils literal notranslate"><span class="pre">LowerPTXAsyncCopy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.transform.MarkCudaSyncCalls"><code class="docutils literal notranslate"><span class="pre">MarkCudaSyncCalls()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.transform.InjectFenceProxy"><code class="docutils literal notranslate"><span class="pre">InjectFenceProxy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.transform.InjectTcgen05Fence"><code class="docutils literal notranslate"><span class="pre">InjectTcgen05Fence()</span></code></a></li>
