@@ -13,9 +13,9 @@ tilelang.contrib.cutedsl.grid_sync
 
    The barrier:
    1. __syncthreads() within each block
-   2. Thread 0 atomically increments global counter, spin-waits until all blocks arrive
-   3. Thread 0 resets counter
-   4. __syncthreads() within each block
+   2. All threads execute a device-scope fence for prior global writes
+   3. Thread 0 atomically increments global counter and spin-waits until release
+   4. All threads wait for thread 0 and execute a device-scope fence before return
 
 
 

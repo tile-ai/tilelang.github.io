@@ -76,7 +76,7 @@ Module Contents
 
 .. py:function:: get_annotated_mod(func_or_mod, target = 'auto', target_host = None, model_type = 'all')
 
-.. py:function:: pythonic_expr(expr, dtype_map = None, ignore_cast = False, floor_div_op = '/')
+.. py:function:: pythonic_expr(expr, dtype_map = None, ignore_cast = False, floor_div_op = '/', func_name_map = None)
 
    Converts a TVM PrimExpr into a Python-style string, correctly handling operator precedence.
 
@@ -87,6 +87,8 @@ Module Contents
                         behavior (suitable for generating C/C++ expressions). For generating
                         Python code where integer division is required (e.g. grid/block),
                         pass '//' explicitly.
+   :param func_name_map: Optional mapping for rendered helper function names, e.g.
+                         {"max": "std::max"} when generating C++.
 
    :returns: A string representation of the expression.
 

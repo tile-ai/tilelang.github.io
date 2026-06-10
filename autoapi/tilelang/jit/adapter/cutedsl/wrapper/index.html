@@ -1296,8 +1296,16 @@
 
 <dl class="py data">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.wrapper.CUBIN_FAKE_TENSOR_TEMPLATE">
-<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.cutedsl.wrapper.</span></span><span class="sig-name descname"><span class="pre">CUBIN_FAKE_TENSOR_TEMPLATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'</span>&#160; <span class="pre">__fake_{arg_name}__</span> <span class="pre">=</span> <span class="pre">make_fake_compact_tensor(_DTYPE_MAP[str({arg_name}.dtype)],...</span></em><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.wrapper.CUBIN_FAKE_TENSOR_TEMPLATE" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.cutedsl.wrapper.</span></span><span class="sig-name descname"><span class="pre">CUBIN_FAKE_TENSOR_TEMPLATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#tilelang.jit.adapter.cutedsl.wrapper.CUBIN_FAKE_TENSOR_TEMPLATE" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;  __fake_{arg_name}__ = make_fake_compact_tensor(</span>
+<span class="sd">      {dtype_expr},</span>
+<span class="sd">      _positive_fake_shape({arg_name}.shape),</span>
+<span class="sd">      stride_order={arg_name}.dim_order()[::-1],</span>
+<span class="sd">      assumed_align=16,</span>
+<span class="sd">  )&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details></dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.cutedsl.wrapper.CUBIN_GEN_CODE_TEMPLATE">
@@ -1395,6 +1403,9 @@
 <span class="sd">      &quot;torch.int16&quot;: cutlass.Int16,</span>
 <span class="sd">      &quot;torch.uint16&quot;: cutlass.Uint16,</span>
 <span class="sd">      &quot;torch.uchar&quot;: cutlass.Uint8}}</span>
+
+<span class="sd">  def _positive_fake_shape(shape):</span>
+<span class="sd">    return tuple(max(int(dim), 1) for dim in tuple(shape))</span>
 
 <span class="sd">{cubin_gen_code}</span>
 

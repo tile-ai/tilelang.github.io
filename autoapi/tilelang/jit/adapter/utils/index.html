@@ -706,7 +706,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.get_annotated_mod" title="tilelang.jit.adapter.utils.get_annotated_mod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_annotated_mod</span></code></a>(func_or_mod[, target, target_host, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.pythonic_expr" title="tilelang.jit.adapter.utils.pythonic_expr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pythonic_expr</span></code></a>(expr[, dtype_map, ignore_cast, floor_div_op])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.pythonic_expr" title="tilelang.jit.adapter.utils.pythonic_expr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pythonic_expr</span></code></a>(expr[, dtype_map, ignore_cast, ...])</p></td>
 <td><p>Converts a TVM PrimExpr into a Python-style string, correctly handling operator precedence.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.utils.maybe_desc_name" title="tilelang.jit.adapter.utils.maybe_desc_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maybe_desc_name</span></code></a>(name, matches, i[, desc_name_map])</p></td>
@@ -903,7 +903,7 @@ def kernel(arg1: cute.Tensor, arg2: int):</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.utils.pythonic_expr">
-<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.utils.</span></span><span class="sig-name descname"><span class="pre">pythonic_expr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_cast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floor_div_op</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.utils.pythonic_expr" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.utils.</span></span><span class="sig-name descname"><span class="pre">pythonic_expr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_cast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floor_div_op</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.utils.pythonic_expr" title="Link to this definition">¶</a></dt>
 <dd><p>Converts a TVM PrimExpr into a Python-style string, correctly handling operator precedence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -915,6 +915,8 @@ def kernel(arg1: cute.Tensor, arg2: int):</p>
 behavior (suitable for generating C/C++ expressions). For generating
 Python code where integer division is required (e.g. grid/block),
 pass ‘//’ explicitly.</p></li>
+<li><p><strong>func_name_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>] </em><em>| </em><em>None</em>) – Optional mapping for rendered helper function names, e.g.
+{“max”: “std::max”} when generating C++.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

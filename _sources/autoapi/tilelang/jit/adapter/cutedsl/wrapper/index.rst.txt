@@ -705,7 +705,25 @@ Module Contents
 
 
 .. py:data:: CUBIN_FAKE_TENSOR_TEMPLATE
-   :value: '  __fake_{arg_name}__ = make_fake_compact_tensor(_DTYPE_MAP[str({arg_name}.dtype)],...
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """  __fake_{arg_name}__ = make_fake_compact_tensor(
+            {dtype_expr},
+            _positive_fake_shape({arg_name}.shape),
+            stride_order={arg_name}.dim_order()[::-1],
+            assumed_align=16,
+        )"""
+
+   .. raw:: html
+
+      </details>
+
 
 
 .. py:data:: CUBIN_GEN_CODE_TEMPLATE
@@ -819,6 +837,9 @@ Module Contents
             "torch.int16": cutlass.Int16,
             "torch.uint16": cutlass.Uint16,
             "torch.uchar": cutlass.Uint8}}
+      
+        def _positive_fake_shape(shape):
+          return tuple(max(int(dim), 1) for dim in tuple(shape))
       
       {cubin_gen_code}
       

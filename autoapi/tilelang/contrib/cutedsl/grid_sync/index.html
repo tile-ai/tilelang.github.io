@@ -662,9 +662,9 @@ counter declared via llvm.mlir.global. Requires cooperative kernel launch
 (cuLaunchCooperativeKernel) to guarantee all thread blocks are resident.</p>
 <p>The barrier:
 1. __syncthreads() within each block
-2. Thread 0 atomically increments global counter, spin-waits until all blocks arrive
-3. Thread 0 resets counter
-4. __syncthreads() within each block</p>
+2. All threads execute a device-scope fence for prior global writes
+3. Thread 0 atomically increments global counter and spin-waits until release
+4. All threads wait for thread 0 and execute a device-scope fence before return</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">

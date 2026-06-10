@@ -685,22 +685,31 @@ bitcast, tensor construction, warp election, barrier sync, and FP16 packing.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.bitcast" title="tilelang.contrib.cutedsl.utils.bitcast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bitcast</span></code></a>(value, target_dtype)</p></td>
 <td><p>Reinterpret the bits of a value as a different type.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.make_filled_tensor" title="tilelang.contrib.cutedsl.utils.make_filled_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_filled_tensor</span></code></a>(shape, value)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.cast_tensor" title="tilelang.contrib.cutedsl.utils.cast_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cast_tensor</span></code></a>(value, dtype)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.make_tensor_at_offset" title="tilelang.contrib.cutedsl.utils.make_tensor_at_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_tensor_at_offset</span></code></a>(ptr, offset, shape[, div_by])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.as_tensor_ssa" title="tilelang.contrib.cutedsl.utils.as_tensor_ssa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_tensor_ssa</span></code></a>(value)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.handle_add_byte_offset" title="tilelang.contrib.cutedsl.utils.handle_add_byte_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">handle_add_byte_offset</span></code></a>(handle, byte_offset)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.as_rmem_tensor" title="tilelang.contrib.cutedsl.utils.as_rmem_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_rmem_tensor</span></code></a>(value, shape, dtype)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.shuffle_elect" title="tilelang.contrib.cutedsl.utils.shuffle_elect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shuffle_elect</span></code></a>(thread_extent)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.make_filled_tensor" title="tilelang.contrib.cutedsl.utils.make_filled_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_filled_tensor</span></code></a>(shape, value[, dtype])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.sync_thread_partial" title="tilelang.contrib.cutedsl.utils.sync_thread_partial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_thread_partial</span></code></a>([barrier_id, thread_count])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.make_tensor_at_offset" title="tilelang.contrib.cutedsl.utils.make_tensor_at_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_tensor_at_offset</span></code></a>(ptr, offset, shape[, div_by])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.pack_half2" title="tilelang.contrib.cutedsl.utils.pack_half2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pack_half2</span></code></a>(x, y)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.handle_add_byte_offset" title="tilelang.contrib.cutedsl.utils.handle_add_byte_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">handle_add_byte_offset</span></code></a>(handle, byte_offset)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.shuffle_elect" title="tilelang.contrib.cutedsl.utils.shuffle_elect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shuffle_elect</span></code></a>(thread_extent)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.sync_thread_partial" title="tilelang.contrib.cutedsl.utils.sync_thread_partial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_thread_partial</span></code></a>([barrier_id, thread_count])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.pack_half2" title="tilelang.contrib.cutedsl.utils.pack_half2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pack_half2</span></code></a>(x, y)</p></td>
 <td><p>Pack two half-precision (fp16) values into a single 32-bit value.</p></td>
 </tr>
 </tbody>
@@ -743,8 +752,23 @@ Equivalent to C’s (<a href="#id1"><span class="problematic" id="id2">*</span><
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.cast_tensor">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">cast_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.cast_tensor" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.as_tensor_ssa">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">as_tensor_ssa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.as_tensor_ssa" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.as_rmem_tensor">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">as_rmem_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.as_rmem_tensor" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.make_filled_tensor">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">make_filled_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.make_filled_tensor" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">make_filled_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.make_filled_tensor" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -847,6 +871,9 @@ as raw data and concatenating them.</p>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.BYTES_PER_POINTER"><code class="docutils literal notranslate"><span class="pre">BYTES_PER_POINTER</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.type_map"><code class="docutils literal notranslate"><span class="pre">type_map</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.bitcast"><code class="docutils literal notranslate"><span class="pre">bitcast()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.cast_tensor"><code class="docutils literal notranslate"><span class="pre">cast_tensor()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.as_tensor_ssa"><code class="docutils literal notranslate"><span class="pre">as_tensor_ssa()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.as_rmem_tensor"><code class="docutils literal notranslate"><span class="pre">as_rmem_tensor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.make_filled_tensor"><code class="docutils literal notranslate"><span class="pre">make_filled_tensor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.make_tensor_at_offset"><code class="docutils literal notranslate"><span class="pre">make_tensor_at_offset()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.handle_add_byte_offset"><code class="docutils literal notranslate"><span class="pre">handle_add_byte_offset()</span></code></a></li>
