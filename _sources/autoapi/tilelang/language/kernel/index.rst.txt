@@ -24,6 +24,7 @@ Functions
 .. autoapisummary::
 
    tilelang.language.kernel.Kernel
+   tilelang.language.kernel.ClusterKernel
    tilelang.language.kernel.CUDASourceCodeKernel
    tilelang.language.kernel.get_thread_binding
    tilelang.language.kernel.get_thread_bindings
@@ -196,9 +197,15 @@ Module Contents
       Returns the total number of threads.
 
 
-.. py:function:: Kernel(*blocks, threads = None, cluster_dims = None, is_cpu = False, prelude = None)
+.. py:function:: Kernel(*blocks, threads = None, prelude = None)
 
-   Tools to quickly construct a GPU kernel launch frame.
+   Tools to quickly construct a kernel launch frame.
+
+   The launch nest is emitted in a target-neutral form (thread_binding
+   For loops); each backend pipeline materializes it via
+   MaterializeKernelLaunch. Backends without SIMT (e.g. CPU) simply
+   ignore the thread extents at compile time, so the same kernel can be
+   compiled for any target.
 
    :param blocks: A list of extent, can be 1-3 dimension, representing gridDim.(x|y|z)
    :type blocks: int
@@ -206,11 +213,6 @@ Module Contents
                    Or a list of integers representing blockDim.(x|y|z)
                    if the value is -1, we skip the threadIdx.x binding.
    :type threads: int
-   :param cluster_dims: The cluster dimensions for SM90+ cluster launch.
-                        For example, use 2 or (2, 1, 1) to create 2-CTA clusters.
-                        When specified, the kernel will be launched using cudaLaunchKernelEx
-                        with cudaLaunchAttributeClusterDimension.
-   :type cluster_dims: int | tuple[int, int, int] | list[int] | None
    :param prelude: The import c code of the kernel,
                    will be injected before the generated kernel code.
    :type prelude: str
@@ -236,11 +238,34 @@ Module Contents
            tx, ty = T.get_thread_bindings()
            ...
 
-   Emit a CPU kernel where thread bindings are skipped:
+
+.. py:function:: ClusterKernel(*blocks, cluster_dims, threads = None, prelude = None)
+
+   Construct a kernel launch frame with a CUDA thread block cluster
+   (SM90+ only).
+
+   This is the CUDA-specific variant of :func:`Kernel`: identical launch
+   semantics and bindings, plus a ``cluster_dims`` annotation. The kernel
+   will be launched with cudaLaunchKernelEx using
+   cudaLaunchAttributeClusterDimension.
+
+   :param blocks: A list of extent, can be 1-3 dimension, representing gridDim.(x|y|z)
+   :type blocks: int
+   :param cluster_dims: The cluster dimensions. For example, use 2 or (2, 1, 1) to create
+                        2-CTA clusters.
+   :type cluster_dims: int | tuple[int, int, int] | list[int]
+   :param threads: A integer representing blockDim.x
+                   Or a list of integers representing blockDim.(x|y|z)
+   :type threads: int
+   :param prelude: The import c code of the kernel,
+                   will be injected before the generated kernel code.
+   :type prelude: str
+
+   .. rubric:: Examples
 
    .. code-block:: python
 
-       with T.Kernel(loop_extent, is_cpu=True) as (i,):
+       with T.ClusterKernel(grid_x, grid_y, cluster_dims=2, threads=128) as (bx, by):
            ...
 
 

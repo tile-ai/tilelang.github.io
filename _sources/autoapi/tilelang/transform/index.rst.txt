@@ -44,6 +44,7 @@ Functions
    tilelang.transform.LegalizeSafeMemoryAccess
    tilelang.transform.LowerAccessPtr
    tilelang.transform.MakePackedAPI
+   tilelang.transform.MaterializeKernelLaunch
    tilelang.transform.AnnotateDeviceRegions
    tilelang.transform.SplitHostDevice
    tilelang.transform.AnnotateReadOnlyParams
@@ -200,6 +201,23 @@ Package Contents
 .. py:function:: MakePackedAPI()
 
    MakePackedAPI
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: MaterializeKernelLaunch(lower_thread_binding = True)
+
+   Materialize the target-neutral kernel launch nest (thread_binding
+   For loops emitted by T.Kernel) into a backend-specific form. Each
+   backend pipeline decides the mode for itself:
+
+   :param lower_thread_binding: If True (SIMT backends, e.g. CUDA/ROCm/Metal), lower the
+                                blockIdx.*/threadIdx.* loops into thread_extent AttrStmts.
+                                If False (backends without SIMT, e.g. CPU), lower blockIdx.*
+                                loops into plain serial For loops and ignore threadIdx.* loops
+                                (their extents are dropped; the loop vars are pinned to 0).
+   :type lower_thread_binding: bool
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
