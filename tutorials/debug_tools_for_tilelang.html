@@ -606,6 +606,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/deprecated/index.html">tilelang.utils.deprecated</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/device/index.html">tilelang.utils.device</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/language/index.html">tilelang.utils.language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/pass_diff/index.html">tilelang.utils.pass_diff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/pass_diff_hook/index.html">tilelang.utils.pass_diff_hook</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/sparse/index.html">tilelang.utils.sparse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/utils/tensor/index.html">tilelang.utils.tensor</a></li>
 </ul>
@@ -835,6 +837,125 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 </div>
 </section>
 </section>
+<section id="pass-diff-observing-ir-changes-across-passes">
+<h2>Pass Diff: Observing IR Changes Across Passes<a class="headerlink" href="#pass-diff-observing-ir-changes-across-passes" title="Link to this heading">¶</a></h2>
+<p>TileLang programs are lowered through a sequence of compiler <em>passes</em>, each of which may transform the IR. Understanding exactly what each pass changes is essential for debugging incorrect transformations, unexpected optimizations, or missing passes.</p>
+<p>TileLang provides a built-in <strong>Pass Diff</strong> tool that automatically captures the IR before and after every pass and generates a human-readable diff report. It works transparently — no code changes are required.</p>
+<section id="quick-start-environment-variable">
+<h3>Quick Start (Environment Variable)<a class="headerlink" href="#quick-start-environment-variable" title="Link to this heading">¶</a></h3>
+<p>The simplest way to enable pass diff is to set the <code class="docutils literal notranslate"><span class="pre">TILELANG_PASS_DIFF</span></code> environment variable before running your script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Colored diff printed to the terminal</span>
+<span class="nv">TILELANG_PASS_DIFF</span><span class="o">=</span>terminal<span class="w"> </span>python3<span class="w"> </span>my_script.py
+
+<span class="c1"># Generate an HTML report</span>
+<span class="nv">TILELANG_PASS_DIFF</span><span class="o">=</span>html<span class="w"> </span>python3<span class="w"> </span>my_script.py
+
+<span class="c1"># Both terminal output and HTML report</span>
+<span class="nv">TILELANG_PASS_DIFF</span><span class="o">=</span>both<span class="w"> </span>python3<span class="w"> </span>my_script.py
+
+<span class="c1"># Disabled (default — zero overhead)</span>
+python3<span class="w"> </span>my_script.py
+</pre></div>
+</div>
+<p>The HTML report is saved to the directory specified by the <code class="docutils literal notranslate"><span class="pre">TILELANG_PASS_DIFF_OUTPUT</span></code> environment variable (default: <code class="docutils literal notranslate"><span class="pre">tmp/pass_diff_output</span></code>). Each run produces a timestamped file, e.g. <code class="docutils literal notranslate"><span class="pre">pass_diff_20260611_205421.html</span></code>.</p>
+</section>
+<section id="environment-variables">
+<h3>Environment Variables<a class="headerlink" href="#environment-variables" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TILELANG_PASS_DIFF</span></code></p></td>
+<td><p>Enable pass diff. Values: <code class="docutils literal notranslate"><span class="pre">0</span></code> (off), <code class="docutils literal notranslate"><span class="pre">terminal</span></code>, <code class="docutils literal notranslate"><span class="pre">html</span></code>, <code class="docutils literal notranslate"><span class="pre">both</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TILELANG_PASS_DIFF_OUTPUT</span></code></p></td>
+<td><p>Output directory for HTML reports</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tmp/pass_diff_output</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="html-report-features">
+<h3>HTML Report Features<a class="headerlink" href="#html-report-features" title="Link to this heading">¶</a></h3>
+<p>The HTML report provides a rich diff viewer with:</p>
+<ul class="simple">
+<li><p><strong>Side-by-side before/after view</strong> for each pass, with color-coded insertions and deletions</p></li>
+<li><p><strong>Collapsible pass sections</strong> — click a pass header to expand or collapse its diff</p></li>
+<li><p><strong>Expand context</strong> — when a diff hunk hides unchanged lines, a <code class="docutils literal notranslate"><span class="pre">⋯</span> <span class="pre">Show</span> <span class="pre">N</span> <span class="pre">lines</span> <span class="pre">above/below</span></code> control lets you reveal them</p></li>
+<li><p><strong>Dark/Light theme toggle</strong> — the default dark theme can be switched via the toolbar button; the preference is persisted across sessions</p></li>
+<li><p><strong>Copy buttons</strong> — copy the before or after IR of any pass to the clipboard</p></li>
+<li><p><strong>Summary statistics</strong> — total passes, changed passes, insertions, and deletions shown in the toolbar</p></li>
+</ul>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../_images/pass_diff_html.png"><img alt="Screenshot of the Pass Diff HTML report" src="../_images/pass_diff_html.png" style="width: 600px;" />
+</a>
+</figure>
+</section>
+<section id="programmatic-api">
+<h3>Programmatic API<a class="headerlink" href="#programmatic-api" title="Link to this heading">¶</a></h3>
+<p>For more fine-grained control, you can use the <code class="docutils literal notranslate"><span class="pre">pass_diff</span></code> function directly in your code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.utils.pass_diff</span><span class="w"> </span><span class="kn">import</span> <span class="n">pass_diff</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tilelang</span><span class="w"> </span><span class="kn">import</span> <span class="n">tvm</span>
+
+<span class="c1"># Diff a single pass</span>
+<span class="n">pass_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">ThreadSync</span><span class="p">(</span><span class="s2">&quot;shared&quot;</span><span class="p">))</span>
+
+<span class="c1"># Diff a chain of named passes</span>
+<span class="n">pass_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;AnnotateDeviceRegions&quot;</span><span class="p">,</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">AnnotateDeviceRegions</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s2">&quot;SplitHostDevice&quot;</span><span class="p">,</span>       <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">SplitHostDevice</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s2">&quot;ThreadSync&quot;</span><span class="p">,</span>            <span class="n">tilelang</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">ThreadSync</span><span class="p">(</span><span class="s2">&quot;shared&quot;</span><span class="p">)),</span>
+<span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">func</span></code></p></td>
+<td><p>A <code class="docutils literal notranslate"><span class="pre">PrimFunc</span></code> or <code class="docutils literal notranslate"><span class="pre">IRModule</span></code> to run passes on</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">passes</span></code></p></td>
+<td><p>A single pass or a list of <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">pass)</span></code> tuples</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;terminal&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;html&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;both&quot;</span></code> (default: <code class="docutils literal notranslate"><span class="pre">&quot;terminal&quot;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">context</span></code></p></td>
+<td><p>Number of context lines in the unified diff (default: 3)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">html_path</span></code></p></td>
+<td><p>Output path for HTML report (default: <code class="docutils literal notranslate"><span class="pre">&quot;pass_diff_report.html&quot;</span></code>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="how-it-works">
+<h3>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h3>
+<p>When enabled, the hook monkey-patches <code class="docutils literal notranslate"><span class="pre">tvm.ir.transform.Pass.__call__</span></code> at import time. Every pass invocation is intercepted to capture the IR before and after, compute a unified diff, and emit the result in the chosen format. When disabled (the default), no patching occurs and there is zero overhead.</p>
+</section>
+<section id="tips">
+<h3>Tips<a class="headerlink" href="#tips" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Use <code class="docutils literal notranslate"><span class="pre">terminal</span></code> mode</strong> for quick checks — the colored diff is printed as passes run, so you can see changes in real time.</p></li>
+<li><p><strong>Use <code class="docutils literal notranslate"><span class="pre">html</span></code> mode</strong> for thorough analysis — the report lets you navigate across many passes, expand hidden context, and copy IR snippets.</p></li>
+<li><p><strong>Combine with <code class="docutils literal notranslate"><span class="pre">TILELANG_PASS_DIFF_OUTPUT</span></code></strong> to direct reports to a specific location, e.g. when running in CI or comparing across runs.</p></li>
+<li><p><strong>The hook captures all passes</strong> in the lowering pipeline, including those triggered internally by <code class="docutils literal notranslate"><span class="pre">tilelang.compile()</span></code>. This makes it useful for understanding the full compilation flow.</p></li>
+</ul>
+</section>
+</section>
 <section id="autodd-automatic-delta-debugging">
 <h2>AutoDD: Automatic Delta Debugging<a class="headerlink" href="#autodd-automatic-delta-debugging" title="Link to this heading">¶</a></h2>
 <p>When dealing with complex TileLang programs that produce errors, manually isolating the bug can be tedious. <strong>AutoDD</strong> (Automatic Delta Debugging) is a built-in tool that automatically simplifies your program to the minimal code needed to reproduce a specific error.</p>
@@ -942,8 +1063,8 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 <li><p><strong>Slow Reducers</strong>: Remove arbitrary expressions, reduce integer constants</p></li>
 </ol>
 </section>
-<section id="tips">
-<h3>Tips<a class="headerlink" href="#tips" title="Link to this heading">¶</a></h3>
+<section id="id1">
+<h3>Tips<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p><strong>Error message matching</strong>: Use a unique substring from the error output</p></li>
 <li><p><strong>Timeout</strong>: Increase <code class="docutils literal notranslate"><span class="pre">--timeout</span></code> for programs with long compilation times</p></li>
@@ -963,7 +1084,7 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 </section>
 <section id="conclusion">
 <h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">¶</a></h2>
-<p>By carefully examining intermediate representations (IR) before final code generation—and by leveraging runtime printing through <code class="docutils literal notranslate"><span class="pre">T.print</span></code>—one can quickly diagnose where index calculations, copy logic, or other kernel operations deviate from the intended behavior. This two-pronged approach (inspecting IR transformations and using runtime prints) is often sufficient for resolving generation and correctness issues in TileLang programs.</p>
+<p>By carefully examining intermediate representations (IR) before final code generation—and by leveraging runtime printing through <code class="docutils literal notranslate"><span class="pre">T.print</span></code>—one can quickly diagnose where index calculations, copy logic, or other kernel operations deviate from the intended behavior. The <strong>Pass Diff</strong> tool complements this by providing automatic, pass-by-pass visibility into every IR transformation, making it easy to pinpoint exactly which pass introduces an unexpected change. This three-pronged approach (inspecting IR transformations, observing pass-level diffs, and using runtime prints) is often sufficient for resolving generation and correctness issues in TileLang programs.</p>
 <p>For complex programs where manual debugging is tedious, <strong>AutoDD</strong> provides automated delta debugging to quickly isolate the minimal code that reproduces a bug.</p>
 <p>For advanced performance tuning (e.g., analyzing memory bandwidth or occupancy), more specialized profiling tools such as <strong>Nsight Compute</strong>, <strong>rocProf</strong>, or vendor-specific profilers may be required. Those aspects will be covered in future documents.</p>
 </section>
@@ -1034,6 +1155,15 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 <li><a class="reference internal" href="#visual-layout-inference-for-tilelang">Visual Layout Inference For TileLang</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#pass-diff-observing-ir-changes-across-passes">Pass Diff: Observing IR Changes Across Passes</a><ul>
+<li><a class="reference internal" href="#quick-start-environment-variable">Quick Start (Environment Variable)</a></li>
+<li><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
+<li><a class="reference internal" href="#html-report-features">HTML Report Features</a></li>
+<li><a class="reference internal" href="#programmatic-api">Programmatic API</a></li>
+<li><a class="reference internal" href="#how-it-works">How It Works</a></li>
+<li><a class="reference internal" href="#tips">Tips</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#autodd-automatic-delta-debugging">AutoDD: Automatic Delta Debugging</a><ul>
 <li><a class="reference internal" href="#what-is-delta-debugging">What is Delta Debugging?</a></li>
 <li><a class="reference internal" href="#why-use-autodd">Why Use AutoDD?</a></li>
@@ -1041,7 +1171,7 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
 <li><a class="reference internal" href="#example">Example</a></li>
 <li><a class="reference internal" href="#how-autodd-works">How AutoDD Works</a></li>
-<li><a class="reference internal" href="#tips">Tips</a></li>
+<li><a class="reference internal" href="#id1">Tips</a></li>
 <li><a class="reference internal" href="#complete-example">Complete Example</a></li>
 </ul>
 </li>

@@ -1,0 +1,47 @@
+tilelang.utils.pass_diff_hook
+=============================
+
+.. py:module:: tilelang.utils.pass_diff_hook
+
+.. autoapi-nested-parse::
+
+   Framework-level pass diff hook.
+
+   When the ``TILELANG_PASS_DIFF`` environment variable is enabled, this module
+   monkey-patches ``tvm.ir.transform.Pass.__call__`` to automatically capture
+   IR before/after every pass and generate diff reports.
+
+   Usage (no code changes needed)::
+
+       TILELANG_PASS_DIFF=terminal python3 my_script.py   # colored terminal diff
+       TILELANG_PASS_DIFF=html python3 my_script.py       # HTML report
+       TILELANG_PASS_DIFF=both python3 my_script.py       # both
+       python3 my_script.py                               # off (zero overhead)
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.utils.pass_diff_hook.install_pass_diff_hook
+   tilelang.utils.pass_diff_hook.uninstall_pass_diff_hook
+
+
+Module Contents
+---------------
+
+.. py:function:: install_pass_diff_hook()
+
+   Install the pass diff hook if TILELANG_PASS_DIFF is enabled.
+
+   Called automatically from ``tilelang/__init__.py``. Safe to call
+   multiple times — only the first call has effect.
+
+
+.. py:function:: uninstall_pass_diff_hook()
+
+   Remove the pass diff hook and restore original Pass.__call__.
+
+

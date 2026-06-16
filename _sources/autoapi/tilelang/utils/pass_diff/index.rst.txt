@@ -1,0 +1,67 @@
+tilelang.utils.pass_diff
+========================
+
+.. py:module:: tilelang.utils.pass_diff
+
+.. autoapi-nested-parse::
+
+   IR pass diff tool — compare TIR before/after each pass in a chain.
+
+   Usage
+   -----
+   ::
+
+       from tilelang.utils.pass_diff import pass_diff
+
+       # Single pass, terminal colored diff
+       pass_diff(func, tilelang.transform.ThreadSync("shared"))
+
+       # Pass chain with named steps
+       pass_diff(func, [
+           ("AnnotateDeviceRegions", tvm.tirx.transform.AnnotateDeviceRegions()),
+           ("SplitHostDevice",       tvm.tirx.transform.SplitHostDevice()),
+           ("ThreadSync",            tilelang.transform.ThreadSync("shared")),
+       ])
+
+       # Generate HTML report
+       pass_diff(func, passes, mode="html")
+
+       # Both terminal + HTML
+       pass_diff(func, passes, mode="both")
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.utils.pass_diff.pass_diff
+
+
+Module Contents
+---------------
+
+.. py:function:: pass_diff(func_or_mod, passes, *, mode = 'terminal', context = 3, html_path = 'pass_diff_report.html')
+
+   Compare IR before and after each pass in a chain.
+
+   :param func_or_mod: The starting IR.
+   :type func_or_mod: PrimFunc or IRModule
+   :param passes: A single pass, a list of passes, or a list of (name, pass) pairs.
+                  If passes are not named, a default name is derived from the pass object.
+   :type passes: Pass or list[Pass] or list[tuple[str, Pass]]
+   :param mode: Output mode. ``"terminal"`` prints colored diff to stdout.
+                ``"html"`` generates an HTML file. ``"both"`` does both.
+   :type mode: {"terminal", "html", "both"}
+   :param context: Number of context lines in the unified diff (default 3).
+   :type context: int
+   :param html_path: Output path for HTML report (default ``pass_diff_report.html``).
+   :type html_path: str
+
+   :returns: One entry per pass step, each containing:
+             ``name``, ``before_script``, ``after_script``, ``diff_lines``,
+             ``insertions``, ``deletions``, ``changed``.
+   :rtype: list[dict]
+
+
