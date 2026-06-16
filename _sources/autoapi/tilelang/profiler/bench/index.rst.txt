@@ -16,7 +16,6 @@ Attributes
 
    tilelang.profiler.bench.IS_CUDA
    tilelang.profiler.bench.device
-   tilelang.profiler.bench.Event
 
 
 Classes
@@ -57,9 +56,7 @@ Module Contents
    :value: 'cuda:0'
 
 
-.. py:data:: Event
-
-.. py:function:: do_bench(fn, warmup = 25, rep = 100, _n_warmup = 0, _n_repeat = 0, quantiles = None, fast_flush = True, backend = 'event', return_mode = 'mean')
+.. py:function:: do_bench(fn, warmup = 25, rep = 100, _n_warmup = 0, _n_repeat = 0, quantiles = None, fast_flush = True, backend = 'event', return_mode = 'mean', device = None)
 
    Benchmark the runtime of a PyTorch function with L2 cache management.
 
@@ -78,6 +75,9 @@ Module Contents
    :param fast_flush: Use faster L2 cache flush with int32 vs int8 (default: True)
    :param backend: Profiler backend - "event" (CUDA events), "cupti", or "cudagraph" (default: "event")
    :param return_mode: Result aggregation method - "mean", "median", "min", or "max"
+   :param device: Optional CUDA device to benchmark on. When provided, CUDA
+                  events, streams, cache buffers, and synchronizations are scoped to
+                  that device.
 
    :returns: Runtime in milliseconds (float) or list of quantile values if quantiles specified
 

@@ -672,9 +672,6 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.profiler.bench.device" title="tilelang.profiler.bench.device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.profiler.bench.Event" title="tilelang.profiler.bench.Event"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Event</span></code></a></p></td>
-<td><p></p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -732,14 +729,9 @@
 <span class="sig-prename descclassname"><span class="pre">tilelang.profiler.bench.</span></span><span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cuda:0'</span></em><a class="headerlink" href="#tilelang.profiler.bench.device" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="tilelang.profiler.bench.Event">
-<span class="sig-prename descclassname"><span class="pre">tilelang.profiler.bench.</span></span><span class="sig-name descname"><span class="pre">Event</span></span><a class="headerlink" href="#tilelang.profiler.bench.Event" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.profiler.bench.do_bench">
-<span class="sig-prename descclassname"><span class="pre">tilelang.profiler.bench.</span></span><span class="sig-name descname"><span class="pre">do_bench</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warmup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n_warmup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n_repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_flush</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.profiler.bench.do_bench" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.profiler.bench.</span></span><span class="sig-name descname"><span class="pre">do_bench</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warmup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n_warmup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n_repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_flush</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.profiler.bench.do_bench" title="Link to this definition">¶</a></dt>
 <dd><p>Benchmark the runtime of a PyTorch function with L2 cache management.</p>
 <p>This function provides accurate GPU kernel timing by:
 - Clearing L2 cache between runs for consistent measurements
@@ -758,6 +750,9 @@
 <li><p><strong>fast_flush</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Use faster L2 cache flush with int32 vs int8 (default: True)</p></li>
 <li><p><strong>backend</strong> (<em>Literal</em><em>[</em><em>'event'</em><em>, </em><em>'cupti'</em><em>, </em><em>'cudagraph'</em><em>]</em>) – Profiler backend - “event” (CUDA events), “cupti”, or “cudagraph” (default: “event”)</p></li>
 <li><p><strong>return_mode</strong> (<em>Literal</em><em>[</em><em>'min'</em><em>, </em><em>'max'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>]</em>) – Result aggregation method - “mean”, “median”, “min”, or “max”</p></li>
+<li><p><strong>device</strong> (<em>int</em><em> | </em><em>torch.device</em><em> | </em><em>None</em>) – Optional CUDA device to benchmark on. When provided, CUDA
+events, streams, cache buffers, and synchronizations are scoped to
+that device.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -839,7 +834,6 @@
 </li>
 <li><a class="reference internal" href="#tilelang.profiler.bench.IS_CUDA"><code class="docutils literal notranslate"><span class="pre">IS_CUDA</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.profiler.bench.device"><code class="docutils literal notranslate"><span class="pre">device</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.profiler.bench.Event"><code class="docutils literal notranslate"><span class="pre">Event</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.profiler.bench.do_bench"><code class="docutils literal notranslate"><span class="pre">do_bench()</span></code></a></li>
 </ul>
 </li>
