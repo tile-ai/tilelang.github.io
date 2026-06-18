@@ -1,0 +1,251 @@
+tilelang.layout.cute
+====================
+
+.. py:module:: tilelang.layout.cute
+
+.. autoapi-nested-parse::
+
+   CuTe layout IR objects and layout-algebra Python API, in TileLang.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.layout.cute.PyIntTuple
+   tilelang.layout.cute.IntTupleLike
+   tilelang.layout.cute.ModeLike
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.layout.cute.Swizzle
+   tilelang.layout.cute.IntTuple
+   tilelang.layout.cute.IntTupleConst
+   tilelang.layout.cute.IntTuplePrimExpr
+   tilelang.layout.cute.IntTupleScaledBasis
+   tilelang.layout.cute.IntTupleTuple
+   tilelang.layout.cute.ScaledBasis
+   tilelang.layout.cute.Layout
+   tilelang.layout.cute.ComposedLayout
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.layout.cute.to_python
+   tilelang.layout.cute.from_python
+   tilelang.layout.cute.E
+   tilelang.layout.cute.product
+   tilelang.layout.cute.flatten_to_tuple
+   tilelang.layout.cute.rank
+   tilelang.layout.cute.flatten
+   tilelang.layout.cute.size
+   tilelang.layout.cute.coalesce
+   tilelang.layout.cute.right_inverse
+   tilelang.layout.cute.composition
+   tilelang.layout.cute.make_layout
+   tilelang.layout.cute.make_column_major_layout
+   tilelang.layout.cute.make_row_major_layout
+   tilelang.layout.cute.make_identity_layout
+
+
+Module Contents
+---------------
+
+.. py:data:: PyIntTuple
+
+.. py:data:: IntTupleLike
+
+.. py:data:: ModeLike
+
+.. py:function:: to_python(t)
+
+   Unpack an :class:`IntTuple` into Python: a branch becomes a nested ``tuple``, and each leaf becomes a plain ``int`` (static), a PrimExpr (dynamic), or a :class:`ScaledBasis` (basis stride).
+
+
+.. py:function:: from_python(value)
+
+   Convert a Python value to an FFI :class:`IntTuple` (the inverse of :func:`to_python`): a nested tuple/list becomes an :class:`IntTupleTuple` branch; an int becomes :class:`IntTupleConst`; a PrimExpr becomes :class:`IntTuplePrimExpr`; a :class:`ScaledBasis` becomes :class:`IntTupleScaledBasis`; an already-built :class:`IntTuple` passes through.
+
+
+.. py:class:: Swizzle
+
+   Bases: :py:obj:`tvm.ir.base.Node`, :py:obj:`tvm.runtime.Scriptable`
+
+
+   .. py:attribute:: b_bits
+      :type:  int
+
+
+   .. py:attribute:: m_base
+      :type:  int
+
+
+   .. py:attribute:: s_shift
+      :type:  int
+
+
+   .. py:property:: is_swizzled
+      :type: bool
+
+
+
+   .. py:method:: recast(old_bits, new_bits)
+
+
+.. py:class:: IntTuple
+
+   Bases: :py:obj:`tvm.ir.base.Node`, :py:obj:`tvm.runtime.Scriptable`
+
+
+   .. py:method:: __add__(other)
+
+
+   .. py:method:: __radd__(other)
+
+
+   .. py:method:: __mul__(other)
+
+
+   .. py:method:: __rmul__(other)
+
+
+.. py:class:: IntTupleConst
+
+   Bases: :py:obj:`IntTuple`
+
+
+   .. py:attribute:: value
+      :type:  int
+
+
+.. py:class:: IntTuplePrimExpr
+
+   Bases: :py:obj:`IntTuple`
+
+
+   .. py:attribute:: value
+      :type:  object
+
+
+.. py:class:: IntTupleScaledBasis
+
+   Bases: :py:obj:`IntTuple`
+
+
+   .. py:attribute:: value
+      :type:  IntTuple
+
+
+   .. py:attribute:: basis
+      :type:  list
+
+
+.. py:class:: IntTupleTuple
+
+   Bases: :py:obj:`IntTuple`
+
+
+   .. py:attribute:: fields
+      :type:  list
+
+
+.. py:class:: ScaledBasis(value, mode)
+
+   A ScaledBasis wrapper.
+
+
+   .. py:property:: value
+      :type: PyIntTuple
+
+
+
+   .. py:property:: mode
+      :type: tuple
+
+
+
+   .. py:method:: __repr__()
+
+
+.. py:function:: E(mode)
+
+.. py:function:: product(shape)
+
+.. py:function:: flatten_to_tuple(value)
+
+.. py:class:: Layout
+
+   Bases: :py:obj:`tvm.ir.base.Node`, :py:obj:`tvm.runtime.Scriptable`
+
+
+   .. py:property:: shape
+
+
+   .. py:property:: stride
+
+
+   .. py:method:: __getitem__(idx)
+
+
+   .. py:method:: __call__(coord)
+
+
+   .. py:method:: from_tilelang(layout)
+      :staticmethod:
+
+
+
+.. py:function:: rank(layout)
+
+.. py:function:: flatten(layout)
+
+.. py:function:: size(layout)
+
+.. py:function:: coalesce(layout, max_extent = None)
+
+.. py:function:: right_inverse(layout)
+
+.. py:function:: composition(lhs, rhs)
+
+.. py:function:: make_layout(shape, stride=None)
+
+.. py:function:: make_column_major_layout(shape)
+
+.. py:function:: make_row_major_layout(shape)
+
+.. py:function:: make_identity_layout(shape)
+
+.. py:class:: ComposedLayout
+
+   Bases: :py:obj:`tvm.ir.base.Node`, :py:obj:`tvm.runtime.Scriptable`
+
+
+   .. py:attribute:: swizzle
+      :type:  Swizzle
+
+
+   .. py:attribute:: offset
+      :type:  int
+
+
+   .. py:attribute:: layout
+      :type:  Layout
+
+
+   .. py:method:: recast(old_bits, new_bits)
+
+
+   .. py:method:: from_tilelang(layout, buffer = None)
+      :staticmethod:
+
+
+
