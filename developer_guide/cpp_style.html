@@ -853,7 +853,8 @@ the value. Take a value when the function will store it and move from it:</p>
 <h2>Headers<a class="headerlink" href="#headers" title="Link to this heading">¶</a></h2>
 <p>Keep headers narrow and predictable.</p>
 <ul class="simple">
-<li><p>Avoid <code class="docutils literal notranslate"><span class="pre">using</span> <span class="pre">namespace</span></code> in headers.</p></li>
+<li><p>Avoid <code class="docutils literal notranslate"><span class="pre">using</span> <span class="pre">namespace</span></code> in installed public headers or headers that are widely
+included across TileLang subsystems.</p></li>
 <li><p>Prefer explicit qualifications or narrow aliases in the smallest namespace
 where they are needed.</p></li>
 <li><p>Include the headers that define the types used by the file.</p></li>
@@ -875,6 +876,55 @@ where they are needed.</p></li>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">ffi</span><span class="p">;</span>
 </pre></div>
 </div>
+</section>
+<section id="namespace-usage">
+<h2>Namespace Usage<a class="headerlink" href="#namespace-usage" title="Link to this heading">¶</a></h2>
+<p>Namespace rules should make public APIs predictable without making implementation
+files noisy. TVM itself is not mechanically uniform across the whole repository,
+so TileLang uses the following policy as a review guideline rather than as a
+blanket rewrite rule.</p>
+<p>TileLang currently does not maintain a separate installed C++ header tree like
+TVM’s <code class="docutils literal notranslate"><span class="pre">include/tvm/</span></code>. The strictest rule applies to any future installed public
+headers and to TileLang-owned headers that behave like shared interfaces inside
+the repository: headers that define cross-module APIs, ObjectRef/ObjectNode
+types, FFI-visible fields, or interfaces included across multiple subsystems. Do
+not add namespace-wide imports there. Use qualified names for ordinary types:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">LayoutNode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ffi</span><span class="o">::</span><span class="n">Object</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ffi</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="n">tirx</span><span class="o">::</span><span class="n">PrimExpr</span><span class="o">&gt;</span><span class="w"> </span><span class="n">input_shape</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ffi</span><span class="o">::</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">tirx</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">buffer</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Use a narrow alias in a header only when the alias is part of the API or removes
+real repetition:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">LayoutMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ffi</span><span class="o">::</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">tirx</span><span class="o">::</span><span class="n">Buffer</span><span class="p">,</span><span class="w"> </span><span class="n">Layout</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Implementation files may use file-local namespace imports when the file is
+dense with IR or DSL expressions:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">tvm</span><span class="w"> </span><span class="p">{</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">tl</span><span class="w"> </span><span class="p">{</span>
+
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">tirx</span><span class="p">;</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace tl</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace tvm</span>
+</pre></div>
+</div>
+<p>Narrowly included implementation headers under <code class="docutils literal notranslate"><span class="pre">src/</span></code> may follow the same rule
+as <code class="docutils literal notranslate"><span class="pre">.cc</span></code> files. This mirrors TVM’s internal schedule and transform headers,
+where <code class="docutils literal notranslate"><span class="pre">tirx</span></code> imports are sometimes used to keep IR visitor code readable. If an
+internal helper header grows into a cross-module interface, revisit its
+namespace imports.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">ffi</span></code>, prefer explicit names such as <code class="docutils literal notranslate"><span class="pre">ffi::Any</span></code>, <code class="docutils literal notranslate"><span class="pre">ffi::Array</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ffi::Map</span></code>, and <code class="docutils literal notranslate"><span class="pre">ffi::make_object</span></code> in core-style code. A <code class="docutils literal notranslate"><span class="pre">.cc</span></code> file may use
+<code class="docutils literal notranslate"><span class="pre">using</span> <span class="pre">namespace</span> <span class="pre">ffi;</span></code> when FFI helpers are pervasive and the shorter names make
+the implementation materially easier to read. Keep the choice consistent within
+the file.</p>
+<p>Do not run mechanical namespace rewrites across unrelated code. When touching a
+file for functional work, avoid making its namespace style less clear, but keep
+large style-only cleanups isolated in focused pull requests.</p>
 </section>
 <section id="comments-and-documentation">
 <h2>Comments And Documentation<a class="headerlink" href="#comments-and-documentation" title="Link to this heading">¶</a></h2>
@@ -1002,6 +1052,7 @@ style cleanup.</p>
 <li><a class="reference internal" href="#objectnode-fields">ObjectNode Fields</a></li>
 <li><a class="reference internal" href="#function-parameters">Function Parameters</a></li>
 <li><a class="reference internal" href="#headers">Headers</a></li>
+<li><a class="reference internal" href="#namespace-usage">Namespace Usage</a></li>
 <li><a class="reference internal" href="#comments-and-documentation">Comments And Documentation</a></li>
 <li><a class="reference internal" href="#error-handling">Error Handling</a></li>
 <li><a class="reference internal" href="#includes">Includes</a></li>
