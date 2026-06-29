@@ -1,0 +1,144 @@
+tilelang.backend.host_codegen
+=============================
+
+.. py:module:: tilelang.backend.host_codegen
+
+.. autoapi-nested-parse::
+
+   Host codegen registry shared by backend packages.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.backend.host_codegen.HostCodegenFunc
+   tilelang.backend.host_codegen.HostCodegenHookFunc
+   tilelang.backend.host_codegen.TargetPredicate
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.backend.host_codegen.HostCodegen
+   tilelang.backend.host_codegen.HostCodegenHook
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.backend.host_codegen.global_func_host_codegen
+   tilelang.backend.host_codegen.register_host_codegen
+   tilelang.backend.host_codegen.register_lazy_host_codegen
+   tilelang.backend.host_codegen.register_host_codegen_hook
+   tilelang.backend.host_codegen.register_lazy_host_codegen_hooks
+   tilelang.backend.host_codegen.allowed_host_codegens_for_target
+   tilelang.backend.host_codegen.apply_host_codegen_hooks
+   tilelang.backend.host_codegen.resolve_host_codegen
+
+
+Module Contents
+---------------
+
+.. py:data:: HostCodegenFunc
+
+.. py:data:: HostCodegenHookFunc
+
+.. py:data:: TargetPredicate
+
+.. py:function:: global_func_host_codegen(global_func_name)
+
+   Create a host codegen callback backed by a TVM global function.
+
+
+.. py:class:: HostCodegen
+
+   Host codegen entry point for one host target variant.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: build
+      :type:  HostCodegenFunc
+
+
+   .. py:attribute:: supports_target
+      :type:  TargetPredicate | None
+      :value: None
+
+
+
+   .. py:method:: matches(target_host)
+
+
+   .. py:method:: lower(mod, target_host)
+
+
+.. py:class:: HostCodegenHook
+
+   Device-backend hook applied before host codegen build.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: apply
+      :type:  HostCodegenHookFunc
+
+
+   .. py:attribute:: supports_target
+      :type:  TargetPredicate | None
+      :value: None
+
+
+
+   .. py:method:: matches(target)
+
+
+   .. py:method:: lower(mod, target_host, target)
+
+
+.. py:function:: register_host_codegen(target_host_kind, codegen, *, override = False)
+
+   Register a host codegen entry for a host target kind.
+
+
+.. py:function:: register_lazy_host_codegen(target_host_kind, import_path)
+
+   Register a backend module to import when a host target kind is first used.
+
+
+.. py:function:: register_host_codegen_hook(target_kind, hook, *, override = False)
+
+   Register a device-backend hook for host codegen preparation.
+
+
+.. py:function:: register_lazy_host_codegen_hooks(target_kind, import_path)
+
+   Register a backend module to import before applying host codegen hooks.
+
+
+.. py:function:: allowed_host_codegens_for_target(target_host)
+
+   Return matching host codegen names for a host target.
+
+
+.. py:function:: apply_host_codegen_hooks(mod, target_host, target)
+
+   Apply device-backend host codegen hooks.
+
+
+.. py:function:: resolve_host_codegen(target_host)
+
+   Resolve a host codegen entry from a TVM host target.
+
+

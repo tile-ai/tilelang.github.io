@@ -1,0 +1,105 @@
+tilelang.backend.device_codegen
+===============================
+
+.. py:module:: tilelang.backend.device_codegen
+
+.. autoapi-nested-parse::
+
+   Device codegen registry shared by backend packages.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.backend.device_codegen.DeviceCodegenFunc
+   tilelang.backend.device_codegen.TargetPredicate
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.backend.device_codegen.DeviceCodegen
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.backend.device_codegen.global_func_device_codegen
+   tilelang.backend.device_codegen.register_device_codegen
+   tilelang.backend.device_codegen.register_lazy_device_codegen
+   tilelang.backend.device_codegen.allowed_device_codegens_for_target
+   tilelang.backend.device_codegen.resolve_device_codegen
+
+
+Module Contents
+---------------
+
+.. py:data:: DeviceCodegenFunc
+
+.. py:data:: TargetPredicate
+
+.. py:function:: global_func_device_codegen(global_func_name)
+
+   Create a device codegen callback backed by a TVM global function.
+
+
+.. py:class:: DeviceCodegen
+
+   Device codegen entry points for one backend target variant.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: build
+      :type:  DeviceCodegenFunc | None
+      :value: None
+
+
+
+   .. py:attribute:: build_without_compile
+      :type:  DeviceCodegenFunc | None
+      :value: None
+
+
+
+   .. py:attribute:: supports_target
+      :type:  TargetPredicate | None
+      :value: None
+
+
+
+   .. py:method:: matches(target)
+
+
+   .. py:method:: lower(mod, target, *, compile_device)
+
+
+.. py:function:: register_device_codegen(target_kind, codegen, *, override = False)
+
+   Register a device codegen entry for a target kind.
+
+
+.. py:function:: register_lazy_device_codegen(target_kind, import_path)
+
+   Register a backend module to import when its target kind is first used.
+
+
+.. py:function:: allowed_device_codegens_for_target(target)
+
+   Return matching device codegen names for a target.
+
+
+.. py:function:: resolve_device_codegen(target)
+
+   Resolve a device codegen entry from a TVM target.
+
+

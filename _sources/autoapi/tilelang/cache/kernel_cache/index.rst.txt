@@ -80,7 +80,8 @@ Module Contents
 
       :param func: Function to be compiled or a prepared PrimFunc
       :param out_idx: Indices specifying which outputs to return
-      :param target: Compilation target platform (None = read from TILELANG_TARGET env var)
+      :param target: Compilation target platform (None = read from TILELANG_DEFAULT_TARGET env var).
+                     Use a dict for target attributes, for example {"kind": "cuda", "arch": "sm_90"}.
       :param target_host: Host target platform
       :param execution_backend: Execution backend (None = read from TILELANG_EXECUTION_BACKEND)
       :param verbose: Enable verbose output (None = read from TILELANG_VERBOSE)
@@ -91,8 +92,9 @@ Module Contents
 
       Environment Variables
       ---------------------
-      TILELANG_TARGET : str
-          Default compilation target (e.g., "cuda", "llvm"). Defaults to "auto".
+      TILELANG_DEFAULT_TARGET : str
+          Default compilation target (e.g., "cuda", "llvm", or a dict-like target config string).
+          Defaults to "auto".
       TILELANG_EXECUTION_BACKEND : str
           Default execution backend. Defaults to "auto".
       TILELANG_VERBOSE : str

@@ -1,0 +1,81 @@
+tilelang.language.meta
+======================
+
+.. py:module:: tilelang.language.meta
+
+.. autoapi-nested-parse::
+
+   Turn Python classes/methods into TIR, in both eager and lazy modes.
+
+   Two DSL primitives -- ``inline`` (method -> inlined TIR) and ``meta_class``
+   (class of JIT-time stateful helpers) -- that behave the same in eager
+   (``@tilelang.jit``) and lazy (``@T.prim_func``) frontends. See each function's
+   docstring for the details.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.language.meta.inline
+   tilelang.language.meta.meta_class
+
+
+Module Contents
+---------------
+
+.. py:function:: inline(func)
+
+   Decorator: lower a method body to TIR, inlined at each call site.
+
+   ``self`` is bound automatically. The lowering engine is chosen per call so
+   the same method works in both frontends:
+
+   - eager mode (an eager ``Builder`` is active) -> the eager ``macro`` engine;
+   - lazy mode (no eager builder; a TVMScript parser is active) -> TVM's
+     parser-level ``inline`` (``TIRInline``).
+
+   Both engines are built lazily on first use of the respective mode.
+
+   Inside an inlined method, read scalar state via ``self.x[0]`` and write via
+   ``self.x[0] = ...``; the store lowers to ``BufferStore`` through whichever
+   engine is active, so no core builder/parser changes are needed.
+
+
+.. py:function:: meta_class(cls)
+
+   Class decorator for JIT-time stateful helpers (e.g. tile schedulers).
+
+   Instances exist only during JIT tracing / parsing and hold ``T.alloc_var``
+   buffers as state (``T.alloc_var`` emits into the active IR frame in both
+   modes). The decorator has three responsibilities:
+
+   1. Mark the class with ``_is_meta_class``. The lazy parser needs this to
+      bind ``sched = Sched(...)`` as a (non-TIR) instance in its scope instead
+      of trying to turn it into a constant.
+   2. Auto-``inline`` every TIR-emitting method, so methods need no per-method
+      ``@inline``. A method is considered TIR-emitting iff it contains a
+      buffer store, i.e. a subscript-target assignment ``self.x[...] = ...``
+      (see ``_emits_store``). Left as plain Python:
+
+      - dunders (``__init__`` allocates state as plain Python),
+      - ``staticmethod`` / ``classmethod`` / ``property``,
+      - methods already decorated with ``@inline``,
+      - methods with no buffer store -- pure compile-time helpers that only
+        build/return ``PrimExpr`` expressions (e.g. ``valid`` returning a
+        loop condition, or a ``coord(tile_id)`` decode returning ``(m, n)``).
+        These stay plain so they can return values and be reused statelessly.
+        A method that emits TIR only through control flow / nested calls (no
+        direct store) should be marked explicitly with ``@inline``.
+   3. Auto-name state buffers ``{prefix}_{attr}`` in the generated IR, where
+      ``prefix`` is the constructor argument named ``prefix`` (so
+      ``Sched("sched", ...)`` yields ``sched_m_idx`` etc.). This wraps
+      ``__init__`` to capture ``prefix`` and installs a ``__setattr__`` that
+      names any ``Buffer`` assigned to a non-underscore attribute; non-buffers
+      (compile-time ints like ``num_n_tiles``) and underscore attributes are
+      skipped, and naming is best-effort (never fatal). It runs at
+      construction while an IR builder is active, so it works in both modes.
+
+

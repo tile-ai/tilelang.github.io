@@ -15,6 +15,9 @@ Functions
 .. autoapisummary::
 
    tilelang.contrib.nvcc.get_nvcc_subprocess_env
+   tilelang.contrib.nvcc.get_target_arch_and_code
+   tilelang.contrib.nvcc.get_target_code_list
+   tilelang.contrib.nvcc.format_target_code_for_gencode
    tilelang.contrib.nvcc.compile_cuda
    tilelang.contrib.nvcc.default_compile_options
    tilelang.contrib.nvcc.get_ptx_from_source
@@ -49,6 +52,15 @@ Module Contents
    install, but nvcc still needs MSVC's host compiler environment.
 
 
+.. py:function:: get_target_arch_and_code(target = None)
+
+   Return the CUDA target arch suffix and optional NVCC code targets.
+
+
+.. py:function:: get_target_code_list(target_code)
+
+.. py:function:: format_target_code_for_gencode(target_code)
+
 .. py:function:: compile_cuda(code, target_format='ptx', arch=None, options=None, path_target=None, verbose=False)
 
    Compile cuda code with NVCC from env.
@@ -64,7 +76,7 @@ Module Contents
    :param path_target: Output file.
    :type path_target: str, optional
 
-   :returns: **cubin** -- The bytearray of the cubin
+   :returns: **data** -- The compiled output bytes.
    :rtype: bytearray
 
 

@@ -71,11 +71,12 @@ Package Contents
    :param execution_backend: Execution backend to use for kernel execution. If None, reads from
                              TILELANG_EXECUTION_BACKEND environment variable (defaults to "auto").
    :type execution_backend: Literal["auto", "dlpack", "tvm_ffi", "cython", "nvrtc", "torch", "cutedsl"], optional
-   :param target: Compilation target. If None, reads from TILELANG_TARGET environment
-                  variable (defaults to "auto").
-   :type target: str or tvm.target.Target, optional
+   :param target: Compilation target. If None, reads from TILELANG_DEFAULT_TARGET environment
+                  variable (defaults to "auto"). Use a dict for target attributes, for example
+                  {"kind": "cuda", "arch": "sm_90"}.
+   :type target: str, dict, or tvm.target.Target, optional
    :param target_host: Target host for cross-compilation (default: None).
-   :type target_host: str or tvm.target.Target, optional
+   :type target_host: str, dict, or tvm.target.Target, optional
    :param verbose: Whether to enable verbose output. If None, reads from
                    TILELANG_VERBOSE environment variable (defaults to False).
    :type verbose: bool, optional
@@ -84,8 +85,9 @@ Package Contents
    :type pass_configs: dict, optional
    :param Environment Variables:
    :param ---------------------:
-   :param TILELANG_TARGET: Default compilation target (e.g., "cuda", "llvm"). Defaults to "auto".
-   :type TILELANG_TARGET: str
+   :param TILELANG_DEFAULT_TARGET: Default compilation target (e.g., "cuda", "llvm", or a dict-like target config string).
+                                   Defaults to "auto".
+   :type TILELANG_DEFAULT_TARGET: str
    :param TILELANG_EXECUTION_BACKEND: Default execution backend. Defaults to "auto".
    :type TILELANG_EXECUTION_BACKEND: str
    :param TILELANG_VERBOSE: Set to "1", "true", "yes", or "on" to enable verbose compilation by default.
@@ -103,11 +105,12 @@ Package Contents
    :param execution_backend: Execution backend to use for kernel execution. If None, reads from
                              TILELANG_EXECUTION_BACKEND environment variable (defaults to "auto").
    :type execution_backend: Literal["auto", "dlpack", "tvm_ffi", "cython", "nvrtc", "torch", "cutedsl"], optional
-   :param target: Compilation target. If None, reads from TILELANG_TARGET environment
-                  variable (defaults to "auto").
-   :type target: str or tvm.target.Target, optional
+   :param target: Compilation target. If None, reads from TILELANG_DEFAULT_TARGET environment
+                  variable (defaults to "auto"). Use a dict for target attributes, for example
+                  {"kind": "cuda", "arch": "sm_90"}.
+   :type target: str, dict, or tvm.target.Target, optional
    :param target_host: Target host for cross-compilation (default: None).
-   :type target_host: str or tvm.target.Target, optional
+   :type target_host: str, dict, or tvm.target.Target, optional
    :param verbose: Whether to enable verbose output. If None, reads from
                    TILELANG_VERBOSE environment variable (defaults to False).
    :type verbose: bool, optional
@@ -116,8 +119,9 @@ Package Contents
    :type pass_configs: dict, optional
    :param Environment Variables:
    :param ---------------------:
-   :param TILELANG_TARGET: Default compilation target (e.g., "cuda", "llvm"). Defaults to "auto".
-   :type TILELANG_TARGET: str
+   :param TILELANG_DEFAULT_TARGET: Default compilation target (e.g., "cuda", "llvm", or a dict-like target config string).
+                                   Defaults to "auto".
+   :type TILELANG_DEFAULT_TARGET: str
    :param TILELANG_EXECUTION_BACKEND: Default execution backend. Defaults to "auto".
    :type TILELANG_EXECUTION_BACKEND: str
    :param TILELANG_VERBOSE: Set to "1", "true", "yes", or "on" to enable verbose compilation by default.
