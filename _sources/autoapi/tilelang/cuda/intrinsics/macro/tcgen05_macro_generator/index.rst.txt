@@ -18,8 +18,15 @@ Classes
 .. autoapisummary::
 
    tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams
-   tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.SwizzleMode
    tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TensorCoreIntrinEmitter
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.compute_umma_descriptor
 
 
 Module Contents
@@ -36,9 +43,9 @@ Module Contents
 
 
    .. py:attribute:: swizzle_mode
-      :type:  int
+      :type:  tilelang.layout.SwizzleMode
 
-      SwizzleMode enum value (passed directly to ``T.initialize_tcgen05_descriptor``).
+      Canonical swizzle mode; project to the descriptor field via ``tcgen05_layout_type()``.
 
 
    .. py:attribute:: leading_byte_offset
@@ -77,50 +84,42 @@ Module Contents
       Whether the matrix is stored in K-major order (affects offset formula branching).
 
 
-.. py:class:: SwizzleMode
-
-   Bases: :py:obj:`enum.IntEnum`
-
-
-   Enum where members are also (and must be) ints
-
-
-   .. py:attribute:: NONE
+   .. py:attribute:: slice_byte_offset
+      :type:  object
       :value: 0
 
 
-
-   .. py:attribute:: SWIZZLE_128B
-      :value: 2
-
-
-
-   .. py:attribute:: SWIZZLE_64B
-      :value: 4
+      Physical byte offset (raw bytes) of the operand slice origin within its
+      buffer; passed to ``T.increase_descriptor_offset`` after building the
+      descriptor from the buffer base. ``0`` for a whole-buffer / base-origin
+      operand. Computed by :func:`compute_umma_descriptor` from the CuTe layout.
 
 
+.. py:function:: compute_umma_descriptor(tl_layout, buffer, transposed, micro_size_k = 16, region=None)
 
-   .. py:attribute:: SWIZZLE_32B
-      :value: 6
+   Port of CuTe ``make_umma_desc`` (mma_traits_sm100.hpp).
 
+   The Blackwell analog of :func:`compute_gmma_descriptor`: decode an arbitrary
+   shared-memory ``tl_layout`` for ``buffer`` and compute the UMMA descriptor
+   parameters, accepting any UMMA-canonical layout. A non-canonical layout is a
+   programming error, so the canonicity checks assert (mirroring CuTe's
+   ``static_assert``s).
 
+   SBO/LBO are read in uint128 units from the canonical layout (dtype-agnostic,
+   exactly like ``make_umma_desc``); ``elem_bits`` is carried for the atom-offset
+   math. The ``SWIZZLE_128B_BASE32B`` UMMA mode is not produced by tilelang's
+   shared-layout makers, so only the standard {NONE,32B,64B,128B} atoms appear.
+   Unlike ``make_umma_desc`` (which sees one atom), the decoded layout here is the
+   whole operand tile; 2SM/block-scaled atom splitting is handled by the caller.
 
-   .. py:method:: is_none()
+   ``transposed`` selects which logical axis is MN vs K (shape only): default
+   ``[MN, K]``, transposed ``[K, MN]``. The operand is required to be row-major,
+   i.e. K-major iff ``not transposed``; the contiguity detected from the layout
+   is asserted to agree.
 
-
-   .. py:method:: is_swizzle_32b()
-
-
-   .. py:method:: is_swizzle_64b()
-
-
-   .. py:method:: is_swizzle_128b()
-
-
-   .. py:method:: swizzle_byte_size()
-
-
-   .. py:method:: swizzle_atom_size()
+   ``region`` is the operand's per-axis ranges (one :class:`tvm.ir.Range` per
+   logical buffer mode), used to restrict the decoded layout to a sliced
+   operand. It may be ``None`` for a full-buffer operand.
 
 
 .. py:class:: TensorCoreIntrinEmitter(a_dtype = T.float16, b_dtype = T.float16, accum_dtype = T.float16, a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, thread_var = None)
@@ -305,11 +304,9 @@ Module Contents
 
    .. py:method:: compute_tcgen05_b_desc_params(B_buf)
 
-      Compute B descriptor parameters from the B shared buffer.
-
-      This is a pure-Python helper -- no TIR code is emitted.
-      The returned ``TCGEN05DescriptorParams`` is passed to
-      ``init_tcgen05_b_desc()`` and ``tcgen05_*_atom()`` methods.
+      Compute B descriptor parameters from the B shared buffer via the CuTe
+      ``make_umma_desc`` port. The returned ``TCGEN05DescriptorParams`` is passed
+      to ``init_tcgen05_b_desc()`` and ``tcgen05_*_atom()``.
 
       :param B_buf: The B operand in shared memory.
       :type B_buf: Buffer or BufferRegion
@@ -318,9 +315,8 @@ Module Contents
 
    .. py:method:: compute_tcgen05_a_desc_params(A_buf)
 
-      Compute A descriptor parameters from the A shared buffer (SS variant).
-
-      This is a pure-Python helper -- no TIR code is emitted.
+      Compute A descriptor parameters from the A shared buffer (SS variant)
+      via the CuTe ``make_umma_desc`` port.
 
       :param A_buf: The A operand in shared memory.
       :type A_buf: Buffer or BufferRegion

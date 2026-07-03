@@ -47,6 +47,26 @@ Module Contents
 
 
 
+   .. py:method:: compute_wgmma_a_desc_params(A_region)
+
+      Compute A descriptor parameters from the A shared buffer region (SS variant).
+
+      A is sparse: its physical (compressed) K extent is ``micro_size_k //
+      SPARSE_FACTOR``, passed as ``micro_size_k`` for the K-atom accounting.
+      Pure-Python helper (no TIR emitted); the returned ``WGMMADescriptorParams``
+      is consumed by ``wgmma_ss()``.
+
+
+
+   .. py:method:: compute_wgmma_b_desc_params(B_region)
+
+      Compute B descriptor parameters from the B shared buffer region.
+
+      Pure-Python helper (no TIR emitted); the returned ``WGMMADescriptorParams``
+      is consumed by ``wgmma_ss()`` and ``wgmma_rs()``.
+
+
+
    .. py:method:: wgmma_ss(A_region, E_region, B_region, C_region, clear_accum = False, wg_wait = 0)
 
 

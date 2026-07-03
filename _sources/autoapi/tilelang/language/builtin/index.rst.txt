@@ -81,10 +81,16 @@ Functions
    tilelang.language.builtin.ldg32
    tilelang.language.builtin.ldg64
    tilelang.language.builtin.ldg128
+   tilelang.language.builtin.lds32
+   tilelang.language.builtin.lds64
+   tilelang.language.builtin.lds128
    tilelang.language.builtin.ldg256
    tilelang.language.builtin.stg32
    tilelang.language.builtin.stg64
    tilelang.language.builtin.stg128
+   tilelang.language.builtin.sts32
+   tilelang.language.builtin.sts64
+   tilelang.language.builtin.sts128
    tilelang.language.builtin.stg256
 
 
@@ -919,6 +925,21 @@ Module Contents
    >>> val = T.ldg128(x[i], pred=i < N)  # predicated load
 
 
+.. py:function:: lds32(src)
+
+   Load 32 bits (4 bytes) from shared memory and return a uint32.
+
+
+.. py:function:: lds64(src)
+
+   Load 64 bits (8 bytes) from shared memory and return a uint32x2.
+
+
+.. py:function:: lds128(src)
+
+   Load 128 bits (16 bytes) from shared memory and return a uint32x4.
+
+
 .. py:function:: ldg256(src, pred = None)
 
    Load 256 bits (32 bytes) from global memory using explicit PTX instructions.
@@ -984,6 +1005,21 @@ Module Contents
 
    >>> T.stg128(y[i:i+4], val)
    >>> T.stg128(y[i:i+4], val, pred=i < N)  # predicated store
+
+
+.. py:function:: sts32(dst, value)
+
+   Store a uint32 value to shared memory as 32 bits (4 bytes).
+
+
+.. py:function:: sts64(dst, value)
+
+   Store a uint32x2 value to shared memory as 64 bits (8 bytes).
+
+
+.. py:function:: sts128(dst, value)
+
+   Store a uint32x4 value to shared memory as 128 bits (16 bytes).
 
 
 .. py:function:: stg256(dst, value, pred = None)

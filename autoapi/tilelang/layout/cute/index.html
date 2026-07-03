@@ -524,6 +524,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../gemm_sp/index.html">tilelang.layout.gemm_sp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../layout/index.html">tilelang.layout.layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../swizzle/index.html">tilelang.layout.swizzle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../swizzle_mode/index.html">tilelang.layout.swizzle_mode</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../math/index.html">tilelang.math</a></li>
@@ -770,16 +771,34 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.cute.composition" title="tilelang.layout.cute.composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">composition</span></code></a>(lhs, rhs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.cute.make_layout" title="tilelang.layout.cute.make_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_layout</span></code></a>(shape[, stride])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.cute.filter" title="tilelang.layout.cute.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>(layout)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.cute.make_column_major_layout" title="tilelang.layout.cute.make_column_major_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_column_major_layout</span></code></a>(shape)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.cute.congruent" title="tilelang.layout.cute.congruent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">congruent</span></code></a>(a, b)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.cute.make_row_major_layout" title="tilelang.layout.cute.make_row_major_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_row_major_layout</span></code></a>(shape)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.cute.cosize" title="tilelang.layout.cute.cosize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosize</span></code></a>(layout)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.cute.make_identity_layout" title="tilelang.layout.cute.make_identity_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_identity_layout</span></code></a>(shape)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.cute.complement" title="tilelang.layout.cute.complement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">complement</span></code></a>(layout, cotarget)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.cute.logical_divide" title="tilelang.layout.cute.logical_divide"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logical_divide</span></code></a>(layout, tiler)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.cute.make_layout" title="tilelang.layout.cute.make_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_layout</span></code></a>(shape[, stride])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.cute.make_column_major_layout" title="tilelang.layout.cute.make_column_major_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_column_major_layout</span></code></a>(shape)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.cute.make_row_major_layout" title="tilelang.layout.cute.make_row_major_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_row_major_layout</span></code></a>(shape)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.layout.cute.make_identity_layout" title="tilelang.layout.cute.make_identity_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_identity_layout</span></code></a>(shape)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.layout.cute.restrict" title="tilelang.layout.cute.restrict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">restrict</span></code></a>(layout, region)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -872,6 +891,16 @@
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.cute.Swizzle" title="tilelang.layout.cute.Swizzle">Swizzle</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.cute.Swizzle.to_swizzle_mode">
+<span class="sig-name descname"><span class="pre">to_swizzle_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.Swizzle.to_swizzle_mode" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../swizzle_mode/index.html#tilelang.layout.swizzle_mode.SwizzleMode" title="tilelang.layout.swizzle_mode.SwizzleMode">tilelang.layout.swizzle_mode.SwizzleMode</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1106,6 +1135,19 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.layout.cute.Layout.with_shape">
+<span class="sig-name descname"><span class="pre">with_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.Layout.with_shape" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>shape</strong> (<em>IntTupleLike</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout">Layout</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.layout.cute.Layout.from_tilelang">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_tilelang</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.Layout.from_tilelang" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -1202,11 +1244,85 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.cute.filter">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.cute.</span></span><span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.filter" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>layout</strong> (<a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout"><em>Layout</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout">Layout</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.cute.congruent">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.cute.</span></span><span class="sig-name descname"><span class="pre">congruent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.congruent" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>IntTupleLike</em>)</p></li>
+<li><p><strong>b</strong> (<em>IntTupleLike</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.cute.cosize">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.cute.</span></span><span class="sig-name descname"><span class="pre">cosize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.cosize" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>layout</strong> (<a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout"><em>Layout</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.cute.complement">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.cute.</span></span><span class="sig-name descname"><span class="pre">complement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cotarget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.complement" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout"><em>Layout</em></a>)</p></li>
+<li><p><strong>cotarget</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout">Layout</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.cute.logical_divide">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.cute.</span></span><span class="sig-name descname"><span class="pre">logical_divide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiler</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.logical_divide" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout"><em>Layout</em></a>)</p></li>
+<li><p><strong>tiler</strong> (<a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout"><em>Layout</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout">Layout</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.layout.cute.make_layout">
 <span class="sig-prename descclassname"><span class="pre">tilelang.layout.cute.</span></span><span class="sig-name descname"><span class="pre">make_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.make_layout" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>shape</strong> (<em>PyIntTuple</em>)</p>
+<dd class="field-odd"><p><strong>shape</strong> (<em>IntTupleLike</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout">Layout</a></p>
@@ -1219,7 +1335,7 @@
 <span class="sig-prename descclassname"><span class="pre">tilelang.layout.cute.</span></span><span class="sig-name descname"><span class="pre">make_column_major_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.make_column_major_layout" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>shape</strong> (<em>PyIntTuple</em>)</p>
+<dd class="field-odd"><p><strong>shape</strong> (<em>IntTupleLike</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout">Layout</a></p>
@@ -1232,7 +1348,7 @@
 <span class="sig-prename descclassname"><span class="pre">tilelang.layout.cute.</span></span><span class="sig-name descname"><span class="pre">make_row_major_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.make_row_major_layout" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>shape</strong> (<em>PyIntTuple</em>)</p>
+<dd class="field-odd"><p><strong>shape</strong> (<em>IntTupleLike</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout">Layout</a></p>
@@ -1245,7 +1361,7 @@
 <span class="sig-prename descclassname"><span class="pre">tilelang.layout.cute.</span></span><span class="sig-name descname"><span class="pre">make_identity_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.make_identity_layout" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>shape</strong> (<em>PyIntTuple</em>)</p>
+<dd class="field-odd"><p><strong>shape</strong> (<em>IntTupleLike</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout">Layout</a></p>
@@ -1301,6 +1417,22 @@
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.layout.cute.restrict">
+<span class="sig-prename descclassname"><span class="pre">tilelang.layout.cute.</span></span><span class="sig-name descname"><span class="pre">restrict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.layout.cute.restrict" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout"><em>Layout</em></a>)</p></li>
+<li><p><strong>region</strong> (<em>collections.abc.Sequence</em><em>[</em><em>tvm.ir.Range</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[PyIntTuple, <a class="reference internal" href="#tilelang.layout.cute.Layout" title="tilelang.layout.cute.Layout">Layout</a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -1377,6 +1509,7 @@
 <li><a class="reference internal" href="#tilelang.layout.cute.Swizzle.s_shift"><code class="docutils literal notranslate"><span class="pre">Swizzle.s_shift</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.cute.Swizzle.is_swizzled"><code class="docutils literal notranslate"><span class="pre">Swizzle.is_swizzled</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.cute.Swizzle.recast"><code class="docutils literal notranslate"><span class="pre">Swizzle.recast()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.cute.Swizzle.to_swizzle_mode"><code class="docutils literal notranslate"><span class="pre">Swizzle.to_swizzle_mode()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.layout.cute.IntTuple"><code class="docutils literal notranslate"><span class="pre">IntTuple</span></code></a><ul>
@@ -1417,6 +1550,7 @@
 <li><a class="reference internal" href="#tilelang.layout.cute.Layout.stride"><code class="docutils literal notranslate"><span class="pre">Layout.stride</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.cute.Layout.__getitem__"><code class="docutils literal notranslate"><span class="pre">Layout.__getitem__()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.cute.Layout.__call__"><code class="docutils literal notranslate"><span class="pre">Layout.__call__()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.cute.Layout.with_shape"><code class="docutils literal notranslate"><span class="pre">Layout.with_shape()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.cute.Layout.from_tilelang"><code class="docutils literal notranslate"><span class="pre">Layout.from_tilelang()</span></code></a></li>
 </ul>
 </li>
@@ -1426,6 +1560,11 @@
 <li><a class="reference internal" href="#tilelang.layout.cute.coalesce"><code class="docutils literal notranslate"><span class="pre">coalesce()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.cute.right_inverse"><code class="docutils literal notranslate"><span class="pre">right_inverse()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.cute.composition"><code class="docutils literal notranslate"><span class="pre">composition()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.cute.filter"><code class="docutils literal notranslate"><span class="pre">filter()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.cute.congruent"><code class="docutils literal notranslate"><span class="pre">congruent()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.cute.cosize"><code class="docutils literal notranslate"><span class="pre">cosize()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.cute.complement"><code class="docutils literal notranslate"><span class="pre">complement()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.layout.cute.logical_divide"><code class="docutils literal notranslate"><span class="pre">logical_divide()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.cute.make_layout"><code class="docutils literal notranslate"><span class="pre">make_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.cute.make_column_major_layout"><code class="docutils literal notranslate"><span class="pre">make_column_major_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.layout.cute.make_row_major_layout"><code class="docutils literal notranslate"><span class="pre">make_row_major_layout()</span></code></a></li>
@@ -1438,6 +1577,7 @@
 <li><a class="reference internal" href="#tilelang.layout.cute.ComposedLayout.from_tilelang"><code class="docutils literal notranslate"><span class="pre">ComposedLayout.from_tilelang()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#tilelang.layout.cute.restrict"><code class="docutils literal notranslate"><span class="pre">restrict()</span></code></a></li>
 </ul>
 </li>
 </ul>

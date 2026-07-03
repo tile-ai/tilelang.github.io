@@ -524,6 +524,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../../layout/gemm_sp/index.html">tilelang.layout.gemm_sp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../layout/layout/index.html">tilelang.layout.layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../layout/swizzle/index.html">tilelang.layout.swizzle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../layout/swizzle_mode/index.html">tilelang.layout.swizzle_mode</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../math/index.html">tilelang.math</a></li>
@@ -695,13 +696,22 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code></a></p></td>
-<td><p>Pre-computed parameters for WGMMA descriptor initialization and atom offset computation.</p></td>
+<td><p>Pre-computed WGMMA descriptor parameters, produced by</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwizzleMode</span></code></a></p></td>
-<td><p>Enum where members are also (and must be) ints</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter</span></code></a></p></td>
 <td><p>To eliminate Python syntax within TIR Macro.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_gmma_descriptor</span></code></a>(tl_layout, buffer, transposed)</p></td>
+<td><p>Port of CuTe <code class="docutils literal notranslate"><span class="pre">make_gmma_desc</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -717,13 +727,13 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">WGMMADescriptorParams</span></span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="Link to this definition">¶</a></dt>
-<dd><p>Pre-computed parameters for WGMMA descriptor initialization and atom offset computation.</p>
-<p>Returned by <code class="docutils literal notranslate"><span class="pre">compute_wgmma_*_desc_params()</span></code> and consumed by
-<code class="docutils literal notranslate"><span class="pre">init_wgmma_*_desc()</span></code> and <code class="docutils literal notranslate"><span class="pre">wgmma_*_atom()</span></code> methods.</p>
+<dd><p>Pre-computed WGMMA descriptor parameters, produced by
+<a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_gmma_descriptor()</span></code></a> (a port of CuTe <code class="docutils literal notranslate"><span class="pre">make_gmma_desc</span></code>) and
+consumed by <code class="docutils literal notranslate"><span class="pre">init_wgmma_*_desc()</span></code> and <code class="docutils literal notranslate"><span class="pre">wgmma_*_atom()</span></code>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_mode">
-<span class="sig-name descname"><span class="pre">swizzle_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_mode" title="Link to this definition">¶</a></dt>
-<dd><p>SwizzleMode enum value (passed directly to <code class="docutils literal notranslate"><span class="pre">T.initialize_wgmma_descriptor</span></code>).</p>
+<span class="sig-name descname"><span class="pre">swizzle_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tilelang.layout.SwizzleMode</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_mode" title="Link to this definition">¶</a></dt>
+<dd><p>Canonical swizzle mode; project to the descriptor field via <code class="docutils literal notranslate"><span class="pre">wgmma_layout_type()</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -767,93 +777,44 @@
 <dd><p>Whether the matrix is stored in K-major order (affects offset formula branching).</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">SwizzleMode</span></span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></p>
-<p>Enum where members are also (and must be) ints</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.NONE">
-<span class="sig-name descname"><span class="pre">NONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.NONE" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.SWIZZLE_128B">
-<span class="sig-name descname"><span class="pre">SWIZZLE_128B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.SWIZZLE_128B" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.SWIZZLE_64B">
-<span class="sig-name descname"><span class="pre">SWIZZLE_64B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.SWIZZLE_64B" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.SWIZZLE_32B">
-<span class="sig-name descname"><span class="pre">SWIZZLE_32B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.SWIZZLE_32B" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_none">
-<span class="sig-name descname"><span class="pre">is_none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_none" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.slice_byte_offset">
+<span class="sig-name descname"><span class="pre">slice_byte_offset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">object</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.slice_byte_offset" title="Link to this definition">¶</a></dt>
+<dd><p>Physical byte offset (raw bytes) of the operand slice origin within its
+buffer; passed to <code class="docutils literal notranslate"><span class="pre">T.increase_descriptor_offset</span></code> after building the
+descriptor from the buffer base. <code class="docutils literal notranslate"><span class="pre">0</span></code> for a whole-buffer / base-origin
+operand. Computed by <a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_gmma_descriptor()</span></code></a> from the CuTe layout.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_swizzle_32b">
-<span class="sig-name descname"><span class="pre">is_swizzle_32b</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_swizzle_32b" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
-</dd>
-</dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_swizzle_64b">
-<span class="sig-name descname"><span class="pre">is_swizzle_64b</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_swizzle_64b" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">compute_gmma_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tl_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">micro_size_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor" title="Link to this definition">¶</a></dt>
+<dd><p>Port of CuTe <code class="docutils literal notranslate"><span class="pre">make_gmma_desc</span></code>.</p>
+<p>Decode an arbitrary shared-memory <code class="docutils literal notranslate"><span class="pre">tl_layout</span></code> for <code class="docutils literal notranslate"><span class="pre">buffer</span></code> and compute the
+WGMMA descriptor parameters, accepting <em>any</em> WGMMA-canonical layout – not
+just the four “maker” layouts. A non-GMMA-canonical layout is a programming
+error, so the canonicity checks assert (mirroring CuTe’s <a href="#id1"><span class="problematic" id="id2">``</span></a>static_assert``s).</p>
+<p><code class="docutils literal notranslate"><span class="pre">transposed</span></code> selects which logical axis is MN vs K (shape only): default
+<code class="docutils literal notranslate"><span class="pre">[MN,</span> <span class="pre">K]</span></code>, transposed <code class="docutils literal notranslate"><span class="pre">[K,</span> <span class="pre">MN]</span></code>. The operand is required to be row-major,
+i.e. K-major iff <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">transposed</span></code>; the contiguity detected from the layout
+(the GMMA mode owning the stride-1 sub-mode) is asserted to agree.</p>
+<p><code class="docutils literal notranslate"><span class="pre">region</span></code> is the operand’s per-axis ranges (one <code class="xref py py-class docutils literal notranslate"><span class="pre">tvm.ir.Range</span></code> per
+logical buffer mode), used to restrict the decoded layout to a sliced
+operand (e.g. <code class="docutils literal notranslate"><span class="pre">B[:,</span> <span class="pre">j*64:...]</span></code>). It may be <code class="docutils literal notranslate"><span class="pre">None</span></code> for a full-buffer
+operand or the atom-level API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transposed</strong> (<a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>micro_size_k</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams">WGMMADescriptorParams</a></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_swizzle_128b">
-<span class="sig-name descname"><span class="pre">is_swizzle_128b</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_swizzle_128b" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.swizzle_byte_size">
-<span class="sig-name descname"><span class="pre">swizzle_byte_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.swizzle_byte_size" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.swizzle_atom_size">
-<span class="sig-name descname"><span class="pre">swizzle_atom_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.swizzle_atom_size" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -997,9 +958,8 @@
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.compute_wgmma_b_desc_params">
 <span class="sig-name descname"><span class="pre">compute_wgmma_b_desc_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B_region</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.compute_wgmma_b_desc_params" title="Link to this definition">¶</a></dt>
 <dd><p>Compute B descriptor parameters from the B shared buffer region.</p>
-<p>This is a pure-Python helper – no TIR code is emitted.
-The returned <code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code> is passed to
-<code class="docutils literal notranslate"><span class="pre">init_wgmma_b_desc()</span></code> and <code class="docutils literal notranslate"><span class="pre">wgmma_*_atom()</span></code> methods.</p>
+<p>Pure-Python helper (no TIR emitted); the returned <code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code>
+is consumed by <code class="docutils literal notranslate"><span class="pre">init_wgmma_b_desc()</span></code> and <code class="docutils literal notranslate"><span class="pre">wgmma_*_atom()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>B_region</strong> (<em>tvm.tirx.BufferRegion</em>)</p>
@@ -1014,9 +974,8 @@ The returned <code class="docutils literal notranslate"><span class="pre">WGMMAD
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.compute_wgmma_a_desc_params">
 <span class="sig-name descname"><span class="pre">compute_wgmma_a_desc_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_region</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.compute_wgmma_a_desc_params" title="Link to this definition">¶</a></dt>
 <dd><p>Compute A descriptor parameters from the A shared buffer region (SS variant).</p>
-<p>This is a pure-Python helper – no TIR code is emitted.
-The returned <code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code> is passed to
-<code class="docutils literal notranslate"><span class="pre">init_wgmma_a_desc()</span></code> and <code class="docutils literal notranslate"><span class="pre">wgmma_ss_atom()</span></code> methods.</p>
+<p>Pure-Python helper (no TIR emitted); the returned <code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code>
+is consumed by <code class="docutils literal notranslate"><span class="pre">init_wgmma_a_desc()</span></code> and <code class="docutils literal notranslate"><span class="pre">wgmma_ss_atom()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>A_region</strong> (<em>tvm.tirx.BufferRegion</em>)</p>
@@ -1261,6 +1220,7 @@ in <cite>local_buf</cite> are laid out.</p>
 <li><a class="reference internal" href="#">tilelang.cuda.intrinsics.macro.wgmma_macro_generator</a><ul>
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.lift"><code class="docutils literal notranslate"><span class="pre">lift</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code></a><ul>
@@ -1271,21 +1231,10 @@ in <cite>local_buf</cite> are laid out.</p>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_atom_size"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.k_atom_size</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.elems_in_bytes"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.elems_in_bytes</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.is_k_major"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.is_k_major</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.slice_byte_offset"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.slice_byte_offset</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode"><code class="docutils literal notranslate"><span class="pre">SwizzleMode</span></code></a><ul>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.NONE"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.NONE</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.SWIZZLE_128B"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.SWIZZLE_128B</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.SWIZZLE_64B"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.SWIZZLE_64B</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.SWIZZLE_32B"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.SWIZZLE_32B</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_none"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.is_none()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_swizzle_32b"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.is_swizzle_32b()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_swizzle_64b"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.is_swizzle_64b()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.is_swizzle_128b"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.is_swizzle_128b()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.swizzle_byte_size"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.swizzle_byte_size()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.SwizzleMode.swizzle_atom_size"><code class="docutils literal notranslate"><span class="pre">SwizzleMode.swizzle_atom_size()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor"><code class="docutils literal notranslate"><span class="pre">compute_gmma_descriptor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_prefix"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_prefix</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.TensorCoreIntrinEmitter.wgmma_inst_m"><code class="docutils literal notranslate"><span class="pre">TensorCoreIntrinEmitter.wgmma_inst_m</span></code></a></li>

@@ -524,6 +524,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../../layout/gemm_sp/index.html">tilelang.layout.gemm_sp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../layout/layout/index.html">tilelang.layout.layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../layout/swizzle/index.html">tilelang.layout.swizzle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../layout/swizzle_mode/index.html">tilelang.layout.swizzle_mode</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../math/index.html">tilelang.math</a></li>
@@ -744,6 +745,40 @@
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.compute_wgmma_a_desc_params">
+<span class="sig-name descname"><span class="pre">compute_wgmma_a_desc_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_region</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.compute_wgmma_a_desc_params" title="Link to this definition">¶</a></dt>
+<dd><p>Compute A descriptor parameters from the A shared buffer region (SS variant).</p>
+<p>A is sparse: its physical (compressed) K extent is <code class="docutils literal notranslate"><span class="pre">micro_size_k</span> <span class="pre">//</span>
+<span class="pre">SPARSE_FACTOR</span></code>, passed as <code class="docutils literal notranslate"><span class="pre">micro_size_k</span></code> for the K-atom accounting.
+Pure-Python helper (no TIR emitted); the returned <code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code>
+is consumed by <code class="docutils literal notranslate"><span class="pre">wgmma_ss()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>A_region</strong> (<em>tvm.tirx.BufferRegion</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../wgmma_macro_generator/index.html#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.compute_wgmma_b_desc_params">
+<span class="sig-name descname"><span class="pre">compute_wgmma_b_desc_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B_region</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.compute_wgmma_b_desc_params" title="Link to this definition">¶</a></dt>
+<dd><p>Compute B descriptor parameters from the B shared buffer region.</p>
+<p>Pure-Python helper (no TIR emitted); the returned <code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code>
+is consumed by <code class="docutils literal notranslate"><span class="pre">wgmma_ss()</span></code> and <code class="docutils literal notranslate"><span class="pre">wgmma_rs()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>B_region</strong> (<em>tvm.tirx.BufferRegion</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../wgmma_macro_generator/index.html#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.wgmma_ss">
 <span class="sig-name descname"><span class="pre">wgmma_ss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E_region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wg_wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.wgmma_ss" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -912,6 +947,8 @@ in <cite>local_buf</cite> are laid out.</p>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.wgmma_inst_n"><code class="docutils literal notranslate"><span class="pre">WGSparseTensorCoreIntrinEmitter.wgmma_inst_n</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.a_shared_layout"><code class="docutils literal notranslate"><span class="pre">WGSparseTensorCoreIntrinEmitter.a_shared_layout</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.b_shared_layout"><code class="docutils literal notranslate"><span class="pre">WGSparseTensorCoreIntrinEmitter.b_shared_layout</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.compute_wgmma_a_desc_params"><code class="docutils literal notranslate"><span class="pre">WGSparseTensorCoreIntrinEmitter.compute_wgmma_a_desc_params()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.compute_wgmma_b_desc_params"><code class="docutils literal notranslate"><span class="pre">WGSparseTensorCoreIntrinEmitter.compute_wgmma_b_desc_params()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.wgmma_ss"><code class="docutils literal notranslate"><span class="pre">WGSparseTensorCoreIntrinEmitter.wgmma_ss()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.wgmma_rs"><code class="docutils literal notranslate"><span class="pre">WGSparseTensorCoreIntrinEmitter.wgmma_rs()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.ldmatrix_e"><code class="docutils literal notranslate"><span class="pre">WGSparseTensorCoreIntrinEmitter.ldmatrix_e()</span></code></a></li>

@@ -524,6 +524,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/gemm_sp/index.html">tilelang.layout.gemm_sp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/layout/index.html">tilelang.layout.layout</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/swizzle/index.html">tilelang.layout.swizzle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/layout/swizzle_mode/index.html">tilelang.layout.swizzle_mode</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../autoapi/tilelang/math/index.html">tilelang.math</a></li>
@@ -751,10 +752,10 @@ the default is <code class="docutils literal notranslate"><span class="pre">auto
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span>cuda
 </pre></div>
 </div>
-<p>For target options, use a dict-like string. This is useful in scripts that rely on the default target through
+<p>For target options, use a JSON object string. This is useful in scripts that rely on the default target through
 <code class="docutils literal notranslate"><span class="pre">tilelang.compile(...,</span> <span class="pre">target=None)</span></code>, <code class="docutils literal notranslate"><span class="pre">&#64;tilelang.jit</span></code>, or autotuning:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span><span class="s1">&#39;{kind: &quot;cuda&quot;, arch: &quot;sm_90&quot;}&#39;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span><span class="s1">&#39;{kind: &quot;cuda&quot;, arch: &quot;sm_100f&quot;, code: [&quot;sm_100a&quot;, &quot;sm_103a&quot;]}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span><span class="s1">&#39;{&quot;kind&quot;: &quot;cuda&quot;, &quot;arch&quot;: &quot;sm_90&quot;}&#39;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span><span class="s1">&#39;{&quot;kind&quot;: &quot;cuda&quot;, &quot;arch&quot;: &quot;sm_100f&quot;, &quot;code&quot;: [&quot;sm_100a&quot;, &quot;sm_103a&quot;]}&#39;</span>
 </pre></div>
 </div>
 <p>In Python code, prefer passing a real dictionary instead of a string:</p>
