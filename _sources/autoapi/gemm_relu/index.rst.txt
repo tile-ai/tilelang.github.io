@@ -1,0 +1,34 @@
+gemm_relu
+=========
+
+.. py:module:: gemm_relu
+
+.. autoapi-nested-parse::
+
+   Demo kernel for the pass visualizer: fused GEMM + bias + ReLU.
+
+       C = relu(A @ B + bias)
+
+   `bias` is a per-output-column vector of shape (N,), broadcast across rows. Both
+   the bias add and the ReLU are fused into the GEMM epilogue: they run on the
+   accumulator fragment `C_local` (still in registers) right before writing back to
+   global memory. No extra kernel launch, no extra global round-trip.
+
+   Used as input to ``tilelang.tools.pass_visualizer.viewer``; see the package
+   README for the exact command.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   gemm_relu.gemm_relu
+
+
+Module Contents
+---------------
+
+.. py:function:: gemm_relu(M, N, K, block_M, block_N, block_K, dtype='float16', accum_dtype='float32')
+

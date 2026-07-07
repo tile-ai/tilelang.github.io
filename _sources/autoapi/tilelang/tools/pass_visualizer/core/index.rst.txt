@@ -1,0 +1,77 @@
+tilelang.tools.pass_visualizer.core
+===================================
+
+.. py:module:: tilelang.tools.pass_visualizer.core
+
+.. autoapi-nested-parse::
+
+   Core helpers for the pass visualizer: load a user TileLang kernel, build the
+   CUDA lowering pass pipeline, and render a PrimFunc's SBlock structure tree.
+
+   This mirrors ``CUDAPassPipelineBodyPrologue`` in ``tilelang/cuda/pipeline.py``,
+   running each prologue pass (through LayoutInference and the post-LayoutInference
+   lowering passes) so the structure tree can be captured before/after every stage.
+
+   The kernel file is taken as input; any ``@tilelang.jit`` kernel in the file is
+   auto-discovered. These helpers are consumed by ``viewer.py`` to emit an
+   interactive HTML pass browser.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.tools.pass_visualizer.core.load_user_module
+   tilelang.tools.pass_visualizer.core.discover_jit_kernels
+   tilelang.tools.pass_visualizer.core.kernel_to_tir
+   tilelang.tools.pass_visualizer.core.build_module
+   tilelang.tools.pass_visualizer.core.build_pass_stages
+   tilelang.tools.pass_visualizer.core.inspect_structure
+
+
+Module Contents
+---------------
+
+.. py:function:: load_user_module(path)
+
+   Import an arbitrary user TileLang source file as a module.
+
+
+.. py:function:: discover_jit_kernels(module)
+
+   Find every `@tilelang.jit` object (JITImpl) defined at module top level.
+
+
+.. py:function:: kernel_to_tir(kernel, **kwargs)
+
+   Elaborate a kernel into its un-lowered PrimFunc (TIR).
+
+   Accepts three forms:
+     * JITImpl  (@tilelang.jit)        -> .get_tir(**kwargs)
+     * a factory callable (@T.prim_func wrapper returning a PrimFunc) -> call it
+     * a PrimFunc already                -> returned as-is
+
+
+.. py:function:: build_module(func, target = 'auto')
+
+   Wrap a PrimFunc into an IRModule and resolve the (target, target_host) pair.
+
+
+.. py:function:: build_pass_stages(target)
+
+   Build the ordered CUDA prologue pass list, through the full Prologue.
+
+   Each stage is a ``(name, transform)`` pair where ``transform`` is a TVM pass
+   object callable as ``transform(mod) -> mod``. Conditional passes are resolved
+   here so the returned list reflects what actually runs for this target/config.
+
+   Matches CUDAPassPipelineBodyPrologue (tilelang/cuda/pipeline.py:68-137).
+
+
+.. py:function:: inspect_structure(mod)
+
+   Print each PrimFunc top-down: params → buffer_map → attrs → body (SBlock tree).
+
+

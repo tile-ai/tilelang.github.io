@@ -1,0 +1,267 @@
+tilelang.tools.pass_visualizer.viewer
+=====================================
+
+.. py:module:: tilelang.tools.pass_visualizer.viewer
+
+.. autoapi-nested-parse::
+
+   Interactive pass browser: render the SBlock structure tree after every CUDA
+   lowering pass as a single self-contained HTML file.
+
+   Left pane is the ordered pass list (click to select). Right pane shows the
+   structure tree for the selected pass, with lines added by that pass highlighted
+   green and lines it removed shown ghosted red — so switching between passes makes
+   "what this pass changed" obvious.
+
+   Reuses the tree-rendering logic from core.py verbatim; this file only adds
+   per-pass capture, line-level diffing (difflib), and HTML emission.
+
+   Run with::
+
+       python -m tilelang.tools.pass_visualizer.viewer \
+           tilelang/tools/pass_visualizer/examples/gemm_relu.py \
+           --set M=1024 --set N=1024 --set K=1024 \
+           --set block_M=128 --set block_N=128 --set block_K=32 \
+           --out gemm_relu_passes.html
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.tools.pass_visualizer.viewer.HTML_TEMPLATE
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.tools.pass_visualizer.viewer.build_pass_data
+   tilelang.tools.pass_visualizer.viewer.emit_html
+   tilelang.tools.pass_visualizer.viewer.emit_txt
+   tilelang.tools.pass_visualizer.viewer.main
+
+
+Module Contents
+---------------
+
+.. py:function:: build_pass_data(path, factory, target, kwargs, source)
+
+   Run the pipeline pass-by-pass, capturing a tree + diff for each stage.
+
+   Returns (kernel_name, stages) where each stage is:
+       {name, flag, rows}
+   'flag' is changed/no-op; 'rows' is the diff vs the previous stage's tree.
+   Stage 0 is the TileLang source; stage 1 the pipeline input ("(input)").
+
+
+.. py:data:: HTML_TEMPLATE
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """<!DOCTYPE html>
+      <html lang="en">
+      <head>
+      <meta charset="utf-8">
+      <title>Pass browser — __TITLE__</title>
+      <style>
+        :root {
+          --bg: #1e1e1e; --fg: #d4d4d4; --panel: #252526; --border: #3c3c3c;
+          --sel: #094771; --add-bg: #14361d; --add-fg: #6ccb6c;
+          --del-bg: #3a1d1d; --del-fg: #d36b6b; --muted: #858585;
+        }
+        * { box-sizing: border-box; }
+        body {
+          margin: 0; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+          background: var(--bg); color: var(--fg); font-size: 13px; height: 100vh;
+          display: flex; overflow: hidden;
+        }
+        #left {
+          width: 360px; min-width: 260px; flex-shrink: 0; overflow-y: auto;
+          background: var(--panel); border-right: 1px solid var(--border);
+          transition: width .12s ease, min-width .12s ease;
+        }
+        #left.collapsed { width: 34px; min-width: 34px; overflow: hidden; }
+        #left.collapsed #passlist { display: none; }
+        #left.collapsed h2 .lbl { display: none; }
+        #left h2 {
+          margin: 0; padding: 12px 14px; font-size: 12px; text-transform: uppercase;
+          letter-spacing: .08em; color: var(--muted); position: sticky; top: 0;
+          background: var(--panel); border-bottom: 1px solid var(--border);
+          cursor: pointer; user-select: none; display: flex; align-items: center; gap: 8px;
+        }
+        #left h2:hover { color: var(--fg); }
+        #left h2 .arrow { font-size: 10px; }
+        .pass {
+          padding: 8px 14px; cursor: pointer; border-bottom: 1px solid #2d2d2d;
+          display: flex; align-items: center; gap: 8px; white-space: nowrap;
+        }
+        .pass:hover { background: #2a2d2e; }
+        .pass.sel { background: var(--sel); }
+        .pass .nm { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+        .badge {
+          font-size: 10px; padding: 1px 7px; border-radius: 10px; flex-shrink: 0;
+        }
+        .badge.changed { background: var(--add-bg); color: var(--add-fg); }
+        .badge.no-op   { background: #333; color: var(--muted); }
+        .badge.input   { background: #2d3b55; color: #8ab4f8; }
+        .badge.source  { background: #4a3a1a; color: #ffba6b; }
+        .delta { font-size: 10px; color: var(--muted); flex-shrink: 0; }
+        #right { flex: 1; overflow: auto; padding: 0; }
+        #head {
+          position: sticky; top: 0; background: var(--bg); padding: 12px 18px;
+          border-bottom: 1px solid var(--border); z-index: 1;
+        }
+        #head .title { font-size: 15px; }
+        #head .sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+        #head .legend { margin-top: 8px; display: flex; gap: 16px; font-size: 11px; }
+        #head .legend span { display: flex; align-items: center; gap: 6px; }
+        .sw { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+        .sw.add { background: var(--add-fg); } .sw.del { background: var(--del-fg); }
+        .sw.tileop { background: #ff9d3c; }
+        .sw.sync { background: #9d7bff; }
+        .sw.hw { background: #5fb3d4; }
+        pre#tree { margin: 0; padding: 14px 18px; white-space: pre; tab-size: 2; }
+        .row { display: block; padding: 0 6px; border-radius: 2px; }
+        .row.add { background: var(--add-bg); color: var(--add-fg); }
+        .row.del { background: var(--del-bg); color: var(--del-fg); text-decoration: line-through; opacity: .8; }
+        .row .mk { display: inline-block; width: 14px; color: var(--muted); user-select: none; }
+        .row.add .mk { color: var(--add-fg); } .row.del .mk { color: var(--del-fg); }
+        /* tile-op lines: left accent bar + faint wash so the actual ops stand out */
+        .row.tileop-row {
+          background: rgba(255, 166, 87, 0.13);
+          box-shadow: inset 4px 0 0 #ff8c1a;
+        }
+        .row.tileop-row.add { box-shadow: inset 4px 0 0 #ff8c1a; }
+        .row.tileop-row.del { box-shadow: inset 4px 0 0 #8a5a1a; }
+        /* token highlighting, layered on top of the diff row colors */
+        .tileop {
+          color: #1e1e1e; font-weight: 700; background: #ff9d3c;
+          padding: 0 4px; border-radius: 3px;
+        }
+        .field  { color: #9cdcfe; }                          /* SBlock/PrimFunc field names */
+        .node   { color: #4ec9b0; }                          /* Stmt node-type labels */
+        .ty     { color: #c586c0; }                          /* Python type annotations (:IntImm, :Map, ...) */
+        kbd { background:#333;border-radius:3px;padding:1px 5px;border:1px solid #555;font-size:11px; }
+      </style>
+      </head>
+      <body>
+      <div id="left"><h2 id="passhdr"><span class="arrow">&#9664;</span><span class="lbl">Passes</span></h2><div id="passlist"></div></div>
+      <div id="right">
+        <div id="head">
+          <div class="title" id="h-title"></div>
+          <div class="sub" id="h-sub"></div>
+          <div class="legend">
+            <span><i class="sw add"></i>added by this pass</span>
+            <span><i class="sw del"></i>removed by this pass</span>
+            <span><i class="sw tileop"></i>tile op</span>
+            <span><i class="sw sync"></i>sync primitive</span>
+            <span><i class="sw hw"></i>lowered hw intrinsic</span>
+            <span>Use <kbd>&uarr;</kbd>/<kbd>&darr;</kbd> to step through passes</span>
+          </div>
+        </div>
+        <pre id="tree"></pre>
+      </div>
+      <script>
+      const DATA = __DATA__;
+      let cur = 0;
+      
+      function escapeHtml(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+      
+      function countDelta(stage) {
+        let a = 0, d = 0;
+        for (const r of stage.rows) { if (r.t === 'add') a++; else if (r.t === 'del') d++; }
+        return [a, d];
+      }
+      
+      function renderList() {
+        const el = document.getElementById('passlist');
+        el.innerHTML = '';
+        DATA.forEach((st, i) => {
+          const [a, d] = countDelta(st);
+          const row = document.createElement('div');
+          row.className = 'pass' + (i === cur ? ' sel' : '');
+          row.onclick = () => select(i);
+          const delta = (st.flag === 'changed') ? `<span class="delta">+${a} -${d}</span>` : '';
+          row.innerHTML = `<span class="nm">${escapeHtml(st.name)}</span>`
+            + `<span class="badge ${st.flag}">${st.flag}</span>` + delta;
+          el.appendChild(row);
+        });
+      }
+      
+      function renderTree() {
+        const st = DATA[cur];
+        const [a, d] = countDelta(st);
+        document.getElementById('h-title').textContent = st.name;
+        document.getElementById('h-sub').textContent =
+          st.flag === 'source' ? 'original TileLang source'
+          : st.flag === 'input' ? 'pipeline input (before any pass)'
+          : `${st.flag} — ${a} line(s) added, ${d} line(s) removed vs previous pass`;
+        const pre = document.getElementById('tree');
+        pre.innerHTML = '';
+        for (const r of st.rows) {
+          const span = document.createElement('span');
+          const cls = r.t === 'add' ? 'add' : r.t === 'del' ? 'del' : '';
+          // r.h = server-side highlighted HTML; r.op = line carries a tile-op call.
+          span.className = 'row' + (cls ? ' ' + cls : '') + (r.op ? ' tileop-row' : '');
+          const mark = r.t === 'add' ? '+' : r.t === 'del' ? '-' : ' ';
+          span.innerHTML = `<span class="mk">${mark}</span>${r.h}`;
+          pre.appendChild(span);
+        }
+      }
+      
+      function select(i) {
+        cur = Math.max(0, Math.min(DATA.length - 1, i));
+        renderList();
+        renderTree();
+        const sel = document.querySelector('.pass.sel');
+        if (sel) sel.scrollIntoView({block: 'nearest'});
+      }
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') { select(cur + 1); e.preventDefault(); }
+        else if (e.key === 'ArrowUp') { select(cur - 1); e.preventDefault(); }
+      });
+      
+      // Click the "Passes" header to collapse / expand the left panel.
+      document.getElementById('passhdr').onclick = () => {
+        const left = document.getElementById('left');
+        const collapsed = left.classList.toggle('collapsed');
+        left.querySelector('.arrow').innerHTML = collapsed ? '&#9654;' : '&#9664;';
+      };
+      
+      renderList();
+      renderTree();
+      </script>
+      </body>
+      </html>
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:function:: emit_html(title, stages)
+
+.. py:function:: emit_txt(title, stages)
+
+   Plain-text rendering: each stage's tree, one stage after another.
+
+   Uses the raw row text (`s`), with a +/- marker for diff rows so the same
+   information shown in the HTML is greppable / diffable as text.
+
+
+.. py:function:: main()
+
