@@ -43,6 +43,11 @@ tilelang.transform.decouple_type_cast
        for vec in T.vectorized(16):
            a_frag[vec] = T.cast(cast_buf[vec], "float32")        # compute
 
+   The staging cast buffers together with the transformed loops are wrapped in
+   an opaque block annotated with `lexical_alloc_scope`, so their allocations
+   stay lexically scoped to the use site (see LowerOpaqueBlock / StorageRewrite)
+   instead of being hoisted to the kernel entry.
+
 
 
 Attributes

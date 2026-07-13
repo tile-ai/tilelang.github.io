@@ -1,0 +1,100 @@
+tilelang.tools.cuda.iket.frontend
+=================================
+
+.. py:module:: tilelang.tools.cuda.iket.frontend
+
+.. autoapi-nested-parse::
+
+   Kernel-side IKET event helpers.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.tools.cuda.iket.frontend.PayloadSpec
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.tools.cuda.iket.frontend.reset
+   tilelang.tools.cuda.iket.frontend.event_table
+   tilelang.tools.cuda.iket.frontend.payload
+   tilelang.tools.cuda.iket.frontend.mark
+   tilelang.tools.cuda.iket.frontend.range_push
+   tilelang.tools.cuda.iket.frontend.range_pop
+   tilelang.tools.cuda.iket.frontend.range_start
+   tilelang.tools.cuda.iket.frontend.range_end
+   tilelang.tools.cuda.iket.frontend.range
+
+
+Module Contents
+---------------
+
+.. py:class:: PayloadSpec
+
+   IKET payload value descriptor for a TileLang CUDA event.
+
+
+   .. py:attribute:: expr
+      :type:  Any
+
+
+   .. py:attribute:: dtype
+      :type:  str
+
+
+   .. py:attribute:: iket_id
+      :type:  int
+
+
+.. py:function:: reset()
+
+   Reset frontend event-id allocation for kernels built afterward.
+
+
+.. py:function:: event_table()
+
+   Return events registered while constructing recent kernels.
+
+
+.. py:function:: payload(expr, dtype = None)
+
+   Attach a supported scalar payload value to an IKET event.
+
+
+.. py:function:: mark(name, payload = None)
+
+   Emit an IKET instant marker at the current program point.
+
+
+.. py:function:: range_push(name, payload = None)
+
+   Emit an IKET range-start event at the current program point.
+
+
+.. py:function:: range_pop(name = None)
+
+   Emit an IKET range-end event for the current warp-local range.
+
+
+.. py:function:: range_start(name, payload = None)
+
+   Alias for :func:`range_push`.
+
+
+.. py:function:: range_end(name = None)
+
+   Alias for :func:`range_pop`.
+
+
+.. py:function:: range(name, payload = None)
+
+   Return a scope that emits IKET range-start and range-end events.
+
+

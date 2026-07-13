@@ -1,0 +1,93 @@
+tilelang.tools.cuda.iket.metadata
+=================================
+
+.. py:module:: tilelang.tools.cuda.iket.metadata
+
+.. autoapi-nested-parse::
+
+   Self-contained IKET event metadata carried through TIR.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.tools.cuda.iket.metadata.TOKEN_PREFIX
+   tilelang.tools.cuda.iket.metadata.MAX_EVENT_NAME_BYTES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.tools.cuda.iket.metadata.Event
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.tools.cuda.iket.metadata.encode_event
+   tilelang.tools.cuda.iket.metadata.decode_event
+
+
+Module Contents
+---------------
+
+.. py:data:: TOKEN_PREFIX
+   :value: '__tl_iket_v1_'
+
+
+.. py:data:: MAX_EVENT_NAME_BYTES
+   :value: 32
+
+
+.. py:class:: Event
+
+   Metadata for one IKET event emitted by a TileLang kernel.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: event_id
+      :type:  int
+
+
+   .. py:attribute:: kind
+      :type:  str
+
+
+   .. py:attribute:: range_id
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: payload_type
+      :type:  str
+      :value: 'NoPayload'
+
+
+
+   .. py:attribute:: payload_iket_id
+      :type:  int
+      :value: 0
+
+
+
+.. py:function:: encode_event(event)
+
+   Encode an event as a source-safe token stored in a TIR StringImm.
+
+
+.. py:function:: decode_event(token)
+
+   Decode and validate an event token recovered from generated CUDA.
+
+

@@ -69,13 +69,15 @@ Module Contents
         These stay plain so they can return values and be reused statelessly.
         A method that emits TIR only through control flow / nested calls (no
         direct store) should be marked explicitly with ``@inline``.
-   3. Auto-name state buffers ``{prefix}_{attr}`` in the generated IR, where
-      ``prefix`` is the constructor argument named ``prefix`` (so
-      ``Sched("sched", ...)`` yields ``sched_m_idx`` etc.). This wraps
-      ``__init__`` to capture ``prefix`` and installs a ``__setattr__`` that
-      names any ``Buffer`` assigned to a non-underscore attribute; non-buffers
-      (compile-time ints like ``num_n_tiles``) and underscore attributes are
-      skipped, and naming is best-effort (never fatal). It runs at
-      construction while an IR builder is active, so it works in both modes.
+   3. Auto-name state buffers ``{name}_{attr}`` in the generated IR, where
+      ``name`` is the optional constructor argument named ``name`` (so
+      ``Sched(..., name="sched")`` yields ``sched_m_idx`` etc.; the default
+      ``None`` skips naming). This wraps ``__init__`` to capture ``name`` and
+      installs a ``__setattr__`` that names any ``Buffer`` assigned to an
+      attribute (leading underscores are stripped, so ``self._m_idx``
+      becomes ``sched_m_idx``); non-buffers (compile-time ints like
+      ``num_n_tiles``) are skipped, and naming is
+      best-effort (never fatal). It runs at construction while an IR builder
+      is active, so it works in both modes.
 
 
