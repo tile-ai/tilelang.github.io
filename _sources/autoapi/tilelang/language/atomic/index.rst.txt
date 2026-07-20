@@ -247,8 +247,9 @@ Module Contents
 
    Performs an atomic load from `src` and returns a PrimExpr representing the loaded value.
    memory_order selects the ordering and must be one of: "relaxed", "consume", "acquire",
-   "release", "acq_rel", or "seq_cst" (default).
-   Raises KeyError if an unknown memory_order is provided.
+   or "seq_cst" (default).
+
+   :raises ValueError: If memory_order is not valid for an atomic load.
 
    Note: atomic_load always returns the loaded value, so no return_prev parameter is needed.
 
@@ -287,15 +288,15 @@ Module Contents
    :type dst: Buffer
    :param src: Value to store.
    :type src: PrimExpr
-   :param memory_order: Memory ordering name; one of "relaxed", "consume",
-                        "acquire", "release", "acq_rel", or "seq_cst". Defaults to "seq_cst".
+   :param memory_order: Memory ordering name; one of "relaxed", "release",
+                        or "seq_cst". Defaults to "seq_cst".
                         The name is mapped to an internal numeric ID used by the underlying runtime.
    :type memory_order: str, optional
 
    :returns: A handle representing the issued atomic store operation.
    :rtype: PrimExpr
 
-   :raises KeyError: If `memory_order` is not one of the supported names.
+   :raises ValueError: If memory_order is not valid for an atomic store.
 
    Note: atomic_store doesn't return a previous value, so no return_prev parameter is needed.
 

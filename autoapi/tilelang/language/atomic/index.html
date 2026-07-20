@@ -648,6 +648,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../utils/language/index.html">tilelang.utils.language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/pass_diff/index.html">tilelang.utils.pass_diff</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/pass_diff_hook/index.html">tilelang.utils.pass_diff_hook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/pass_timing/index.html">tilelang.utils.pass_timing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/sparse/index.html">tilelang.utils.sparse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../utils/tensor/index.html">tilelang.utils.tensor</a></li>
 </ul>
@@ -1001,8 +1002,21 @@ If provided, it is translated to the corresponding numeric memory-order id befor
 <dd><p>Load a value from the given buffer using the specified atomic memory ordering.</p>
 <p>Performs an atomic load from <cite>src</cite> and returns a PrimExpr representing the loaded value.
 memory_order selects the ordering and must be one of: “relaxed”, “consume”, “acquire”,
-“release”, “acq_rel”, or “seq_cst” (default).
-Raises KeyError if an unknown memory_order is provided.</p>
+or “seq_cst” (default).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If memory_order is not valid for an atomic load.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>src</strong> (<em>tvm.tirx.Buffer</em>)</p></li>
+<li><p><strong>memory_order</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.tirx.PrimExpr</p>
+</dd>
+</dl>
 <p>Note: atomic_load always returns the loaded value, so no return_prev parameter is needed.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Basic atomic load</span>
@@ -1034,17 +1048,6 @@ Raises KeyError if an unknown memory_order is provided.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">current_count</span> <span class="o">=</span> <span class="n">atomic_load</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span> <span class="n">memory_order</span><span class="o">=</span><span class="s2">&quot;relaxed&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>tvm.tirx.Buffer</em>)</p></li>
-<li><p><strong>memory_order</strong> (<em>str</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1056,8 +1059,8 @@ Raises KeyError if an unknown memory_order is provided.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dst</strong> (<em>Buffer</em>) – Destination buffer to store into.</p></li>
 <li><p><strong>src</strong> (<em>PrimExpr</em>) – Value to store.</p></li>
-<li><p><strong>memory_order</strong> (<em>str</em><em>, </em><em>optional</em>) – Memory ordering name; one of “relaxed”, “consume”,
-“acquire”, “release”, “acq_rel”, or “seq_cst”. Defaults to “seq_cst”.
+<li><p><strong>memory_order</strong> (<em>str</em><em>, </em><em>optional</em>) – Memory ordering name; one of “relaxed”, “release”,
+or “seq_cst”. Defaults to “seq_cst”.
 The name is mapped to an internal numeric ID used by the underlying runtime.</p></li>
 </ul>
 </dd>
@@ -1068,7 +1071,7 @@ The name is mapped to an internal numeric ID used by the underlying runtime.</p>
 <dd class="field-odd"><p>PrimExpr</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>KeyError</strong> – If <cite>memory_order</cite> is not one of the supported names.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If memory_order is not valid for an atomic store.</p>
 </dd>
 </dl>
 <p>Note: atomic_store doesn’t return a previous value, so no return_prev parameter is needed.</p>

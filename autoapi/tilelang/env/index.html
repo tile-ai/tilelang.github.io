@@ -648,6 +648,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../utils/language/index.html">tilelang.utils.language</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../utils/pass_diff/index.html">tilelang.utils.pass_diff</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../utils/pass_diff_hook/index.html">tilelang.utils.pass_diff_hook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/pass_timing/index.html">tilelang.utils.pass_timing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../utils/sparse/index.html">tilelang.utils.sparse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../utils/tensor/index.html">tilelang.utils.tensor</a></li>
 </ul>
@@ -816,6 +817,12 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.env.parse_pass_profile_threshold_ms" title="tilelang.env.parse_pass_profile_threshold_ms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_pass_profile_threshold_ms</span></code></a>(value[, name])</p></td>
+<td><p>Parse a finite, non-negative pass profile threshold in milliseconds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.env.resolve_pass_profile_threshold_ms" title="tilelang.env.resolve_pass_profile_threshold_ms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_pass_profile_threshold_ms</span></code></a>(pass_configs, key, ...)</p></td>
+<td><p>Resolve pass profile threshold with an explicit pass config taking precedence.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.env.prepend_dll_search_path" title="tilelang.env.prepend_dll_search_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepend_dll_search_path</span></code></a>(paths)</p></td>
 <td><p>Prepend <code class="docutils literal notranslate"><span class="pre">paths</span></code> to <code class="docutils literal notranslate"><span class="pre">%PATH%</span></code> on Windows, skipping entries already present.</p></td>
 </tr>
@@ -848,6 +855,41 @@
 <dt class="sig sig-object py" id="tilelang.env.TargetConfig">
 <span class="sig-prename descclassname"><span class="pre">tilelang.env.</span></span><span class="sig-name descname"><span class="pre">TargetConfig</span></span><a class="headerlink" href="#tilelang.env.TargetConfig" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.env.parse_pass_profile_threshold_ms">
+<span class="sig-prename descclassname"><span class="pre">tilelang.env.</span></span><span class="sig-name descname"><span class="pre">parse_pass_profile_threshold_ms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pass</span> <span class="pre">profile</span> <span class="pre">threshold'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.parse_pass_profile_threshold_ms" title="Link to this definition">¶</a></dt>
+<dd><p>Parse a finite, non-negative pass profile threshold in milliseconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>object</em>)</p></li>
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.env.resolve_pass_profile_threshold_ms">
+<span class="sig-prename descclassname"><span class="pre">tilelang.env.</span></span><span class="sig-name descname"><span class="pre">resolve_pass_profile_threshold_ms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_threshold_ms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.resolve_pass_profile_threshold_ms" title="Link to this definition">¶</a></dt>
+<dd><p>Resolve pass profile threshold with an explicit pass config taking precedence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pass_configs</strong> (<em>collections.abc.Mapping</em><em>[</em><em>object</em><em>, </em><em>object</em><em>]</em>)</p></li>
+<li><p><strong>key</strong> (<em>object</em>)</p></li>
+<li><p><strong>env_threshold_ms</strong> (<em>collections.abc.Callable</em><em>[</em><em>[</em><em>]</em><em>, </em><em>float</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="tilelang.env.CUTLASS_NOT_FOUND_MESSAGE">
@@ -1144,6 +1186,16 @@ auto-tuning configs, and build options.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.env.Environment.TILELANG_PASS_PROFILE">
+<span class="sig-name descname"><span class="pre">TILELANG_PASS_PROFILE</span></span><a class="headerlink" href="#tilelang.env.Environment.TILELANG_PASS_PROFILE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.env.Environment.TILELANG_PASS_PROFILE_THRESHOLD_MS">
+<span class="sig-name descname"><span class="pre">TILELANG_PASS_PROFILE_THRESHOLD_MS</span></span><a class="headerlink" href="#tilelang.env.Environment.TILELANG_PASS_PROFILE_THRESHOLD_MS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.env.Environment.TILELANG_AUTO_TUNING_DISABLE_CACHE">
 <span class="sig-name descname"><span class="pre">TILELANG_AUTO_TUNING_DISABLE_CACHE</span></span><a class="headerlink" href="#tilelang.env.Environment.TILELANG_AUTO_TUNING_DISABLE_CACHE" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1274,6 +1326,26 @@ auto-tuning configs, and build options.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.env.Environment.is_pass_profile_enabled">
+<span class="sig-name descname"><span class="pre">is_pass_profile_enabled</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.Environment.is_pass_profile_enabled" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.env.Environment.get_pass_profile_threshold_ms">
+<span class="sig-name descname"><span class="pre">get_pass_profile_threshold_ms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.Environment.get_pass_profile_threshold_ms" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1525,6 +1597,8 @@ when TileLang is imported. Each lookup is best-effort; failures are ignored.</p>
 <li><a class="reference internal" href="#tilelang.env.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.EnvVarDefault"><code class="docutils literal notranslate"><span class="pre">EnvVarDefault</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.TargetConfig"><code class="docutils literal notranslate"><span class="pre">TargetConfig</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.parse_pass_profile_threshold_ms"><code class="docutils literal notranslate"><span class="pre">parse_pass_profile_threshold_ms()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.resolve_pass_profile_threshold_ms"><code class="docutils literal notranslate"><span class="pre">resolve_pass_profile_threshold_ms()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.CUTLASS_NOT_FOUND_MESSAGE"><code class="docutils literal notranslate"><span class="pre">CUTLASS_NOT_FOUND_MESSAGE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.COMPOSABLE_KERNEL_NOT_FOUND_MESSAGE"><code class="docutils literal notranslate"><span class="pre">COMPOSABLE_KERNEL_NOT_FOUND_MESSAGE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.TL_TEMPLATE_NOT_FOUND_MESSAGE"><code class="docutils literal notranslate"><span class="pre">TL_TEMPLATE_NOT_FOUND_MESSAGE</span></code></a></li>
@@ -1570,6 +1644,8 @@ when TileLang is imported. Each lookup is best-effort; failures are ignored.</p>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_COMPILE_TIMEOUT_SECONDS"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_COMPILE_TIMEOUT_SECONDS</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_PASS_DIFF"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_PASS_DIFF</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_PASS_DIFF_OUTPUT"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_PASS_DIFF_OUTPUT</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_PASS_PROFILE"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_PASS_PROFILE</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_PASS_PROFILE_THRESHOLD_MS"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_PASS_PROFILE_THRESHOLD_MS</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_AUTO_TUNING_DISABLE_CACHE"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_AUTO_TUNING_DISABLE_CACHE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_AUTO_TUNING_CPU_UTILITIES"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_AUTO_TUNING_CPU_UTILITIES</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_AUTO_TUNING_CPU_COUNTS"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_AUTO_TUNING_CPU_COUNTS</span></code></a></li>
@@ -1588,6 +1664,8 @@ when TileLang is imported. Each lookup is best-effort; failures are ignored.</p>
 <li><a class="reference internal" href="#tilelang.env.Environment.is_print_on_compilation_enabled"><code class="docutils literal notranslate"><span class="pre">Environment.is_print_on_compilation_enabled()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.should_cleanup_temp_files"><code class="docutils literal notranslate"><span class="pre">Environment.should_cleanup_temp_files()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.is_jit_diagnostics_enabled"><code class="docutils literal notranslate"><span class="pre">Environment.is_jit_diagnostics_enabled()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.Environment.is_pass_profile_enabled"><code class="docutils literal notranslate"><span class="pre">Environment.is_pass_profile_enabled()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.Environment.get_pass_profile_threshold_ms"><code class="docutils literal notranslate"><span class="pre">Environment.get_pass_profile_threshold_ms()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.get_compile_timeout_seconds"><code class="docutils literal notranslate"><span class="pre">Environment.get_compile_timeout_seconds()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.get_pass_diff_mode"><code class="docutils literal notranslate"><span class="pre">Environment.get_pass_diff_mode()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.get_default_target"><code class="docutils literal notranslate"><span class="pre">Environment.get_default_target()</span></code></a></li>

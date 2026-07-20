@@ -1,0 +1,128 @@
+tilelang.utils.pass_timing
+==========================
+
+.. py:module:: tilelang.utils.pass_timing
+
+.. autoapi-nested-parse::
+
+   Per-pass timing instrumentation for tilelang compilation pipelines.
+
+   Records inclusive and self wall-clock duration for each pass using
+   ``time.monotonic()``. Data persists after PassContext exit for
+   post-compilation reporting.
+
+   Enabled via TILELANG_PASS_PROFILE=1 env var or
+   PassConfigKey.TL_PASS_PROFILE pass config.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.utils.pass_timing.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.utils.pass_timing.PassTimingRecord
+   tilelang.utils.pass_timing.TileLangPassTimingInstrument
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.utils.pass_timing.build_pass_instruments
+   tilelang.utils.pass_timing.report_pass_timing_on_exit
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: PassTimingRecord
+
+   Single completed pass execution record.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: duration_s
+      :type:  float
+
+
+   .. py:attribute:: depth
+      :type:  int
+
+
+   .. py:attribute:: self_duration_s
+      :type:  float
+      :value: 0.0
+
+
+
+   .. py:attribute:: sequence
+      :type:  int
+      :value: 0
+
+
+
+.. py:class:: TileLangPassTimingInstrument(threshold_ms = 0.0)
+
+   Per-pass timing instrument for tilelang compilation pipelines.
+
+   This is a plain-Python wrapper that creates a TVM ``PassInstrument``
+   internally. Callback state is kept separate so the native instrument does
+   not retain this wrapper.
+
+   :param threshold_ms: Only show passes whose inclusive duration meets this threshold (ms).
+                        0.0 means show all passes.
+   :type threshold_ms: float
+
+
+   .. py:property:: instrument
+
+      The underlying TVM PassInstrument to add to ``PassContext``.
+
+
+   .. py:property:: records
+      :type: list[PassTimingRecord]
+
+
+
+   .. py:property:: total_duration_s
+      :type: float
+
+
+
+   .. py:method:: report(context = None)
+
+      Generate a formatted timing report string.
+
+
+
+   .. py:method:: print_report(context = None)
+
+      Print the timing report to the logger.
+
+
+
+.. py:function:: build_pass_instruments(base_instruments, threshold_ms)
+
+   Build instruments with timing first so later after-pass callbacks are excluded.
+
+
+.. py:function:: report_pass_timing_on_exit(timing_instrument, context)
+
+   Emit a timing report after PassContext exits, including on failure.
+
+
