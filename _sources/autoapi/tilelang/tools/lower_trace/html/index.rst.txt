@@ -1,0 +1,38 @@
+tilelang.tools.lower_trace.html
+===============================
+
+.. py:module:: tilelang.tools.lower_trace.html
+
+.. autoapi-nested-parse::
+
+   HTML report generation for lower trace.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.tools.lower_trace.html.render_pass_section
+   tilelang.tools.lower_trace.html.generate_html
+
+
+Module Contents
+---------------
+
+.. py:function:: render_pass_section(rec)
+
+   Render a single pass section as HTML.
+
+
+.. py:function:: generate_html(records, output_path, section_cache = None)
+
+   Generate a self-contained HTML file with pass trace visualization.
+
+   ``section_cache`` (keyed by ``(phase, index)``) memoizes the expensive
+   per-pass section rendering (which includes the IR diff).  When supplied by
+   the incremental flush path, previously rendered sections are reused so the
+   diff is computed at most once per record, keeping total cost O(n).
+
+
