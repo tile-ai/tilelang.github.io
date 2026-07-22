@@ -1,0 +1,70 @@
+tilelang.tools.lower_trace
+==========================
+
+.. py:module:: tilelang.tools.lower_trace
+
+.. autoapi-nested-parse::
+
+   IR Lower Trace — zero-intrusion debug tool for visualizing compilation passes.
+
+   Generates a self-contained HTML page and/or terminal diff showing all passes in the
+   compilation pipeline with side-by-side IR diff for each pass.
+
+   Usage::
+
+       TL_LOWER_TRACE=1 python my_kernel.py        # HTML report
+       TL_LOWER_TRACE=terminal python my_kernel.py  # terminal diff only
+       TL_LOWER_TRACE=both python my_kernel.py      # both terminal and HTML
+
+   Programmatic API::
+
+       from tilelang.tools.lower_trace import lower_trace
+
+       lower_trace(func, my_pass, mode="terminal")
+       lower_trace(func, [pass_a, pass_b], mode="both", html_path="diff.html")
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/tilelang/tools/lower_trace/core/index
+   /autoapi/tilelang/tools/lower_trace/diff/index
+   /autoapi/tilelang/tools/lower_trace/html/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.tools.lower_trace.lower_trace
+
+
+Package Contents
+----------------
+
+.. py:function:: lower_trace(func_or_mod, passes, *, mode = 'terminal', context = 3, html_path = 'lower_trace_report.html')
+
+   Compare IR before and after each pass in a chain.
+
+   :param func_or_mod: The starting IR.
+   :type func_or_mod: PrimFunc or IRModule
+   :param passes: A single pass, a list of passes, or a list of (name, pass) pairs.
+   :type passes: Pass or list[Pass] or list[tuple[str, Pass]]
+   :param mode: Output mode.
+   :type mode: {"terminal", "html", "both"}
+   :param context: Number of context lines in the unified diff (default 3).
+   :type context: int
+   :param html_path: Output path for HTML report (default ``lower_trace_report.html``).
+   :type html_path: str
+
+   :returns: One entry per pass step, each containing:
+             ``name``, ``before_script``, ``after_script``, ``diff_lines``,
+             ``insertions``, ``deletions``, ``changed``.
+   :rtype: list[dict]
+
+
