@@ -221,7 +221,7 @@ Module Contents
 
 
 
-   .. py:method:: run(warmup = 25, rep = 100, timeout = 180, use_pipeline = False, enable_grouped_compile = False, group_compile_size = 2, benchmark_devices = None, benchmark_multi_gpu = False)
+   .. py:method:: run(warmup = 25, rep = 100, timeout = 180, use_pipeline = False, enable_grouped_compile = False, group_compile_size = 2, benchmark_devices = None, benchmark_multi_gpu = False, early_stop = False, early_stop_factor = 2.0)
 
       Run the auto-tuning process.
 
@@ -233,6 +233,8 @@ Module Contents
       :param group_compile_size: Number of configurations in one compile unit.
       :param benchmark_devices: CUDA device ordinals used for benchmark workers when benchmark_multi_gpu=True.
       :param benchmark_multi_gpu: Whether to benchmark configurations across multiple CUDA GPUs.
+      :param early_stop: Whether to skip full benchmark when estimate exceeds best * early_stop_factor.
+      :param early_stop_factor: Multiplier for best latency to compute early stop threshold.
 
       :returns: Results of the auto-tuning process.
       :rtype: AutotuneResult
