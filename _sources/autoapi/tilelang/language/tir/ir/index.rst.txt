@@ -9,6 +9,7 @@ Attributes
 
 .. autoapisummary::
 
+   tilelang.language.tir.ir.PyPrimExpr
    tilelang.language.tir.ir.abs
    tilelang.language.tir.ir.acos
    tilelang.language.tir.ir.acosh
@@ -158,12 +159,17 @@ Functions
    tilelang.language.tir.ir.unroll
    tilelang.language.tir.ir.thread_binding
    tilelang.language.tir.ir.grid
+   tilelang.language.tir.ir.Select
+   tilelang.language.tir.ir.min
+   tilelang.language.tir.ir.max
    tilelang.language.tir.ir.align_up
    tilelang.language.tir.ir.cast
 
 
 Module Contents
 ---------------
+
+.. py:data:: PyPrimExpr
 
 .. py:function:: serial(start, stop = None, *, annotations = None)
 
@@ -251,6 +257,24 @@ Module Contents
 
    :returns: **res** -- The ForFrame.
    :rtype: frame.ForFrame
+
+
+.. py:function:: Select(condition, true_value, false_value, span=None)
+
+   Construct a TIR select expression.
+
+   ``Select`` evaluates both value expressions. Use ``if_then_else`` when a
+   branch must guard side effects or out-of-bounds memory accesses.
+
+
+.. py:function:: min(a, b)
+
+   Construct a binary TIR minimum expression.
+
+
+.. py:function:: max(a, b)
+
+   Construct a binary TIR maximum expression.
 
 
 .. py:data:: abs
