@@ -1,0 +1,48 @@
+tilelang.cuda.intrinsics.sparse_layout
+======================================
+
+.. py:module:: tilelang.cuda.intrinsics.sparse_layout
+
+.. autoapi-nested-parse::
+
+   Layout metadata for 2:4 semi-structured sparsity.
+
+   Shared contract between the sparse compressor (``tilelang.utils.sparse``) and the
+   CUDA ``mma_sp`` code generator. Depends only on the leaf ``dtypes`` module so it
+   can be pulled into the codegen import path without touching the language facade.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.cuda.intrinsics.sparse_layout.GROUP_CONFIG
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.cuda.intrinsics.sparse_layout.get_e_factor
+   tilelang.cuda.intrinsics.sparse_layout.get_e_replicate_factor
+
+
+Module Contents
+---------------
+
+.. py:data:: GROUP_CONFIG
+   :type:  dict[tilelang.language.dtypes.dtype, tuple[int, int]]
+
+.. py:function:: get_e_factor(a_dtype, meta_dtype)
+
+   Return how many a_dtype elements are indexed by one meta_dtype element.
+
+
+.. py:function:: get_e_replicate_factor(a_dtype)
+
+   Return how many consecutive threads share the same logical metadata value.
+
+

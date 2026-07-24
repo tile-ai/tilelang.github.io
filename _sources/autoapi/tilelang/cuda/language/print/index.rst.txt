@@ -1,0 +1,43 @@
+tilelang.cuda.language.print
+============================
+
+.. py:module:: tilelang.cuda.language.print
+
+.. autoapi-nested-parse::
+
+   This module provides macros and utilities for debugging TileLang (tl) programs.
+   It includes functionality to print variables, print values in buffers, conditionally execute debug prints and assert.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.cuda.language.print.print
+
+
+Module Contents
+---------------
+
+.. py:function:: print(obj = None, msg = '', warp_group_id = 0, warp_id = 0)
+
+   A generic print function that handles both TIR buffers and primitive expressions.
+
+   - If the input is a TIR buffer, it prints its values, but only on the first thread (tx=0, ty=0, tz=0).
+   - If the input is a TIR primitive expression, it prints its value directly.
+
+   :param obj: The object to print. It can be either a tirx.Buffer, tirx.PrimExpr, or None (for msg-only print).
+   :type obj: Any
+   :param msg: An optional message to include in the print statement.
+   :type msg: str
+   :param warp_group_id: The warp group id to print.
+   :type warp_group_id: int
+   :param warp_id: The warp id to print.
+   :type warp_id: int
+   :param print thread will be warp_group_id * warp_group_size + warp_id:
+
+   :raises ValueError: If the input object type is unsupported.
+
+
