@@ -728,6 +728,12 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.Span" title="tilelang.language.eager.ast.Span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Span</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.QuoteReplacement" title="tilelang.language.eager.ast.QuoteReplacement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QuoteReplacement</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.Operator" title="tilelang.language.eager.ast.Operator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Operator</span></code></a></p></td>
 <td><p></p></td>
 </tr>
@@ -809,6 +815,16 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py type">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.Span">
+<em class="property"><span class="pre">type</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.ast.</span></span><span class="sig-name descname"><span class="pre">Span</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.eager.ast.Span" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py type">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.QuoteReplacement">
+<em class="property"><span class="pre">type</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.ast.</span></span><span class="sig-name descname"><span class="pre">QuoteReplacement</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ast.AST</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ast.stmt</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.language.eager.ast.QuoteReplacement" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.eager.ast.ast_has_span">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.ast.</span></span><span class="sig-name descname"><span class="pre">ast_has_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ast</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.ast_has_span" title="Link to this definition">¶</a></dt>
@@ -830,7 +846,7 @@
 <dd class="field-odd"><p><strong>ast</strong> (<em>ast_get_span.ast</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple[int, int, int, int]</p>
+<dd class="field-even"><p>Span | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -842,7 +858,7 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ast</strong> (<em>ast_set_span.ast</em>)</p></li>
-<li><p><strong>span</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>span</strong> (<em>Span</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -884,8 +900,9 @@ just a single node.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>names</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>ast.AST</em><em>]</em>)</p></li>
-<li><p><strong>passes</strong> (<em>list</em><em>[</em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>names</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>QuoteReplacement</em><em>]</em>)</p></li>
+<li><p><strong>passes</strong> (<em>collections.abc.Sequence</em><em>[</em><em>QuoteReplacement</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>span</strong> (<em>Span</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -896,7 +913,7 @@ just a single node.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.eager.ast.QuoteVisitor.passes">
-<span class="sig-name descname"><span class="pre">passes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.language.eager.ast.QuoteVisitor.passes" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">passes</span></span><a class="headerlink" href="#tilelang.language.eager.ast.QuoteVisitor.passes" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -912,6 +929,9 @@ just a single node.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.AST</em>)</p>
 </dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ast.AST | list[ast.AST] | None</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -923,7 +943,7 @@ just a single node.</p>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.Name</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Any</p>
+<dd class="field-even"><p>QuoteReplacement</p>
 </dd>
 </dl>
 </dd></dl>
@@ -936,7 +956,7 @@ just a single node.</p>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.Pass</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Any</p>
+<dd class="field-even"><p>QuoteReplacement</p>
 </dd>
 </dl>
 </dd></dl>
@@ -950,11 +970,13 @@ just a single node.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>expr</strong> (<em>str</em>)</p></li>
-<li><p><strong>passes</strong> (<em>list</em><em>[</em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>passes</strong> (<em>collections.abc.Sequence</em><em>[</em><em>QuoteReplacement</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>span</strong> (<em>ast.AST</em><em> | </em><em>Span</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>kws</strong> (<em>QuoteReplacement</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list[ast.AST]</p>
+<dd class="field-even"><p>list[ast.stmt]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -966,11 +988,13 @@ just a single node.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>expr</strong> (<em>str</em>)</p></li>
-<li><p><strong>passes</strong> (<em>list</em><em>[</em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>passes</strong> (<em>collections.abc.Sequence</em><em>[</em><em>QuoteReplacement</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>span</strong> (<em>ast.AST</em><em> | </em><em>Span</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>kws</strong> (<em>QuoteReplacement</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>ast.AST</p>
+<dd class="field-even"><p>ast.stmt</p>
 </dd>
 </dl>
 </dd></dl>
@@ -980,7 +1004,10 @@ just a single node.</p>
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.ast.</span></span><span class="sig-name descname"><span class="pre">quote_expr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kws</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.quote_expr" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>expr</strong> (<em>str</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<em>str</em>)</p></li>
+<li><p><strong>kws</strong> (<em>QuoteReplacement</em>)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>ast.expr</p>
@@ -1480,7 +1507,7 @@ just a single node.</p>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.Assign</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list[ast.AST]</p>
+<dd class="field-even"><p>list[ast.stmt]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1493,7 +1520,7 @@ just a single node.</p>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.AugAssign</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list[ast.AST]</p>
+<dd class="field-even"><p>ast.AST | list[ast.stmt]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1564,7 +1591,7 @@ just a single node.</p>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.IfExp</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>ast.Expr</p>
+<dd class="field-even"><p>ast.expr</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1836,6 +1863,8 @@ _T (return type).</p>
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.Span"><code class="docutils literal notranslate"><span class="pre">Span</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.QuoteReplacement"><code class="docutils literal notranslate"><span class="pre">QuoteReplacement</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.ast_has_span"><code class="docutils literal notranslate"><span class="pre">ast_has_span()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.ast_get_span"><code class="docutils literal notranslate"><span class="pre">ast_get_span()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.ast_set_span"><code class="docutils literal notranslate"><span class="pre">ast_set_span()</span></code></a></li>

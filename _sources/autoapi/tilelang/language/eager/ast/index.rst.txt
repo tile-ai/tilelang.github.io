@@ -9,6 +9,8 @@ Attributes
 
 .. autoapisummary::
 
+   tilelang.language.eager.ast.Span
+   tilelang.language.eager.ast.QuoteReplacement
    tilelang.language.eager.ast.Operator
    tilelang.language.eager.ast.BoolOp
 
@@ -47,13 +49,21 @@ Functions
 Module Contents
 ---------------
 
+.. py:type:: Span
+   :canonical: tuple[int, int, int, int]
+
+
+.. py:type:: QuoteReplacement
+   :canonical: ast.AST | list[ast.stmt] | None
+
+
 .. py:function:: ast_has_span(ast)
 
 .. py:function:: ast_get_span(ast)
 
 .. py:function:: ast_set_span(ast, span)
 
-.. py:class:: QuoteVisitor(names, passes = None, span=None)
+.. py:class:: QuoteVisitor(names, passes = None, span = None)
 
    Bases: :py:obj:`ast.NodeTransformer`
 
@@ -96,8 +106,6 @@ Module Contents
 
 
    .. py:attribute:: passes
-      :value: []
-
 
 
    .. py:attribute:: span
@@ -117,9 +125,9 @@ Module Contents
    .. py:method:: visit_Pass(node)
 
 
-.. py:function:: quote(expr, *, passes = None, span=None, **kws)
+.. py:function:: quote(expr, *, passes = None, span = None, **kws)
 
-.. py:function:: quote1(expr, *, passes = None, span=None, **kws)
+.. py:function:: quote1(expr, *, passes = None, span = None, **kws)
 
 .. py:function:: quote_expr(expr, **kws)
 
