@@ -1,0 +1,66 @@
+tilelang.cuda.op.gemm.gemm_fma
+==============================
+
+.. py:module:: tilelang.cuda.op.gemm.gemm_fma
+
+.. autoapi-nested-parse::
+
+   CUDA scalar FMA fallback GEMM.
+
+   Used when a tensor-core MMA path is unavailable for the requested dtype, layout,
+   or shape combination (e.g. BF16 on SM70 Volta, or shapes that do not satisfy the
+   SM70 MMA tile constraints). Each thread computes a strided subset of the output
+   tile using ordinary CUDA-core fused multiply-add instructions.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.cuda.op.gemm.gemm_fma.GEMM_INST_FMA
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.cuda.op.gemm.gemm_fma.GemmFMA
+
+
+Module Contents
+---------------
+
+.. py:data:: GEMM_INST_FMA
+   :value: 'cuda.fma'
+
+
+.. py:class:: GemmFMA
+
+   Bases: :py:obj:`tilelang.tileop.gemm.gemm_base.GemmBase`
+
+
+   CUDA scalar FMA fallback for GEMM combinations without tensor-core MMA.
+
+
+   .. py:method:: infer_layout(target, thread_nums)
+
+      Assign the linear fragment layout to any fragment operand.
+
+
+
+   .. py:method:: lower(layout_map, target, thread_bounds, thread_var, mbar_phase_expr = None)
+
+      Emit the FMA-fallback GEMM prim_func.
+
+      Each thread accumulates its assigned output elements with a scalar loop
+      over ``K``. Shared operands are read directly; fragment operands are
+      staged into shared memory first so all threads can read the full tile.
+      Casts widen operands to ``accum_dtype`` before multiplication so narrow
+      input dtypes stay numerically sound (e.g. BF16 to FP32 accumulation on
+      Volta). This path favors correctness and coverage over peak throughput.
+
+
+
