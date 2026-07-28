@@ -244,6 +244,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../compiler_internals/tensor_checks.html">Tensor Checks (Host-Side Auto-Validation)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../compiler_internals/metal_tilelang_development.html">TileLang Metal Backend Internals</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">DEVELOPER GUIDE</span></p>
 <ul>
@@ -575,6 +576,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../transform/metal_fragment_to_simdgroup/index.html">tilelang.metal.transform.metal_fragment_to_simdgroup</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../../utils/index.html">tilelang.metal.utils</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../profiler/index.html">tilelang.profiler</a><input aria-label="Toggle navigation of tilelang.profiler" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -733,6 +735,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL" title="tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEMM_INST_METAL</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL_COOPERATIVE_TENSOR" title="tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL_COOPERATIVE_TENSOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEMM_INST_METAL_COOPERATIVE_TENSOR</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -742,7 +747,10 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal" title="tilelang.metal.op.gemm.gemm_metal.GemmMetal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmMetal</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup" title="tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmMetalSimdGroup</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal" title="tilelang.metal.op.gemm.gemm_metal.GemmMetal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmMetal</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -756,6 +764,56 @@
 <span class="sig-prename descclassname"><span class="pre">tilelang.metal.op.gemm.gemm_metal.</span></span><span class="sig-name descname"><span class="pre">GEMM_INST_METAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'metal.simdgroup'</span></em><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL_COOPERATIVE_TENSOR">
+<span class="sig-prename descclassname"><span class="pre">tilelang.metal.op.gemm.gemm_metal.</span></span><span class="sig-name descname"><span class="pre">GEMM_INST_METAL_COOPERATIVE_TENSOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'metal.cooperative_tensor'</span></em><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL_COOPERATIVE_TENSOR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.metal.op.gemm.gemm_metal.</span></span><span class="sig-name descname"><span class="pre">GemmMetalSimdGroup</span></span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../../tileop/gemm/gemm_base/index.html#tilelang.tileop.gemm.gemm_base.GemmBase" title="tilelang.tileop.gemm.gemm_base.GemmBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.tileop.gemm.gemm_base.GemmBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.is_gemm_ss">
+<span class="sig-name descname"><span class="pre">is_gemm_ss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.is_gemm_ss" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.infer_layout">
+<span class="sig-name descname"><span class="pre">infer_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_nums</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.infer_layout" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>tvm.target.Target</em>)</p></li>
+<li><p><strong>thread_nums</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.lower">
+<span class="sig-name descname"><span class="pre">lower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar_phase_expr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.lower" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout_map</strong> (<em>dict</em>)</p></li>
+<li><p><strong>target</strong> (<em>tvm.target.Target</em>)</p></li>
+<li><p><strong>thread_bounds</strong> (<em>tvm.ir.Range</em>)</p></li>
+<li><p><strong>thread_index</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>mbar_phase_expr</strong> (<em>tvm.tirx.PrimExpr</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetal">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.metal.op.gemm.gemm_metal.</span></span><span class="sig-name descname"><span class="pre">GemmMetal</span></span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal" title="Link to this definition">¶</a></dt>
@@ -763,6 +821,16 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetal.is_gemm_ss">
 <span class="sig-name descname"><span class="pre">is_gemm_ss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal.is_gemm_ss" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetal.is_gemm_gg">
+<span class="sig-name descname"><span class="pre">is_gemm_gg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal.is_gemm_gg" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
@@ -864,8 +932,16 @@
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL"><code class="docutils literal notranslate"><span class="pre">GEMM_INST_METAL</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL_COOPERATIVE_TENSOR"><code class="docutils literal notranslate"><span class="pre">GEMM_INST_METAL_COOPERATIVE_TENSOR</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup"><code class="docutils literal notranslate"><span class="pre">GemmMetalSimdGroup</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.is_gemm_ss"><code class="docutils literal notranslate"><span class="pre">GemmMetalSimdGroup.is_gemm_ss()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.infer_layout"><code class="docutils literal notranslate"><span class="pre">GemmMetalSimdGroup.infer_layout()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.lower"><code class="docutils literal notranslate"><span class="pre">GemmMetalSimdGroup.lower()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal"><code class="docutils literal notranslate"><span class="pre">GemmMetal</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal.is_gemm_ss"><code class="docutils literal notranslate"><span class="pre">GemmMetal.is_gemm_ss()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal.is_gemm_gg"><code class="docutils literal notranslate"><span class="pre">GemmMetal.is_gemm_gg()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal.infer_layout"><code class="docutils literal notranslate"><span class="pre">GemmMetal.infer_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal.lower"><code class="docutils literal notranslate"><span class="pre">GemmMetal.lower()</span></code></a></li>
 </ul>

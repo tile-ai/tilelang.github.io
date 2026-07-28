@@ -4,6 +4,16 @@ tilelang.metal.intrinsics.metal_macro_generator
 .. py:module:: tilelang.metal.intrinsics.metal_macro_generator
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.metal.intrinsics.metal_macro_generator.OPERAND_LEFT
+   tilelang.metal.intrinsics.metal_macro_generator.OPERAND_RIGHT
+   tilelang.metal.intrinsics.metal_macro_generator.OPERAND_DEST
+
+
 Classes
 -------
 
@@ -15,9 +25,21 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: MPSIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float32', a_transposed = False, b_transposed = False, block_row_warps = 1, block_col_warps = 1, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 32, thread_var = None)
+.. py:data:: OPERAND_LEFT
+   :value: 0
 
-   Metal simdgroup MMA intrinsic emitter for GEMM operations.
+
+.. py:data:: OPERAND_RIGHT
+   :value: 1
+
+
+.. py:data:: OPERAND_DEST
+   :value: 2
+
+
+.. py:class:: MPSIntrinEmitter(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float32', a_transposed = False, b_transposed = False, block_row_warps = 1, block_col_warps = 1, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 32, thread_var = None, a_stride_override = None, b_stride_override = None, inner_k_steps = 1, use_cooperative_tensor = True)
+
+   Metal simdgroup/cooperative tensor intrinsic emitter for GEMM operations.
 
 
    .. py:attribute:: WARP_SIZE
@@ -80,28 +102,33 @@ Module Contents
 
 
 
-   .. py:attribute:: micro_size_x
-      :value: 8
+   .. py:attribute:: a_stride_override
+      :value: None
 
 
 
-   .. py:attribute:: micro_size_y
-      :value: 8
+   .. py:attribute:: b_stride_override
+      :value: None
 
 
 
-   .. py:attribute:: micro_size_k
-      :value: 8
+   .. py:attribute:: inner_k_steps
+      :value: 1
+
+
+
+   .. py:attribute:: use_cooperative_tensor
+      :value: True
 
 
 
    .. py:attribute:: warp_rows
-      :value: 1
+      :value: 0
 
 
 
    .. py:attribute:: warp_cols
-      :value: 1
+      :value: 0
 
 
 
@@ -111,39 +138,42 @@ Module Contents
 
 
 
-   .. py:method:: ldmatrix_a(A_local_buf, A_shared_buf, ki)
+   .. py:method:: ldmatrix_a(A_local_buf, A_shared_buf, ki, k_inner = 0)
 
-      Load matrix A tiles from shared memory into simdgroup local buffers.
-
-
-
-   .. py:method:: ldmatrix_b(B_local_buf, B_shared_buf, ki)
-
-      Load matrix B tiles from shared memory into simdgroup local buffers.
+      Load matrix A tiles from memory into simdgroup/cooperative tensor buffers.
 
 
 
-   .. py:method:: mma(A_local_buf, B_local_buf, C_local_buf)
+   .. py:method:: ldmatrix_b(B_local_buf, B_shared_buf, ki, k_inner = 0)
 
-      Perform simdgroup matrix multiply-accumulate: C += A * B.
+      Load matrix B tiles from memory into simdgroup/cooperative tensor buffers.
+
+
+
+   .. py:method:: mma(A_local_buf, B_local_buf, C_local_buf, k_inner = 0)
+
+      Perform matrix multiply-accumulate: C += A * B.
 
 
 
    .. py:method:: simdgroup_copy(C_simd_buf, C_dst, is_store=True)
 
-      Copy between simdgroup local buffers and shared/global memory.
+      Copy between register-backed Metal matrix buffers and memory.
 
+
+
+   .. py:method:: make_cooperative_tensor_store_layout(local_buf)
 
 
    .. py:method:: simd_store(C_simd_buf, C_dst)
 
-      Store simdgroup local buffer to shared/global memory.
+      Store simdgroup/cooperative tensor local buffer to memory.
 
 
 
    .. py:method:: simd_load(C_simd_buf, C_src)
 
-      Load shared/global memory into simdgroup local buffer.
+      Load memory into simdgroup/cooperative tensor local buffer.
 
 
 

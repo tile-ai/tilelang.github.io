@@ -244,6 +244,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/tensor_checks.html">Tensor Checks (Host-Side Auto-Validation)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/metal_tilelang_development.html">TileLang Metal Backend Internals</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">DEVELOPER GUIDE</span></p>
 <ul>
@@ -575,6 +576,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../metal/transform/metal_fragment_to_simdgroup/index.html">tilelang.metal.transform.metal_fragment_to_simdgroup</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../metal/utils/index.html">tilelang.metal.utils</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../profiler/index.html">tilelang.profiler</a><input aria-label="Toggle navigation of tilelang.profiler" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -892,6 +894,18 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.increase_descriptor_offset" title="tilelang.language.builtin.increase_descriptor_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increase_descriptor_offset</span></code></a>(descriptor, offset)</p></td>
 <td><p>Increase the offset of a memory descriptor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_fill" title="tilelang.language.builtin.cooperative_tensor_fill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_fill</span></code></a>(data, idx, value, rows, cols)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_load" title="tilelang.language.builtin.cooperative_tensor_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_load</span></code></a>(data, idx, ptr, stride, rows, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_store" title="tilelang.language.builtin.cooperative_tensor_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_store</span></code></a>(data, idx, ptr, stride, rows, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_multiply_accumulate" title="tilelang.language.builtin.cooperative_tensor_multiply_accumulate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_multiply_accumulate</span></code></a>(c_data, c_idx, ...)</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.loop_break" title="tilelang.language.builtin.loop_break"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loop_break</span></code></a>()</p></td>
 <td><p>Break out of the innermost loop.</p></td>
@@ -2010,6 +2024,67 @@ on HIP.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.cooperative_tensor_fill">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">cooperative_tensor_fill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.cooperative_tensor_fill" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> (<em>int</em>)</p></li>
+<li><p><strong>cols</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.cooperative_tensor_load">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">cooperative_tensor_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operand_role</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.cooperative_tensor_load" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> (<em>int</em>)</p></li>
+<li><p><strong>cols</strong> (<em>int</em>)</p></li>
+<li><p><strong>tile_m</strong> (<em>int</em>)</p></li>
+<li><p><strong>tile_n</strong> (<em>int</em>)</p></li>
+<li><p><strong>tile_k</strong> (<em>int</em>)</p></li>
+<li><p><strong>operand_role</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.cooperative_tensor_store">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">cooperative_tensor_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operand_role</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.cooperative_tensor_store" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> (<em>int</em>)</p></li>
+<li><p><strong>cols</strong> (<em>int</em>)</p></li>
+<li><p><strong>tile_m</strong> (<em>int</em>)</p></li>
+<li><p><strong>tile_n</strong> (<em>int</em>)</p></li>
+<li><p><strong>tile_k</strong> (<em>int</em>)</p></li>
+<li><p><strong>operand_role</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.builtin.cooperative_tensor_multiply_accumulate">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">cooperative_tensor_multiply_accumulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trans_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trans_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.cooperative_tensor_multiply_accumulate" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> (<em>int</em>)</p></li>
+<li><p><strong>n</strong> (<em>int</em>)</p></li>
+<li><p><strong>k</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.loop_break">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">loop_break</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.loop_break" title="Link to this definition">¶</a></dt>
 <dd><p>Break out of the innermost loop.</p>
@@ -2581,6 +2656,10 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <li><a class="reference internal" href="#tilelang.language.builtin.initialize_wgmma_descriptor"><code class="docutils literal notranslate"><span class="pre">initialize_wgmma_descriptor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.initialize_tcgen05_descriptor"><code class="docutils literal notranslate"><span class="pre">initialize_tcgen05_descriptor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.increase_descriptor_offset"><code class="docutils literal notranslate"><span class="pre">increase_descriptor_offset()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_fill"><code class="docutils literal notranslate"><span class="pre">cooperative_tensor_fill()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_load"><code class="docutils literal notranslate"><span class="pre">cooperative_tensor_load()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_store"><code class="docutils literal notranslate"><span class="pre">cooperative_tensor_store()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_multiply_accumulate"><code class="docutils literal notranslate"><span class="pre">cooperative_tensor_multiply_accumulate()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.loop_break"><code class="docutils literal notranslate"><span class="pre">loop_break()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc"><code class="docutils literal notranslate"><span class="pre">cp_async_barrier_noinc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_mma_arrive"><code class="docutils literal notranslate"><span class="pre">tcgen05_mma_arrive()</span></code></a></li>

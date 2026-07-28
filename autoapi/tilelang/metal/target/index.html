@@ -244,6 +244,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/tensor_checks.html">Tensor Checks (Host-Side Auto-Validation)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../compiler_internals/metal_tilelang_development.html">TileLang Metal Backend Internals</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">DEVELOPER GUIDE</span></p>
 <ul>
@@ -575,6 +576,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../transform/metal_fragment_to_simdgroup/index.html">tilelang.metal.transform.metal_fragment_to_simdgroup</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/index.html">tilelang.metal.utils</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../profiler/index.html">tilelang.profiler</a><input aria-label="Toggle navigation of tilelang.profiler" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -733,7 +735,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.target.check_metal_availability" title="tilelang.metal.target.check_metal_availability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_metal_availability</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.metal.target.check_metal4_availability" title="tilelang.metal.target.check_metal4_availability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_metal4_availability</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.target.normalize_metal_target" title="tilelang.metal.target.normalize_metal_target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_metal_target</span></code></a>(target)</p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.metal.target.target_is_metal" title="tilelang.metal.target.target_is_metal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_is_metal</span></code></a>(target)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.target.target_metal_supports_metal4" title="tilelang.metal.target.target_metal_supports_metal4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_metal_supports_metal4</span></code></a>(target)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -753,8 +764,44 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.metal.target.check_metal4_availability">
+<span class="sig-prename descclassname"><span class="pre">tilelang.metal.target.</span></span><span class="sig-name descname"><span class="pre">check_metal4_availability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.target.check_metal4_availability" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.metal.target.normalize_metal_target">
+<span class="sig-prename descclassname"><span class="pre">tilelang.metal.target.</span></span><span class="sig-name descname"><span class="pre">normalize_metal_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.target.normalize_metal_target" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target</strong> (<em>tilelang.backend.target.TargetLike</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.target.Target | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.metal.target.target_is_metal">
 <span class="sig-prename descclassname"><span class="pre">tilelang.metal.target.</span></span><span class="sig-name descname"><span class="pre">target_is_metal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.target.target_is_metal" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target</strong> (<em>tvm.target.Target</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.metal.target.target_metal_supports_metal4">
+<span class="sig-prename descclassname"><span class="pre">tilelang.metal.target.</span></span><span class="sig-name descname"><span class="pre">target_metal_supports_metal4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.target.target_metal_supports_metal4" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>target</strong> (<em>tvm.target.Target</em>)</p>
@@ -827,7 +874,10 @@
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.metal.target.check_metal_availability"><code class="docutils literal notranslate"><span class="pre">check_metal_availability()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.target.check_metal4_availability"><code class="docutils literal notranslate"><span class="pre">check_metal4_availability()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.target.normalize_metal_target"><code class="docutils literal notranslate"><span class="pre">normalize_metal_target()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.target.target_is_metal"><code class="docutils literal notranslate"><span class="pre">target_is_metal()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.target.target_metal_supports_metal4"><code class="docutils literal notranslate"><span class="pre">target_metal_supports_metal4()</span></code></a></li>
 </ul>
 </li>
 </ul>

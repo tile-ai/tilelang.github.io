@@ -5,11 +5,11 @@ tilelang.metal.transform.metal_fragment_to_simdgroup
 
 .. autoapi-nested-parse::
 
-   Rewrite local.fragment to metal.simdgroup for GEMM accumulator buffers on Metal.
+   Rewrite local.fragment to metal.simdgroup for legacy Metal GEMM accumulators.
 
-   This pass runs after pipelining and before LayoutInference, so that
-   simdgroup matrices (which are hardware-opaque and have no explicit
-   thread-level layout) are never seen by LayoutInference.
+   M5 cooperative-tensor GEMM keeps fragment/local buffers in regular scopes until
+   Metal codegen sees explicit tl.cooperative_tensor_* builtins.  Only legacy
+   simdgroup GEMM requires changing the accumulator scope before layout inference.
 
 
 

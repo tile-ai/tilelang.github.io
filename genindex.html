@@ -242,6 +242,7 @@
 <li class="toctree-l1"><a class="reference internal" href="compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compiler_internals/tensor_checks.html">Tensor Checks (Host-Side Auto-Validation)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compiler_internals/metal_tilelang_development.html">TileLang Metal Backend Internals</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">DEVELOPER GUIDE</span></p>
 <ul>
@@ -573,6 +574,7 @@
 <li class="toctree-l4"><a class="reference internal" href="autoapi/tilelang/metal/transform/metal_fragment_to_simdgroup/index.html">tilelang.metal.transform.metal_fragment_to_simdgroup</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/tilelang/metal/utils/index.html">tilelang.metal.utils</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/tilelang/profiler/index.html">tilelang.profiler</a><input aria-label="Toggle navigation of tilelang.profiler" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -1022,6 +1024,8 @@
           <li><a href="autoapi/tilelang/cuda/intrinsics/macro/wgmma_sp_macro_generator/index.html#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.a_shared_layout">(tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.a_stride_override">a_stride_override (tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter attribute)</a>
+</li>
         <li><a href="autoapi/tilelang/cuda/intrinsics/macro/mma_macro_generator/index.html#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.a_transposed">a_transposed (tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter attribute)</a>
 
         <ul>
@@ -1534,6 +1538,8 @@
           <li><a href="autoapi/tilelang/cuda/intrinsics/macro/wgmma_sp_macro_generator/index.html#tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter.b_shared_layout">(tilelang.cuda.intrinsics.macro.wgmma_sp_macro_generator.WGSparseTensorCoreIntrinEmitter attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.b_stride_override">b_stride_override (tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter attribute)</a>
+</li>
         <li><a href="autoapi/tilelang/cuda/intrinsics/macro/mma_macro_generator/index.html#tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter.b_transposed">b_transposed (tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter attribute)</a>
 
         <ul>
@@ -1960,6 +1966,8 @@
 </li>
         <li><a href="autoapi/tilelang/rocm/target/index.html#tilelang.rocm.target.check_hip_availability">check_hip_availability() (in module tilelang.rocm.target)</a>
 </li>
+        <li><a href="autoapi/tilelang/metal/target/index.html#tilelang.metal.target.check_metal4_availability">check_metal4_availability() (in module tilelang.metal.target)</a>
+</li>
         <li><a href="autoapi/tilelang/metal/target/index.html#tilelang.metal.target.check_metal_availability">check_metal_availability() (in module tilelang.metal.target)</a>
 </li>
         <li><a href="autoapi/tilelang/jit/adapter/nvrtc/index.html#tilelang.jit.adapter.nvrtc.check_nvrtc_available">check_nvrtc_available() (in module tilelang.jit.adapter.nvrtc)</a>
@@ -2249,6 +2257,14 @@
         <li><a href="autoapi/tilelang/contrib/dlpack/index.html#tilelang.contrib.dlpack.convert_func">convert_func() (in module tilelang.contrib.dlpack)</a>
 </li>
         <li><a href="autoapi/tilelang/carver/template/conv/index.html#tilelang.carver.template.conv.ConvTemplate">ConvTemplate (class in tilelang.carver.template.conv)</a>
+</li>
+        <li><a href="autoapi/tilelang/language/builtin/index.html#tilelang.language.builtin.cooperative_tensor_fill">cooperative_tensor_fill() (in module tilelang.language.builtin)</a>
+</li>
+        <li><a href="autoapi/tilelang/language/builtin/index.html#tilelang.language.builtin.cooperative_tensor_load">cooperative_tensor_load() (in module tilelang.language.builtin)</a>
+</li>
+        <li><a href="autoapi/tilelang/language/builtin/index.html#tilelang.language.builtin.cooperative_tensor_multiply_accumulate">cooperative_tensor_multiply_accumulate() (in module tilelang.language.builtin)</a>
+</li>
+        <li><a href="autoapi/tilelang/language/builtin/index.html#tilelang.language.builtin.cooperative_tensor_store">cooperative_tensor_store() (in module tilelang.language.builtin)</a>
 </li>
         <li><a href="autoapi/tilelang/language/tile_schedule/index.html#tilelang.language.tile_schedule.PersistentTileScheduler.coord">coord() (tilelang.language.tile_schedule.PersistentTileScheduler method)</a>
 </li>
@@ -3276,6 +3292,8 @@
 </li>
         <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL">GEMM_INST_METAL (in module tilelang.metal.op.gemm.gemm_metal)</a>
 </li>
+        <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL_COOPERATIVE_TENSOR">GEMM_INST_METAL_COOPERATIVE_TENSOR (in module tilelang.metal.op.gemm.gemm_metal)</a>
+</li>
         <li><a href="autoapi/tilelang/rocm/op/gemm/gemm_mfma/index.html#tilelang.rocm.op.gemm.gemm_mfma.GEMM_INST_MFMA">GEMM_INST_MFMA (in module tilelang.rocm.op.gemm.gemm_mfma)</a>
 </li>
         <li><a href="autoapi/tilelang/cuda/op/gemm/gemm_mma/index.html#tilelang.cuda.op.gemm.gemm_mma.GEMM_INST_MMA">GEMM_INST_MMA (in module tilelang.cuda.op.gemm.gemm_mma)</a>
@@ -3340,6 +3358,8 @@
         <li><a href="autoapi/tilelang/tileop/gemm/registry/index.html#tilelang.tileop.gemm.registry.GemmImplEntry">GemmImplEntry (class in tilelang.tileop.gemm.registry)</a>
 </li>
         <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GemmMetal">GemmMetal (class in tilelang.metal.op.gemm.gemm_metal)</a>
+</li>
+        <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup">GemmMetalSimdGroup (class in tilelang.metal.op.gemm.gemm_metal)</a>
 </li>
         <li><a href="autoapi/tilelang/rocm/op/gemm/gemm_mfma/index.html#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA">GemmMFMA (class in tilelang.rocm.op.gemm.gemm_mfma)</a>
 </li>
@@ -3633,14 +3653,14 @@
           <li><a href="autoapi/tilelang/carver/roller/node/index.html#tilelang.carver.roller.node.PrimFuncNode.get_input_buffers">(tilelang.carver.roller.node.PrimFuncNode method)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/tilelang/carver/roller/shape_inference/common/index.html#tilelang.carver.roller.shape_inference.common.InputShapeInference.get_input_exprs">get_input_exprs() (tilelang.carver.roller.shape_inference.common.InputShapeInference method)</a>
 
         <ul>
           <li><a href="autoapi/tilelang/carver/roller/shape_inference/tir/index.html#tilelang.carver.roller.shape_inference.tir.InputShapeInference.get_input_exprs">(tilelang.carver.roller.shape_inference.tir.InputShapeInference method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/tilelang/layout/layout/index.html#tilelang.layout.layout.Layout.get_input_shape">get_input_shape() (tilelang.layout.layout.Layout method)</a>
 </li>
         <li><a href="autoapi/tilelang/carver/roller/node/index.html#tilelang.carver.roller.node.Node.get_ir">get_ir() (tilelang.carver.roller.node.Node method)</a>
@@ -4268,6 +4288,8 @@
 </li>
           <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GemmMetal.infer_layout">(tilelang.metal.op.gemm.gemm_metal.GemmMetal method)</a>
 </li>
+          <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.infer_layout">(tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup method)</a>
+</li>
           <li><a href="autoapi/tilelang/rocm/op/gemm/gemm_mfma/index.html#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.infer_layout">(tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA method)</a>
 </li>
           <li><a href="autoapi/tilelang/rocm/op/gemm/gemm_wmma/index.html#tilelang.rocm.op.gemm.gemm_wmma.GemmWMMA.infer_layout">(tilelang.rocm.op.gemm.gemm_wmma.GemmWMMA method)</a>
@@ -4364,6 +4386,8 @@
         <li><a href="autoapi/tilelang/language/meta/index.html#tilelang.language.meta.inline">inline() (in module tilelang.language.meta)</a>
 </li>
         <li><a href="autoapi/tilelang/carver/matmul_analysis/index.html#tilelang.carver.matmul_analysis.inline_transpose_block">inline_transpose_block() (in module tilelang.carver.matmul_analysis)</a>
+</li>
+        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.inner_k_steps">inner_k_steps (tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter attribute)</a>
 </li>
         <li><a href="autoapi/tilelang/carver/roller/node/index.html#tilelang.carver.roller.node.PrimFuncNode.input_buffers">input_buffers (tilelang.carver.roller.node.PrimFuncNode attribute)</a>
 </li>
@@ -4489,10 +4513,10 @@
         </ul></li>
         <li><a href="autoapi/tilelang/carver/arch/cpu/index.html#tilelang.carver.arch.cpu.is_cpu_arch">is_cpu_arch() (in module tilelang.carver.arch.cpu)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/tilelang/engine/lower/index.html#tilelang.engine.lower.is_cpu_device_backend">is_cpu_device_backend() (in module tilelang.engine.lower)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/tilelang/jit/adapter/utils/index.html#tilelang.jit.adapter.utils.is_cpu_target">is_cpu_target() (in module tilelang.jit.adapter.utils)</a>
 </li>
         <li><a href="autoapi/tilelang/profiler/bench/index.html#tilelang.profiler.bench.IS_CUDA">IS_CUDA (in module tilelang.profiler.bench)</a>
@@ -4567,6 +4591,8 @@
 </li>
         <li><a href="autoapi/tilelang/carver/analysis/index.html#tilelang.carver.analysis.BlockInfo.is_gemm">is_gemm() (tilelang.carver.analysis.BlockInfo method)</a>
 </li>
+        <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GemmMetal.is_gemm_gg">is_gemm_gg() (tilelang.metal.op.gemm.gemm_metal.GemmMetal method)</a>
+</li>
         <li><a href="autoapi/tilelang/cuda/op/gemm/gemm_mma/index.html#tilelang.cuda.op.gemm.gemm_mma.GemmMMA.is_gemm_rr">is_gemm_rr() (tilelang.cuda.op.gemm.gemm_mma.GemmMMA method)</a>
 
         <ul>
@@ -4637,6 +4663,8 @@
           <li><a href="autoapi/tilelang/cuda/op/gemm_sp/gemm_sp_wgmma/index.html#tilelang.cuda.op.gemm_sp.gemm_sp_wgmma.GemmSPWGMMA.is_gemm_ss">(tilelang.cuda.op.gemm_sp.gemm_sp_wgmma.GemmSPWGMMA method)</a>
 </li>
           <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GemmMetal.is_gemm_ss">(tilelang.metal.op.gemm.gemm_metal.GemmMetal method)</a>
+</li>
+          <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.is_gemm_ss">(tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup method)</a>
 </li>
           <li><a href="autoapi/tilelang/rocm/op/gemm/gemm_mfma/index.html#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.is_gemm_ss">(tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA method)</a>
 </li>
@@ -4711,7 +4739,9 @@
         </ul></li>
         <li><a href="autoapi/tilelang/carver/arch/metal/index.html#tilelang.carver.arch.metal.is_metal_arch">is_metal_arch() (in module tilelang.carver.arch.metal)</a>
 </li>
-        <li><a href="autoapi/tilelang/utils/language/index.html#tilelang.utils.language.is_metal_simdgroup">is_metal_simdgroup() (in module tilelang.utils.language)</a>
+        <li><a href="autoapi/tilelang/metal/utils/index.html#tilelang.metal.utils.is_metal_cooperative_tensor">is_metal_cooperative_tensor() (in module tilelang.metal.utils)</a>
+</li>
+        <li><a href="autoapi/tilelang/metal/utils/index.html#tilelang.metal.utils.is_metal_simdgroup">is_metal_simdgroup() (in module tilelang.metal.utils)</a>
 </li>
         <li><a href="autoapi/tilelang/jit/adapter/utils/index.html#tilelang.jit.adapter.utils.is_metal_target">is_metal_target() (in module tilelang.jit.adapter.utils)</a>
 </li>
@@ -5416,6 +5446,8 @@
 </li>
           <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GemmMetal.lower">(tilelang.metal.op.gemm.gemm_metal.GemmMetal method)</a>
 </li>
+          <li><a href="autoapi/tilelang/metal/op/gemm/gemm_metal/index.html#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.lower">(tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup method)</a>
+</li>
           <li><a href="autoapi/tilelang/rocm/op/gemm/gemm_mfma/index.html#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.lower">(tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA method)</a>
 </li>
           <li><a href="autoapi/tilelang/rocm/op/gemm/gemm_wmma/index.html#tilelang.rocm.op.gemm.gemm_wmma.GemmWMMA.lower">(tilelang.rocm.op.gemm.gemm_wmma.GemmWMMA method)</a>
@@ -5536,6 +5568,8 @@
         <li><a href="autoapi/tilelang/language/gemm_op/index.html#tilelang.language.gemm_op.make_blockscaled_gemm_layout">make_blockscaled_gemm_layout() (in module tilelang.language.gemm_op)</a>
 </li>
         <li><a href="autoapi/tilelang/layout/cute/index.html#tilelang.layout.cute.make_column_major_layout">make_column_major_layout() (in module tilelang.layout.cute)</a>
+</li>
+        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.make_cooperative_tensor_store_layout">make_cooperative_tensor_store_layout() (tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter method)</a>
 </li>
         <li><a href="autoapi/tilelang/layout/gemm_sp/index.html#tilelang.layout.gemm_sp.make_cutlass_metadata_layout">make_cutlass_metadata_layout() (in module tilelang.layout.gemm_sp)</a>
 </li>
@@ -5807,6 +5841,10 @@
 </li>
         <li><a href="autoapi/tilelang/carver/arch/metal/index.html#tilelang.carver.arch.metal.METAL">METAL (class in tilelang.carver.arch.metal)</a>
 </li>
+        <li><a href="autoapi/tilelang/cuda/intrinsics/layout/mma_layout/index.html#tilelang.cuda.intrinsics.layout.mma_layout.metal_ct_store_32x16_to_16x32_layout">metal_ct_store_32x16_to_16x32_layout() (in module tilelang.cuda.intrinsics.layout.mma_layout)</a>
+</li>
+        <li><a href="autoapi/tilelang/cuda/intrinsics/layout/mma_layout/index.html#tilelang.cuda.intrinsics.layout.mma_layout.metal_ct_store_index_map">metal_ct_store_index_map() (in module tilelang.cuda.intrinsics.layout.mma_layout)</a>
+</li>
         <li><a href="autoapi/tilelang/language/tir/exports/index.html#tilelang.language.tir.exports.METAL_ONLY_TIR_EXPORTS">METAL_ONLY_TIR_EXPORTS (in module tilelang.language.tir.exports)</a>
 </li>
         <li><a href="autoapi/tilelang/metal/pipeline/index.html#tilelang.metal.pipeline.metal_pipeline">metal_pipeline (in module tilelang.metal.pipeline)</a>
@@ -5827,24 +5865,12 @@
 </li>
         <li><a href="autoapi/tilelang/rocm/intrinsics/utils/index.html#tilelang.rocm.intrinsics.utils.mfma_store_index_map_32x32">mfma_store_index_map_32x32() (in module tilelang.rocm.intrinsics.utils)</a>
 </li>
-        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_k">micro_size_k (tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter attribute)</a>
-
-        <ul>
-          <li><a href="autoapi/tilelang/rocm/intrinsics/wmma_macro_generator/index.html#tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_k">(tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter attribute)</a>
+        <li><a href="autoapi/tilelang/rocm/intrinsics/wmma_macro_generator/index.html#tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_k">micro_size_k (tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter attribute)</a>
 </li>
-        </ul></li>
-        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_x">micro_size_x (tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter attribute)</a>
-
-        <ul>
-          <li><a href="autoapi/tilelang/rocm/intrinsics/wmma_macro_generator/index.html#tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_x">(tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter attribute)</a>
+        <li><a href="autoapi/tilelang/rocm/intrinsics/wmma_macro_generator/index.html#tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_x">micro_size_x (tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter attribute)</a>
 </li>
-        </ul></li>
-        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_y">micro_size_y (tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter attribute)</a>
-
-        <ul>
-          <li><a href="autoapi/tilelang/rocm/intrinsics/wmma_macro_generator/index.html#tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_y">(tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter attribute)</a>
+        <li><a href="autoapi/tilelang/rocm/intrinsics/wmma_macro_generator/index.html#tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter.micro_size_y">micro_size_y (tilelang.rocm.intrinsics.wmma_macro_generator.WMMAIntrinEmitter attribute)</a>
 </li>
-        </ul></li>
         <li><a href="autoapi/tilelang/language/tir/op/index.html#tilelang.language.tir.op.min">min (in module tilelang.language.tir.op)</a>
 </li>
         <li><a href="autoapi/tilelang/contrib/cutedsl/reduce/index.html#tilelang.contrib.cutedsl.reduce.min">min() (in module tilelang.contrib.cutedsl.reduce)</a>
@@ -6433,6 +6459,8 @@
 </li>
           <li><a href="autoapi/tilelang/metal/transform/metal_fragment_to_simdgroup/index.html#module-tilelang.metal.transform.metal_fragment_to_simdgroup">tilelang.metal.transform.metal_fragment_to_simdgroup</a>
 </li>
+          <li><a href="autoapi/tilelang/metal/utils/index.html#module-tilelang.metal.utils">tilelang.metal.utils</a>
+</li>
           <li><a href="autoapi/tilelang/profiler/index.html#module-tilelang.profiler">tilelang.profiler</a>
 </li>
           <li><a href="autoapi/tilelang/profiler/bench/index.html#module-tilelang.profiler.bench">tilelang.profiler.bench</a>
@@ -6736,6 +6764,8 @@
 </li>
         <li><a href="autoapi/tilelang/transform/decouple_type_cast/index.html#tilelang.transform.decouple_type_cast.normalize_flat_binds">normalize_flat_binds() (in module tilelang.transform.decouple_type_cast)</a>
 </li>
+        <li><a href="autoapi/tilelang/metal/target/index.html#tilelang.metal.target.normalize_metal_target">normalize_metal_target() (in module tilelang.metal.target)</a>
+</li>
         <li><a href="autoapi/tilelang/transform/pass_config/index.html#tilelang.transform.pass_config.normalize_pass_configs">normalize_pass_configs() (in module tilelang.transform.pass_config)</a>
 </li>
         <li><a href="autoapi/tilelang/carver/analysis/index.html#tilelang.carver.analysis.normalize_prim_func">normalize_prim_func() (in module tilelang.carver.analysis)</a>
@@ -6814,6 +6844,12 @@
 </li>
         <li><a href="autoapi/tilelang/jit/adapter/utils/index.html#tilelang.jit.adapter.utils.TMADescriptorParams.oob_fill">oob_fill (tilelang.jit.adapter.utils.TMADescriptorParams attribute)</a>
 </li>
+        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_DEST">OPERAND_DEST (in module tilelang.metal.intrinsics.metal_macro_generator)</a>
+</li>
+        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_LEFT">OPERAND_LEFT (in module tilelang.metal.intrinsics.metal_macro_generator)</a>
+</li>
+        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_RIGHT">OPERAND_RIGHT (in module tilelang.metal.intrinsics.metal_macro_generator)</a>
+</li>
         <li><a href="autoapi/tilelang/language/eager/ast/index.html#tilelang.language.eager.ast.Operator">Operator (in module tilelang.language.eager.ast)</a>
 </li>
         <li><a href="autoapi/tilelang/carver/roller/hint/index.html#tilelang.carver.roller.hint.Hint.opt_shapes">opt_shapes (tilelang.carver.roller.hint.Hint attribute)</a>
@@ -6838,6 +6874,8 @@
           <li><a href="autoapi/tilelang/carver/template/matmul/index.html#id6">(tilelang.carver.template.matmul.MatmulTemplate attribute)</a>, <a href="autoapi/tilelang/carver/template/matmul/index.html#tilelang.carver.template.matmul.MatmulTemplate.out_dtype">[1]</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/tilelang/autotuner/param/index.html#tilelang.autotuner.param.CompileArgs.out_idx">out_idx (tilelang.autotuner.param.CompileArgs attribute)</a>
 
         <ul>
@@ -6852,8 +6890,6 @@
           <li><a href="autoapi/tilelang/language/eager/builder/index.html#tilelang.language.eager.builder.Builder.out_idx">(tilelang.language.eager.builder.Builder attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/tilelang/autotuner/param/index.html#tilelang.autotuner.param.OUT_IDX_PATH">OUT_IDX_PATH (in module tilelang.autotuner.param)</a>
 </li>
         <li><a href="autoapi/tilelang/language/eager/builder/index.html#tilelang.language.eager.builder.Builder.out_tensor_cnt">out_tensor_cnt (tilelang.language.eager.builder.Builder attribute)</a>
@@ -8706,6 +8742,8 @@
 </li>
         <li><a href="autoapi/tilelang/carver/roller/shape_inference/tir/index.html#tilelang.carver.roller.shape_inference.tir.InputShapeInference.target_mapping">target_mapping (tilelang.carver.roller.shape_inference.tir.InputShapeInference attribute)</a>
 </li>
+        <li><a href="autoapi/tilelang/metal/target/index.html#tilelang.metal.target.target_metal_supports_metal4">target_metal_supports_metal4() (in module tilelang.metal.target)</a>
+</li>
         <li><a href="autoapi/tilelang/autodd/index.html#tilelang.autodd.GeneralRemove.target_type">target_type (tilelang.autodd.GeneralRemove attribute)</a>
 </li>
         <li><a href="autoapi/tilelang/backend/target/index.html#tilelang.backend.target.TargetConfig">TargetConfig (in module tilelang.backend.target)</a>
@@ -10159,8 +10197,6 @@
           <li><a href="autoapi/tilelang/jit/adapter/torch/kernel_cache/index.html#module-tilelang.jit.adapter.torch.kernel_cache">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     tilelang.jit.adapter.torch.metal
 
@@ -10168,6 +10204,8 @@
           <li><a href="autoapi/tilelang/jit/adapter/torch/metal/index.html#module-tilelang.jit.adapter.torch.metal">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     tilelang.jit.adapter.tvm_ffi
 
@@ -10656,6 +10694,13 @@
 
         <ul>
           <li><a href="autoapi/tilelang/metal/transform/metal_fragment_to_simdgroup/index.html#module-tilelang.metal.transform.metal_fragment_to_simdgroup">module</a>
+</li>
+        </ul></li>
+        <li>
+    tilelang.metal.utils
+
+        <ul>
+          <li><a href="autoapi/tilelang/metal/utils/index.html#module-tilelang.metal.utils">module</a>
 </li>
         </ul></li>
         <li>
@@ -11684,14 +11729,14 @@
         </ul></li>
         <li><a href="autoapi/tilelang/autodd/index.html#tilelang.autodd.PDD.update">update() (tilelang.autodd.PDD method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/tilelang/language/tile_schedule/index.html#tilelang.language.tile_schedule.BaseTileScheduler.update_current_idx">update_current_idx() (tilelang.language.tile_schedule.BaseTileScheduler method)</a>
 
         <ul>
           <li><a href="autoapi/tilelang/language/tile_schedule/index.html#tilelang.language.tile_schedule.PersistentTileScheduler.update_current_idx">(tilelang.language.tile_schedule.PersistentTileScheduler method)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/tilelang/jit/adapter/cutedsl/libgen/index.html#tilelang.jit.adapter.cutedsl.libgen.CuTeDSLLibraryGenerator.update_host_func">update_host_func() (tilelang.jit.adapter.cutedsl.libgen.CuTeDSLLibraryGenerator method)</a>
 
         <ul>
@@ -11725,6 +11770,8 @@
         <li><a href="autoapi/tilelang/carver/roller/hint/index.html#tilelang.carver.roller.hint.Hint.use_async">use_async (tilelang.carver.roller.hint.Hint attribute)</a>
 </li>
         <li><a href="autoapi/tilelang/carver/roller/policy/tensorcore/index.html#tilelang.carver.roller.policy.tensorcore.TensorCorePolicy.use_async_copy">use_async_copy (tilelang.carver.roller.policy.tensorcore.TensorCorePolicy attribute)</a>
+</li>
+        <li><a href="autoapi/tilelang/metal/intrinsics/metal_macro_generator/index.html#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.use_cooperative_tensor">use_cooperative_tensor (tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter attribute)</a>
 </li>
         <li><a href="autoapi/tilelang/language/annotations/index.html#tilelang.language.annotations.use_swizzle">use_swizzle() (in module tilelang.language.annotations)</a>
 </li>

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.profiler" href="../../../profiler/index.html"><link rel="prev" title="tilelang.metal.transform.mark_host_metal_context" href="../mark_host_metal_context/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.metal.utils" href="../../utils/index.html"><link rel="prev" title="tilelang.metal.transform.mark_host_metal_context" href="../mark_host_metal_context/index.html">
         <link rel="prefetch" href="../../../../../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../../../../../_static/img/logo-v2.png" as="image">
 
@@ -244,6 +244,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../compiler_internals/tensor_checks.html">Tensor Checks (Host-Side Auto-Validation)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../compiler_internals/metal_tilelang_development.html">TileLang Metal Backend Internals</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">DEVELOPER GUIDE</span></p>
 <ul>
@@ -575,6 +576,7 @@
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.metal.transform.metal_fragment_to_simdgroup</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/index.html">tilelang.metal.utils</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../profiler/index.html">tilelang.profiler</a><input aria-label="Toggle navigation of tilelang.profiler" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -725,10 +727,10 @@
         <article role="main" id="furo-main-content">
           <section id="module-tilelang.metal.transform.metal_fragment_to_simdgroup">
 <span id="tilelang-metal-transform-metal-fragment-to-simdgroup"></span><h1>tilelang.metal.transform.metal_fragment_to_simdgroup<a class="headerlink" href="#module-tilelang.metal.transform.metal_fragment_to_simdgroup" title="Link to this heading">¶</a></h1>
-<p>Rewrite local.fragment to metal.simdgroup for GEMM accumulator buffers on Metal.</p>
-<p>This pass runs after pipelining and before LayoutInference, so that
-simdgroup matrices (which are hardware-opaque and have no explicit
-thread-level layout) are never seen by LayoutInference.</p>
+<p>Rewrite local.fragment to metal.simdgroup for legacy Metal GEMM accumulators.</p>
+<p>M5 cooperative-tensor GEMM keeps fragment/local buffers in regular scopes until
+Metal codegen sees explicit tl.cooperative_tensor_* builtins.  Only legacy
+simdgroup GEMM requires changing the accumulator scope before layout inference.</p>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -756,12 +758,12 @@ thread-level layout) are never seen by LayoutInference.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../../../profiler/index.html">
+          <a class="next-page" href="../../utils/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">tilelang.profiler</div>
+                <div class="title">tilelang.metal.utils</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

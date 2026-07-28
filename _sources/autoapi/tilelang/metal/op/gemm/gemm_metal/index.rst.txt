@@ -10,6 +10,7 @@ Attributes
 .. autoapisummary::
 
    tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL
+   tilelang.metal.op.gemm.gemm_metal.GEMM_INST_METAL_COOPERATIVE_TENSOR
 
 
 Classes
@@ -17,6 +18,7 @@ Classes
 
 .. autoapisummary::
 
+   tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup
    tilelang.metal.op.gemm.gemm_metal.GemmMetal
 
 
@@ -27,12 +29,33 @@ Module Contents
    :value: 'metal.simdgroup'
 
 
+.. py:data:: GEMM_INST_METAL_COOPERATIVE_TENSOR
+   :value: 'metal.cooperative_tensor'
+
+
+.. py:class:: GemmMetalSimdGroup
+
+   Bases: :py:obj:`tilelang.tileop.gemm.gemm_base.GemmBase`
+
+
+   .. py:method:: is_gemm_ss()
+
+
+   .. py:method:: infer_layout(target, thread_nums)
+
+
+   .. py:method:: lower(layout_map, target, thread_bounds, thread_index, mbar_phase_expr = None)
+
+
 .. py:class:: GemmMetal
 
    Bases: :py:obj:`tilelang.tileop.gemm.gemm_base.GemmBase`
 
 
    .. py:method:: is_gemm_ss()
+
+
+   .. py:method:: is_gemm_gg()
 
 
    .. py:method:: infer_layout(target, thread_nums)

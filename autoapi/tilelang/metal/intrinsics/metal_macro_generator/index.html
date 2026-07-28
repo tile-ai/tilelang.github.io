@@ -244,6 +244,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../compiler_internals/letstmt_inline.html">LetStmt Inlining in TileLang</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../compiler_internals/inject_fence_proxy.html">InjectFenceProxy Pass</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../compiler_internals/tensor_checks.html">Tensor Checks (Host-Side Auto-Validation)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../compiler_internals/metal_tilelang_development.html">TileLang Metal Backend Internals</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">DEVELOPER GUIDE</span></p>
 <ul>
@@ -575,6 +576,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../transform/metal_fragment_to_simdgroup/index.html">tilelang.metal.transform.metal_fragment_to_simdgroup</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/index.html">tilelang.metal.utils</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../profiler/index.html">tilelang.profiler</a><input aria-label="Toggle navigation of tilelang.profiler" class="toctree-checkbox" id="toctree-checkbox-47" name="toctree-checkbox-47" role="switch" type="checkbox"/><label for="toctree-checkbox-47"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -725,13 +727,31 @@
         <article role="main" id="furo-main-content">
           <section id="module-tilelang.metal.intrinsics.metal_macro_generator">
 <span id="tilelang-metal-intrinsics-metal-macro-generator"></span><h1>tilelang.metal.intrinsics.metal_macro_generator<a class="headerlink" href="#module-tilelang.metal.intrinsics.metal_macro_generator" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_LEFT" title="tilelang.metal.intrinsics.metal_macro_generator.OPERAND_LEFT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OPERAND_LEFT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_RIGHT" title="tilelang.metal.intrinsics.metal_macro_generator.OPERAND_RIGHT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OPERAND_RIGHT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_DEST" title="tilelang.metal.intrinsics.metal_macro_generator.OPERAND_DEST"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OPERAND_DEST</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter" title="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MPSIntrinEmitter</span></code></a></p></td>
-<td><p>Metal simdgroup MMA intrinsic emitter for GEMM operations.</p></td>
+<td><p>Metal simdgroup/cooperative tensor intrinsic emitter for GEMM operations.</p></td>
 </tr>
 </tbody>
 </table>
@@ -739,10 +759,25 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.OPERAND_LEFT">
+<span class="sig-prename descclassname"><span class="pre">tilelang.metal.intrinsics.metal_macro_generator.</span></span><span class="sig-name descname"><span class="pre">OPERAND_LEFT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_LEFT" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.OPERAND_RIGHT">
+<span class="sig-prename descclassname"><span class="pre">tilelang.metal.intrinsics.metal_macro_generator.</span></span><span class="sig-name descname"><span class="pre">OPERAND_RIGHT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_RIGHT" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.OPERAND_DEST">
+<span class="sig-prename descclassname"><span class="pre">tilelang.metal.intrinsics.metal_macro_generator.</span></span><span class="sig-name descname"><span class="pre">OPERAND_DEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_DEST" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.metal.intrinsics.metal_macro_generator.</span></span><span class="sig-name descname"><span class="pre">MPSIntrinEmitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_row_warps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_col_warps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_row_tiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_col_tiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter" title="Link to this definition">¶</a></dt>
-<dd><p>Metal simdgroup MMA intrinsic emitter for GEMM operations.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.metal.intrinsics.metal_macro_generator.</span></span><span class="sig-name descname"><span class="pre">MPSIntrinEmitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accum_dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_transposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_row_warps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_col_warps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_row_tiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warp_col_tiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_stride_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_stride_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_k_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cooperative_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter" title="Link to this definition">¶</a></dt>
+<dd><p>Metal simdgroup/cooperative tensor intrinsic emitter for GEMM operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -756,7 +791,11 @@
 <li><p><strong>warp_row_tiles</strong> (<em>int</em>)</p></li>
 <li><p><strong>warp_col_tiles</strong> (<em>int</em>)</p></li>
 <li><p><strong>chunk</strong> (<em>int</em>)</p></li>
-<li><p><strong>thread_var</strong> (<em>tvm.tirx.Var</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>thread_var</strong> (<em>tvm.tirx.PrimExpr</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>a_stride_override</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>b_stride_override</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>inner_k_steps</strong> (<em>int</em>)</p></li>
+<li><p><strong>use_cooperative_tensor</strong> (<a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -821,28 +860,33 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_x">
-<span class="sig-name descname"><span class="pre">micro_size_x</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_x" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.a_stride_override">
+<span class="sig-name descname"><span class="pre">a_stride_override</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.a_stride_override" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_y">
-<span class="sig-name descname"><span class="pre">micro_size_y</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_y" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.b_stride_override">
+<span class="sig-name descname"><span class="pre">b_stride_override</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.b_stride_override" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_k">
-<span class="sig-name descname"><span class="pre">micro_size_k</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_k" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.inner_k_steps">
+<span class="sig-name descname"><span class="pre">inner_k_steps</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.inner_k_steps" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.use_cooperative_tensor">
+<span class="sig-name descname"><span class="pre">use_cooperative_tensor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.use_cooperative_tensor" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.warp_rows">
-<span class="sig-name descname"><span class="pre">warp_rows</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.warp_rows" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">warp_rows</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.warp_rows" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.warp_cols">
-<span class="sig-name descname"><span class="pre">warp_cols</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.warp_cols" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">warp_cols</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.warp_cols" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -853,48 +897,64 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_a">
-<span class="sig-name descname"><span class="pre">ldmatrix_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_shared_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_a" title="Link to this definition">¶</a></dt>
-<dd><p>Load matrix A tiles from shared memory into simdgroup local buffers.</p>
+<span class="sig-name descname"><span class="pre">ldmatrix_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_shared_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_a" title="Link to this definition">¶</a></dt>
+<dd><p>Load matrix A tiles from memory into simdgroup/cooperative tensor buffers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>A_shared_buf</strong> (<em>tvm.tirx.Buffer</em><em> | </em><em>tvm.tirx.BufferRegion</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A_shared_buf</strong> (<em>tvm.tirx.Buffer</em><em> | </em><em>tvm.tirx.BufferRegion</em>)</p></li>
+<li><p><strong>k_inner</strong> (<em>int</em>)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_b">
-<span class="sig-name descname"><span class="pre">ldmatrix_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_shared_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_b" title="Link to this definition">¶</a></dt>
-<dd><p>Load matrix B tiles from shared memory into simdgroup local buffers.</p>
+<span class="sig-name descname"><span class="pre">ldmatrix_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_shared_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_b" title="Link to this definition">¶</a></dt>
+<dd><p>Load matrix B tiles from memory into simdgroup/cooperative tensor buffers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>B_shared_buf</strong> (<em>tvm.tirx.Buffer</em><em> | </em><em>tvm.tirx.BufferRegion</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>B_shared_buf</strong> (<em>tvm.tirx.Buffer</em><em> | </em><em>tvm.tirx.BufferRegion</em>)</p></li>
+<li><p><strong>k_inner</strong> (<em>int</em>)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.mma">
-<span class="sig-name descname"><span class="pre">mma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_local_buf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.mma" title="Link to this definition">¶</a></dt>
-<dd><p>Perform simdgroup matrix multiply-accumulate: C += A * B.</p>
+<span class="sig-name descname"><span class="pre">mma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_local_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_inner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.mma" title="Link to this definition">¶</a></dt>
+<dd><p>Perform matrix multiply-accumulate: C += A * B.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k_inner</strong> (<em>int</em>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simdgroup_copy">
 <span class="sig-name descname"><span class="pre">simdgroup_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_simd_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_store</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simdgroup_copy" title="Link to this definition">¶</a></dt>
-<dd><p>Copy between simdgroup local buffers and shared/global memory.</p>
+<dd><p>Copy between register-backed Metal matrix buffers and memory.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.make_cooperative_tensor_store_layout">
+<span class="sig-name descname"><span class="pre">make_cooperative_tensor_store_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_buf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.make_cooperative_tensor_store_layout" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simd_store">
 <span class="sig-name descname"><span class="pre">simd_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_simd_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_dst</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simd_store" title="Link to this definition">¶</a></dt>
-<dd><p>Store simdgroup local buffer to shared/global memory.</p>
+<dd><p>Store simdgroup/cooperative tensor local buffer to memory.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simd_load">
 <span class="sig-name descname"><span class="pre">simd_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_simd_buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_src</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simd_load" title="Link to this definition">¶</a></dt>
-<dd><p>Load shared/global memory into simdgroup local buffer.</p>
+<dd><p>Load memory into simdgroup/cooperative tensor local buffer.</p>
 </dd></dl>
 
 </dd></dl>
@@ -958,8 +1018,12 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.metal.intrinsics.metal_macro_generator</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_LEFT"><code class="docutils literal notranslate"><span class="pre">OPERAND_LEFT</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_RIGHT"><code class="docutils literal notranslate"><span class="pre">OPERAND_RIGHT</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.OPERAND_DEST"><code class="docutils literal notranslate"><span class="pre">OPERAND_DEST</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.WARP_SIZE"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.WARP_SIZE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.a_dtype"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.a_dtype</span></code></a></li>
@@ -973,9 +1037,10 @@
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.warp_col_tiles"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.warp_col_tiles</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.chunk"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.chunk</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.thread_var"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.thread_var</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_x"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.micro_size_x</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_y"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.micro_size_y</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.micro_size_k"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.micro_size_k</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.a_stride_override"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.a_stride_override</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.b_stride_override"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.b_stride_override</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.inner_k_steps"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.inner_k_steps</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.use_cooperative_tensor"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.use_cooperative_tensor</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.warp_rows"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.warp_rows</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.warp_cols"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.warp_cols</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.get_thread_binding"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.get_thread_binding()</span></code></a></li>
@@ -983,6 +1048,7 @@
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.ldmatrix_b"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.ldmatrix_b()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.mma"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.mma()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simdgroup_copy"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.simdgroup_copy()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.make_cooperative_tensor_store_layout"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.make_cooperative_tensor_store_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simd_store"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.simd_store()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.metal.intrinsics.metal_macro_generator.MPSIntrinEmitter.simd_load"><code class="docutils literal notranslate"><span class="pre">MPSIntrinEmitter.simd_load()</span></code></a></li>
 </ul>
