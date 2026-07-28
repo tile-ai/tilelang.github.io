@@ -24,6 +24,22 @@ Classes
    tilelang.ir.ReduceType
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ir.make_span
+   tilelang.ir.set_stmt_span
+   tilelang.ir.get_stmt_span
+   tilelang.ir.set_buffer_span
+   tilelang.ir.get_buffer_span
+   tilelang.ir.set_prim_func_span
+   tilelang.ir.get_prim_func_span
+   tilelang.ir.span_to_location
+   tilelang.ir.span_coverage
+
+
 Module Contents
 ---------------
 
@@ -120,5 +136,38 @@ Module Contents
 .. py:class:: ReduceType
 
    Bases: :py:obj:`tvm.ir.base.Node`, :py:obj:`tvm.runtime.Scriptable`
+
+
+.. py:function:: make_span(file, line)
+
+   Create a span covering a whole source line.
+
+
+.. py:function:: set_stmt_span(stmt, span)
+
+.. py:function:: get_stmt_span(stmt)
+
+.. py:function:: set_buffer_span(buffer, span)
+
+.. py:function:: get_buffer_span(buffer)
+
+.. py:function:: set_prim_func_span(func, span)
+
+.. py:function:: get_prim_func_span(func)
+
+.. py:function:: span_to_location(span)
+
+   Convert a span to a (file, line) tuple, or None when undefined.
+
+
+.. py:function:: span_coverage(func)
+
+   Statistics on span injection coverage for a PrimFunc.
+
+   Returns {"stmts": [with_span, total], "buffers": [with_span, total]},
+   where buffers cover both function parameters (buffer_map) and block-
+   allocated buffers (SBlock.alloc_buffers, i.e. T.alloc_* sites).
+   New nodes synthesized by passes legitimately have no span; this metric
+   is meant for the freshly parsed IR (span injection validation).
 
 

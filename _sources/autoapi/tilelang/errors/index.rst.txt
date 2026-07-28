@@ -1,0 +1,46 @@
+tilelang.errors
+===============
+
+.. py:module:: tilelang.errors
+
+.. autoapi-nested-parse::
+
+   Render source-location hints embedded in compiler error messages.
+
+   C++ passes append a machine-readable location line to error messages when the
+   relevant IR node carries a source span (see `src/span_utils.h`):
+
+
+     --> /abs/path/to/kernel.py:21:1
+
+   `enrich_error` rewrites the exception message in place (same exception type)
+   to a clang/python-style snippet:
+
+       tvm.error.InternalError: The layout for fragment C_local ...
+         --> /abs/path/to/kernel.py:21:1
+          |
+       21 |     C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+          |     ^
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.errors.enrich_error
+
+
+Module Contents
+---------------
+
+.. py:function:: enrich_error(exc)
+
+   Append a rendered source snippet to a compiler error, when available.
+
+   The exception object is returned unchanged (type and traceback preserved);
+   only its message args are rewritten. Rendering failures fall back to the
+   original message silently.
+
+

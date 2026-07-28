@@ -446,6 +446,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../env/index.html">tilelang.env</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../errors/index.html">tilelang.errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../intrinsics/index.html">tilelang.intrinsics</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">tilelang.ir</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../jit/index.html">tilelang.jit</a><input aria-label="Toggle navigation of tilelang.jit" class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -772,6 +773,42 @@
 </table>
 </div>
 </section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.make_span" title="tilelang.ir.make_span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_span</span></code></a>(file, line)</p></td>
+<td><p>Create a span covering a whole source line.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ir.set_stmt_span" title="tilelang.ir.set_stmt_span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_stmt_span</span></code></a>(stmt, span)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.get_stmt_span" title="tilelang.ir.get_stmt_span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_stmt_span</span></code></a>(stmt)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ir.set_buffer_span" title="tilelang.ir.set_buffer_span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_buffer_span</span></code></a>(buffer, span)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.get_buffer_span" title="tilelang.ir.get_buffer_span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer_span</span></code></a>(buffer)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ir.set_prim_func_span" title="tilelang.ir.set_prim_func_span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_prim_func_span</span></code></a>(func, span)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.get_prim_func_span" title="tilelang.ir.get_prim_func_span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_prim_func_span</span></code></a>(func)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ir.span_to_location" title="tilelang.ir.span_to_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">span_to_location</span></code></a>(span)</p></td>
+<td><p>Convert a span to a (file, line) tuple, or None when undefined.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.span_coverage" title="tilelang.ir.span_coverage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">span_coverage</span></code></a>(func)</p></td>
+<td><p>Statistics on span injection coverage for a PrimFunc.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py class">
@@ -914,6 +951,122 @@
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.ir.base.Node</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.runtime.Scriptable</span></code></p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ir.make_span">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">make_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.make_span" title="Link to this definition">¶</a></dt>
+<dd><p>Create a span covering a whole source line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>str</em>)</p></li>
+<li><p><strong>line</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.ir.base.Span</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ir.set_stmt_span">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">set_stmt_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stmt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.set_stmt_span" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>span</strong> (<em>tvm.ir.base.Span</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ir.get_stmt_span">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">get_stmt_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stmt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.get_stmt_span" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.ir.base.Span | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ir.set_buffer_span">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">set_buffer_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.set_buffer_span" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>span</strong> (<em>tvm.ir.base.Span</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ir.get_buffer_span">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">get_buffer_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.get_buffer_span" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.ir.base.Span | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ir.set_prim_func_span">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">set_prim_func_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.set_prim_func_span" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>span</strong> (<em>tvm.ir.base.Span</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ir.get_prim_func_span">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">get_prim_func_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.get_prim_func_span" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tvm.ir.base.Span | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ir.span_to_location">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">span_to_location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">span</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.span_to_location" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a span to a (file, line) tuple, or None when undefined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>span</strong> (<em>tvm.ir.base.Span</em><em> | </em><em>None</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[str, int] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ir.span_coverage">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">span_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.span_coverage" title="Link to this definition">¶</a></dt>
+<dd><p>Statistics on span injection coverage for a PrimFunc.</p>
+<p>Returns {“stmts”: [with_span, total], “buffers”: [with_span, total]},
+where buffers cover both function parameters (buffer_map) and block-
+allocated buffers (SBlock.alloc_buffers, i.e. T.alloc_* sites).
+New nodes synthesized by passes legitimately have no span; this metric
+is meant for the freshly parsed IR (span injection validation).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -974,6 +1127,7 @@
             <ul>
 <li><a class="reference internal" href="#">tilelang.ir</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.ir.Fill"><code class="docutils literal notranslate"><span class="pre">Fill</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ir.AtomicAdd"><code class="docutils literal notranslate"><span class="pre">AtomicAdd</span></code></a></li>
@@ -1000,6 +1154,15 @@
 <li><a class="reference internal" href="#tilelang.ir.CumMaxOp"><code class="docutils literal notranslate"><span class="pre">CumMaxOp</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ir.RegionOp"><code class="docutils literal notranslate"><span class="pre">RegionOp</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ir.ReduceType"><code class="docutils literal notranslate"><span class="pre">ReduceType</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.make_span"><code class="docutils literal notranslate"><span class="pre">make_span()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.set_stmt_span"><code class="docutils literal notranslate"><span class="pre">set_stmt_span()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.get_stmt_span"><code class="docutils literal notranslate"><span class="pre">get_stmt_span()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.set_buffer_span"><code class="docutils literal notranslate"><span class="pre">set_buffer_span()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.get_buffer_span"><code class="docutils literal notranslate"><span class="pre">get_buffer_span()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.set_prim_func_span"><code class="docutils literal notranslate"><span class="pre">set_prim_func_span()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.get_prim_func_span"><code class="docutils literal notranslate"><span class="pre">get_prim_func_span()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.span_to_location"><code class="docutils literal notranslate"><span class="pre">span_to_location()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.span_coverage"><code class="docutils literal notranslate"><span class="pre">span_coverage()</span></code></a></li>
 </ul>
 </li>
 </ul>
