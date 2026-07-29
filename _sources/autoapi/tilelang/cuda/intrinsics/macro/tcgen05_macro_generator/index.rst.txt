@@ -18,6 +18,7 @@ Classes
 .. autoapisummary::
 
    tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams
+   tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05TensorMemoryParams
    tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TensorCoreIntrinEmitter
 
 
@@ -95,6 +96,62 @@ Module Contents
       operand. Computed by :func:`compute_umma_descriptor` from the CuTe layout.
 
 
+.. py:class:: TCGEN05TensorMemoryParams
+
+   Pre-computed TMEM addressing for one operand Region.
+
+   The TMEM analog of :class:`TCGEN05DescriptorParams`: built by
+   ``compute_tcgen05_{a,c}_tmem_params()`` from the operand's CuTe fragment
+   and Region, and consumed by ``tcgen05_*_atom()`` to form each MMA atom's
+   raw TMEM address.
+
+
+   .. py:attribute:: data
+      :type:  tvm.tirx.Var
+
+      The TMEM buffer's data Var, carrying the base address.
+
+
+   .. py:attribute:: origin
+      :type:  tuple[tvm.tirx.PrimExpr, tvm.tirx.PrimExpr]
+
+      Physical ``(datapath, value-column)`` of the Region origin.
+
+
+   .. py:attribute:: tile
+      :type:  tilelang.layout.cute.Layout
+
+      Region-local matrix coordinates to physical coordinate steps.
+
+
+   .. py:attribute:: value_bits
+      :type:  int
+
+      Bit width of one value; converts value columns to raw b32 columns.
+
+
+   .. py:method:: from_region(fragment, region)
+      :classmethod:
+
+
+      Restrict a TMEM fragment to one operand Region.
+
+      ``cute.restrict`` applies the Region exactly like the shared-memory
+      descriptor path: it yields the Region origin's physical ``(datapath,
+      column)`` plus the sliced sublayout, and each atom origin is then one
+      evaluation of that sublayout.
+
+
+
+   .. py:method:: atom_offset(row_offset, col_offset)
+
+      Raw TMEM address of the atom at a Region-local matrix origin.
+
+      The column coordinate counts values of the buffer's dtype; scaling it
+      to raw b32 columns here is the same conversion TMEM allocation uses.
+
+
+
 .. py:function:: compute_umma_descriptor(tl_layout, buffer, transposed, micro_size_k = 16, region=None)
 
    Port of CuTe ``make_umma_desc`` (mma_traits_sm100.hpp).
@@ -138,6 +195,12 @@ Module Contents
       :type:  str
 
 
+   .. py:attribute:: meta
+      :type:  tuple
+      :value: ()
+
+
+
    .. py:attribute:: a_shared_layout
       :type:  tilelang.layout.Layout
       :value: None
@@ -150,19 +213,63 @@ Module Contents
 
 
 
-   .. py:method:: tcgen05mma(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
+   .. py:attribute:: a_tmem_layout
+      :type:  tilelang.layout.cute.Layout
+      :value: None
+
+
+
+   .. py:attribute:: c_tmem_layout
+      :type:  tilelang.layout.cute.Layout
+      :value: None
+
+
+
+   .. py:method:: validate_tcgen05_operand_regions(A_region, B_region, C_region, *, is_ts)
+
+      Enforce the TCGEN5MMA operand contract at the emitter boundary.
+
+      Every operand is a complete BufferRegion whose leading modes are
+      pinned to one element and whose two trailing matrix modes are an
+      exact union of instruction atoms, atom-aligned in origin.  CUTLASS
+      forms sliced views only after partitioning into atoms; enforcing the
+      same contract here — once, before any address math — prevents
+      descriptor-aligned but atom-misaligned windows (for example BF16 K16
+      at K=8) from silently producing incorrect results, and lets the rest
+      of the lowering assume well-formed Regions without re-checking.
+
+
+
+   .. py:method:: compute_tcgen05_c_tmem_params(C_region)
+
+      Compute accumulator TMEM addressing for one operand Region.
+
+      The TMEM analog of ``compute_tcgen05_*_desc_params``: shared by the
+      SS, TS, and block-scaled emitters so the accumulator addressing
+      convention lives in exactly one place.
+
+
+
+   .. py:method:: compute_tcgen05_a_tmem_params(A_region)
+
+      Compute TS A TMEM addressing for one operand Region.
+
+
+
+   .. py:method:: tcgen05mma(A_region, B_region, C_region, mbar, clear_accum = False)
 
       Emit a TCGEN5MMA operation, dispatching to SS or TS variant based on A's memory scope.
 
-      If *A_buf* resides in tensor memory (``shared.tmem``), the TS variant is
-      emitted; otherwise the SS variant is used (both A and B from shared memory).
+      If *A_region* resides in tensor memory (``shared.tmem``), the TS
+      variant is emitted; otherwise the SS variant is used (both A and B
+      from shared memory).
 
-      :param A_buf: Operand A — either in shared memory (SS) or tensor memory (TS).
-      :type A_buf: Buffer
-      :param B_buf: Operand B in shared memory.
-      :type B_buf: Buffer
-      :param C_local_buf: Accumulator buffer in tensor memory.
-      :type C_local_buf: Buffer
+      :param A_region: Operand A — either in shared memory (SS) or tensor memory (TS).
+      :type A_region: BufferRegion
+      :param B_region: Operand B in shared memory.
+      :type B_region: BufferRegion
+      :param C_region: Accumulator Region in tensor memory.
+      :type C_region: BufferRegion
       :param mbar: Memory barrier used for MMA completion signalling.
       :type mbar: PrimExpr
       :param clear_accum: Whether to zero the accumulator before the first MMA.
@@ -170,48 +277,49 @@ Module Contents
 
 
 
-   .. py:method:: tcgen05mma_ss(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
+   .. py:method:: tcgen05mma_ss(A_region, B_region, C_region, mbar, clear_accum = False)
 
       Emit the SS (Shared-Shared) variant of TCGEN5MMA.
 
       Reads operand A and B from shared memory via a descriptor.
 
-      :param A_buf: Operand A in shared memory.
-      :type A_buf: Buffer
-      :param B_buf: Operand B in shared memory.
-      :type B_buf: Buffer
-      :param C_local_buf: Accumulator buffer in tensor memory.
-      :type C_local_buf: Buffer
-      :param mbar: Memory barrier for MMA completion signalling.
+      :param A_region: Operand A in shared memory.
+      :type A_region: BufferRegion
+      :param B_region: Operand B in shared memory.
+      :type B_region: BufferRegion
+      :param C_region: Accumulator Region in tensor memory.
+      :type C_region: BufferRegion
+      :param mbar: Memory barrier for MMA completion signalling. ``None`` keeps the
+                   MMA ordered in the issue stream without publishing an event.
       :type mbar: PrimExpr
       :param clear_accum: Whether to zero the accumulator before the first MMA.
       :type clear_accum: PrimExpr
 
 
 
-   .. py:method:: tcgen05mma_ts(A_buf, B_buf, C_local_buf, mbar, clear_accum = False)
+   .. py:method:: tcgen05mma_ts(A_region, B_region, C_region, mbar, clear_accum = False)
 
       Emit the TS (TensorMemory-Shared) variant of TCGEN5MMA.
 
       Reads operand A directly from tensor memory (TMEM) and operand B from
-      shared memory via a descriptor.  The TMEM column offset for A is
-      computed assuming packed storage (e.g. two ``bfloat16`` values per
-      ``uint32`` column) to match the output of ``tcgen05.st``.
+      shared memory via a descriptor.  Every A and C atom origin is mapped
+      through its CuTe TMEM fragment.
 
-      :param A_buf: Operand A residing in tensor memory (``shared.tmem``).
-      :type A_buf: Buffer
-      :param B_buf: Operand B in shared memory.
-      :type B_buf: Buffer
-      :param C_local_buf: Accumulator buffer in tensor memory.
-      :type C_local_buf: Buffer
-      :param mbar: Memory barrier for MMA completion signalling.
+      :param A_region: Operand A residing in tensor memory (``shared.tmem``).
+      :type A_region: BufferRegion
+      :param B_region: Operand B in shared memory.
+      :type B_region: BufferRegion
+      :param C_region: Accumulator Region in tensor memory.
+      :type C_region: BufferRegion
+      :param mbar: Memory barrier for MMA completion signalling. ``None`` keeps the
+                   MMA ordered in the issue stream without publishing an event.
       :type mbar: PrimExpr
       :param clear_accum: Whether to zero the accumulator before the first MMA.
       :type clear_accum: PrimExpr
 
 
 
-   .. py:method:: tcgen05mma_blockscaled(A_buf, B_buf, C_local_buf, SFA_tmem, SFB_tmem, mbar, sf_k_start, sf_a_granularity_k, sf_b_granularity_k, clear_accum = False)
+   .. py:method:: tcgen05mma_blockscaled(A_region, B_region, C_region, SFA_tmem, SFB_tmem, mbar, sf_k_start, sf_a_granularity_k, sf_b_granularity_k, clear_accum = False)
 
       Emit a block-scaled TCGEN5MMA (SS variant with TMEM scale factors).
 
@@ -245,18 +353,19 @@ Module Contents
 
 
 
-   .. py:method:: make_mma_store_layout(tmem_buf)
+   .. py:method:: make_mma_store_layout(tmem_buf, *, operand = 'C', is_ts = False)
 
-      Create the TCGEN5 tensor-memory layout used to store MMA accumulators.
+      Create the TMEM layout of one TCGEN5MMA operand for the layout map.
 
-      :param tmem_buf: The local buffer representing tensormemory of a mma's output
-      :type tmem_buf: tir.Buffer
+      Requires ``self.meta`` initialized via ``get_tcgen5_mma_meta()``; the
+      selected instruction atom decides the fragment.
 
-      :returns: Layout object describing how logical (i, j) coordinates map to the
-                swizzled tensor-memory offsets required by TCGEN5MMA.
-      :rtype: Layout
-
-      :raises AssertionError: If `tmem_buf` is not detected to be a tensor-memory buffer.
+      ``operand="A"`` builds the dense TS ``FrgTypeA`` (CuTe
+      ``tmem_frg_{1,2}sm<A, A, ...>``): 16-bit A remains expressed in value
+      columns here; two such columns are packed into one raw b32 TMEM
+      column only when an MMA atom address is formed.  ``operand="C"``
+      builds the accumulator ``FrgTypeC``; ``is_ts`` selects the TS traits'
+      allocation mode when the GEMM's A operand also lives in TMEM.
 
 
 
@@ -272,11 +381,11 @@ Module Contents
 
 
 
-   .. py:property:: tcgen05_meta_unpacked
-      :type: tuple
+   .. py:property:: tcgen05_meta
+      :type: tilelang.cuda.intrinsics.layout.mma_sm100_layout.TCGEN05Meta
 
 
-      Return ``(atom_m, atom_n, atom_k, enable_ws, enable_2cta)`` as ints.
+      The selected instruction atom, as named fields.
 
       Requires ``self.meta`` to have been set via ``get_tcgen5_mma_meta()``.
 
@@ -363,7 +472,7 @@ Module Contents
 
 
 
-   .. py:method:: tcgen05_ss_atom(desc_a, desc_b, C_local_buf, inst_m_idx, inst_n_idx, ki, a_params, b_params, instr_desc, clear_accum = False)
+   .. py:method:: tcgen05_ss_atom(desc_a, desc_b, inst_m_idx, inst_n_idx, ki, a_params, b_params, c_params, instr_desc, clear_accum = False)
 
       Emit a single TCGEN05MMA SS instruction for atom ``(inst_m_idx, inst_n_idx, ki)``.
 
@@ -373,8 +482,6 @@ Module Contents
       :type desc_a: Buffer
       :param desc_b: Initialized A and B descriptors.
       :type desc_b: Buffer
-      :param C_local_buf: Accumulator buffer in tensor memory.
-      :type C_local_buf: Buffer
       :param inst_m_idx: M-dimension atom index (0 .. tcgen05_num_inst_m - 1).
       :type inst_m_idx: int
       :param inst_n_idx: N-dimension atom index (0 .. tcgen05_num_inst_n - 1).
@@ -385,6 +492,9 @@ Module Contents
       :type a_params: TCGEN05DescriptorParams
       :param b_params: Pre-computed B descriptor parameters.
       :type b_params: TCGEN05DescriptorParams
+      :param c_params: Pre-computed accumulator TMEM parameters from
+                       ``compute_tcgen05_c_tmem_params()``.
+      :type c_params: TCGEN05TensorMemoryParams
       :param instr_desc: Instruction descriptor from ``compute_tcgen05_instr_desc()``.
       :type instr_desc: PrimExpr
       :param clear_accum: Whether to zero the accumulator on the first K atom.
@@ -392,26 +502,28 @@ Module Contents
 
 
 
-   .. py:method:: tcgen05_ts_atom(a_tmem_data, desc_b, C_local_buf, inst_m_idx, inst_n_idx, ki, b_params, instr_desc, clear_accum = False)
+   .. py:method:: tcgen05_ts_atom(desc_b, inst_m_idx, inst_n_idx, ki, a_params, b_params, c_params, instr_desc, clear_accum = False)
 
       Emit a single TCGEN05MMA TS instruction for atom ``(inst_m_idx, inst_n_idx, ki)``.
 
       A resides in tensor memory; B in shared memory.
 
-      :param a_tmem_data: Data pointer for the A operand in tensor memory (e.g., ``A_buf.data``).
-      :type a_tmem_data: Var
       :param desc_b: Initialized B descriptor.
       :type desc_b: Buffer
-      :param C_local_buf: Accumulator buffer in tensor memory.
-      :type C_local_buf: Buffer
       :param inst_m_idx: M-dimension atom index.
       :type inst_m_idx: int
       :param inst_n_idx: N-dimension atom index.
       :type inst_n_idx: int
       :param ki: K-dimension atom index.
       :type ki: int
+      :param a_params: Pre-computed A TMEM parameters from
+                       ``compute_tcgen05_a_tmem_params()``.
+      :type a_params: TCGEN05TensorMemoryParams
       :param b_params: Pre-computed B descriptor parameters.
       :type b_params: TCGEN05DescriptorParams
+      :param c_params: Pre-computed accumulator TMEM parameters from
+                       ``compute_tcgen05_c_tmem_params()``.
+      :type c_params: TCGEN05TensorMemoryParams
       :param instr_desc: Instruction descriptor from ``compute_tcgen05_instr_desc()``.
       :type instr_desc: PrimExpr
       :param clear_accum: Whether to zero the accumulator on the first K atom.
@@ -419,7 +531,7 @@ Module Contents
 
 
 
-   .. py:method:: tcgen05_blockscaled_atom(desc_a, desc_b, C_local_buf, sfa_data, sfb_data, inst_m_idx, inst_n_idx, ki, a_params, b_params, instr_desc, clear_accum = False)
+   .. py:method:: tcgen05_blockscaled_atom(desc_a, desc_b, sfa_data, sfb_data, inst_m_idx, inst_n_idx, ki, a_params, b_params, c_params, instr_desc, clear_accum = False)
 
       Emit a single TCGEN05MMA block-scaled SS instruction.
 
@@ -427,8 +539,6 @@ Module Contents
       :type desc_a: Buffer
       :param desc_b: Initialized A and B descriptors.
       :type desc_b: Buffer
-      :param C_local_buf: Accumulator buffer in tensor memory.
-      :type C_local_buf: Buffer
       :param sfa_data: Scale factor data pointers in tensor memory.
       :type sfa_data: Var
       :param sfb_data: Scale factor data pointers in tensor memory.
@@ -443,6 +553,9 @@ Module Contents
       :type a_params: TCGEN05DescriptorParams
       :param b_params: Pre-computed descriptor parameters.
       :type b_params: TCGEN05DescriptorParams
+      :param c_params: Pre-computed accumulator TMEM parameters from
+                       ``compute_tcgen05_c_tmem_params()``.
+      :type c_params: TCGEN05TensorMemoryParams
       :param instr_desc: Block-scaled instruction descriptor (with SF IDs already encoded).
       :type instr_desc: PrimExpr
       :param clear_accum: Whether to zero the accumulator on the first K atom.

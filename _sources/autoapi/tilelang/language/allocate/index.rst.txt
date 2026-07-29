@@ -200,8 +200,12 @@ Module Contents
        - Only TCGEN5.MMA and specific TMEM load/store instructions can access TMEM; all pre-processing must occur before data is loaded into TMEM, and all post-processing after data is retrieved.
        - The number of columns allocated should not increase between any two allocations in the execution order within the CTA.
 
-   :param num_cols: Number of columns to allocate in TMEM. Must be a power of 2 and >= 32 but less than or equal to 512.
-   :type num_cols: int
+   :param shape: Logical buffer shape.  The last two modes are the
+                 matrix modes; any leading modes are batch dimensions that repeat
+                 the buffer along TMEM columns.
+   :type shape: ShapeType
+   :param dtype: Element data type.
+   :type dtype: DType
 
    :returns: A TVM buffer object allocated in TMEM scope, suitable for use as an accumulator or operand in TCGEN5.MMA operations.
    :rtype: T.Buffer

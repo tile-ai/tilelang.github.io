@@ -50,12 +50,18 @@ Functions
    tilelang.layout.cute.size
    tilelang.layout.cute.coalesce
    tilelang.layout.cute.right_inverse
+   tilelang.layout.cute.left_inverse
    tilelang.layout.cute.composition
    tilelang.layout.cute.filter
    tilelang.layout.cute.congruent
+   tilelang.layout.cute.compatible
+   tilelang.layout.cute.coshape
    tilelang.layout.cute.cosize
    tilelang.layout.cute.complement
    tilelang.layout.cute.logical_divide
+   tilelang.layout.cute.logical_product
+   tilelang.layout.cute.tiled_product
+   tilelang.layout.cute.blocked_product
    tilelang.layout.cute.make_layout
    tilelang.layout.cute.make_column_major_layout
    tilelang.layout.cute.make_row_major_layout
@@ -110,6 +116,11 @@ Module Contents
    .. py:method:: to_swizzle_mode()
 
 
+   .. py:method:: parse(text)
+      :staticmethod:
+
+
+
 .. py:class:: IntTuple
 
    Bases: :py:obj:`tvm.ir.base.Node`, :py:obj:`tvm.runtime.Scriptable`
@@ -127,6 +138,11 @@ Module Contents
    .. py:method:: __rmul__(other)
 
 
+   .. py:method:: parse(text)
+      :staticmethod:
+
+
+
 .. py:class:: IntTupleConst
 
    Bases: :py:obj:`IntTuple`
@@ -142,7 +158,7 @@ Module Contents
 
 
    .. py:attribute:: value
-      :type:  object
+      :type:  tvm.ir.PrimExpr
 
 
 .. py:class:: IntTupleScaledBasis
@@ -182,6 +198,12 @@ Module Contents
 
 
 
+   .. py:method:: __mul__(other)
+
+
+   .. py:method:: __rmul__(other)
+
+
    .. py:method:: __repr__()
 
 
@@ -211,9 +233,22 @@ Module Contents
    .. py:method:: with_shape(shape)
 
 
+   .. py:method:: parse(text)
+      :staticmethod:
+
+
+
    .. py:method:: from_tilelang(layout)
       :staticmethod:
 
+
+
+   .. py:method:: from_tilelang_hierarchical(layout)
+      :staticmethod:
+
+
+
+   .. py:method:: to_tilelang()
 
 
 .. py:function:: rank(layout)
@@ -226,17 +261,29 @@ Module Contents
 
 .. py:function:: right_inverse(layout)
 
+.. py:function:: left_inverse(layout)
+
 .. py:function:: composition(lhs, rhs)
 
 .. py:function:: filter(layout)
 
 .. py:function:: congruent(a, b)
 
+.. py:function:: compatible(a, b)
+
+.. py:function:: coshape(layout)
+
 .. py:function:: cosize(layout)
 
 .. py:function:: complement(layout, cotarget)
 
 .. py:function:: logical_divide(layout, tiler)
+
+.. py:function:: logical_product(block, tiler)
+
+.. py:function:: tiled_product(block, tiler)
+
+.. py:function:: blocked_product(block, tiler)
 
 .. py:function:: make_layout(shape, stride=None)
 

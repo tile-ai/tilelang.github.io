@@ -22,6 +22,8 @@ Classes
    tilelang.ir.CumMaxOp
    tilelang.ir.RegionOp
    tilelang.ir.ReduceType
+   tilelang.ir.Tcgen05Meta
+   tilelang.ir.Tcgen05CopyPlan
 
 
 Functions
@@ -169,5 +171,42 @@ Module Contents
    allocated buffers (SBlock.alloc_buffers, i.e. T.alloc_* sites).
    New nodes synthesized by passes legitimately have no span; this metric
    is meant for the freshly parsed IR (span injection validation).
+
+
+.. py:class:: Tcgen05Meta
+
+   Bases: :py:obj:`tvm.ir.base.Node`, :py:obj:`tvm.runtime.Scriptable`
+
+
+   One tcgen05.ld/st data-movement shape: the per-warp single-issue
+   CUTLASS TV atom plus the wrapper's chaining limit.
+
+
+   .. py:attribute:: intrinsics_name
+      :type:  str
+
+
+   .. py:attribute:: max_chunks
+      :type:  int
+
+
+.. py:class:: Tcgen05CopyPlan
+
+   Bases: :py:obj:`tvm.ir.base.Node`, :py:obj:`tvm.runtime.Scriptable`
+
+
+   The tiled copy of one TMEM tile built by tl.ExpandTcgen05Layout.
+
+
+   .. py:attribute:: num_chunks_each_wg
+      :type:  int
+
+
+   .. py:attribute:: num_issues
+      :type:  int
+
+
+   .. py:attribute:: vals_per_issue
+      :type:  int
 
 

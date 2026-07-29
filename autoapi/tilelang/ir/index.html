@@ -388,6 +388,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../cuda/intrinsics/index.html">tilelang.cuda.intrinsics</a><input aria-label="Toggle navigation of tilelang.cuda.intrinsics" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../cuda/intrinsics/layout/index.html">tilelang.cuda.intrinsics.layout</a><input aria-label="Toggle navigation of tilelang.cuda.intrinsics.layout" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../cuda/intrinsics/layout/mma_layout/index.html">tilelang.cuda.intrinsics.layout.mma_layout</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../cuda/intrinsics/layout/mma_sm100_layout/index.html">tilelang.cuda.intrinsics.layout.mma_sm100_layout</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../cuda/intrinsics/layout/mma_sm70_layout/index.html">tilelang.cuda.intrinsics.layout.mma_sm70_layout</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../cuda/intrinsics/layout/mma_sp_layout/index.html">tilelang.cuda.intrinsics.layout.mma_sp_layout</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../cuda/intrinsics/layout/utils/index.html">tilelang.cuda.intrinsics.layout.utils</a></li>
@@ -771,6 +772,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.ReduceType" title="tilelang.ir.ReduceType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReduceType</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ir.Tcgen05Meta" title="tilelang.ir.Tcgen05Meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tcgen05Meta</span></code></a></p></td>
+<td><p>One tcgen05.ld/st data-movement shape: the per-warp single-issue</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.Tcgen05CopyPlan" title="tilelang.ir.Tcgen05CopyPlan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tcgen05CopyPlan</span></code></a></p></td>
+<td><p>The tiled copy of one TMEM tile built by tl.ExpandTcgen05Layout.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1069,6 +1076,46 @@ is meant for the freshly parsed IR (span injection validation).</p>
 </dl>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.ir.Tcgen05Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">Tcgen05Meta</span></span><a class="headerlink" href="#tilelang.ir.Tcgen05Meta" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.ir.base.Node</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.runtime.Scriptable</span></code></p>
+<p>One tcgen05.ld/st data-movement shape: the per-warp single-issue
+CUTLASS TV atom plus the wrapper’s chaining limit.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.ir.Tcgen05Meta.intrinsics_name">
+<span class="sig-name descname"><span class="pre">intrinsics_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#tilelang.ir.Tcgen05Meta.intrinsics_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.ir.Tcgen05Meta.max_chunks">
+<span class="sig-name descname"><span class="pre">max_chunks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.ir.Tcgen05Meta.max_chunks" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.ir.Tcgen05CopyPlan">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">Tcgen05CopyPlan</span></span><a class="headerlink" href="#tilelang.ir.Tcgen05CopyPlan" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.ir.base.Node</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.runtime.Scriptable</span></code></p>
+<p>The tiled copy of one TMEM tile built by tl.ExpandTcgen05Layout.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.ir.Tcgen05CopyPlan.num_chunks_each_wg">
+<span class="sig-name descname"><span class="pre">num_chunks_each_wg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.ir.Tcgen05CopyPlan.num_chunks_each_wg" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.ir.Tcgen05CopyPlan.num_issues">
+<span class="sig-name descname"><span class="pre">num_issues</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.ir.Tcgen05CopyPlan.num_issues" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.ir.Tcgen05CopyPlan.vals_per_issue">
+<span class="sig-name descname"><span class="pre">vals_per_issue</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.ir.Tcgen05CopyPlan.vals_per_issue" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -1165,6 +1212,17 @@ is meant for the freshly parsed IR (span injection validation).</p>
 <li><a class="reference internal" href="#tilelang.ir.get_prim_func_span"><code class="docutils literal notranslate"><span class="pre">get_prim_func_span()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ir.span_to_location"><code class="docutils literal notranslate"><span class="pre">span_to_location()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ir.span_coverage"><code class="docutils literal notranslate"><span class="pre">span_coverage()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.Tcgen05Meta"><code class="docutils literal notranslate"><span class="pre">Tcgen05Meta</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.ir.Tcgen05Meta.intrinsics_name"><code class="docutils literal notranslate"><span class="pre">Tcgen05Meta.intrinsics_name</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.Tcgen05Meta.max_chunks"><code class="docutils literal notranslate"><span class="pre">Tcgen05Meta.max_chunks</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.ir.Tcgen05CopyPlan"><code class="docutils literal notranslate"><span class="pre">Tcgen05CopyPlan</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.ir.Tcgen05CopyPlan.num_chunks_each_wg"><code class="docutils literal notranslate"><span class="pre">Tcgen05CopyPlan.num_chunks_each_wg</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.Tcgen05CopyPlan.num_issues"><code class="docutils literal notranslate"><span class="pre">Tcgen05CopyPlan.num_issues</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.Tcgen05CopyPlan.vals_per_issue"><code class="docutils literal notranslate"><span class="pre">Tcgen05CopyPlan.vals_per_issue</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

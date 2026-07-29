@@ -1,0 +1,184 @@
+tilelang.cuda.intrinsics.layout.mma_sm100_layout
+================================================
+
+.. py:module:: tilelang.cuda.intrinsics.layout.mma_sm100_layout
+
+.. autoapi-nested-parse::
+
+   CuTe TMEM fragment layouts for dense SM100 MMA (``tmem_frg`` family).
+
+   A TMEM fragment is a :class:`cute.Layout` with :class:`cute.ScaledBasis`
+   strides, mapping logical buffer coordinates to hierarchical ``(datapath,
+   column)`` TMEM coordinates, with the column measured in the buffer's value
+   type.  Exactly as in CUTLASS ``mma_traits_sm100.hpp``, an atom in virtual
+   TMEM addressing (datapath stride one, column stride 128) is repeated over the
+   tile counts, then composed with ``tmem_restride`` into physical coordinates.
+   Both TMEM allocation and MMA address formation consume the same layout, and a
+   sliced operand is handled by ``cute.restrict`` like any other CuTe layout.
+
+   The atoms are the PTX "TMEM data path layout organization" variants
+   (https://docs.nvidia.com/cuda/parallel-thread-execution/#tcgen05-data-path-layout-organization):
+
+   ========  ==========================  ====================================
+   PTX       CUTLASS atom                shape:stride (virtual addressing)
+   ========  ==========================  ====================================
+   Layout A  2SM M256 (M128/CTA)         ``(128, N):(1, 128)``
+   Layout B  2SM M128 (M64/CTA, "2x2")   ``(64, (N/2, 2)):(1, (128, 64))``
+   Layout C  2SM M64  (M32/CTA, "1x4")   ``(32, (N/4, 4)):(1, (128, 32))``
+   Layout D  1SM M128                    ``(128, N):(1, 128)``
+   Layout E  1SM M64  ``.ws`` C/D        ``(64, (N/2, 2)):(1, (128, 64))``
+   Layout F  1SM M64  half-datapath      ``((16, 4), N):((1, 32), 128)``
+   Layout G  1SM M32  ``.ws`` C/D        ``(32, (N/4, 4)):(1, (128, 32))``
+   ========  ==========================  ====================================
+
+   Only the compiler's MMA lowering (this module and
+   ``tcgen05_macro_generator``) sees CuTe layouts; everywhere else — the layout
+   map, TMEM allocation, and copy lowering — a fragment travels as its TileLang
+   ``lambda *indices: [datapath, column]`` form via
+   :meth:`cute.Layout.to_tilelang`, and
+   :meth:`cute.Layout.from_tilelang_hierarchical` recovers the hierarchical
+   CuTe layout losslessly.
+
+   As everywhere else in the MMA lowering, the last two modes of a buffer are
+   the matrix modes; any leading modes are batch dimensions (for example a
+   software-pipeline stage) and repeat the fragment along TMEM columns.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.cuda.intrinsics.layout.mma_sm100_layout.TCGEN05TmemAllocMode
+   tilelang.cuda.intrinsics.layout.mma_sm100_layout.TCGEN05Meta
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.cuda.intrinsics.layout.mma_sm100_layout.make_tmem_frg_atom
+   tilelang.cuda.intrinsics.layout.mma_sm100_layout.make_tmem_frg_ws_atom
+   tilelang.cuda.intrinsics.layout.mma_sm100_layout.make_tmem_frg
+   tilelang.cuda.intrinsics.layout.mma_sm100_layout.make_tmem_frg_a
+   tilelang.cuda.intrinsics.layout.mma_sm100_layout.make_tmem_frg_c
+   tilelang.cuda.intrinsics.layout.mma_sm100_layout.validate_tcgen05_ts_instruction
+
+
+Module Contents
+---------------
+
+.. py:class:: TCGEN05TmemAllocMode
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Dense TMEM allocation modes from CUTLASS ``UMMA::TmemAllocMode``.
+
+
+   .. py:attribute:: INTERLEAVED
+      :value: 'interleaved'
+
+
+
+   .. py:attribute:: NON_INTERLEAVED
+      :value: 'non_interleaved'
+
+
+
+   .. py:attribute:: DUPLICATED
+      :value: 'duplicated'
+
+
+
+.. py:class:: TCGEN05Meta
+
+   The TCGEN5MMA instruction atom selected by ``get_tcgen5_mma_meta``.
+
+
+   .. py:attribute:: atom_m
+      :type:  int
+
+
+   .. py:attribute:: atom_n
+      :type:  int
+
+
+   .. py:attribute:: atom_k
+      :type:  int
+
+
+   .. py:attribute:: enable_ws
+      :type:  bool
+
+
+   .. py:attribute:: enable_2cta
+      :type:  bool
+
+
+   .. py:method:: from_ffi(values)
+      :classmethod:
+
+
+
+   .. py:property:: num_sms
+      :type: int
+
+
+
+   .. py:property:: atom_m_per_cta
+      :type: int
+
+
+
+   .. py:property:: b_atom_n_per_cta
+      :type: int
+
+
+      Each 2SM instruction reads an N/2 shard of B from each CTA.
+
+
+.. py:function:: make_tmem_frg_atom(num_sms, alloc_mode, atom_m, atom_n)
+
+   Return CUTLASS ``tmem_frg``'s ``(tmem_atom, outer_tile_stride)`` pair.
+
+   ``atom_m`` is the per-CTA M extent.  The 1SM M64 atom is PTX Layout F
+   (half datapaths, 32-datapath halves interleaved); the 2SM atoms fold the
+   peer CTA's N shard into the upper datapaths (PTX Layouts A/B/C).
+
+
+.. py:function:: make_tmem_frg_ws_atom(atom_m, atom_n)
+
+   Return CUTLASS ``tmem_frg_ws``'s dense 1SM weight-stationary C/D atom.
+
+   ``.ws`` instructions with M below 128 fold N shards into the upper
+   datapaths instead of leaving them idle: PTX Layout E for M64 and Layout G
+   for M32.
+
+
+.. py:function:: make_tmem_frg(buffer, num_sms, alloc_mode, atom_m, atom_n, storage_bits)
+
+   Tile a legal ordinary CUTLASS atom over the buffer's matrix modes.
+
+
+.. py:function:: make_tmem_frg_a(buffer, meta)
+
+   Build the exact dense TS ``FrgTypeA`` selected by CUTLASS.
+
+
+.. py:function:: make_tmem_frg_c(buffer, meta, *, is_ts)
+
+   Build the dense ``FrgTypeC`` paired with the selected instruction.
+
+   Ordinary SS accumulators use the interleaved allocation; dense TS traits
+   pin CUTLASS's NonInterleaved (1SM) / Interleaved (2SM) modes; ``.ws`` SS
+   instructions use the weight-stationary fragment (PTX Layouts E/G).
+
+
+.. py:function:: validate_tcgen05_ts_instruction(meta, a_dtype, transposed)
+
+   Validate a dense TS instruction atom against CUTLASS SM100 wrappers.
+
+
