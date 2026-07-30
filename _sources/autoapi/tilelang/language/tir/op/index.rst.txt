@@ -60,6 +60,7 @@ Functions
    tilelang.language.tir.op.tvm_store_matrix_sync
    tilelang.language.tir.op.ptx_mma
    tilelang.language.tir.op.ptx_mma_sp
+   tilelang.language.tir.op.ptx_mma_block_scale
    tilelang.language.tir.op.ptx_wgmma_ss
    tilelang.language.tir.op.ptx_wgmma_rs
    tilelang.language.tir.op.ptx_wgmma_sp_ss
@@ -881,6 +882,11 @@ Module Contents
 
    :returns: **call** -- The call expression.
    :rtype: PrimExpr
+
+
+.. py:function:: ptx_mma_block_scale(accum_dtype, shape, A_layout, B_layout, kind, scale_vec_size, A_dtype, B_dtype, scale_type, multiplicand_a, a_index, multiplicand_b, b_index, accumulator, c_index, scale_a, scale_b, scale_a_byte_id=0, scale_a_thread_id=0, scale_b_byte_id=0, scale_b_thread_id=0)
+
+   TVM intrinsic for SM120a warp-level NVF4 block-scaled MMA.
 
 
 .. py:function:: ptx_wgmma_ss(dtype, wgmma_prefix, a_is_k_major, b_is_k_major, a_dtype_abbrv, b_dtype_abbrv, accum_dtype_abbrv, A_desc, A_offset, B_desc, B_offset, C_data, C_offset, scale_out, scale_in_a, scale_in_b)

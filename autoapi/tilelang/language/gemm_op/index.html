@@ -391,6 +391,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../cuda/intrinsics/macro/index.html">tilelang.cuda.intrinsics.macro</a><input aria-label="Toggle navigation of tilelang.cuda.intrinsics.macro" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/intrinsics/macro/mma_macro_generator/index.html">tilelang.cuda.intrinsics.macro.mma_macro_generator</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cuda/intrinsics/macro/mma_sm120_macro_generator/index.html">tilelang.cuda.intrinsics.macro.mma_sm120_macro_generator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/intrinsics/macro/mma_sm70_macro_generator/index.html">tilelang.cuda.intrinsics.macro.mma_sm70_macro_generator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/intrinsics/macro/mma_sm75_macro_generator/index.html">tilelang.cuda.intrinsics.macro.mma_sm75_macro_generator</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/intrinsics/macro/mma_sp_macro_generator/index.html">tilelang.cuda.intrinsics.macro.mma_sp_macro_generator</a></li>
@@ -416,6 +417,7 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../cuda/op/gemm/index.html">tilelang.cuda.op.gemm</a><input aria-label="Toggle navigation of tilelang.cuda.op.gemm" class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/op/gemm/gemm_fma/index.html">tilelang.cuda.op.gemm.gemm_fma</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/op/gemm/gemm_mma/index.html">tilelang.cuda.op.gemm.gemm_mma</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cuda/op/gemm/gemm_mma_sm120/index.html">tilelang.cuda.op.gemm.gemm_mma_sm120</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/op/gemm/gemm_mma_sm70/index.html">tilelang.cuda.op.gemm.gemm_mma_sm70</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/op/gemm/gemm_mma_sm75/index.html">tilelang.cuda.op.gemm.gemm_mma_sm75</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../cuda/op/gemm/gemm_tcgen05/index.html">tilelang.cuda.op.gemm.gemm_tcgen05</a></li>
@@ -740,7 +742,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.gemm_op.tcgen05_gemm_blockscaled" title="tilelang.language.gemm_op.tcgen05_gemm_blockscaled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_gemm_blockscaled</span></code></a>(A, B, C, SFA_tmem, SFB_tmem)</p></td>
 <td><p>Explicit Blackwell TCGEN05 block-scaled GEMM without an implicit wait.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.gemm_op.make_blockscaled_gemm_layout" title="tilelang.language.gemm_op.make_blockscaled_gemm_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_blockscaled_gemm_layout</span></code></a>(C, A[, transpose_A])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.gemm_op.mma_gemm_blockscaled" title="tilelang.language.gemm_op.mma_gemm_blockscaled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mma_gemm_blockscaled</span></code></a>(A, B, C, SFA, SFB[, transpose_A, ...])</p></td>
+<td><p>Explicit SM120 warp-level block-scaled MMA GEMM.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.gemm_op.make_blockscaled_gemm_layout" title="tilelang.language.gemm_op.make_blockscaled_gemm_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_blockscaled_gemm_layout</span></code></a>(C, A[, transpose_A])</p></td>
 <td><p>Build the TMEM store layout for the C accumulator of a block-scaled GEMM.</p></td>
 </tr>
 </tbody>
@@ -893,6 +898,42 @@ scale-factor A/B IDs for each internal K32 MMA atom from these values.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.gemm_op.mma_gemm_blockscaled">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm_op.</span></span><span class="sig-name descname"><span class="pre">mma_gemm_blockscaled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">GemmWarpPolicy.Square</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_accum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_a_granularity_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_b_granularity_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.gemm_op.mma_gemm_blockscaled" title="Link to this definition">¶</a></dt>
+<dd><p>Explicit SM120 warp-level block-scaled MMA GEMM.</p>
+<p>This API follows the same scale-factor model as
+<code class="docutils literal notranslate"><span class="pre">T.tcgen05_gemm_blockscaled</span></code>: users pass the scale tensors, logical
+<code class="docutils literal notranslate"><span class="pre">k_start</span></code>, and K granularity, while the lowering derives the low-level
+scale addressing. Unlike TCGEN05, this path is synchronous warp-level
+<code class="docutils literal notranslate"><span class="pre">mma.sync</span></code> and does not use tensor memory or mbarriers.</p>
+<p>The current supported instruction is SM120 NVF4:
+<code class="docutils literal notranslate"><span class="pre">m16n8k64.kind::mxf4nvf4.block_scale.scale_vec::4X</span></code> with E2M1 operands,
+FP32 accumulation, and UE4M3 scale factors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>tilelang._typing.BufferLikeType</em>)</p></li>
+<li><p><strong>B</strong> (<em>tilelang._typing.BufferLikeType</em>)</p></li>
+<li><p><strong>C</strong> (<em>tilelang._typing.BufferLikeType</em>)</p></li>
+<li><p><strong>SFA</strong> (<em>tilelang._typing.BufferLikeType</em>)</p></li>
+<li><p><strong>SFB</strong> (<em>tilelang._typing.BufferLikeType</em>)</p></li>
+<li><p><strong>transpose_A</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>transpose_B</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>policy</strong> (<a class="reference internal" href="../../tileop/base/index.html#tilelang.tileop.base.GemmWarpPolicy" title="tilelang.tileop.base.GemmWarpPolicy"><em>tilelang.tileop.base.GemmWarpPolicy</em></a>)</p></li>
+<li><p><strong>clear_accum</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>k_start</strong> (<em>int</em><em> | </em><em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>sf_a_granularity_k</strong> (<em>int</em>)</p></li>
+<li><p><strong>sf_b_granularity_k</strong> (<em>int</em>)</p></li>
+<li><p><strong>sf_layout</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.gemm_op.make_blockscaled_gemm_layout">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.gemm_op.</span></span><span class="sig-name descname"><span class="pre">make_blockscaled_gemm_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose_A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.gemm_op.make_blockscaled_gemm_layout" title="Link to this definition">¶</a></dt>
 <dd><p>Build the TMEM store layout for the C accumulator of a block-scaled GEMM.</p>
@@ -980,6 +1021,7 @@ so that subsequent <code class="docutils literal notranslate"><span class="pre">
 <li><a class="reference internal" href="#tilelang.language.gemm_op.wgmma_gemm"><code class="docutils literal notranslate"><span class="pre">wgmma_gemm()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.gemm_op.tcgen05_gemm"><code class="docutils literal notranslate"><span class="pre">tcgen05_gemm()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.gemm_op.tcgen05_gemm_blockscaled"><code class="docutils literal notranslate"><span class="pre">tcgen05_gemm_blockscaled()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.gemm_op.mma_gemm_blockscaled"><code class="docutils literal notranslate"><span class="pre">mma_gemm_blockscaled()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.gemm_op.make_blockscaled_gemm_layout"><code class="docutils literal notranslate"><span class="pre">make_blockscaled_gemm_layout()</span></code></a></li>
 </ul>
 </li>

@@ -21,6 +21,10 @@ Attributes
    tilelang.cuda.intrinsics.layout.mma_layout.shared_16x32_to_mma_32x16_layout_sr_b
    tilelang.cuda.intrinsics.layout.mma_layout.shared_16x32_to_mma_32x16_layout_rs_a
    tilelang.cuda.intrinsics.layout.mma_layout.shared_16x32_to_mma_32x16_layout_rs_b
+   tilelang.cuda.intrinsics.layout.mma_layout.shared_16x64_to_mma_32x32_layout_sr_a
+   tilelang.cuda.intrinsics.layout.mma_layout.shared_16x64_to_mma_32x32_layout_rs_a
+   tilelang.cuda.intrinsics.layout.mma_layout.shared_8x64_to_mma_32x16_layout_sr_b
+   tilelang.cuda.intrinsics.layout.mma_layout.shared_8x64_to_mma_32x16_layout_rs_b
 
 
 Functions
@@ -57,6 +61,15 @@ Functions
    tilelang.cuda.intrinsics.layout.mma_layout.mma_load_a_32x8_to_shared_16x16_layout
    tilelang.cuda.intrinsics.layout.mma_layout.mma_load_b_32x16_to_shared_16x32_layout
    tilelang.cuda.intrinsics.layout.mma_layout.mma_load_b_32x8_to_shared_16x16_layout
+   tilelang.cuda.intrinsics.layout.mma_layout.shared_16x64_to_mma_a_32x32_layout
+   tilelang.cuda.intrinsics.layout.mma_layout.shared_64x16_to_mma_a_32x32_layout_trans
+   tilelang.cuda.intrinsics.layout.mma_layout.shared_8x64_to_mma_b_32x16_layout
+   tilelang.cuda.intrinsics.layout.mma_layout.shared_64x8_to_mma_b_32x16_layout_trans
+   tilelang.cuda.intrinsics.layout.mma_layout.ldmatrix_32x32_to_shared_16x64_layout_a
+   tilelang.cuda.intrinsics.layout.mma_layout.ldmatrix_32x32_to_shared_16x64_layout_b
+   tilelang.cuda.intrinsics.layout.mma_layout.ldmatrix_32x16_to_shared_8x64_layout_b
+   tilelang.cuda.intrinsics.layout.mma_layout.mma_load_a_32x32_to_shared_16x64_layout
+   tilelang.cuda.intrinsics.layout.mma_layout.mma_load_b_32x16_to_shared_8x64_layout
    tilelang.cuda.intrinsics.layout.mma_layout.shared_16x16_to_mma_32x8_smoothlayout
    tilelang.cuda.intrinsics.layout.mma_layout.shared_16x32_to_mma_32x16_smoothlayout
    tilelang.cuda.intrinsics.layout.mma_layout.shared_32x16_to_mma_32x16_smoothlayout
@@ -166,6 +179,57 @@ Module Contents
        (threadID_in_group * 2) + (i & 0x1) + 8       for bi where i >= 2
 
    col = groupID
+
+
+.. py:function:: shared_16x64_to_mma_a_32x32_layout(i, j)
+
+   A fragment layout for m16n8k64 e2m1 row-major operand.
+
+
+.. py:function:: shared_64x16_to_mma_a_32x32_layout_trans(i, j)
+
+.. py:function:: shared_8x64_to_mma_b_32x16_layout(i, j)
+
+   B fragment layout for m16n8k64 e2m1 col-major operand.
+
+
+.. py:function:: shared_64x8_to_mma_b_32x16_layout_trans(i, j)
+
+.. py:data:: shared_16x64_to_mma_32x32_layout_sr_a
+
+.. py:data:: shared_16x64_to_mma_32x32_layout_rs_a
+
+.. py:data:: shared_8x64_to_mma_32x16_layout_sr_b
+
+.. py:data:: shared_8x64_to_mma_32x16_layout_rs_b
+
+.. py:function:: ldmatrix_32x32_to_shared_16x64_layout_a(thread_id)
+
+   Row-start addresses for ldmatrix.x4 loading A m16k64 e2m1.
+
+
+.. py:function:: ldmatrix_32x32_to_shared_16x64_layout_b(thread_id)
+
+   Row-start addresses for ldmatrix.x4 loading B n16k64 e2m1.
+
+
+.. py:function:: ldmatrix_32x16_to_shared_8x64_layout_b(thread_id)
+
+   Row-start addresses for ldmatrix.x2 loading B n8k64 e2m1.
+
+
+.. py:function:: mma_load_a_32x32_to_shared_16x64_layout(thread_id, local_id)
+
+   Inverse: (thread_id, local_id) -> (m, k) for A m16k64 e2m1.
+
+   Matches CUTLASS/CuTe SM120 ALayout:
+   Layout<Shape<Shape<_4,_8>, Shape<_8,_2,_2>>,
+          Stride<Stride<_128,_1>, Stride<_16,_8,_512>>>.
+
+
+.. py:function:: mma_load_b_32x16_to_shared_8x64_layout(thread_id, local_id)
+
+   Inverse: (thread_id, local_id) -> (n, k) for B n8k64 e2m1.
 
 
 .. py:function:: shared_16x16_to_mma_32x8_smoothlayout(i, j)

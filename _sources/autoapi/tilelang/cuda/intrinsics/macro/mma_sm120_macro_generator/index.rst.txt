@@ -1,0 +1,268 @@
+tilelang.cuda.intrinsics.macro.mma_sm120_macro_generator
+========================================================
+
+.. py:module:: tilelang.cuda.intrinsics.macro.mma_sm120_macro_generator
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.cuda.intrinsics.macro.mma_sm120_macro_generator.lift
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.cuda.intrinsics.macro.mma_sm120_macro_generator.BlockScaleMmaConfig
+   tilelang.cuda.intrinsics.macro.mma_sm120_macro_generator.SM120BlockScaleTile
+   tilelang.cuda.intrinsics.macro.mma_sm120_macro_generator.TensorCoreIntrinEmitterSM120
+
+
+Module Contents
+---------------
+
+.. py:data:: lift
+
+.. py:class:: BlockScaleMmaConfig
+
+   Static SM120 warp-level block-scale MMA configuration.
+
+
+   .. py:attribute:: kind
+      :type:  str
+
+
+   .. py:attribute:: mma_prefix
+      :type:  str
+
+
+   .. py:attribute:: atom_k
+      :type:  int
+
+
+   .. py:attribute:: scale_vec_size
+      :type:  int
+
+
+   .. py:attribute:: sf_vec_size
+      :type:  int
+
+
+   .. py:attribute:: scale_type
+      :type:  str
+
+
+   .. py:attribute:: a_dtype_abbrv
+      :type:  str
+
+
+   .. py:attribute:: b_dtype_abbrv
+      :type:  str
+
+
+   .. py:attribute:: accum_dtype
+      :type:  str
+      :value: 'float32'
+
+
+
+   .. py:attribute:: active_sfa_threads
+      :type:  int
+      :value: 16
+
+
+
+   .. py:attribute:: active_sfb_threads
+      :type:  int
+      :value: 8
+
+
+
+.. py:class:: SM120BlockScaleTile
+
+   Validated tile geometry for the SM120 packed-scale register pipeline.
+
+
+   .. py:attribute:: tile_m
+      :type:  int
+
+
+   .. py:attribute:: tile_n
+      :type:  int
+
+
+   .. py:attribute:: tile_k
+      :type:  int
+
+
+   .. py:attribute:: block_row_warps
+      :type:  int
+
+
+   .. py:attribute:: block_col_warps
+      :type:  int
+
+
+   .. py:attribute:: warp_rows
+      :type:  int
+
+
+   .. py:attribute:: warp_cols
+      :type:  int
+
+
+   .. py:attribute:: warp_row_tiles
+      :type:  int
+
+
+   .. py:attribute:: warp_col_tiles
+      :type:  int
+
+
+   .. py:attribute:: kblocks
+      :type:  int
+
+
+   .. py:attribute:: micro_size_m
+      :type:  int
+
+
+   .. py:attribute:: micro_size_n
+      :type:  int
+
+
+   .. py:attribute:: micro_size_k
+      :type:  int
+
+
+   .. py:attribute:: sf_layout
+      :type:  str
+
+
+   .. py:attribute:: sfa_words
+      :type:  int
+
+
+   .. py:attribute:: sfb_words
+      :type:  int
+
+
+   .. py:attribute:: warp_issues
+      :type:  int
+
+
+   .. py:attribute:: warpgroup_issues
+      :type:  int
+
+
+   .. py:method:: from_emitter(emitter, *, sf_layout, kblocks = None)
+      :classmethod:
+
+
+
+   .. py:method:: validate()
+
+
+   .. py:method:: compact_selector_scale_rows(lane, warp_m, warp_n)
+
+      Return SFA/SFB semantic rows loaded by the current compact TV package.
+
+
+
+   .. py:method:: compact_selector_scale_word_offsets(lane, warp_m, warp_n, kblock)
+
+
+   .. py:method:: sfa_selector_source_lane(lane, scale_a_thread_id)
+      :staticmethod:
+
+
+
+   .. py:method:: sfb_selector_source_lane(lane, scale_b_thread_id)
+      :staticmethod:
+
+
+
+   .. py:method:: compact_selector_effective_rows(lane, warp_m, warp_n, issue)
+
+      Return semantic SFA/SFB rows consumed by one compact-selector issue.
+
+
+
+   .. py:method:: package_pingpong_lifecycle()
+
+      Return the current copy/gemm package lifecycle from the CUDA helper.
+
+      Each tuple is ``(op, register_package, kblock)``.  Scale and A/B packages
+      share the same register package id in the current implementation.
+
+
+
+   .. py:method:: omma_sf_issue_schedule_per_warp()
+
+      Return the current per-warp OMMA.SF issue schedule.
+
+      Each tuple is ``(mma_i, mma_j, n8_half, sfa_word, sfb_word,
+      scale_a_thread_id, scale_b_thread_id)``.  ``sfa_word`` and ``sfb_word``
+      are indices inside the current compact-selector scale package, not
+      source-memory offsets.
+
+
+
+.. py:class:: TensorCoreIntrinEmitterSM120(a_dtype = 'float16', b_dtype = 'float16', accum_dtype = 'float16', a_transposed = False, b_transposed = False, block_row_warps = 2, block_col_warps = 2, warp_row_tiles = 8, warp_col_tiles = 8, chunk = 16, reduce_k = 1, num_elems_per_byte = 1, is_m_first = False, thread_var = None, is_blockscaled = False, kind = 'mxf4nvf4', scale_vec_size = 4, stype = 'ue4m3')
+
+   Bases: :py:obj:`tilelang.cuda.intrinsics.macro.mma_macro_generator.TensorCoreIntrinEmitter`
+
+
+   Warp-level MMA emitter, with optional SM120 block-scale mode.
+
+   The block-scale mode keeps scale-factor storage explicit, matching
+   TileLang's TCGEN05 block-scaled style while targeting warp-level
+   ``mma.sync``.
+
+
+   .. py:attribute:: is_blockscaled
+      :value: False
+
+
+
+   .. py:method:: ldmatrix_a(A_local_buf, A_shared_buf, ki, rk = 0)
+
+
+   .. py:method:: ldmatrix_b(B_local_buf, B_shared_buf, ki, rk = 0)
+
+
+   .. py:method:: mma(A_local_buf, B_local_buf, C_local_buf, k_inner = 0, *, SFA_buf=None, SFB_buf=None, k_start = 0, sf_a_granularity_k = None, sf_b_granularity_k = None, sf_layout = 'rowmajor')
+
+
+   .. py:method:: ldscale(SFA_local_buf, SFB_local_buf, SFB_rep_local_buf, SFA_buf, SFB_buf, ki = 0, k_start = 0, sf_a_granularity_k = None, sf_b_granularity_k = None, sf_layout = 'rowmajor')
+
+
+   .. py:method:: ldscale_fragment(SFA_fragment_buf, SFB_fragment_buf, SFB_rep_fragment_buf, SFA_buf, SFB_buf, ki = 0, k_start = 0, sf_a_granularity_k = None, sf_b_granularity_k = None, sf_layout = 'rowmajor')
+
+      Load SM120 block-scale fragments into local registers.
+
+      This is currently a thin wrapper over the existing scale-word load.
+      The separate name gives the SM120 MMA lowering a stable hook for a
+      CUTLASS-like scale-fragment copy path.
+
+
+
+   .. py:method:: mma_blockscaled_fulltile(A_shared_buf, B_shared_buf, C_local_buf, SFA_buf, SFB_buf, sf_layout = 'rowmajor')
+
+      Emit an SM120 full-tile block-scaled MMA register micro-pipeline.
+
+
+
+   .. py:method:: mma_full_b_atom_with_scale_fragments(A_local_buf, B_local_buf, C_local_buf, SFA_fragment_buf, SFB_fragment_buf, SFB_rep_fragment_buf, inst_m_idx, inst_n_idx)
+
+      Issue one SM120 block-scaled MMA atom from a full B fragment tile.
+
+
+
+   .. py:method:: mma_full_b_atom_with_prefetched_scales(A_local_buf, B_local_buf, C_local_buf, SFA_local_buf, SFB_local_buf, SFB_rep_local_buf, inst_m_idx, inst_n_idx)
+
+
