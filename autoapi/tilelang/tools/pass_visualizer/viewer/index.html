@@ -729,8 +729,8 @@ lowering pass as a single self-contained HTML file.</p>
 structure tree for the selected pass, with lines added by that pass highlighted
 green and lines it removed shown ghosted red — so switching between passes makes
 “what this pass changed” obvious.</p>
-<p>Reuses the tree-rendering logic from core.py verbatim; this file only adds
-per-pass capture, line-level diffing (difflib), and HTML emission.</p>
+<p>The canonical CUDA prologue runs under a <code class="docutils literal notranslate"><span class="pre">PassInstrument</span></code> from <code class="docutils literal notranslate"><span class="pre">core.py</span></code>;
+this file converts its before/after snapshots into line diffs and emits HTML.</p>
 <p>Run with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pass_visualizer</span><span class="o">.</span><span class="n">viewer</span> \
     <span class="n">tilelang</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">pass_visualizer</span><span class="o">/</span><span class="n">examples</span><span class="o">/</span><span class="n">gemm_relu</span><span class="o">.</span><span class="n">py</span> \
@@ -757,7 +757,7 @@ per-pass capture, line-level diffing (difflib), and HTML emission.</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.tools.pass_visualizer.viewer.build_pass_data" title="tilelang.tools.pass_visualizer.viewer.build_pass_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_pass_data</span></code></a>(path, factory, target, kwargs, source)</p></td>
-<td><p>Run the pipeline pass-by-pass, capturing a tree + diff for each stage.</p></td>
+<td><p>Observe the real CUDA prologue, capturing a tree + diff for each pass.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.tools.pass_visualizer.viewer.emit_html" title="tilelang.tools.pass_visualizer.viewer.emit_html"><code class="xref py py-obj docutils literal notranslate"><span class="pre">emit_html</span></code></a>(title, stages)</p></td>
 <td><p></p></td>
@@ -777,7 +777,7 @@ per-pass capture, line-level diffing (difflib), and HTML emission.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.viewer.build_pass_data">
 <span class="sig-prename descclassname"><span class="pre">tilelang.tools.pass_visualizer.viewer.</span></span><span class="sig-name descname"><span class="pre">build_pass_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tools.pass_visualizer.viewer.build_pass_data" title="Link to this definition">¶</a></dt>
-<dd><p>Run the pipeline pass-by-pass, capturing a tree + diff for each stage.</p>
+<dd><p>Observe the real CUDA prologue, capturing a tree + diff for each pass.</p>
 <dl class="simple">
 <dt>Returns (kernel_name, stages) where each stage is:</dt><dd><p>{name, flag, rows}</p>
 </dd>

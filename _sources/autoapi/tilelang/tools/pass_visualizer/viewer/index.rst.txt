@@ -13,8 +13,8 @@ tilelang.tools.pass_visualizer.viewer
    green and lines it removed shown ghosted red — so switching between passes makes
    "what this pass changed" obvious.
 
-   Reuses the tree-rendering logic from core.py verbatim; this file only adds
-   per-pass capture, line-level diffing (difflib), and HTML emission.
+   The canonical CUDA prologue runs under a ``PassInstrument`` from ``core.py``;
+   this file converts its before/after snapshots into line diffs and emits HTML.
 
    Run with::
 
@@ -50,7 +50,7 @@ Module Contents
 
 .. py:function:: build_pass_data(path, factory, target, kwargs, source)
 
-   Run the pipeline pass-by-pass, capturing a tree + diff for each stage.
+   Observe the real CUDA prologue, capturing a tree + diff for each pass.
 
    Returns (kernel_name, stages) where each stage is:
        {name, flag, rows}

@@ -723,14 +723,41 @@
         <article role="main" id="furo-main-content">
           <section id="module-tilelang.tools.pass_visualizer.core">
 <span id="tilelang-tools-pass-visualizer-core"></span><h1>tilelang.tools.pass_visualizer.core<a class="headerlink" href="#module-tilelang.tools.pass_visualizer.core" title="Link to this heading">¶</a></h1>
-<p>Core helpers for the pass visualizer: load a user TileLang kernel, build the
-CUDA lowering pass pipeline, and render a PrimFunc’s SBlock structure tree.</p>
-<p>This mirrors <code class="docutils literal notranslate"><span class="pre">CUDAPassPipelineBodyPrologue</span></code> in <code class="docutils literal notranslate"><span class="pre">tilelang/cuda/pipeline.py</span></code>,
-running each prologue pass (through LayoutInference and the post-LayoutInference
-lowering passes) so the structure tree can be captured before/after every stage.</p>
+<p>Core helpers for the pass visualizer: load a user TileLang kernel, capture
+real compiler-pass executions, and render a PrimFunc’s SBlock structure tree.</p>
+<p><code class="docutils literal notranslate"><span class="pre">StructureTreePassInstrument</span></code> observes the canonical CUDA lowering prologue
+through TVM’s <code class="docutils literal notranslate"><span class="pre">PassInstrument</span></code> API.  The visualizer therefore follows the
+passes that actually execute instead of maintaining a duplicate pass list.</p>
 <p>The kernel file is taken as input; any <code class="docutils literal notranslate"><span class="pre">&#64;tilelang.jit</span></code> kernel in the file is
 auto-discovered. These helpers are consumed by <code class="docutils literal notranslate"><span class="pre">viewer.py</span></code> to emit an
 interactive HTML pass browser.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.logger" title="tilelang.tools.pass_visualizer.core.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord" title="tilelang.tools.pass_visualizer.core.PassStructureRecord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PassStructureRecord</span></code></a></p></td>
+<td><p>Before/after structure snapshots for one top-level compiler pass.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument" title="tilelang.tools.pass_visualizer.core.StructureTreePassInstrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StructureTreePassInstrument</span></code></a></p></td>
+<td><p>Capture structure trees around the real top-level passes in a pipeline.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -748,11 +775,11 @@ interactive HTML pass browser.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.build_module" title="tilelang.tools.pass_visualizer.core.build_module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_module</span></code></a>(func[, target])</p></td>
 <td><p>Wrap a PrimFunc into an IRModule and resolve the (target, target_host) pair.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.build_pass_stages" title="tilelang.tools.pass_visualizer.core.build_pass_stages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_pass_stages</span></code></a>(target)</p></td>
-<td><p>Build the ordered CUDA prologue pass list, through the full Prologue.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.inspect_structure" title="tilelang.tools.pass_visualizer.core.inspect_structure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect_structure</span></code></a>(mod)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.inspect_structure" title="tilelang.tools.pass_visualizer.core.inspect_structure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect_structure</span></code></a>(mod)</p></td>
 <td><p>Print each PrimFunc top-down: params → buffer_map → attrs → body (SBlock tree).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.capture_structure" title="tilelang.tools.pass_visualizer.core.capture_structure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">capture_structure</span></code></a>(mod)</p></td>
+<td><p>Render <code class="docutils literal notranslate"><span class="pre">inspect_structure</span></code> into stable text lines for diffing.</p></td>
 </tr>
 </tbody>
 </table>
@@ -760,6 +787,11 @@ interactive HTML pass browser.</p>
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.logger">
+<span class="sig-prename descclassname"><span class="pre">tilelang.tools.pass_visualizer.core.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.logger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.load_user_module">
 <span class="sig-prename descclassname"><span class="pre">tilelang.tools.pass_visualizer.core.</span></span><span class="sig-name descname"><span class="pre">load_user_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.load_user_module" title="Link to this definition">¶</a></dt>
@@ -816,25 +848,6 @@ interactive HTML pass browser.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.build_pass_stages">
-<span class="sig-prename descclassname"><span class="pre">tilelang.tools.pass_visualizer.core.</span></span><span class="sig-name descname"><span class="pre">build_pass_stages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.build_pass_stages" title="Link to this definition">¶</a></dt>
-<dd><p>Build the ordered CUDA prologue pass list, through the full Prologue.</p>
-<p>Each stage is a <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">transform)</span></code> pair where <code class="docutils literal notranslate"><span class="pre">transform</span></code> is a TVM pass
-object callable as <code class="docutils literal notranslate"><span class="pre">transform(mod)</span> <span class="pre">-&gt;</span> <span class="pre">mod</span></code>. Conditional passes are resolved
-here so the returned list reflects what actually runs for this target/config.</p>
-<p>Matches CUDAPassPipelineBodyPrologue in tilelang/cuda/pipeline.py, except
-for LayoutVisual, which only emits visualization side effects.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>target</strong> (<em>tvm.target.Target</em>)</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list[tuple[str, object]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.inspect_structure">
 <span class="sig-prename descclassname"><span class="pre">tilelang.tools.pass_visualizer.core.</span></span><span class="sig-name descname"><span class="pre">inspect_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mod</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.inspect_structure" title="Link to this definition">¶</a></dt>
 <dd><p>Print each PrimFunc top-down: params → buffer_map → attrs → body (SBlock tree).</p>
@@ -846,6 +859,123 @@ for LayoutVisual, which only emits visualization side effects.</p>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.capture_structure">
+<span class="sig-prename descclassname"><span class="pre">tilelang.tools.pass_visualizer.core.</span></span><span class="sig-name descname"><span class="pre">capture_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mod</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.capture_structure" title="Link to this definition">¶</a></dt>
+<dd><p>Render <code class="docutils literal notranslate"><span class="pre">inspect_structure</span></code> into stable text lines for diffing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mod</strong> (<em>tilelang.tvm.IRModule</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.PassStructureRecord">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.tools.pass_visualizer.core.</span></span><span class="sig-name descname"><span class="pre">PassStructureRecord</span></span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord" title="Link to this definition">¶</a></dt>
+<dd><p>Before/after structure snapshots for one top-level compiler pass.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.PassStructureRecord.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.PassStructureRecord.sequence">
+<span class="sig-name descname"><span class="pre">sequence</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord.sequence" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.PassStructureRecord.before_lines">
+<span class="sig-name descname"><span class="pre">before_lines</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord.before_lines" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.PassStructureRecord.after_lines">
+<span class="sig-name descname"><span class="pre">after_lines</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord.after_lines" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.PassStructureRecord.changed">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">changed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><span class="pre">bool</span></a></em><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord.changed" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.StructureTreePassInstrument">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.tools.pass_visualizer.core.</span></span><span class="sig-name descname"><span class="pre">StructureTreePassInstrument</span></span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument" title="Link to this definition">¶</a></dt>
+<dd><p>Capture structure trees around the real top-level passes in a pipeline.</p>
+<p>Some top-level TileLang passes invoke nested TVM passes internally.  Those
+callbacks are tracked so before/after events remain correctly paired, but
+only depth-zero passes become browser stages.  This preserves the viewer’s
+linear pipeline semantics instead of duplicating a parent’s changes in its
+nested implementation details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.records">
+<span class="sig-name descname"><span class="pre">records</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord" title="tilelang.tools.pass_visualizer.core.PassStructureRecord"><span class="pre">PassStructureRecord</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.records" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.input_lines">
+<span class="sig-name descname"><span class="pre">input_lines</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.input_lines" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.incomplete_passes">
+<span class="sig-name descname"><span class="pre">incomplete_passes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.incomplete_passes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.enter_pass_ctx">
+<span class="sig-name descname"><span class="pre">enter_pass_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.enter_pass_ctx" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.exit_pass_ctx">
+<span class="sig-name descname"><span class="pre">exit_pass_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.exit_pass_ctx" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.run_before_pass">
+<span class="sig-name descname"><span class="pre">run_before_pass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.run_before_pass" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mod</strong> (<em>tilelang.tvm.IRModule</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.run_after_pass">
+<span class="sig-name descname"><span class="pre">run_after_pass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.run_after_pass" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mod</strong> (<em>tilelang.tvm.IRModule</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.ordered_records">
+<span class="sig-name descname"><span class="pre">ordered_records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.ordered_records" title="Link to this definition">¶</a></dt>
+<dd><p>Return completed top-level pass records in execution order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[<a class="reference internal" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord" title="tilelang.tools.pass_visualizer.core.PassStructureRecord">PassStructureRecord</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -907,14 +1037,36 @@ for LayoutVisual, which only emits visualization side effects.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.tools.pass_visualizer.core</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.load_user_module"><code class="docutils literal notranslate"><span class="pre">load_user_module()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.discover_jit_kernels"><code class="docutils literal notranslate"><span class="pre">discover_jit_kernels()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.kernel_to_tir"><code class="docutils literal notranslate"><span class="pre">kernel_to_tir()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.build_module"><code class="docutils literal notranslate"><span class="pre">build_module()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.build_pass_stages"><code class="docutils literal notranslate"><span class="pre">build_pass_stages()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.inspect_structure"><code class="docutils literal notranslate"><span class="pre">inspect_structure()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.capture_structure"><code class="docutils literal notranslate"><span class="pre">capture_structure()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord"><code class="docutils literal notranslate"><span class="pre">PassStructureRecord</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord.name"><code class="docutils literal notranslate"><span class="pre">PassStructureRecord.name</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord.sequence"><code class="docutils literal notranslate"><span class="pre">PassStructureRecord.sequence</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord.before_lines"><code class="docutils literal notranslate"><span class="pre">PassStructureRecord.before_lines</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord.after_lines"><code class="docutils literal notranslate"><span class="pre">PassStructureRecord.after_lines</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.PassStructureRecord.changed"><code class="docutils literal notranslate"><span class="pre">PassStructureRecord.changed</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument"><code class="docutils literal notranslate"><span class="pre">StructureTreePassInstrument</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.records"><code class="docutils literal notranslate"><span class="pre">StructureTreePassInstrument.records</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.input_lines"><code class="docutils literal notranslate"><span class="pre">StructureTreePassInstrument.input_lines</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.incomplete_passes"><code class="docutils literal notranslate"><span class="pre">StructureTreePassInstrument.incomplete_passes</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.enter_pass_ctx"><code class="docutils literal notranslate"><span class="pre">StructureTreePassInstrument.enter_pass_ctx()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.exit_pass_ctx"><code class="docutils literal notranslate"><span class="pre">StructureTreePassInstrument.exit_pass_ctx()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.run_before_pass"><code class="docutils literal notranslate"><span class="pre">StructureTreePassInstrument.run_before_pass()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.run_after_pass"><code class="docutils literal notranslate"><span class="pre">StructureTreePassInstrument.run_after_pass()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.tools.pass_visualizer.core.StructureTreePassInstrument.ordered_records"><code class="docutils literal notranslate"><span class="pre">StructureTreePassInstrument.ordered_records()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

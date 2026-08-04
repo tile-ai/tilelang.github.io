@@ -911,7 +911,7 @@ which is retained only for backward compatibility. New users should use
 </section>
 <section id="pass-visualizer-structure-tree-view-across-passes">
 <h2>Pass Visualizer: Structure-Tree View Across Passes<a class="headerlink" href="#pass-visualizer-structure-tree-view-across-passes" title="Link to this heading">¶</a></h2>
-<p>The <strong>Pass Visualizer</strong> is a complement to Pass Diff. Where Pass Diff shows a line-level diff of the <strong>TVMScript text</strong>, the Pass Visualizer renders the IR as a <strong>structure tree</strong> (the <code class="docutils literal notranslate"><span class="pre">SBlock</span></code> nesting, with <code class="docutils literal notranslate"><span class="pre">reads</span></code> / <code class="docutils literal notranslate"><span class="pre">writes</span></code> / <code class="docutils literal notranslate"><span class="pre">alloc_buffers</span></code> / <code class="docutils literal notranslate"><span class="pre">annotations</span></code> fields) and expands every tile op by field name. It produces a single self-contained, interactive HTML file that steps through each CUDA lowering pass.</p>
+<p>The <strong>Pass Visualizer</strong> is a complement to Pass Diff. Where Pass Diff shows a line-level diff of the <strong>TVMScript text</strong>, the Pass Visualizer renders the IR as a <strong>structure tree</strong> (the <code class="docutils literal notranslate"><span class="pre">SBlock</span></code> nesting, with <code class="docutils literal notranslate"><span class="pre">reads</span></code> / <code class="docutils literal notranslate"><span class="pre">writes</span></code> / <code class="docutils literal notranslate"><span class="pre">alloc_buffers</span></code> / <code class="docutils literal notranslate"><span class="pre">annotations</span></code> fields) and expands every tile op by field name. A TVM <code class="docutils literal notranslate"><span class="pre">PassInstrument</span></code> observes the canonical CUDA lowering prologue, so the report follows the conditional passes and order that actually execute. It produces a single self-contained, interactive HTML file that steps through those passes. The CLI currently supports CUDA targets only; backend-specific pipeline dispatch can be added separately for other targets.</p>
 <p>This view is most useful when debugging <strong>structural</strong> passes — layout inference, warp specialization, pipelining — where you care about how the IR’s block structure and operator semantics change, not just which text lines moved.</p>
 <section id="how-it-differs-from-pass-diff">
 <h3>How It Differs From Pass Diff<a class="headerlink" href="#how-it-differs-from-pass-diff" title="Link to this heading">¶</a></h3>
@@ -938,7 +938,7 @@ which is retained only for backward compatibility. New users should use
 </tr>
 <tr class="row-odd"><td><p>Trigger</p></td>
 <td><p>Environment-variable hook, captures the real full pipeline</p></td>
-<td><p>Explicit CLI, runs the focused lowering prologue</p></td>
+<td><p>Explicit CLI, instruments the real focused lowering prologue</p></td>
 </tr>
 </tbody>
 </table>
@@ -988,6 +988,7 @@ which is retained only for backward compatibility. New users should use
 <li><p><strong>Left pane</strong>: the ordered pass list, each tagged <code class="docutils literal notranslate"><span class="pre">changed</span></code> / <code class="docutils literal notranslate"><span class="pre">no-op</span></code> with an added/removed line count. Click a pass — or use the <kbd>↑</kbd>/<kbd>↓</kbd> keys — to step through the pipeline.</p></li>
 <li><p><strong>Right pane</strong>: the structure tree for the selected pass, with lines <strong>added</strong> by that pass highlighted green and lines it <strong>removed</strong> shown ghosted red.</p></li>
 <li><p><strong>Operator highlighting</strong>: tile ops (e.g. <code class="docutils literal notranslate"><span class="pre">T.gemm</span></code>, <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>), synchronization primitives, and lowered hardware intrinsics (<code class="docutils literal notranslate"><span class="pre">ptx_mma</span></code>, <code class="docutils literal notranslate"><span class="pre">tma_load</span></code>, …) are each colored distinctly, so you can follow a <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> as it lowers into TMA/PTX intrinsics.</p></li>
+<li><p><strong>Real pass metadata</strong>: stage names and ordering come from <code class="docutils literal notranslate"><span class="pre">PassInstrument</span></code>; nested implementation passes are folded into their top-level pipeline stage to keep the browser timeline linear.</p></li>
 </ul>
 </section>
 <section id="programmatic-api">
