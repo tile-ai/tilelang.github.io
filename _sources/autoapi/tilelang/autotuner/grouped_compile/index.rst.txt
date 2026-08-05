@@ -39,9 +39,9 @@ Module Contents
 
    Flow:
    1. Elaborate each config into a PrimFunc.
-   2. Lower each PrimFunc into host/device IR modules.
-   3. Merge all device IR into one IRModule and compile device code once.
-   4. Build host runtime module per config and import shared device module.
+   2. Lower each PrimFunc and build its host module in a fresh Z3 context.
+   3. Merge all device IR and compile it once in a separate fresh Z3 context.
+   4. Import the shared device module into each host runtime module.
    5. Construct per-config JITKernel objects that share the grouped device module.
 
 
