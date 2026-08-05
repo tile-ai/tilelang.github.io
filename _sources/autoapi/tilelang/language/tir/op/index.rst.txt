@@ -40,15 +40,11 @@ Attributes
    tilelang.language.tir.op.tvm_bmma_sync
    tilelang.language.tir.op.tvm_fill_fragment
    tilelang.language.tir.op.tvm_store_matrix_sync
-   tilelang.language.tir.op.ptx_mma
-   tilelang.language.tir.op.mma_store
-   tilelang.language.tir.op.ptx_cp_async_bulk
    tilelang.language.tir.op.ptx_commit_group
    tilelang.language.tir.op.ptx_wait_group
    tilelang.language.tir.op.ptx_cp_async_barrier
    tilelang.language.tir.op.ptx_init_barrier_thread_count
    tilelang.language.tir.op.ptx_arrive_barrier
-   tilelang.language.tir.op.ptx_wait_barrier
    tilelang.language.tir.op.create_barriers
    tilelang.language.tir.op.vectorlow
    tilelang.language.tir.op.vectorhigh
@@ -130,23 +126,7 @@ Functions
    tilelang.language.tir.op.call_pure_extern
    tilelang.language.tir.op.call_extern
    tilelang.language.tir.op.tvm_access_ptr
-   tilelang.language.tir.op.ptx_mma_sp
-   tilelang.language.tir.op.ptx_mma_block_scale
-   tilelang.language.tir.op.ptx_wgmma_ss
-   tilelang.language.tir.op.ptx_wgmma_rs
-   tilelang.language.tir.op.ptx_wgmma_sp_ss
-   tilelang.language.tir.op.ptx_wgmma_sp_rs
-   tilelang.language.tir.op.ptx_tcgen05_mma_ss
-   tilelang.language.tir.op.ptx_tcgen05_mma_ts
-   tilelang.language.tir.op.ptx_tcgen05_mma_blockscaled_ss
-   tilelang.language.tir.op.mma_fill
-   tilelang.language.tir.op.ptx_ldmatrix
    tilelang.language.tir.op.ptx_cp_async
-   tilelang.language.tir.op.tvm_mfma
-   tilelang.language.tir.op.tvm_mfma_store
-   tilelang.language.tir.op.tvm_rdna_wmma
-   tilelang.language.tir.op.tvm_rdna_wmma_store
-   tilelang.language.tir.op.ptx_fence_barrier_init
    tilelang.language.tir.op.ptx_arrive_barrier_expect_tx
    tilelang.language.tir.op.infinity
    tilelang.language.tir.op.reinterpret
@@ -220,12 +200,6 @@ Module Contents
 
 .. py:data:: tvm_store_matrix_sync
 
-.. py:data:: ptx_mma
-
-.. py:data:: mma_store
-
-.. py:data:: ptx_cp_async_bulk
-
 .. py:data:: ptx_commit_group
 
 .. py:data:: ptx_wait_group
@@ -235,8 +209,6 @@ Module Contents
 .. py:data:: ptx_init_barrier_thread_count
 
 .. py:data:: ptx_arrive_barrier
-
-.. py:data:: ptx_wait_barrier
 
 .. py:data:: create_barriers
 
@@ -464,144 +436,6 @@ Module Contents
    :rtype: PrimExpr
 
 
-.. py:function:: ptx_mma_sp(dtype, shape, A_layout, B_layout, A_dtype, B_dtype, C_dtype, multiplicand_a, a_index, multiplicand_b, b_index, accumulator, c_index, metadata, meta_index, sparse_selector, saturate)
-
-   TVM intrinsic for sparse tensor core ptx instructions
-   https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-for-sparse-mma
-
-   :param dtype: The data type of the result.
-   :type dtype: str
-   :param shape: The shape of mma fragment.
-   :type shape: str
-   :param A_layout: The layout of multiplicand fragment A.
-   :type A_layout: Literal["row", "col"]
-   :param B_layout: The layout of multiplicand fragment B.
-   :type B_layout: Literal["row", "col"]
-   :param A_dtype: The data type of multiplicand fragment A.
-   :type A_dtype: str
-   :param B_dtype: The data type of multiplicand fragment B.
-   :type B_dtype: str
-   :param C_dtype: The data type of accumulator fragment C.
-   :type C_dtype: str
-   :param multiplicand_a: The multiplicand fragment A variable.
-   :type multiplicand_a: Var
-   :param a_index: The index of multiplicand fragment A.
-   :type a_index: Expr
-   :param multiplicand_b: The multiplicand fragment B variable.
-   :type multiplicand_b: Var
-   :param b_index: The index of multiplicand fragment B.
-   :type b_index: Expr
-   :param accumulator: The accumulator fragment C variable.
-   :type accumulator: Var
-   :param c_index: The index of accumulator fragment C.
-   :type c_index: Expr
-   :param metadata: The metadata of operand.
-   :type metadata: Expr
-   :param meta_index: The metadata index of operand.
-   :type meta_index: Expr
-   :param sparse_selector: The sparse selector indicating the thread that stores the metadata.
-   :type sparse_selector: Expr
-   :param saturate: The optional saturation at the output.
-   :type saturate: bool
-
-   :returns: **call** -- The call expression.
-   :rtype: PrimExpr
-
-
-.. py:function:: ptx_mma_block_scale(accum_dtype, shape, A_layout, B_layout, kind, scale_vec_size, A_dtype, B_dtype, scale_type, multiplicand_a, a_index, multiplicand_b, b_index, accumulator, c_index, scale_a, scale_b, scale_a_byte_id=0, scale_a_thread_id=0, scale_b_byte_id=0, scale_b_thread_id=0)
-
-   TVM intrinsic for SM120a warp-level NVF4 block-scaled MMA.
-
-
-.. py:function:: ptx_wgmma_ss(dtype, wgmma_prefix, a_is_k_major, b_is_k_major, a_dtype_abbrv, b_dtype_abbrv, accum_dtype_abbrv, A_desc, A_offset, B_desc, B_offset, C_data, C_offset, scale_out, scale_in_a, scale_in_b)
-
-   TVM intrinsic for ptx tensor core wmma instructions
-   https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-for-wmma
-
-
-.. py:function:: ptx_wgmma_rs(dtype, wgmma_prefix, b_is_k_major, a_dtype_abbrv, b_dtype_abbrv, accum_dtype_abbrv, A_buf, A_offset, B_desc, B_offset, C_data, C_offset, scale_out, scale_in_a, scale_in_b)
-
-.. py:function:: ptx_wgmma_sp_ss(dtype, wgmma_prefix, a_is_k_major, b_is_k_major, a_dtype_abbrv, b_dtype_abbrv, accum_dtype_abbrv, A_desc, A_offset, E_data, E_offset, sparse_selector, B_desc, B_offset, C_data, C_offset, scale_out, scale_in_a, scale_in_b)
-
-.. py:function:: ptx_wgmma_sp_rs(dtype, wgmma_prefix, b_is_k_major, a_dtype_abbrv, b_dtype_abbrv, accum_dtype_abbrv, A_buf, A_offset, E_buf, E_offset, sparse_selector, B_desc, B_offset, C_data, C_offset, scale_out, scale_in_a, scale_in_b)
-
-.. py:function:: ptx_tcgen05_mma_ss(kind_dtype, desc_a, A_offset, desc_b, B_offset, C_ptr, C_offset, desc_val, scale_out, mask0, mask1, mask2, mask3, enable_ws=False, enable_2cta=False, ws=None, warp_specialized=None, variant=None)
-
-   TVM intrinsic for tcgen05.mma shared-memory x shared-memory instructions.
-
-   Expects 14 or 15 positional arguments:
-   (kind_dtype, desc_a, A_offset, desc_b, B_offset, C_ptr, C_offset,
-    desc_val, scale_out, mask0, mask1, mask2, mask3[, enable_ws]).
-   Aliases: you can also pass `ws` or `warp_specialized` (booleans) instead of `enable_ws`.
-   Alternatively, use `variant="ws"` (or "default").
-   - kind_dtype: instruction kind selector (e.g., T.float16 for kind::f16,
-     "tf32" for kind::tf32, "int8" for kind::i8, "float8_e4m3" for kind::f8f6f4).
-
-
-.. py:function:: ptx_tcgen05_mma_ts(kind_dtype, A_ptr, A_offset, desc_b, B_offset, C_ptr, C_offset, desc_val, scale_out, mask0, mask1, mask2, mask3, enable_2cta=False)
-
-   TVM intrinsic for tcgen05.mma tensor-memory x shared-memory instructions.
-
-   Expects 13 positional arguments:
-   (kind_dtype, A_ptr, A_offset, desc_b, B_offset, C_ptr, C_offset,
-    desc_val, scale_out, mask0, mask1, mask2, mask3).
-   - kind_dtype: instruction kind selector (e.g., T.float16 for kind::f16,
-     "tf32" for kind::tf32, "int8" for kind::i8, "float8_e4m3" for kind::f8f6f4).
-
-
-.. py:function:: ptx_tcgen05_mma_blockscaled_ss(kind_dtype, desc_a, A_offset, desc_b, B_offset, C_ptr, C_offset, desc_val, scale_out, sfa_ptr, sfa_offset, sfb_ptr, sfb_offset, reserved0=0, reserved1=0, enable_2cta=False)
-
-   TVM intrinsic for tcgen05.mma block-scaled (mxf8f6f4.block_scale) instructions.
-
-   Block-scaled TCGEN05 is explicit-async and carries an explicit ``enable_2cta``
-   flag, analogous to the regular SS/TS TCGEN05 intrinsics. There is no
-   fallback path if 2CTA is requested.
-
-   Positional args:
-   kind_dtype, desc_a, A_offset, desc_b, B_offset, C_ptr, C_offset,
-   desc_val, scale_out, sfa_ptr, sfa_offset, sfb_ptr, sfb_offset,
-   reserved0, reserved1, enable_2cta.
-
-
-.. py:function:: mma_fill(dtype, local_size, local_ptr, offset)
-
-   TVM intrinsic for zero-initalizing an MMA accumulation register
-
-   :param dtype: The data type of the result.
-   :type dtype: str
-   :param local_size: The number of elements.
-   :type local_size: IntImm
-   :param local_ptr: The destination pointer variable.
-   :type local_ptr: Var
-   :param offset: The destination offset.
-   :type offset: Expr
-
-   :returns: **call** -- The call expression.
-   :rtype: PrimExpr
-
-
-.. py:function:: ptx_ldmatrix(trans, num, src_access_ptr, dst_access_ptr)
-
-   TileLang intrinsic for ptx load matrix from shared memory
-
-   Uses `tl.ptx_ldmatrix` which expects access pointers created via
-   `T.access_ptr` (i.e. `tl.access_ptr` wrapping a `BufferLoad`).
-
-   https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-ldmatrix
-
-   :param trans: The matrix is loaded in column-major format.
-   :type trans: bool
-   :param num: The number of matrices (2 or 4).
-   :type num: IntImm
-   :param src_access_ptr: A `tl.access_ptr` pointing to the source (shared memory) buffer.
-   :type src_access_ptr: PrimExpr
-   :param dst_access_ptr: A `tl.access_ptr` pointing to the destination (local/register) buffer.
-   :type dst_access_ptr: PrimExpr
-
-   :returns: **call** -- The call expression (handle-typed).
-   :rtype: PrimExpr
-
-
 .. py:function:: ptx_cp_async(dst_access_ptr, src_access_ptr, num_elems, predicate=None)
 
    TVM intrinsic for ptx async copy from global to shared memory using cp.async
@@ -643,132 +477,6 @@ Module Contents
    ...     16,
    ...     predicate=guard  # only copy if guard is true
    ... )
-
-
-.. py:function:: tvm_mfma(dtype, shape, A_layout, B_layout, A_dtype, B_dtype, C_dtype, multiplicand_a, a_index, multiplicand_b, b_index, accumulator, c_index)
-
-   TVM intrinsic for amd matrix core mfma instructions
-   https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-for-mma
-
-   :param dtype: The data type of the result.
-   :type dtype: str
-   :param shape: The shape of mma fragment.
-   :type shape: str
-   :param A_layout: The layout of multiplicand fragment A.
-   :type A_layout: Literal["row", "col"]
-   :param B_layout: The layout of multiplicand fragment B.
-   :type B_layout: Literal["row", "col"]
-   :param A_dtype: The data type of multiplicand fragment A.
-   :type A_dtype: str
-   :param B_dtype: The data type of multiplicand fragment B.
-   :type B_dtype: str
-   :param C_dtype: The data type of accumulator fragment C.
-   :type C_dtype: str
-   :param multiplicand_a: The multiplicand fragment A variable.
-   :type multiplicand_a: Var
-   :param a_index: The index of multiplicand fragment A.
-   :type a_index: Expr
-   :param multiplicand_b: The multiplicand fragment B variable.
-   :type multiplicand_b: Var
-   :param b_index: The index of multiplicand fragment A.
-   :type b_index: Expr
-   :param accumulator: The accumulator fragment C variable.
-   :type accumulator: Var
-   :param c_index: The index of accumulator fragment C.
-   :type c_index: Expr
-
-   :returns: **call** -- The call expression.
-   :rtype: PrimExpr
-
-
-.. py:function:: tvm_mfma_store(dtype, m, n, dst_ptr, src_ptr, src_offset, dst_stride)
-
-   TVM intrinsic for storing the result of PTX MMA into a destination pointer
-
-   :param dtype: The data type of the result.
-   :type dtype: str
-   :param m: The shape of mma fragment.
-   :type m: IntImm
-   :param n: The shape of mma fragment.
-   :type n: IntImm
-   :param dst_ptr: The destination pointer variable.
-   :type dst_ptr: Var
-   :param src_ptr: The source pointer variable.
-   :type src_ptr: Var
-   :param src_offset: The source offset.
-   :type src_offset: Expr
-   :param dst_stride: The destination stride.
-   :type dst_stride: Var
-
-   :returns: **call** -- The call expression.
-   :rtype: PrimExpr
-
-
-.. py:function:: tvm_rdna_wmma(dtype, shape, A_layout, B_layout, A_dtype, B_dtype, C_dtype, multiplicand_a, a_index, multiplicand_b, b_index, accumulator, c_index)
-
-   TVM intrinsic for amd matrix core mfma instructions
-   https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-for-mma
-
-   :param dtype: The data type of the result.
-   :type dtype: str
-   :param shape: The shape of mma fragment.
-   :type shape: str
-   :param A_layout: The layout of multiplicand fragment A.
-   :type A_layout: Literal["row", "col"]
-   :param B_layout: The layout of multiplicand fragment B.
-   :type B_layout: Literal["row", "col"]
-   :param A_dtype: The data type of multiplicand fragment A.
-   :type A_dtype: str
-   :param B_dtype: The data type of multiplicand fragment B.
-   :type B_dtype: str
-   :param C_dtype: The data type of accumulator fragment C.
-   :type C_dtype: str
-   :param multiplicand_a: The multiplicand fragment A variable.
-   :type multiplicand_a: Var
-   :param a_index: The index of multiplicand fragment A.
-   :type a_index: Expr
-   :param multiplicand_b: The multiplicand fragment B variable.
-   :type multiplicand_b: Var
-   :param b_index: The index of multiplicand fragment A.
-   :type b_index: Expr
-   :param accumulator: The accumulator fragment C variable.
-   :type accumulator: Var
-   :param c_index: The index of accumulator fragment C.
-   :type c_index: Expr
-
-   :returns: **call** -- The call expression.
-   :rtype: PrimExpr
-
-
-.. py:function:: tvm_rdna_wmma_store(dtype, m, n, dst_ptr, src_ptr, src_offset, dst_stride)
-
-   TVM intrinsic for storing the result of PTX MMA into a destination pointer
-
-   :param dtype: The data type of the result.
-   :type dtype: str
-   :param m: The shape of mma fragment.
-   :type m: IntImm
-   :param n: The shape of mma fragment.
-   :type n: IntImm
-   :param dst_ptr: The destination pointer variable.
-   :type dst_ptr: Var
-   :param src_ptr: The source pointer variable.
-   :type src_ptr: Var
-   :param src_offset: The source offset.
-   :type src_offset: Expr
-   :param dst_stride: The destination stride.
-   :type dst_stride: Var
-
-   :returns: **call** -- The call expression.
-   :rtype: PrimExpr
-
-
-.. py:function:: ptx_fence_barrier_init()
-
-   TVM intrinsic for ptx fence barrier initialization.
-
-   :returns: **call** -- The call expression.
-   :rtype: PrimExpr
 
 
 .. py:function:: ptx_arrive_barrier_expect_tx(barrier_id, byte_count)
