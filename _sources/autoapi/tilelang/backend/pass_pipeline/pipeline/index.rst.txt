@@ -20,16 +20,6 @@ Classes
    tilelang.backend.pass_pipeline.pipeline.PassPipeline
 
 
-Functions
----------
-
-.. autoapisummary::
-
-   tilelang.backend.pass_pipeline.pipeline.register_pipeline
-   tilelang.backend.pass_pipeline.pipeline.get_pipeline
-   tilelang.backend.pass_pipeline.pipeline.resolve_pipeline
-
-
 Module Contents
 ---------------
 
@@ -39,8 +29,8 @@ Module Contents
 
    Lowering pass pipeline for a specific backend.
 
-   Each backend should register its own Pipeline so that the compiler can
-   resolve the correct pass sequence from the target at runtime.
+   Each :class:`BackendModule` declares the pipelines it owns so the compiler
+   can select the correct pass sequence from the resolved backend context.
 
 
    .. py:attribute:: name
@@ -50,23 +40,5 @@ Module Contents
 
       Run the pipeline and render source snippets for located errors.
 
-
-
-.. py:function:: register_pipeline(pipeline)
-
-   Register a lowering pipeline for a backend.
-
-   The pipeline name should match ``target.kind.name`` (e.g. ``"cuda"``,
-   ``"hip"``, ``"c"``, ``"llvm"``).
-
-
-.. py:function:: get_pipeline(name)
-
-   Return the registered Pipeline for *name*.
-
-
-.. py:function:: resolve_pipeline(target)
-
-   Resolve the lowering pipeline from a TVM target.
 
 

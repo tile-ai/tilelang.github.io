@@ -1,0 +1,228 @@
+tilelang.backend.module
+=======================
+
+.. py:module:: tilelang.backend.module
+
+.. autoapi-nested-parse::
+
+   Backend module registration and per-compilation context resolution.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.backend.module.BackendCallback
+   tilelang.backend.module.TargetPredicate
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.backend.module.BackendModule
+   tilelang.backend.module.BackendContext
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.backend.module.register_backend
+   tilelang.backend.module.get_backend
+   tilelang.backend.module.list_backends
+   tilelang.backend.module.create_backend_context
+
+
+Module Contents
+---------------
+
+.. py:data:: BackendCallback
+
+.. py:data:: TargetPredicate
+
+.. py:class:: BackendModule
+
+   Complete Python registration manifest for one TileLang backend.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: target_kinds
+      :type:  tuple[str, Ellipsis]
+
+
+   .. py:attribute:: pipelines
+      :type:  collections.abc.Mapping[str, tilelang.backend.pass_pipeline.PassPipeline]
+
+
+   .. py:attribute:: device_codegens
+      :type:  collections.abc.Mapping[str, tilelang.backend.device_codegen.DeviceCodegen]
+
+
+   .. py:attribute:: execution_backends
+      :type:  tuple[tilelang.backend.execution_backend.ExecutionBackendSpec, Ellipsis]
+
+
+   .. py:attribute:: supports_target
+      :type:  TargetPredicate | None
+      :value: None
+
+
+
+   .. py:attribute:: host_codegens
+      :type:  collections.abc.Mapping[str, tilelang.backend.host_codegen.HostCodegen]
+
+
+   .. py:attribute:: host_codegen_hooks
+      :type:  collections.abc.Mapping[str, tuple[tilelang.backend.host_codegen.HostCodegenHook, Ellipsis]]
+
+
+   .. py:attribute:: callbacks
+      :type:  collections.abc.Mapping[str, BackendCallback]
+
+
+   .. py:method:: __post_init__()
+
+
+   .. py:method:: matches(target)
+
+      Return whether this backend module owns the target.
+
+
+
+   .. py:method:: get_pipeline(target)
+
+      Return the lowering pipeline declared for the target.
+
+
+
+   .. py:method:: lower(mod, target)
+
+      Run this backend's lowering pipeline for the target.
+
+
+
+   .. py:method:: get_device_codegen(target)
+
+      Return the device codegen declared for the target.
+
+
+
+   .. py:method:: codegen_device(mod, target, *, compile_device)
+
+      Generate device code for the target.
+
+
+
+   .. py:method:: get_host_codegen(target_host)
+
+      Return the host codegen declared for the host target.
+
+
+
+   .. py:method:: codegen_host(mod, target_host)
+
+      Generate host code for the host target.
+
+
+
+   .. py:method:: preprocess_host_codegen(mod, target_host, target)
+
+      Apply backend hooks before host code generation.
+
+
+
+   .. py:method:: allowed_execution_backends(target, *, include_unavailable = True)
+
+      Return execution backend names supported by the target.
+
+
+
+   .. py:method:: resolve_execution_backend(requested, target)
+
+      Resolve an execution backend policy for the target.
+
+
+
+.. py:class:: BackendContext
+
+   Resolved backend state shared by every stage of one compilation.
+
+
+   .. py:attribute:: module
+      :type:  BackendModule
+
+
+   .. py:attribute:: target
+      :type:  tvm.target.Target
+
+
+   .. py:attribute:: target_host
+      :type:  tvm.target.Target
+
+
+   .. py:attribute:: execution_backend
+      :type:  tilelang.backend.execution_backend.ExecutionBackendSpec
+
+
+   .. py:method:: __post_init__()
+
+
+   .. py:property:: name
+      :type: str
+
+
+      Return the selected backend module name.
+
+
+   .. py:method:: lower(mod)
+
+      Run the selected backend's lowering pipeline.
+
+
+
+   .. py:method:: codegen_device(mod, *, compile_device = None)
+
+      Generate device code using the selected execution policy by default.
+
+
+
+   .. py:method:: preprocess_host_codegen(mod)
+
+      Apply selected-backend hooks before host code generation.
+
+
+
+   .. py:method:: codegen_host(mod)
+
+      Generate host code for the resolved host target.
+
+
+
+.. py:function:: register_backend(backend)
+
+   Validate and register every component declared by a backend manifest.
+
+
+.. py:function:: get_backend(name)
+
+   Return a registered backend module by name.
+
+
+.. py:function:: list_backends()
+
+   Return a copy of the registered backend modules.
+
+
+.. py:function:: create_backend_context(target = 'auto', target_host = None, execution_backend = 'auto')
+
+   Resolve user inputs into the immutable context for one compilation.
+
+
