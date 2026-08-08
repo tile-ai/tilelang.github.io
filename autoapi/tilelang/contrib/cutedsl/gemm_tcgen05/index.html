@@ -337,6 +337,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../cc/index.html">tilelang.contrib.cc</a></li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html">tilelang.contrib.cutedsl</a><input aria-label="Toggle navigation of tilelang.contrib.cutedsl" checked="" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="../atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
@@ -734,7 +735,7 @@
 <dt>Provides:</dt><dd><ul class="simple">
 <li><p>Tcgen05SmemDescriptor: 64-bit SMEM descriptor for tcgen05 MMA</p></li>
 <li><p>initialize_tcgen05_descriptor: bitfield packing matching common.h layout</p></li>
-<li><p>tcgen05mma_ss / tcgen05mma_ws_ss / tcgen05mma_ts: MMA PTX inline asm</p></li>
+<li><p>tcgen05mma_ss / tcgen05mma_ws_ss / tcgen05mma_ts: primitive MMA wrappers</p></li>
 <li><p>tcgen05_mma_arrive: mbarrier arrive for MMA commit</p></li>
 <li><p>tmem_allocate / tmem_deallocate: TMEM allocation/deallocation</p></li>
 </ul>
@@ -761,33 +762,48 @@
 <td><p>Pack the tcgen05 SMEM descriptor bitfields.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ss" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05mma_ss</span></code></a>(kind_dtype, desc_a, desc_b, tmem_c, ...)</p></td>
-<td><p>tcgen05.mma.cta_group::1.kind::{kind} [tmem_c], desc_a, desc_b, desc_val, {masks}, p;</p></td>
+<td><p>tcgen05.mma.cta_group::{1|2}.kind::{kind} [tmem_c], desc_a, desc_b, desc_val, ...;</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ws_ss" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ws_ss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05mma_ws_ss</span></code></a>(kind_dtype, desc_a, desc_b, tmem_c, ...)</p></td>
 <td><p>tcgen05.mma.ws.cta_group::1.kind::{kind} [tmem_c], desc_a, desc_b, desc_val, p, 0;</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ts" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05mma_ts</span></code></a>(kind_dtype, tmem_a, desc_b, tmem_c, ...)</p></td>
-<td><p>tcgen05.mma.cta_group::1.kind::{kind} [tmem_c], [tmem_a], desc_b, desc_val, {masks}, p;</p></td>
+<td><p>tcgen05.mma.cta_group::{1|2}.kind::{kind} [tmem_c], [tmem_a], desc_b, desc_val, ...;</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_mma_arrive" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_mma_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_mma_arrive</span></code></a>(mbar_ptr)</p></td>
-<td><p>tcgen05.commit.cta_group::1.mbarrier::arrive::one.shared::cluster.b64 [mbar];</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_mma_arrive" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_mma_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_mma_arrive</span></code></a>(mbar_ptr[, use_2cta])</p></td>
+<td><p>Commit prior tcgen05 work to an mbarrier.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tmem_allocate" title="tilelang.contrib.cutedsl.gemm_tcgen05.tmem_allocate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tmem_allocate</span></code></a>(tmem_buffer_ptr, num_cols)</p></td>
-<td><p>tcgen05.alloc.cta_group::1.sync.aligned.shared::cta.b32 [dst], num_cols;</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_before_thread_sync" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_before_thread_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_before_thread_sync</span></code></a>(*[, loc, ip])</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tmem_deallocate" title="tilelang.contrib.cutedsl.gemm_tcgen05.tmem_deallocate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tmem_deallocate</span></code></a>(tmem_ptr, num_cols)</p></td>
-<td><p>tcgen05.dealloc.cta_group::1.sync.aligned.b32 tmem_addr, num_cols;</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_after_thread_sync" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_after_thread_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_after_thread_sync</span></code></a>(*[, loc, ip])</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp32bNx" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp32bNx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_ld_32dp32bNx</span></code></a>(N, pack16, tmem_start_col, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tmem_allocate" title="tilelang.contrib.cutedsl.gemm_tcgen05.tmem_allocate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tmem_allocate</span></code></a>(tmem_buffer_ptr, num_cols[, use_2cta])</p></td>
+<td><p>Allocate TMEM columns for tcgen05 operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tmem_deallocate" title="tilelang.contrib.cutedsl.gemm_tcgen05.tmem_deallocate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tmem_deallocate</span></code></a>(tmem_ptr, num_cols[, use_2cta])</p></td>
+<td><p>Deallocate TMEM columns for tcgen05 operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_blockscaled_ss" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_blockscaled_ss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05mma_blockscaled_ss</span></code></a>(kind_dtype, desc_a, desc_b, ...)</p></td>
+<td><p>Block-scaled tcgen05.mma SS path with scale factors already in TMEM.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_cp_warpx4" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_cp_warpx4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_cp_warpx4</span></code></a>(smem_ptr, tmem_ptr, tmem_col_offset)</p></td>
+<td><p>Copy a 32x128b scale-factor tile from SMEM to TMEM with warpx4 multicast.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_sf_warp_transpose" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_sf_warp_transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_sf_warp_transpose</span></code></a>(smem_ptr)</p></td>
+<td><p>In-place warp transpose for 128 uint32 scale-factor words in SMEM.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp32bNx" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp32bNx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_ld_32dp32bNx</span></code></a>(N, pack16, tmem_start_col, ...)</p></td>
 <td><p>Load N uint32 values from TMEM using tcgen05.ld.sync.aligned.32x32b.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp64bNx" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp64bNx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_ld_32dp64bNx</span></code></a>(N, pack16, tmem_start_col, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp64bNx" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp64bNx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_ld_32dp64bNx</span></code></a>(N, pack16, tmem_start_col, ...)</p></td>
 <td><p>Load from TMEM using 32dp64b pattern (2x 16x64b for lower/upper 16 rows).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp128bNx" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp128bNx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_ld_32dp128bNx</span></code></a>(N, pack16, tmem_start_col, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp128bNx" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp128bNx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_ld_32dp128bNx</span></code></a>(N, pack16, tmem_start_col, ...)</p></td>
 <td><p>Load from TMEM using 32dp128b pattern (2x 16x128b for lower/upper 16 rows).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp256bNx" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp256bNx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_ld_32dp256bNx</span></code></a>(N, pack16, tmem_start_col, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp256bNx" title="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp256bNx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tcgen05_ld_32dp256bNx</span></code></a>(N, pack16, tmem_start_col, ...)</p></td>
 <td><p>Load from TMEM using 32dp256b pattern (2x 16x256b for lower/upper 16 rows).</p></td>
 </tr>
 </tbody>
@@ -847,8 +863,8 @@ Stored as two Int32 registers; recast to Int64 for the PTX operand.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ss">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05mma_ss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ss" title="Link to this definition">¶</a></dt>
-<dd><p>tcgen05.mma.cta_group::1.kind::{kind} [tmem_c], desc_a, desc_b, desc_val, {masks}, p;</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05mma_ss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ss" title="Link to this definition">¶</a></dt>
+<dd><p>tcgen05.mma.cta_group::{1|2}.kind::{kind} [tmem_c], desc_a, desc_b, desc_val, …;</p>
 <p>Guarded by elect_one_sync — only one thread in the warp issues the MMA.
 The TIR codegen also wraps calls in <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(threadIdx.x</span> <span class="pre">&gt;&gt;</span> <span class="pre">5)</span> <span class="pre">==</span> <span class="pre">0</span></code>
 which selects warp 0.</p>
@@ -865,6 +881,7 @@ which selects warp 0.</p>
 <li><p><strong>mask1</strong> (<em>int</em>)</p></li>
 <li><p><strong>mask2</strong> (<em>int</em>)</p></li>
 <li><p><strong>mask3</strong> (<em>int</em>)</p></li>
+<li><p><strong>use_2cta</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -890,8 +907,8 @@ which selects warp 0.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ts">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05mma_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ts" title="Link to this definition">¶</a></dt>
-<dd><p>tcgen05.mma.cta_group::1.kind::{kind} [tmem_c], [tmem_a], desc_b, desc_val, {masks}, p;</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05mma_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ts" title="Link to this definition">¶</a></dt>
+<dd><p>tcgen05.mma.cta_group::{1|2}.kind::{kind} [tmem_c], [tmem_a], desc_b, desc_val, …;</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -905,6 +922,7 @@ which selects warp 0.</p>
 <li><p><strong>mask1</strong> (<em>int</em>)</p></li>
 <li><p><strong>mask2</strong> (<em>int</em>)</p></li>
 <li><p><strong>mask3</strong> (<em>int</em>)</p></li>
+<li><p><strong>use_2cta</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -912,20 +930,42 @@ which selects warp 0.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_mma_arrive">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05_mma_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbar_ptr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_mma_arrive" title="Link to this definition">¶</a></dt>
-<dd><p>tcgen05.commit.cta_group::1.mbarrier::arrive::one.shared::cluster.b64 [mbar];</p>
-<p>Guarded by elect_one_sync — only one thread in the warp issues the commit.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05_mma_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mbar_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_mma_arrive" title="Link to this definition">¶</a></dt>
+<dd><p>Commit prior tcgen05 work to an mbarrier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mbar_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mbar_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>use_2cta</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_before_thread_sync">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05_before_thread_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_before_thread_sync" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_after_thread_sync">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05_after_thread_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_after_thread_sync" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_tcgen05.tmem_allocate">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tmem_allocate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmem_buffer_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cols</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tmem_allocate" title="Link to this definition">¶</a></dt>
-<dd><p>tcgen05.alloc.cta_group::1.sync.aligned.shared::cta.b32 [dst], num_cols;</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tmem_allocate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmem_buffer_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tmem_allocate" title="Link to this definition">¶</a></dt>
+<dd><p>Allocate TMEM columns for tcgen05 operations.</p>
 <p>tmem_buffer_ptr: SMEM pointer that receives the allocated TMEM address.
 num_cols: number of columns to allocate.</p>
 <dl class="field-list simple">
@@ -933,6 +973,7 @@ num_cols: number of columns to allocate.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tmem_buffer_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
 <li><p><strong>num_cols</strong> (<em>int</em>)</p></li>
+<li><p><strong>use_2cta</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -940,8 +981,8 @@ num_cols: number of columns to allocate.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_tcgen05.tmem_deallocate">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tmem_deallocate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cols</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tmem_deallocate" title="Link to this definition">¶</a></dt>
-<dd><p>tcgen05.dealloc.cta_group::1.sync.aligned.b32 tmem_addr, num_cols;</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tmem_deallocate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tmem_deallocate" title="Link to this definition">¶</a></dt>
+<dd><p>Deallocate TMEM columns for tcgen05 operations.</p>
 <p>tmem_ptr: SMEM pointer to the uint32 holding the TMEM address.
 num_cols: number of columns to deallocate.</p>
 <dl class="field-list simple">
@@ -949,7 +990,54 @@ num_cols: number of columns to deallocate.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tmem_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
 <li><p><strong>num_cols</strong> (<em>int</em>)</p></li>
+<li><p><strong>use_2cta</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>)</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_blockscaled_ss">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05mma_blockscaled_ss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_sfa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_sfb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_blockscaled_ss" title="Link to this definition">¶</a></dt>
+<dd><p>Block-scaled tcgen05.mma SS path with scale factors already in TMEM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind_dtype</strong> (<em>str</em>)</p></li>
+<li><p><strong>tmem_c</strong> (<em>int</em>)</p></li>
+<li><p><strong>desc_val</strong> (<em>int</em>)</p></li>
+<li><p><strong>scale_out</strong> (<em>int</em>)</p></li>
+<li><p><strong>tmem_sfa</strong> (<em>int</em>)</p></li>
+<li><p><strong>tmem_sfb</strong> (<em>int</em>)</p></li>
+<li><p><strong>use_2cta</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_cp_warpx4">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05_cp_warpx4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmem_col_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_cp_warpx4" title="Link to this definition">¶</a></dt>
+<dd><p>Copy a 32x128b scale-factor tile from SMEM to TMEM with warpx4 multicast.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>smem_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>tmem_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>tmem_col_offset</strong> (<em>int</em>)</p></li>
+<li><p><strong>use_2cta</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_sf_warp_transpose">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_tcgen05.</span></span><span class="sig-name descname"><span class="pre">tcgen05_sf_warp_transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_sf_warp_transpose" title="Link to this definition">¶</a></dt>
+<dd><p>In-place warp transpose for 128 uint32 scale-factor words in SMEM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smem_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1109,8 +1197,13 @@ N: x-count for 16x256b instructions. Total output: 8*N i32 regs.
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ws_ss"><code class="docutils literal notranslate"><span class="pre">tcgen05mma_ws_ss()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ts"><code class="docutils literal notranslate"><span class="pre">tcgen05mma_ts()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_mma_arrive"><code class="docutils literal notranslate"><span class="pre">tcgen05_mma_arrive()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_before_thread_sync"><code class="docutils literal notranslate"><span class="pre">tcgen05_before_thread_sync()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_after_thread_sync"><code class="docutils literal notranslate"><span class="pre">tcgen05_after_thread_sync()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tmem_allocate"><code class="docutils literal notranslate"><span class="pre">tmem_allocate()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tmem_deallocate"><code class="docutils literal notranslate"><span class="pre">tmem_deallocate()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_blockscaled_ss"><code class="docutils literal notranslate"><span class="pre">tcgen05mma_blockscaled_ss()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_cp_warpx4"><code class="docutils literal notranslate"><span class="pre">tcgen05_cp_warpx4()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_sf_warp_transpose"><code class="docutils literal notranslate"><span class="pre">tcgen05_sf_warp_transpose()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp32bNx"><code class="docutils literal notranslate"><span class="pre">tcgen05_ld_32dp32bNx()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp64bNx"><code class="docutils literal notranslate"><span class="pre">tcgen05_ld_32dp64bNx()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp128bNx"><code class="docutils literal notranslate"><span class="pre">tcgen05_ld_32dp128bNx()</span></code></a></li>

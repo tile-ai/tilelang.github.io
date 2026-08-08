@@ -337,6 +337,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../cc/index.html">tilelang.contrib.cc</a></li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html">tilelang.contrib.cutedsl</a><input aria-label="Toggle navigation of tilelang.contrib.cutedsl" checked="" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="../atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
@@ -731,47 +732,92 @@
 <span id="tilelang-contrib-cutedsl-ldsm"></span><h1>tilelang.contrib.cutedsl.ldsm<a class="headerlink" href="#module-tilelang.contrib.cutedsl.ldsm" title="Link to this heading">¶</a></h1>
 <p>LDMATRIX and STMATRIX operations for CuTeDSL backend.
 Based on tl_templates/cuda/ldsm.h</p>
-<p>These functions provide wrappers around PTX ldmatrix/stmatrix instructions
+<p>These functions provide wrappers around CUTLASS primitive ldmatrix/stmatrix operations
 for loading/storing 8x8 matrix fragments between shared memory and registers.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x1</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x2</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x4</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x1_trans</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x2_trans</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x4_trans</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x1</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x2</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x4</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x1_trans</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x2_trans</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x4_trans</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x1</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x1" title="tilelang.contrib.cutedsl.ldsm.ldmatrix_x1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldmatrix_x1</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
 <td><p>Load 1 matrix (8x8) from shared memory</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x2</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x2" title="tilelang.contrib.cutedsl.ldsm.ldmatrix_x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldmatrix_x2</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
 <td><p>Load 2 matrices (8x8 each) from shared memory</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x4</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x4" title="tilelang.contrib.cutedsl.ldsm.ldmatrix_x4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldmatrix_x4</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
 <td><p>Load 4 matrices (8x8 each) from shared memory</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x1_trans</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x1_trans" title="tilelang.contrib.cutedsl.ldsm.ldmatrix_x1_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldmatrix_x1_trans</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
 <td><p>Load 1 matrix (8x8) with transpose from shared memory</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x2_trans</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x2_trans" title="tilelang.contrib.cutedsl.ldsm.ldmatrix_x2_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldmatrix_x2_trans</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
 <td><p>Load 2 matrices (8x8 each) with transpose from shared memory</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_ldmatrix_x4_trans</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x4_trans" title="tilelang.contrib.cutedsl.ldsm.ldmatrix_x4_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ldmatrix_x4_trans</span></code></a>(smem_ptr, local_ptr, *[, loc, ip])</p></td>
 <td><p>Load 4 matrices (8x8 each) with transpose from shared memory</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x1</span></code></a>(smem_ptr, value0, *[, loc, ip])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x1" title="tilelang.contrib.cutedsl.ldsm.stmatrix_x1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stmatrix_x1</span></code></a>(smem_ptr, value0, *[, loc, ip])</p></td>
 <td><p>Store 1 matrix (8x8) to shared memory</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x2</span></code></a>(smem_ptr, value0, value1, *[, loc, ip])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x2" title="tilelang.contrib.cutedsl.ldsm.stmatrix_x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stmatrix_x2</span></code></a>(smem_ptr, value0, value1, *[, loc, ip])</p></td>
 <td><p>Store 2 matrices (8x8 each) to shared memory</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x4</span></code></a>(smem_ptr, value0, value1, value2, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x4" title="tilelang.contrib.cutedsl.ldsm.stmatrix_x4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stmatrix_x4</span></code></a>(smem_ptr, value0, value1, value2, value3, *)</p></td>
 <td><p>Store 4 matrices (8x8 each) to shared memory</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x1_trans</span></code></a>(smem_ptr, value0, *[, loc, ip])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x1_trans" title="tilelang.contrib.cutedsl.ldsm.stmatrix_x1_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stmatrix_x1_trans</span></code></a>(smem_ptr, value0, *[, loc, ip])</p></td>
 <td><p>Store 1 matrix (8x8) with transpose to shared memory</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x2_trans</span></code></a>(smem_ptr, value0, value1, *[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x2_trans" title="tilelang.contrib.cutedsl.ldsm.stmatrix_x2_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stmatrix_x2_trans</span></code></a>(smem_ptr, value0, value1, *[, loc, ip])</p></td>
 <td><p>Store 2 matrices (8x8 each) with transpose to shared memory</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4_trans" title="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_stmatrix_x4_trans</span></code></a>(smem_ptr, value0, value1, ...[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x4_trans" title="tilelang.contrib.cutedsl.ldsm.stmatrix_x4_trans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stmatrix_x4_trans</span></code></a>(smem_ptr, value0, value1, value2, ...)</p></td>
 <td><p>Store 4 matrices (8x8 each) with transpose to shared memory</p></td>
 </tr>
 </tbody>
@@ -781,8 +827,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ldmatrix_x1">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ldmatrix_x1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x1" title="Link to this definition">¶</a></dt>
 <dd><p>Load 1 matrix (8x8) from shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -798,8 +844,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ldmatrix_x2">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ldmatrix_x2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x2" title="Link to this definition">¶</a></dt>
 <dd><p>Load 2 matrices (8x8 each) from shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -815,8 +861,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ldmatrix_x4">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ldmatrix_x4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x4" title="Link to this definition">¶</a></dt>
 <dd><p>Load 4 matrices (8x8 each) from shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -832,8 +878,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1_trans">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x1_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1_trans" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ldmatrix_x1_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ldmatrix_x1_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x1_trans" title="Link to this definition">¶</a></dt>
 <dd><p>Load 1 matrix (8x8) with transpose from shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -849,8 +895,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2_trans">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x2_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2_trans" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ldmatrix_x2_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ldmatrix_x2_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x2_trans" title="Link to this definition">¶</a></dt>
 <dd><p>Load 2 matrices (8x8 each) with transpose from shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -866,8 +912,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4_trans">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x4_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4_trans" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ldmatrix_x4_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ldmatrix_x4_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_ptr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x4_trans" title="Link to this definition">¶</a></dt>
 <dd><p>Load 4 matrices (8x8 each) with transpose from shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -883,8 +929,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.stmatrix_x1">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">stmatrix_x1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x1" title="Link to this definition">¶</a></dt>
 <dd><p>Store 1 matrix (8x8) to shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -897,8 +943,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.stmatrix_x2">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">stmatrix_x2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x2" title="Link to this definition">¶</a></dt>
 <dd><p>Store 2 matrices (8x8 each) to shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -911,8 +957,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.stmatrix_x4">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">stmatrix_x4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x4" title="Link to this definition">¶</a></dt>
 <dd><p>Store 4 matrices (8x8 each) to shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -925,8 +971,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1_trans">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x1_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1_trans" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.stmatrix_x1_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">stmatrix_x1_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x1_trans" title="Link to this definition">¶</a></dt>
 <dd><p>Store 1 matrix (8x8) with transpose to shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -939,8 +985,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2_trans">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x2_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2_trans" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.stmatrix_x2_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">stmatrix_x2_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x2_trans" title="Link to this definition">¶</a></dt>
 <dd><p>Store 2 matrices (8x8 each) with transpose to shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -953,8 +999,8 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4_trans">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x4_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4_trans" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.stmatrix_x4_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">stmatrix_x4_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x4_trans" title="Link to this definition">¶</a></dt>
 <dd><p>Store 4 matrices (8x8 each) with transpose to shared memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -965,6 +1011,66 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x1</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x2</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x4</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x1_trans</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1_trans" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x2_trans</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2_trans" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_ldmatrix_x4_trans</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4_trans" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x1</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x2</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x4</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x1_trans</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1_trans" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x2_trans</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2_trans" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4_trans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ldsm.</span></span><span class="sig-name descname"><span class="pre">ptx_stmatrix_x4_trans</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4_trans" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </section>
 </section>
@@ -1025,20 +1131,33 @@ for loading/storing 8x8 matrix fragments between shared memory and registers.</p
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.contrib.cutedsl.ldsm</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x1()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x2()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x4()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1_trans"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x1_trans()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2_trans"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x2_trans()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4_trans"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x4_trans()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x1()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x2()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x4()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1_trans"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x1_trans()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2_trans"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x2_trans()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4_trans"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x4_trans()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x1"><code class="docutils literal notranslate"><span class="pre">ldmatrix_x1()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x2"><code class="docutils literal notranslate"><span class="pre">ldmatrix_x2()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x4"><code class="docutils literal notranslate"><span class="pre">ldmatrix_x4()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x1_trans"><code class="docutils literal notranslate"><span class="pre">ldmatrix_x1_trans()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x2_trans"><code class="docutils literal notranslate"><span class="pre">ldmatrix_x2_trans()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ldmatrix_x4_trans"><code class="docutils literal notranslate"><span class="pre">ldmatrix_x4_trans()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x1"><code class="docutils literal notranslate"><span class="pre">stmatrix_x1()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x2"><code class="docutils literal notranslate"><span class="pre">stmatrix_x2()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x4"><code class="docutils literal notranslate"><span class="pre">stmatrix_x4()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x1_trans"><code class="docutils literal notranslate"><span class="pre">stmatrix_x1_trans()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x2_trans"><code class="docutils literal notranslate"><span class="pre">stmatrix_x2_trans()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.stmatrix_x4_trans"><code class="docutils literal notranslate"><span class="pre">stmatrix_x4_trans()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x1</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x2</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x4</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x1_trans"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x1_trans</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x2_trans"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x2_trans</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_ldmatrix_x4_trans"><code class="docutils literal notranslate"><span class="pre">ptx_ldmatrix_x4_trans</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x1</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x2</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x4</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x1_trans"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x1_trans</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x2_trans"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x2_trans</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ldsm.ptx_stmatrix_x4_trans"><code class="docutils literal notranslate"><span class="pre">ptx_stmatrix_x4_trans</span></code></a></li>
 </ul>
 </li>
 </ul>

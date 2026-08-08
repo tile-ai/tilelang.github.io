@@ -337,6 +337,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../cc/index.html">tilelang.contrib.cc</a></li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html">tilelang.contrib.cutedsl</a><input aria-label="Toggle navigation of tilelang.contrib.cutedsl" checked="" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="../atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
@@ -761,6 +762,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DColumn" title="tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DColumn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rasterization2DColumn</span></code></a>(panel_width)</p></td>
 <td><p>Map block indices to column-major swizzled rasterization coordinates.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DRowWithCluster" title="tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DRowWithCluster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rasterization2DRowWithCluster</span></code></a>(panel_width, cluster_dim_x)</p></td>
+<td><p>Row-major swizzle at cluster granularity while preserving intra-cluster x rank.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DColumnWithCluster" title="tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DColumnWithCluster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rasterization2DColumnWithCluster</span></code></a>(panel_width, ...)</p></td>
+<td><p>Column-major swizzle at cluster granularity while preserving intra-cluster x rank.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -849,6 +856,40 @@
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DRowWithCluster">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.threadblock_swizzle.</span></span><span class="sig-name descname"><span class="pre">rasterization2DRowWithCluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_dim_x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DRowWithCluster" title="Link to this definition">¶</a></dt>
+<dd><p>Row-major swizzle at cluster granularity while preserving intra-cluster x rank.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>panel_width</strong> (<em>cutlass.Constexpr</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>cluster_dim_x</strong> (<em>cutlass.Constexpr</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.contrib.cutedsl.threadblock_swizzle.dim3" title="tilelang.contrib.cutedsl.threadblock_swizzle.dim3">dim3</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DColumnWithCluster">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.threadblock_swizzle.</span></span><span class="sig-name descname"><span class="pre">rasterization2DColumnWithCluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_dim_x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DColumnWithCluster" title="Link to this definition">¶</a></dt>
+<dd><p>Column-major swizzle at cluster granularity while preserving intra-cluster x rank.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>panel_width</strong> (<em>cutlass.Constexpr</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>cluster_dim_x</strong> (<em>cutlass.Constexpr</em><em>[</em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.contrib.cutedsl.threadblock_swizzle.dim3" title="tilelang.contrib.cutedsl.threadblock_swizzle.dim3">dim3</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -922,6 +963,8 @@
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.threadblock_swizzle.GridDim"><code class="docutils literal notranslate"><span class="pre">GridDim()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DRow"><code class="docutils literal notranslate"><span class="pre">rasterization2DRow()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DColumn"><code class="docutils literal notranslate"><span class="pre">rasterization2DColumn()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DRowWithCluster"><code class="docutils literal notranslate"><span class="pre">rasterization2DRowWithCluster()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.threadblock_swizzle.rasterization2DColumnWithCluster"><code class="docutils literal notranslate"><span class="pre">rasterization2DColumnWithCluster()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -9,6 +9,13 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.contrib.cutedsl.cpasync.cp_async_commit
+   tilelang.contrib.cutedsl.cpasync.cp_async_wait
+   tilelang.contrib.cutedsl.cpasync.mbarrier_init
+   tilelang.contrib.cutedsl.cpasync.mbarrier_expect_tx
+   tilelang.contrib.cutedsl.cpasync.arrive_and_expect_tx
+   tilelang.contrib.cutedsl.cpasync.mbarrier_arrive
+   tilelang.contrib.cutedsl.cpasync.mbarrier_cp_async_arrive_noinc
    tilelang.contrib.cutedsl.cpasync.cp_async_gs
    tilelang.contrib.cutedsl.cpasync.cp_async_gs_conditional
    tilelang.contrib.cutedsl.cpasync.extract_tensormap_ptr
@@ -28,6 +35,20 @@ Functions
 Module Contents
 ---------------
 
+.. py:function:: cp_async_commit(*, loc=None, ip=None)
+
+.. py:function:: cp_async_wait(n, *, loc=None, ip=None)
+
+.. py:function:: mbarrier_init(mbar_ptr, arrive_count, *, loc=None, ip=None)
+
+.. py:function:: mbarrier_expect_tx(mbar_ptr, tx_count, *, loc=None, ip=None)
+
+.. py:function:: arrive_and_expect_tx(mbar_ptr, tx_count, *, loc=None, ip=None)
+
+.. py:function:: mbarrier_arrive(mbar_ptr, cta_id = None, *, loc=None, ip=None)
+
+.. py:function:: mbarrier_cp_async_arrive_noinc(mbar_ptr, *, loc=None, ip=None)
+
 .. py:function:: cp_async_gs(size, dst, src)
 
 .. py:function:: cp_async_gs_conditional(size, dst, src, cond)
@@ -39,7 +60,7 @@ Module Contents
    :type tma_atom:       CopyAtom
 
 
-.. py:function:: tma_load(tma_desc, mbar, smem_ptr, crd, *, loc=None, ip=None)
+.. py:function:: tma_load(tma_desc, mbar, smem_ptr, crd, use_2cta = False, im2col_offsets=None, *, loc=None, ip=None)
 
    Load data from global memory to shared memory using TMA (Tensor Memory Access).
 
@@ -119,12 +140,11 @@ Module Contents
    Corresponds to PTX instruction: prefetch.tensormap;
 
 
-.. py:function:: mbarrier_wait(mbar_ptr, phase, timeout_ns = 10000000, *, loc=None, ip=None)
+.. py:function:: mbarrier_wait(mbar_ptr, phase, timeout_ns = 10000000)
 
    Waits on a mbarrier with a specified phase (blocking loop).
 
-   Uses inline PTX to loop until the try_wait succeeds.
-   The CUDA backend does: while (!mbar.try_wait(parity)) {}
+   Uses the primitive try-wait wrapper in a spin loop.
 
 
 .. py:function:: mbarrier_cp_async_arrive(mbar_ptr, *, loc=None, ip=None)

@@ -10,7 +10,7 @@ tilelang.contrib.cutedsl.gemm_tcgen05
    Provides:
      - Tcgen05SmemDescriptor: 64-bit SMEM descriptor for tcgen05 MMA
      - initialize_tcgen05_descriptor: bitfield packing matching common.h layout
-     - tcgen05mma_ss / tcgen05mma_ws_ss / tcgen05mma_ts: MMA PTX inline asm
+     - tcgen05mma_ss / tcgen05mma_ws_ss / tcgen05mma_ts: primitive MMA wrappers
      - tcgen05_mma_arrive: mbarrier arrive for MMA commit
      - tmem_allocate / tmem_deallocate: TMEM allocation/deallocation
 
@@ -34,8 +34,13 @@ Functions
    tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ws_ss
    tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_ts
    tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_mma_arrive
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_before_thread_sync
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_after_thread_sync
    tilelang.contrib.cutedsl.gemm_tcgen05.tmem_allocate
    tilelang.contrib.cutedsl.gemm_tcgen05.tmem_deallocate
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05mma_blockscaled_ss
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_cp_warpx4
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_sf_warp_transpose
    tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp32bNx
    tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp64bNx
    tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp128bNx
@@ -81,9 +86,9 @@ Module Contents
        [29:32)  layout_type (swizzle_mode & 0x7)
 
 
-.. py:function:: tcgen05mma_ss(kind_dtype, desc_a, desc_b, tmem_c, desc_val, scale_out, mask0, mask1, mask2, mask3)
+.. py:function:: tcgen05mma_ss(kind_dtype, desc_a, desc_b, tmem_c, desc_val, scale_out, mask0, mask1, mask2, mask3, use_2cta = False)
 
-   tcgen05.mma.cta_group::1.kind::{kind} [tmem_c], desc_a, desc_b, desc_val, {masks}, p;
+   tcgen05.mma.cta_group::{1|2}.kind::{kind} [tmem_c], desc_a, desc_b, desc_val, ...;
 
    Guarded by elect_one_sync — only one thread in the warp issues the MMA.
    The TIR codegen also wraps calls in ``if (threadIdx.x >> 5) == 0``
@@ -95,32 +100,49 @@ Module Contents
    tcgen05.mma.ws.cta_group::1.kind::{kind} [tmem_c], desc_a, desc_b, desc_val, p, 0;
 
 
-.. py:function:: tcgen05mma_ts(kind_dtype, tmem_a, desc_b, tmem_c, desc_val, scale_out, mask0, mask1, mask2, mask3)
+.. py:function:: tcgen05mma_ts(kind_dtype, tmem_a, desc_b, tmem_c, desc_val, scale_out, mask0, mask1, mask2, mask3, use_2cta = False)
 
-   tcgen05.mma.cta_group::1.kind::{kind} [tmem_c], [tmem_a], desc_b, desc_val, {masks}, p;
-
-
-.. py:function:: tcgen05_mma_arrive(mbar_ptr)
-
-   tcgen05.commit.cta_group::1.mbarrier::arrive::one.shared::cluster.b64 [mbar];
-
-   Guarded by elect_one_sync — only one thread in the warp issues the commit.
+   tcgen05.mma.cta_group::{1|2}.kind::{kind} [tmem_c], [tmem_a], desc_b, desc_val, ...;
 
 
-.. py:function:: tmem_allocate(tmem_buffer_ptr, num_cols)
+.. py:function:: tcgen05_mma_arrive(mbar_ptr, use_2cta = False)
 
-   tcgen05.alloc.cta_group::1.sync.aligned.shared::cta.b32 [dst], num_cols;
+   Commit prior tcgen05 work to an mbarrier.
+
+
+.. py:function:: tcgen05_before_thread_sync(*, loc=None, ip=None)
+
+.. py:function:: tcgen05_after_thread_sync(*, loc=None, ip=None)
+
+.. py:function:: tmem_allocate(tmem_buffer_ptr, num_cols, use_2cta = False)
+
+   Allocate TMEM columns for tcgen05 operations.
 
    tmem_buffer_ptr: SMEM pointer that receives the allocated TMEM address.
    num_cols: number of columns to allocate.
 
 
-.. py:function:: tmem_deallocate(tmem_ptr, num_cols)
+.. py:function:: tmem_deallocate(tmem_ptr, num_cols, use_2cta = False)
 
-   tcgen05.dealloc.cta_group::1.sync.aligned.b32 tmem_addr, num_cols;
+   Deallocate TMEM columns for tcgen05 operations.
 
    tmem_ptr: SMEM pointer to the uint32 holding the TMEM address.
    num_cols: number of columns to deallocate.
+
+
+.. py:function:: tcgen05mma_blockscaled_ss(kind_dtype, desc_a, desc_b, tmem_c, desc_val, scale_out, tmem_sfa, tmem_sfb, use_2cta = False)
+
+   Block-scaled tcgen05.mma SS path with scale factors already in TMEM.
+
+
+.. py:function:: tcgen05_cp_warpx4(smem_ptr, tmem_ptr, tmem_col_offset, use_2cta = False)
+
+   Copy a 32x128b scale-factor tile from SMEM to TMEM with warpx4 multicast.
+
+
+.. py:function:: tcgen05_sf_warp_transpose(smem_ptr)
+
+   In-place warp transpose for 128 uint32 scale-factor words in SMEM.
 
 
 .. py:function:: tcgen05_ld_32dp32bNx(N, pack16, tmem_start_col, tmem_col_offset, dst_ptr)

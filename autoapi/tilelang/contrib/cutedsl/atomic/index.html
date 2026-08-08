@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.contrib.cutedsl.cpasync" href="../cpasync/index.html"><link rel="prev" title="tilelang.contrib.cutedsl" href="../index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.contrib.cutedsl.cluster" href="../cluster/index.html"><link rel="prev" title="tilelang.contrib.cutedsl" href="../index.html">
         <link rel="prefetch" href="../../../../../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../../../../../_static/img/logo-v2.png" as="image">
 
@@ -337,6 +337,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../cc/index.html">tilelang.contrib.cc</a></li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html">tilelang.contrib.cutedsl</a><input aria-label="Toggle navigation of tilelang.contrib.cutedsl" checked="" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.contrib.cutedsl.atomic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
@@ -792,7 +793,7 @@ Returns the old value before addition (atomicrmw semantics).</p>
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.atomic.AtomicAddRet">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.atomic.</span></span><span class="sig-name descname"><span class="pre">AtomicAddRet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.atomic.AtomicAddRet" title="Link to this definition">¶</a></dt>
 <dd><p>Perform atomic addition and return the previous value.</p>
-<p>This is the same as AtomicAdd since nvvm.atomicrmw always returns old value.</p>
+<p>This is the same as AtomicAdd since prims.atomicrmw always returns old value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -837,7 +838,7 @@ Returns the old value before addition (atomicrmw semantics).</p>
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.atomic.AtomicMax">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.atomic.</span></span><span class="sig-name descname"><span class="pre">AtomicMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.atomic.AtomicMax" title="Link to this definition">¶</a></dt>
 <dd><p>Perform atomic maximum operation.</p>
-<p>For integers, uses nvvm.atomicrmw with MAX.
+<p>For integers, uses prims.atomicrmw with MAX.
 For floats, uses CAS loop since PTX doesn’t have atomic max for float32.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -867,7 +868,7 @@ For floats, uses CAS loop since PTX doesn’t have atomic max for float32.</p>
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.atomic.AtomicMin">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.atomic.</span></span><span class="sig-name descname"><span class="pre">AtomicMin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.atomic.AtomicMin" title="Link to this definition">¶</a></dt>
 <dd><p>Perform atomic minimum operation.</p>
-<p>For integers, uses nvvm.atomicrmw with MIN.
+<p>For integers, uses prims.atomicrmw with MIN.
 For floats, uses CAS loop since PTX doesn’t have atomic min for float32.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -909,9 +910,9 @@ For floats, uses CAS loop since PTX doesn’t have atomic min for float32.</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>PTX mapping (per NVIDIA ABI):</dt><dd><p>relaxed: ld.relaxed.&lt;scope&gt;
-acquire: ld.acquire.&lt;scope&gt;
-seq_cst: fence.sc.&lt;scope&gt;; ld.relaxed.&lt;scope&gt;</p>
+<dt>NVVM mapping:</dt><dd><p>relaxed: relaxed.gpu
+acquire: acquire.gpu
+seq_cst: fence.sc.gpu + relaxed.gpu</p>
 </dd>
 </dl>
 </dd></dl>
@@ -930,9 +931,9 @@ seq_cst: fence.sc.&lt;scope&gt;; ld.relaxed.&lt;scope&gt;</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>PTX mapping (per NVIDIA ABI):</dt><dd><p>relaxed: st.relaxed.&lt;scope&gt;
-release: st.release.&lt;scope&gt;
-seq_cst: fence.sc.&lt;scope&gt;; st.relaxed.&lt;scope&gt;</p>
+<dt>NVVM mapping:</dt><dd><p>relaxed: relaxed.gpu
+release: release.gpu
+seq_cst: fence.sc.gpu + relaxed.gpu</p>
 </dd>
 </dl>
 </dd></dl>
@@ -945,12 +946,12 @@ seq_cst: fence.sc.&lt;scope&gt;; st.relaxed.&lt;scope&gt;</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../cpasync/index.html">
+          <a class="next-page" href="../cluster/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">tilelang.contrib.cutedsl.cpasync</div>
+                <div class="title">tilelang.contrib.cutedsl.cluster</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

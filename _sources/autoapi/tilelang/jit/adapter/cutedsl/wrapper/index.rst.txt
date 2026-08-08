@@ -29,10 +29,11 @@ Attributes
    tilelang.jit.adapter.cutedsl.wrapper.CPP_KERNEL_INIT_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_TMA_LAUNCH_INIT_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_KERNEL_LAUNCH_TEMPLATE
+   tilelang.jit.adapter.cutedsl.wrapper.CPP_CLUSTER_KERNEL_LAUNCH_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_PDL_KERNEL_LAUNCH_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_COOPERATIVE_KERNEL_LAUNCH_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CPP_LAUNCHER_TEMPLATE
-   tilelang.jit.adapter.cutedsl.wrapper.CUBIN_TMA_ATOM_INIT_TEMPLATE
+   tilelang.jit.adapter.cutedsl.wrapper.CUBIN_TMA_DESC_INIT_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CUBIN_KERNEL_LAUNCH_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CUBIN_FAKE_TENSOR_TEMPLATE
    tilelang.jit.adapter.cutedsl.wrapper.CUBIN_GEN_CODE_TEMPLATE
@@ -213,10 +214,9 @@ Module Contents
       """  // Declare stack-local TMA descriptor array (eliminates concurrency race)
         CUtensorMap tma_descs[{num_tma_descs}];
       
-        // Initialize TMA descriptors (HOST memory - passed via __grid_constant__)
-        // NOTE: We intentionally do NOT reuse/cached descriptors across launches.
-        // Pointer-only reuse is a correctness trap (shape/stride may change with same ptr),
-        // and correctness beats micro-optimizations.
+        // Initialize TMA descriptors (HOST memory - passed via __grid_constant__).
+        // B200 launch-overhead experiments showed safe descriptor cache-key checks cost
+        // more than re-encoding these descriptors for the current generated launcher.
         result = tma_init(tma_descs, {tma_tensor_args});
         if (result != CUDA_SUCCESS) {{
           std::cerr << "Failed to initialize TMA descriptors: " << result << "\n";
@@ -261,6 +261,68 @@ Module Contents
           );
           if (result != CUDA_SUCCESS) {{
             std::cerr << "Failed to launch kernel {kernel_name} on device " << device_id << ": " << result << "\n";
+            return result;
+          }}
+        }}
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: CPP_CLUSTER_KERNEL_LAUNCH_TEMPLATE
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """  // Launch kernel {kernel_idx}: {kernel_name} (clustered)
+        {{
+          // Get the kernel for current device
+          auto kernels_it = g_device_kernels.find(device_id);
+          if (kernels_it == g_device_kernels.end()) {{
+            std::cerr << "Kernels not initialized for device " << device_id << "\n";
+            return CUDA_ERROR_NOT_INITIALIZED;
+          }}
+          const std::vector<CUfunction>& kernels = kernels_it->second;
+      
+          void* args[] = {{{kernel_args}}};
+          CUlaunchAttribute attrs[2];
+          attrs[0].id = CU_LAUNCH_ATTRIBUTE_CLUSTER_DIMENSION;
+          attrs[0].value.clusterDim.x = {cluster_x};
+          attrs[0].value.clusterDim.y = {cluster_y};
+          attrs[0].value.clusterDim.z = {cluster_z};
+          attrs[1].id = CU_LAUNCH_ATTRIBUTE_PROGRAMMATIC_STREAM_SERIALIZATION;
+          attrs[1].value.programmaticStreamSerializationAllowed = 1;
+      
+          CUlaunchConfig config = {{}};
+          config.gridDimX = {grid_x};
+          config.gridDimY = {grid_y};
+          config.gridDimZ = {grid_z};
+          config.blockDimX = {block_x};
+          config.blockDimY = {block_y};
+          config.blockDimZ = {block_z};
+          config.sharedMemBytes = {smem_size};
+          config.hStream = stream;
+          config.attrs = attrs;
+          config.numAttrs = 2;
+      
+          result = cuFuncSetAttribute(kernels[{kernel_idx}],
+                                      CU_FUNC_ATTRIBUTE_NON_PORTABLE_CLUSTER_SIZE_ALLOWED,
+                                      1);
+          if (result != CUDA_SUCCESS) {{
+            std::cerr << "Failed to set cluster attribute for {kernel_name} on device " << device_id << ": " << result << "\n";
+            return result;
+          }}
+      
+          result = cuLaunchKernelEx(&config, kernels[{kernel_idx}], args, nullptr);
+          if (result != CUDA_SUCCESS) {{
+            std::cerr << "Failed to launch clustered kernel {kernel_name} on device " << device_id << ": " << result << "\n";
             return result;
           }}
         }}
@@ -677,8 +739,34 @@ Module Contents
 
 
 
-.. py:data:: CUBIN_TMA_ATOM_INIT_TEMPLATE
-   :value: '    {desc_name} = tl.Gemm_SM90.get_tma_atom(__fake_tensor__, (32, 32))'
+.. py:data:: CUBIN_TMA_DESC_INIT_TEMPLATE
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """    {desc_name}__dtype, {desc_name}__format = _tma_dtype_and_format({dtype})
+          {desc_name} = cuda.create_tensor_map_tiled(
+              global_address={tensor_name}_.iterator.toint(),
+              dtype={desc_name}__dtype,
+              global_dims=[{global_dim_values}],
+              global_strides=[{global_stride_values}],
+              box_dims=[{box_dim_values}],
+              traversal_strides=[{element_stride_values}],
+              interleave=_tma_interleave({interleave}),
+              swizzle=_tma_swizzle({swizzle}),
+              l2_promotion=_tma_l2_promotion({l2_promotion}),
+              oob_fill=_tma_oob_fill({oob_fill}),
+              tma_format={desc_name}__format,
+          )"""
+
+   .. raw:: html
+
+      </details>
+
 
 
 .. py:data:: CUBIN_KERNEL_LAUNCH_TEMPLATE
@@ -693,7 +781,8 @@ Module Contents
       """    {function_name}({call_args}).launch(
             grid=[{grid_x}, {grid_y}, {grid_z}],
             block=[{block_x}, {block_y}, {block_z}],
-            smem={smem_size},
+      {cluster_arg}      smem={smem_size},
+            min_blocks_per_mp=1,
             stream=stream,
             use_pdl={use_pdl},
           )"""
@@ -755,6 +844,17 @@ Module Contents
               {compile_args},
               options=f"--enable-tvm-ffi --keep-cubin --gpu-arch={target_arch} --dump-dir={{_staging_dir.as_posix()}}",
           )
+          engine = getattr(_kernel_wrapper, "engine", None)
+          if engine is not None and hasattr(engine, "initialize"):
+            engine.initialize()
+          _cutlass_launcher = _kernel_wrapper
+          try:
+            import tvm_ffi
+            _cutlass_tvmffi_launcher = tvm_ffi.convert(_kernel_wrapper)
+            _cutlass_tvmffi_error = None
+          except Exception as err:
+            _cutlass_tvmffi_launcher = None
+            _cutlass_tvmffi_error = repr(err)
       
           # CuTeDSL generates a long, mangled cubin filename that includes argument/type info,
           # e.g. "cutlass_kernel_wrapper_FakeTensor...sm_90a.cubin". We expect exactly one cubin.
@@ -791,6 +891,13 @@ Module Contents
       _cpp_launcher = None
       _cpp_launcher_lib = None
       _cubin_generated = False
+      _cutlass_launcher = None
+      _cutlass_tvmffi_launcher = None
+      _cutlass_tvmffi_error = None
+      _cutlass_custream_cls = None
+      _has_tma_descs = {has_tma_descs}
+      _cutlass_host_launcher_supported = {cutlass_host_launcher_supported}
+      _cutlass_host_launcher_disabled_reason = {cutlass_host_launcher_disabled_reason!r}
       
       # Pre-compute paths - cubin is stored alongside the launcher .so
       # Use module basename to avoid conflicts when multiple kernels run concurrently
@@ -802,17 +909,20 @@ Module Contents
       _cubin_needs_generation = not _cubin_path.exists()
       
       def _generate_cubin_if_needed({cubin_gen_params}):
-        """Generate cubin file on first call.
+        """Compile the CUTLASS host wrapper and keep the cubin artifact.
       
-        All CuTeDSL imports are inside this function to avoid slow
-        module-level initialization when loading from cache.
+        All CuTeDSL imports are inside this function to avoid slow module-level
+        initialization when loading from cache. The compiled handle is retained so
+        TILELANG_CUTEDSL_HOST_LAUNCHER=cutlass can launch through CUTLASS directly.
         """
-        global _cubin_generated, _cubin_path
+        global _cubin_generated, _cubin_path, _cutlass_launcher
+        global _cutlass_tvmffi_launcher, _cutlass_tvmffi_error
       
         # Lazy import CuTeDSL only when cubin generation is needed
         from cuda.bindings.driver import CUstream
         import cutlass
         import cutlass.cute as cute
+        import cutlass.experimental.cuda as cuda
         from cutlass.cute.runtime import make_fake_stream, make_fake_compact_tensor
         import tilelang.contrib.cutedsl as tl
         # We rely on CuTeDSL's keep-cubin artifact rather than custom extraction.
@@ -838,12 +948,104 @@ Module Contents
             "torch.uint16": cutlass.Uint16,
             "torch.uchar": cutlass.Uint8}}
       
+        _TMA_DTYPE_NAMES = {{
+            0: "Uint8",
+            1: "Uint16",
+            2: "Uint32",
+            3: "Int32",
+            4: "Uint64",
+            5: "Int64",
+            6: "Float16",
+            7: "Float32",
+            8: "Float64",
+            9: "BFloat16",
+            10: "Float32",
+            11: "TFloat32",
+            12: "TFloat32",
+            13: "Float4E2M1FN",
+            14: "Float4E2M1FN",
+            15: "Float6E3M2FN",
+        }}
+        _TMA_FORMAT_NAMES = {{
+            0: "BYTE",
+            1: "DEFAULT",
+            2: "DEFAULT",
+            3: "DEFAULT",
+            4: "DEFAULT",
+            5: "DEFAULT",
+            6: "DEFAULT",
+            7: "DEFAULT",
+            8: "DEFAULT",
+            9: "DEFAULT",
+            10: "F32_FTZ",
+            11: "DEFAULT",
+            12: "TF32_FTZ",
+            13: "B4X16",
+            14: "B4X16_P64",
+            15: "B6X16_P32",
+        }}
+      
+        def _tma_dtype_and_format(value):
+          value = int(value)
+          dtype_name = _TMA_DTYPE_NAMES.get(value)
+          if dtype_name is None:
+            raise ValueError(f"Unsupported TMA TensorMap dtype enum: {{value}}")
+          dtype = getattr(cutlass, dtype_name, None)
+          if dtype is None:
+            raise ValueError(f"CUTLASS dtype {{dtype_name}} is unavailable")
+          return dtype, getattr(cuda.TensorMapDataFormat, _TMA_FORMAT_NAMES[value])
+      
+        def _tma_interleave(value):
+          return cuda.TensorMapInterleave(int(value))
+      
+        def _tma_swizzle(value):
+          return cuda.TensorMapSwizzle(int(value))
+      
+        def _tma_l2_promotion(value):
+          return cuda.TensorMapL2Promotion(int(value))
+      
+        def _tma_oob_fill(value):
+          return cuda.TensorMapFloatOOBFill(int(value))
+      
         def _positive_fake_shape(shape):
           return tuple(max(int(dim), 1) for dim in tuple(shape))
       
       {cubin_gen_code}
       
         _cubin_generated = True
+      
+      def _host_launcher_mode():
+        mode = os.environ.get("TILELANG_CUTEDSL_HOST_LAUNCHER", "cpp").strip().lower()
+        if mode in ("", "cpp", "c++"):
+          return "cpp"
+        if mode in ("cutlass", "cute"):
+          return "cutlass"
+        raise ValueError(
+            "TILELANG_CUTEDSL_HOST_LAUNCHER must be one of: cpp, cutlass"
+        )
+      
+      def _as_cutlass_stream(stream):
+        global _cutlass_custream_cls
+        if _cutlass_custream_cls is None:
+          from cuda.bindings.driver import CUstream
+          _cutlass_custream_cls = CUstream
+        return _cutlass_custream_cls(stream)
+      
+      def _load_cutlass_launcher({cubin_gen_params}):
+        """Return the compiled CUTLASS host launcher, compiling it if needed."""
+        global _cubin_needs_generation
+        if _cutlass_launcher is None:
+          _generate_cubin_if_needed({cubin_gen_call_args})
+          _cubin_needs_generation = False
+        if _cutlass_tvmffi_launcher is not None:
+          return _cutlass_tvmffi_launcher
+        require_tvmffi = os.environ.get("TILELANG_CUTEDSL_REQUIRE_TVMFFI", "").strip().lower()
+        if require_tvmffi in ("1", "true", "yes", "on"):
+          raise RuntimeError(
+              "CUTLASS host launcher did not produce a TVM-FFI function"
+              + (f": {{_cutlass_tvmffi_error}}" if _cutlass_tvmffi_error else "")
+          )
+        return _cutlass_launcher
       
       def _load_cpp_launcher():
         """Load C++ kernel launcher."""
@@ -873,6 +1075,20 @@ Module Contents
           _cubin_needs_generation = False
       
       {arg_prep_code}
+      
+        host_launcher_mode = _host_launcher_mode()
+        if host_launcher_mode == "cutlass" and _cutlass_host_launcher_supported:
+          _cutlass_stream = _as_cutlass_stream(stream)
+          launcher = _cutlass_tvmffi_launcher
+          if launcher is None:
+            launcher = _load_cutlass_launcher({cubin_gen_call_args})
+          launcher({cutlass_launcher_call_args})
+          return
+      
+        if host_launcher_mode == "cutlass":
+          require_cutlass_host = os.environ.get("TILELANG_CUTEDSL_REQUIRE_CUTLASS_HOST", "").strip().lower()
+          if require_cutlass_host in ("1", "true", "yes", "on"):
+            raise RuntimeError(_cutlass_host_launcher_disabled_reason)
       
         launcher = _load_cpp_launcher()
         result = launcher({launcher_call_args}, stream, device_id, _cubin_path_bytes)

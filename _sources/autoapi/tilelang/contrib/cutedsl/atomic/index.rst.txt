@@ -43,7 +43,7 @@ Module Contents
 
    Perform atomic addition and return the previous value.
 
-   This is the same as AtomicAdd since nvvm.atomicrmw always returns old value.
+   This is the same as AtomicAdd since prims.atomicrmw always returns old value.
 
 
 .. py:function:: AtomicAddx2(dst_ptr, src_values, *, loc=None, ip=None)
@@ -70,7 +70,7 @@ Module Contents
 
    Perform atomic maximum operation.
 
-   For integers, uses nvvm.atomicrmw with MAX.
+   For integers, uses prims.atomicrmw with MAX.
    For floats, uses CAS loop since PTX doesn't have atomic max for float32.
 
 
@@ -83,7 +83,7 @@ Module Contents
 
    Perform atomic minimum operation.
 
-   For integers, uses nvvm.atomicrmw with MIN.
+   For integers, uses prims.atomicrmw with MIN.
    For floats, uses CAS loop since PTX doesn't have atomic min for float32.
 
 
@@ -101,10 +101,10 @@ Module Contents
 
    :returns: The loaded value
 
-   PTX mapping (per NVIDIA ABI):
-       relaxed: ld.relaxed.<scope>
-       acquire: ld.acquire.<scope>
-       seq_cst: fence.sc.<scope>; ld.relaxed.<scope>
+   NVVM mapping:
+       relaxed: relaxed.gpu
+       acquire: acquire.gpu
+       seq_cst: fence.sc.gpu + relaxed.gpu
 
 
 .. py:function:: AtomicStore(ptr, value, memory_order, *, loc=None, ip=None)
@@ -115,9 +115,9 @@ Module Contents
    :param value: Value to store
    :param memory_order: TileLang memory order ID (0=relaxed, 3=release, 5=seq_cst, etc.)
 
-   PTX mapping (per NVIDIA ABI):
-       relaxed: st.relaxed.<scope>
-       release: st.release.<scope>
-       seq_cst: fence.sc.<scope>; st.relaxed.<scope>
+   NVVM mapping:
+       relaxed: relaxed.gpu
+       release: release.gpu
+       seq_cst: fence.sc.gpu + relaxed.gpu
 
 
