@@ -1,0 +1,195 @@
+tilelang.instrumentation.session
+================================
+
+.. py:module:: tilelang.instrumentation.session
+
+.. autoapi-nested-parse::
+
+   Compile-scoped orchestration for TileLang instrumentation tools.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.instrumentation.session.CodegenEvent
+   tilelang.instrumentation.session.PassInstrumentationTool
+   tilelang.instrumentation.session.CompilePassInstrumentationSession
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.instrumentation.session.register_pass_instrumentation_tool
+   tilelang.instrumentation.session.unregister_pass_instrumentation_tool
+   tilelang.instrumentation.session.current_compile_pass_instrumentation
+   tilelang.instrumentation.session.current_pass_instrument_context
+   tilelang.instrumentation.session.compile_pass_instrumentation
+   tilelang.instrumentation.session.create_pass_instruments
+   tilelang.instrumentation.session.instrument_current_pass_context
+   tilelang.instrumentation.session.run_codegen_with_instrumentation
+   tilelang.instrumentation.session.pass_pipeline
+
+
+Module Contents
+---------------
+
+.. py:class:: CodegenEvent
+
+   One explicit backend code-generation call within a compile session.
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: mod
+      :type:  Any
+
+
+   .. py:attribute:: target
+      :type:  Any
+
+
+.. py:class:: PassInstrumentationTool
+
+   Per-compile extension point for pass and codegen developer tools.
+
+
+   .. py:attribute:: pass_instrument_priority
+      :value: 0
+
+
+      Ordering key for PassContext callbacks; lower values run first.
+
+
+   .. py:method:: create_pass_instrument()
+
+      Create fresh callback state for one TVM PassContext.
+
+
+
+   .. py:method:: pipeline_scope(base_phase)
+
+      Return the scope entered around one backend pass pipeline.
+
+
+
+   .. py:method:: run_codegen(event, next_call)
+
+      Observe or wrap codegen, delegating to ``next_call`` exactly once.
+
+
+
+   .. py:method:: finish(error)
+
+      Finalize this tool after its owning compile session exits.
+
+
+
+.. py:class:: CompilePassInstrumentationSession(tools, *, name = None)
+
+   Concrete pass-tool state owned by one logical compilation.
+
+
+   .. py:attribute:: name
+      :value: None
+
+
+
+   .. py:attribute:: tools
+
+
+   .. py:method:: create_pass_instruments(*, context = None)
+
+      Create independent, ordered instruments for one TVM PassContext.
+
+
+
+   .. py:method:: pipeline_scope(base_phase)
+
+      Enter every tool scope for one backend pass pipeline.
+
+
+
+   .. py:method:: run_codegen(event, call)
+
+      Compose tool codegen middleware in registration order.
+
+
+
+   .. py:method:: finish(error)
+
+      Finalize tools in reverse registration order.
+
+
+
+   .. py:method:: find_tool(tool_type)
+
+      Return the first tool matching ``tool_type``, if present.
+
+
+
+.. py:function:: register_pass_instrumentation_tool(name, factory)
+
+   Register or replace a factory used by future compile sessions.
+
+
+.. py:function:: unregister_pass_instrumentation_tool(name)
+
+   Stop adding a tool to future compile sessions.
+
+
+.. py:function:: current_compile_pass_instrumentation()
+
+   Return the compile session active in this execution context.
+
+
+.. py:function:: current_pass_instrument_context()
+
+   Return metadata for the PassContext whose instruments are being created.
+
+
+.. py:function:: compile_pass_instrumentation(name = None, *, tools = (), include_default_tools = True, reuse_existing = True)
+
+   Own pass-tool state for one logical compilation.
+
+   Nested compiler helpers reuse the active session by default, so every
+   PassContext involved in one compilation writes to the same tool state.
+   Independent tools such as Pass Visualizer can request a fresh session by
+   setting ``reuse_existing=False`` and ``include_default_tools=False``.
+
+
+.. py:function:: create_pass_instruments(*, context = None)
+
+   Create instruments for the active compile session, if any.
+
+   ``context`` is descriptive metadata for this particular TVM PassContext.
+   Tools can snapshot it during callback creation without changing their
+   ``create_pass_instrument`` interface.
+
+
+.. py:function:: instrument_current_pass_context()
+
+   Temporarily add active-session instruments to TVM's current context.
+
+   Compiler front doors use this only when they created the compile session
+   themselves. Nested helpers normally run inside a caller-owned
+   ``PassContext`` whose instruments were created from the same session, so
+   they must not attach a duplicate set.
+
+
+.. py:function:: run_codegen_with_instrumentation(name, mod, target, call)
+
+   Run an explicit backend codegen call through the active session.
+
+
+.. py:function:: pass_pipeline(name)
+
+   Run a backend pipeline under its phase and compile-session tools.
+
+

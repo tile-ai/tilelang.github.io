@@ -33,6 +33,7 @@ Classes
 
    tilelang.tools.pass_visualizer.core.PassStructureRecord
    tilelang.tools.pass_visualizer.core.StructureTreePassInstrument
+   tilelang.tools.pass_visualizer.core.StructureTreePassTool
 
 
 Functions
@@ -116,48 +117,51 @@ Module Contents
 
 .. py:class:: StructureTreePassInstrument
 
+   Bases: :py:obj:`tilelang.instrumentation.StackedPassInstrument`
+
+
    Capture structure trees around the real top-level passes in a pipeline.
 
-   Some top-level TileLang passes invoke nested TVM passes internally.  Those
-   callbacks are tracked so before/after events remain correctly paired, but
-   only depth-zero passes become browser stages.  This preserves the viewer's
-   linear pipeline semantics instead of duplicating a parent's changes in its
-   nested implementation details.
+   Some top-level TileLang passes invoke nested TVM passes internally.  The
+   shared stack instrument tracks every callback for pairing, while this
+   consumer snapshots only depth-zero passes so the browser remains linear.
 
 
-   .. py:attribute:: records
-      :type:  list[PassStructureRecord]
-      :value: []
+   .. py:property:: records
+      :type: list[PassStructureRecord]
 
 
 
-   .. py:attribute:: input_lines
-      :type:  list[str] | None
-      :value: None
+   .. py:property:: input_lines
+      :type: list[str] | None
 
 
 
-   .. py:attribute:: incomplete_passes
-      :type:  list[str]
-      :value: []
+   .. py:property:: incomplete_passes
+      :type: list[str]
 
-
-
-   .. py:method:: enter_pass_ctx()
-
-
-   .. py:method:: exit_pass_ctx()
-
-
-   .. py:method:: run_before_pass(mod, info)
-
-
-   .. py:method:: run_after_pass(mod, info)
 
 
    .. py:method:: ordered_records()
 
       Return completed top-level pass records in execution order.
 
+
+
+.. py:class:: StructureTreePassTool
+
+   Bases: :py:obj:`tilelang.instrumentation.PassInstrumentationTool`
+
+
+   Per-viewer tool that creates its PassContext-local capture instrument.
+
+
+   .. py:attribute:: instrument
+      :type:  StructureTreePassInstrument | None
+      :value: None
+
+
+
+   .. py:method:: create_pass_instrument()
 
 

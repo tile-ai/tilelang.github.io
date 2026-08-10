@@ -1,11 +1,11 @@
-tilelang.utils.pass_timing
+tilelang.tools.pass_timing
 ==========================
 
-.. py:module:: tilelang.utils.pass_timing
+.. py:module:: tilelang.tools.pass_timing
 
 .. autoapi-nested-parse::
 
-   Per-pass timing instrumentation for tilelang compilation pipelines.
+   Pass-timing tool for TileLang compilation pipelines.
 
    Records inclusive and self wall-clock duration for each pass using
    ``time.monotonic()``. Data persists after PassContext exit for
@@ -16,21 +16,14 @@ tilelang.utils.pass_timing
 
 
 
-Attributes
-----------
-
-.. autoapisummary::
-
-   tilelang.utils.pass_timing.logger
-
-
 Classes
 -------
 
 .. autoapisummary::
 
-   tilelang.utils.pass_timing.PassTimingRecord
-   tilelang.utils.pass_timing.TileLangPassTimingInstrument
+   tilelang.tools.pass_timing.PassTimingRecord
+   tilelang.tools.pass_timing.TileLangPassTimingInstrument
+   tilelang.tools.pass_timing.PassTimingTool
 
 
 Functions
@@ -38,14 +31,11 @@ Functions
 
 .. autoapisummary::
 
-   tilelang.utils.pass_timing.build_pass_instruments
-   tilelang.utils.pass_timing.report_pass_timing_on_exit
+   tilelang.tools.pass_timing.create_pass_timing_tool
 
 
 Module Contents
 ---------------
-
-.. py:data:: logger
 
 .. py:class:: PassTimingRecord
 
@@ -122,13 +112,59 @@ Module Contents
 
 
 
-.. py:function:: build_pass_instruments(base_instruments, threshold_ms)
+.. py:class:: PassTimingTool(threshold_ms = 0.0)
 
-   Build instruments with timing first so later after-pass callbacks are excluded.
+   Bases: :py:obj:`tilelang.instrumentation.PassInstrumentationTool`
 
 
-.. py:function:: report_pass_timing_on_exit(timing_instrument, context)
+   Per-compile owner of timing callbacks and their combined report.
 
-   Emit a timing report after PassContext exits, including on failure.
+
+   .. py:attribute:: pass_instrument_priority
+      :value: -100
+
+
+
+   .. py:attribute:: threshold_ms
+      :value: 0.0
+
+
+
+   .. py:method:: create_pass_instrument()
+
+
+   .. py:property:: timings
+      :type: tuple[TileLangPassTimingInstrument, Ellipsis]
+
+
+
+   .. py:property:: contexts
+      :type: tuple[str | None, Ellipsis]
+
+
+
+   .. py:property:: records
+      :type: list[PassTimingRecord]
+
+
+
+   .. py:method:: report()
+
+      Generate one compile report containing one section per PassContext.
+
+
+
+   .. py:method:: print_report()
+
+      Print all PassContext timing sections in one logger call.
+
+
+
+   .. py:method:: finish(error)
+
+
+.. py:function:: create_pass_timing_tool(pass_configs)
+
+   Create the per-compile timing tool when config or environment enables it.
 
 

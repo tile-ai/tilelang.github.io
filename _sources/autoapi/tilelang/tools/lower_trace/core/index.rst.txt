@@ -5,24 +5,13 @@ tilelang.tools.lower_trace.core
 
 .. autoapi-nested-parse::
 
-   IR lower trace — zero-intrusion debug tool for visualizing compilation passes.
+   IR lower tracing implemented as a per-compilation instrumentation tool.
 
-   Monkey-patches ``tvm.ir.transform.Pass.__call__`` and ``PassPipeline.lower``
-   to automatically capture IR before/after every pass and generate diff reports.
-
-   This module reads its configuration (``TL_LOWER_TRACE`` / ``TL_LOWER_TRACE_DIR``)
-   through the centralized ``tilelang.env`` environment, or via values passed
-   programmatically to ``enable()``.
-
-   Supports two architectures:
-   - New: ``PassPipeline.lower`` (each backend registers a pipeline object)
-   - Old: phase-based functions called from ``tilelang.engine.lower``
-
-   Usage::
-
-       TL_LOWER_TRACE=1 python my_kernel.py        # HTML report
-       TL_LOWER_TRACE=terminal python my_kernel.py  # terminal diff only
-       TL_LOWER_TRACE=both python my_kernel.py      # both terminal and HTML
+   ``enable()`` only registers configuration for future compilations.  Every
+   compiler front door snapshots that configuration into a distinct
+   ``LowerTraceSession`` which owns its records, pass numbering, pipeline scopes,
+   and report lifecycle.  No TVM global function or default ``PassContext`` is
+   patched.
 
 
 
@@ -43,6 +32,7 @@ Classes
 .. autoapisummary::
 
    tilelang.tools.lower_trace.core.LowerRecord
+   tilelang.tools.lower_trace.core.LowerTraceSession
 
 
 Functions
@@ -50,6 +40,9 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.tools.lower_trace.core.get_last_session
+   tilelang.tools.lower_trace.core.current_lower_trace_session
+   tilelang.tools.lower_trace.core.create_pass_instrument
    tilelang.tools.lower_trace.core.enable
    tilelang.tools.lower_trace.core.disable
    tilelang.tools.lower_trace.core.reset
@@ -76,7 +69,7 @@ Module Contents
 
 .. py:class:: LowerRecord
 
-   Result of running a single pass.
+   Result of running a single compiler pass or codegen boundary.
 
 
    .. py:attribute:: phase
@@ -127,45 +120,161 @@ Module Contents
 
 
 
+   .. py:attribute:: depth
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: parent_index
+      :type:  int | None
+      :value: None
+
+
+
+.. py:class:: LowerTraceSession(*, mode, trace_dir, codegen_output = _UNSET)
+
+   Bases: :py:obj:`tilelang.instrumentation.PassInstrumentationTool`
+
+
+   All mutable lower-trace state for one logical compilation.
+
+
+   .. py:attribute:: mode
+
+
+   .. py:attribute:: trace_dir
+
+
+   .. py:attribute:: codegen_output
+
+
+   .. py:attribute:: records
+      :type:  list[LowerRecord]
+      :value: []
+
+
+
+   .. py:attribute:: section_cache
+      :type:  dict[tuple[str, int], str]
+
+
+   .. py:attribute:: pass_index
+      :value: 0
+
+
+
+   .. py:attribute:: pipeline_count
+      :value: 0
+
+
+
+   .. py:attribute:: script_dir
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: run_dir
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:property:: enabled
+      :type: bool
+
+
+
+   .. py:property:: should_print_terminal
+      :type: bool
+
+
+
+   .. py:property:: should_generate_html
+      :type: bool
+
+
+
+   .. py:method:: ensure_script_dir()
+
+
+   .. py:method:: ensure_run_dir()
+
+
+   .. py:method:: get_codegen_output_path()
+
+
+   .. py:method:: allocate_index()
+
+
+   .. py:method:: append_record(record)
+
+
+   .. py:method:: save_raw_files(record)
+
+      Persist snapshots without allowing tracing I/O to fail compilation.
+
+
+
+   .. py:method:: update_html_link(run_html_path)
+
+
+   .. py:method:: flush_html()
+
+
+   .. py:method:: create_pass_instrument()
+
+
+   .. py:method:: pipeline_scope(base_phase)
+
+
+   .. py:method:: abort_active_instruments(error)
+
+
+   .. py:method:: run_codegen(event, next_call)
+
+
+   .. py:method:: finish(error)
+
+
+   .. py:method:: reset()
+
+      Clear this session's records; primarily useful to unit tests.
+
+
+
+.. py:function:: get_last_session()
+
+   Return the most recent session in the current execution context.
+
+
+.. py:function:: current_lower_trace_session()
+
+   Return lower trace state for the current compile context, if present.
+
+
+.. py:function:: create_pass_instrument()
+
+   Create an instrument for the active session (standalone if necessary).
+
+
 .. py:function:: enable(*, mode=_UNSET, trace_dir=_UNSET, codegen_output=_UNSET)
 
-   Enable IR pass tracing via monkey-patching.
+   Enable lower tracing for future compile sessions.
 
-   :param mode: Force a trace mode (``'terminal'``, ``'html'``, ``'both'``, or
-                ``None`` to disable).  When omitted, the mode is read from the
-                ``TL_LOWER_TRACE`` env var (via ``tilelang.env``) or a prior
-                ``enable`` override.
-   :type mode: str | None, optional
-   :param trace_dir: Force the trace output base directory.  When omitted, falls back to
-                     the ``TL_LOWER_TRACE_DIR`` env var, then
-                     ``./tmp/lower_trace_dir``.
-   :type trace_dir: str | None, optional
-   :param codegen_output: Path to save the codegen-generated C++/CUDA/etc. source code.  When
-                          omitted, defaults to ``<script_dir>/codegen.cpp`` (inside the
-                          per-script output directory, beside ``.run_records/``).  Pass ``None``
-                          explicitly to suppress all extra saves.  See ``_wrap_codegen_ffi``
-                          for the three-file (``<path>`` / ``<path>.original`` /
-                          ``<path>.latest``) patch-and-recompile workflow.
-   :type codegen_output: str | None, optional
+   An already-running compilation keeps the immutable configuration snapshot
+   with which it started.  Calling ``enable`` or ``disable`` therefore never
+   mutates another kernel's active instrumentation.
 
 
 .. py:function:: disable()
 
-   Remove the pass tracing hook and restore original behavior.
+   Stop adding lower trace to future compilations.
 
 
 .. py:function:: reset()
 
-   Clear collected records and section cache.
-
-   ``_script_dir`` is preserved (stable across runs, holds codegen files +
-   html symlink).  ``_run_dir`` is also preserved: clearing it here would
-   split a single run into two directories, because pre-pipeline passes
-   (which lazily create it via ``_ensure_run_dir``) run before
-   ``PassPipeline.lower``/``_wrap_phase`` invokes ``reset`` on its first run.
-   A fresh ``_run_dir`` for each subsequent run is instead established
-   directly in ``_traced_pipeline_lower`` / ``_wrap_phase`` (when
-   ``_run_counter > 1``), without calling ``reset`` so that records keep
-   accumulating across runs.
+   Reset only the compile session active in the current execution context.
 
 
