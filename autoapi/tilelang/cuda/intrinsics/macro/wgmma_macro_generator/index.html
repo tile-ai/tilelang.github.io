@@ -770,7 +770,10 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_gmma_descriptor</span></code></a>(tl_layout, buffer, transposed)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_wgmma_inst_n</span></code></a>(warp_col_tiles)</p></td>
+<td><p>Widest legal WGMMA <code class="docutils literal notranslate"><span class="pre">N</span></code> that tiles <code class="docutils literal notranslate"><span class="pre">warp_col_tiles</span></code> exactly.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_gmma_descriptor</span></code></a>(tl_layout, buffer, transposed)</p></td>
 <td><p>Port of CuTe <code class="docutils literal notranslate"><span class="pre">make_gmma_desc</span></code>.</p></td>
 </tr>
 </tbody>
@@ -783,6 +786,29 @@
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.lift">
 <span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">lift</span></span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.lift" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">select_wgmma_inst_n</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">warp_col_tiles</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n" title="Link to this definition">¶</a></dt>
+<dd><p>Widest legal WGMMA <code class="docutils literal notranslate"><span class="pre">N</span></code> that tiles <code class="docutils literal notranslate"><span class="pre">warp_col_tiles</span></code> exactly.</p>
+<p>Hopper WGMMA accepts <code class="docutils literal notranslate"><span class="pre">N</span></code> in <code class="docutils literal notranslate"><span class="pre">[8,</span> <span class="pre">256]</span></code> with <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">%</span> <span class="pre">8</span> <span class="pre">==</span> <span class="pre">0</span></code>, so an extent
+such as 96 or 160 is a single legal instruction.  Selecting
+<code class="docutils literal notranslate"><span class="pre">gcd(warp_col_tiles,</span> <span class="pre">256)</span></code> instead splits those into n32 / n16 atoms and
+gives up most of the tensor-core throughput.</p>
+<p>Widening is restricted to multiples of 16 for two independent reasons:
+<code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">%</span> <span class="pre">16</span> <span class="pre">==</span> <span class="pre">8</span></code> already miscomputes for <code class="docutils literal notranslate"><span class="pre">warp_cols</span> <span class="pre">&gt;</span> <span class="pre">1</span></code> (issue #2593), and
+the integer instruction tables in <code class="docutils literal notranslate"><span class="pre">wgmma.h</span></code> / <code class="docutils literal notranslate"><span class="pre">wgmma_sp.h</span></code> only
+instantiate multiples of 16 (plus 8 and 24), so a wider <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">%</span> <span class="pre">16</span> <span class="pre">==</span> <span class="pre">8</span></code>
+would not even compile for the s8 path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>warp_col_tiles</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams">
@@ -1283,6 +1309,7 @@ in <cite>local_buf</cite> are laid out.</p>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.lift"><code class="docutils literal notranslate"><span class="pre">lift</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n"><code class="docutils literal notranslate"><span class="pre">select_wgmma_inst_n()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_mode"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.swizzle_mode</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.leading_byte_offset"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.leading_byte_offset</span></code></a></li>

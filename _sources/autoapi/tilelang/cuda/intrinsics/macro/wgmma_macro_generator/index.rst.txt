@@ -26,6 +26,7 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n
    tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor
 
 
@@ -33,6 +34,22 @@ Module Contents
 ---------------
 
 .. py:data:: lift
+
+.. py:function:: select_wgmma_inst_n(warp_col_tiles)
+
+   Widest legal WGMMA ``N`` that tiles ``warp_col_tiles`` exactly.
+
+   Hopper WGMMA accepts ``N`` in ``[8, 256]`` with ``N % 8 == 0``, so an extent
+   such as 96 or 160 is a single legal instruction.  Selecting
+   ``gcd(warp_col_tiles, 256)`` instead splits those into n32 / n16 atoms and
+   gives up most of the tensor-core throughput.
+
+   Widening is restricted to multiples of 16 for two independent reasons:
+   ``N % 16 == 8`` already miscomputes for ``warp_cols > 1`` (issue #2593), and
+   the integer instruction tables in ``wgmma.h`` / ``wgmma_sp.h`` only
+   instantiate multiples of 16 (plus 8 and 24), so a wider ``N % 16 == 8``
+   would not even compile for the s8 path.
+
 
 .. py:class:: WGMMADescriptorParams
 
