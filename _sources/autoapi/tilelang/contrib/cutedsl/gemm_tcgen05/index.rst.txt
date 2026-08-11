@@ -45,6 +45,16 @@ Functions
    tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp64bNx
    tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp128bNx
    tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_32dp256bNx
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_16dp64bNx
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_16dp128bNx
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_ld_16dp256bNx
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_st_32dp32bNx
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_st_32dp64bNx
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_st_32dp128bNx
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_st_32dp256bNx
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_st_16dp64bNx
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_st_16dp128bNx
+   tilelang.contrib.cutedsl.gemm_tcgen05.tcgen05_st_16dp256bNx
 
 
 Module Contents
@@ -181,5 +191,77 @@ Module Contents
    Matches tl::tmem_ld_32dp256bNx from tcgen_05_ld.h.
    N: x-count for 16x256b instructions. Total output: 8*N i32 regs.
    16x256b.xN produces 4*N i32 regs per half.
+
+
+.. py:function:: tcgen05_ld_16dp64bNx(N, pack16, tmem_start_col, tmem_col_offset, dst_ptr)
+
+   Load from TMEM using a single 16x64b issue (low 16 rows only).
+
+   N: x-count for the 16x64b instruction. Total output: N i32 regs.
+
+
+.. py:function:: tcgen05_ld_16dp128bNx(N, pack16, tmem_start_col, tmem_col_offset, dst_ptr)
+
+   Load from TMEM using a single 16x128b issue (low 16 rows only).
+
+   N: x-count for the 16x128b instruction. Total output: 2*N i32 regs.
+
+
+.. py:function:: tcgen05_ld_16dp256bNx(N, pack16, tmem_start_col, tmem_col_offset, dst_ptr)
+
+   Load from TMEM using a single 16x256b issue (low 16 rows only).
+
+   N: x-count for the 16x256b instruction. Total output: 4*N i32 regs.
+
+
+.. py:function:: tcgen05_st_32dp32bNx(N, unpack16, tmem_start_col, tmem_col_offset, src_ptr)
+
+   Store N uint32 values to TMEM using tcgen05.st.sync.aligned.32x32b.
+
+   Matches tl::tcgen05_st_32dp32bNx from copy_sm100.h.
+
+
+.. py:function:: tcgen05_st_32dp64bNx(N, unpack16, tmem_start_col, tmem_col_offset, src_ptr)
+
+   Store to TMEM using 32dp64b pattern (2x 16x64b for lower/upper 16 rows).
+
+   N: x-count for 16x64b instructions. Total input: 2*N i32 regs, the lower
+   half's registers first (the duplicate issue's registers follow all
+   repetitions, matching the C++ wrappers).
+
+
+.. py:function:: tcgen05_st_32dp128bNx(N, unpack16, tmem_start_col, tmem_col_offset, src_ptr)
+
+   Store to TMEM using 32dp128b pattern (2x 16x128b for lower/upper 16 rows).
+
+   N: x-count for 16x128b instructions. Total input: 4*N i32 regs.
+
+
+.. py:function:: tcgen05_st_32dp256bNx(N, unpack16, tmem_start_col, tmem_col_offset, src_ptr)
+
+   Store to TMEM using 32dp256b pattern (2x 16x256b for lower/upper 16 rows).
+
+   N: x-count for 16x256b instructions. Total input: 8*N i32 regs.
+
+
+.. py:function:: tcgen05_st_16dp64bNx(N, unpack16, tmem_start_col, tmem_col_offset, src_ptr)
+
+   Store to TMEM using a single 16x64b issue (low 16 rows only).
+
+   N: x-count for the 16x64b instruction. Total input: N i32 regs.
+
+
+.. py:function:: tcgen05_st_16dp128bNx(N, unpack16, tmem_start_col, tmem_col_offset, src_ptr)
+
+   Store to TMEM using a single 16x128b issue (low 16 rows only).
+
+   N: x-count for the 16x128b instruction. Total input: 2*N i32 regs.
+
+
+.. py:function:: tcgen05_st_16dp256bNx(N, unpack16, tmem_start_col, tmem_col_offset, src_ptr)
+
+   Store to TMEM using a single 16x256b issue (low 16 rows only).
+
+   N: x-count for the 16x256b instruction. Total input: 4*N i32 regs.
 
 
