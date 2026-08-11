@@ -546,6 +546,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../utils/index.html">tilelang.language.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ws_schedule/index.html">tilelang.language.ws_schedule</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../layout/index.html">tilelang.layout</a><input aria-label="Toggle navigation of tilelang.layout" class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -738,6 +739,18 @@
           <section id="module-tilelang.language.annotations">
 <span id="tilelang-language-annotations"></span><h1>tilelang.language.annotations<a class="headerlink" href="#module-tilelang.language.annotations" title="Link to this heading">¶</a></h1>
 <p>Annotation helpers exposed on the TileLang language surface.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.annotations.WSID" title="tilelang.language.annotations.WSID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WSID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -761,12 +774,23 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.annotations.annotate_restrict_buffers" title="tilelang.language.annotations.annotate_restrict_buffers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_restrict_buffers</span></code></a>(*buffers)</p></td>
 <td><p>Mark the given buffer parameters as non-restrict.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.annotations.annotate_ws_schedule" title="tilelang.language.annotations.annotate_ws_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_ws_schedule</span></code></a>(schedule)</p></td>
+<td><p>Attach a warp-specialization schedule to the kernel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.annotations.ws_op" title="tilelang.language.annotations.ws_op"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ws_op</span></code></a>(op_id)</p></td>
+<td><p>Manually annotate the enclosed statement(s) with a stable</p></td>
+</tr>
 </tbody>
 </table>
 </div>
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.language.annotations.WSID">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.annotations.</span></span><span class="sig-name descname"><span class="pre">WSID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tl.ws_op_id'</span></em><a class="headerlink" href="#tilelang.language.annotations.WSID" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.annotations.use_swizzle">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.annotations.</span></span><span class="sig-name descname"><span class="pre">use_swizzle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'row'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotations.use_swizzle" title="Link to this definition">¶</a></dt>
@@ -858,6 +882,50 @@ alias, for example overlapping slices from the same base tensor.</p>
 </div>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.annotations.annotate_ws_schedule">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.annotations.</span></span><span class="sig-name descname"><span class="pre">annotate_ws_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schedule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotations.annotate_ws_schedule" title="Link to this definition">¶</a></dt>
+<dd><p>Attach a warp-specialization schedule to the kernel.</p>
+<p><code class="docutils literal notranslate"><span class="pre">schedule</span></code> is a typed <a class="reference internal" href="../ws_schedule/index.html#tilelang.language.ws_schedule.WSSchedule" title="tilelang.language.ws_schedule.WSSchedule"><code class="xref py py-class docutils literal notranslate"><span class="pre">WSSchedule</span></code></a>
+object describing how to transform the straight-line kernel into a
+warp-specialized one: warp roles, pipelines (full/empty barrier pairs
+protecting multi-versioned buffers), and per-role instruction sequences
+per loop scope. It is materialized by the <code class="docutils literal notranslate"><span class="pre">MaterializeWSSchedule</span></code> pass;
+see <code class="docutils literal notranslate"><span class="pre">examples/aws/gemm.py</span></code> for a complete example.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.annotations.ws_op">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.annotations.</span></span><span class="sig-name descname"><span class="pre">ws_op</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotations.ws_op" title="Link to this definition">¶</a></dt>
+<dd><p>Manually annotate the enclosed statement(s) with a stable
+warp-specialization op or scope id.</p>
+<p>Wraps the body in an <code class="docutils literal notranslate"><span class="pre">AttrStmt</span></code> with key <a class="reference internal" href="#tilelang.language.annotations.WSID" title="tilelang.language.annotations.WSID"><code class="xref py py-data docutils literal notranslate"><span class="pre">WSID</span></code></a>. This is the
+annotation of last resort, for statement forms that cannot carry
+<code class="docutils literal notranslate"><span class="pre">annotations=</span></code> themselves. The enclosed statements — a scalar Bind,
+or several statements such as an inlined scheduler method — become
+ONE opaque op:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">ws_op</span><span class="p">(</span><span class="s2">&quot;rescale_vote&quot;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">should_rescale</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">any_sync</span><span class="p">(</span><span class="n">scale_shared</span><span class="p">[</span><span class="n">tid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">ws_op</span><span class="p">(</span><span class="s2">&quot;sched_next&quot;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">sched</span><span class="o">.</span><span class="n">next_tile</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>With a scope id the wrapper encloses a <code class="docutils literal notranslate"><span class="pre">while</span></code> loop and opens that
+scope (serial scope loops carry the id in their own annotations):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">ws_op</span><span class="p">(</span><span class="s2">&quot;loop_wave&quot;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">while</span> <span class="n">sched</span><span class="o">.</span><span class="n">valid</span><span class="p">():</span>
+<span class="gp">... </span>        <span class="o">...</span>
+</pre></div>
+</div>
+<p>Tile ops and loops pass <code class="docutils literal notranslate"><span class="pre">annotations={T.WSID:</span> <span class="pre">...}</span></code> directly
+instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>op_id</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -917,14 +985,18 @@ alias, for example overlapping slices from the same base tensor.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.language.annotations</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.language.annotations.WSID"><code class="docutils literal notranslate"><span class="pre">WSID</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.use_swizzle"><code class="docutils literal notranslate"><span class="pre">use_swizzle()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_layout"><code class="docutils literal notranslate"><span class="pre">annotate_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_safe_value"><code class="docutils literal notranslate"><span class="pre">annotate_safe_value()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_l2_hit_ratio"><code class="docutils literal notranslate"><span class="pre">annotate_l2_hit_ratio()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_min_blocks_per_sm"><code class="docutils literal notranslate"><span class="pre">annotate_min_blocks_per_sm()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_restrict_buffers"><code class="docutils literal notranslate"><span class="pre">annotate_restrict_buffers()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.annotations.annotate_ws_schedule"><code class="docutils literal notranslate"><span class="pre">annotate_ws_schedule()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.annotations.ws_op"><code class="docutils literal notranslate"><span class="pre">ws_op()</span></code></a></li>
 </ul>
 </li>
 </ul>

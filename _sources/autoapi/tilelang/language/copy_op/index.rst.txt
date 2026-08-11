@@ -83,7 +83,7 @@ Module Contents
      scope-specific decisions happen during lowering.
 
 
-.. py:function:: copy_cluster(src, dst, *, dst_block = None, cluster_mask = None, remote_barrier = None, eviction_policy = None, coalesced_width = None, loop_layout = None)
+.. py:function:: copy_cluster(src, dst, *, dst_block = None, cluster_mask = None, remote_barrier = None, eviction_policy = None, coalesced_width = None, annotations = None, loop_layout = None)
 
    Cluster-aware copy for TMA multicast or SM-to-SM shared-memory copy.
 
@@ -99,6 +99,8 @@ Module Contents
    :param coalesced_width: Vectorization width (in elements) for the SIMT loop
                            used on the SM-to-SM fallback path (``dst_block`` set, no fast
                            bulk-async route available).
+   :param annotations: Additional annotations dict. Values in annotations take
+                       precedence over individual arguments.
    :param loop_layout: Parallel loop layout hint (Fragment) for the SIMT loop on
                        the SM-to-SM fallback path. Incompatible with the TMA multicast
                        path (``cluster_mask`` set).
@@ -165,7 +167,7 @@ Module Contents
    :rtype: tirx.Call
 
 
-.. py:function:: tma_gather4(src, dst, col, rows, *, barrier, swizzle=None, eviction_policy = None)
+.. py:function:: tma_gather4(src, dst, col, rows, *, barrier, swizzle=None, eviction_policy = None, annotations = None)
 
    Issue a TMA tile::gather4 load (sm_100a, Blackwell).
 
@@ -180,6 +182,9 @@ Module Contents
    The ``swizzle`` kwarg is deprecated; mark the shared tile via
    ``T.annotate_layout`` for non-default swizzle.
 
+   ``annotations`` is an additional annotations dict, merged before the
+   internal gather4 encoding keys.
+
 
 .. py:function:: tma_gather4_bytes(K_box, dtype)
 
@@ -187,7 +192,7 @@ Module Contents
    to ``T.mbarrier_expect_tx`` immediately before ``T.tma_gather4``.
 
 
-.. py:function:: tma_scatter4(src, dst, col, rows, *, swizzle=None, eviction_policy = None)
+.. py:function:: tma_scatter4(src, dst, col, rows, *, swizzle=None, eviction_policy = None, annotations = None)
 
    Issue a TMA tile::scatter4 store (sm_100a, Blackwell).
 
@@ -196,8 +201,11 @@ Module Contents
    / ``tma_store_wait`` and the ``T.shuffle_elect`` guard. See
    :func:`tma_gather4` for descriptor / swizzle inference details.
 
+   ``annotations`` is an additional annotations dict, merged before the
+   internal scatter4 encoding keys.
 
-.. py:function:: transpose(src, dst)
+
+.. py:function:: transpose(src, dst, annotations = None)
 
    Transpose a 2D buffer in shared memory: dst[j, i] = src[i, j].
 
@@ -206,12 +214,13 @@ Module Contents
 
    :param src: Source buffer or region of shape (..., M, N).
    :param dst: Destination buffer or region of shape (..., N, M).
+   :param annotations: Optional annotations to attach to the call.
 
    :returns: A handle to the transpose operation.
    :rtype: tirx.Call
 
 
-.. py:function:: im2col(img, col, nhw_step, c_step, kernel, stride, dilation, pad, eviction_policy = None)
+.. py:function:: im2col(img, col, nhw_step, c_step, kernel, stride, dilation, pad, eviction_policy = None, annotations = None)
 
    Perform im2col transformation for 2D convolution.
 
@@ -231,12 +240,13 @@ Module Contents
    :type dilation: int
    :param pad: Padding size
    :type pad: int
+   :param annotations: Optional annotations to attach to the call
 
    :returns: A handle to the im2col operation
    :rtype: tirx.Call
 
 
-.. py:function:: c2d_im2col(img, col, nhw_step, c_step, kernel, stride, dilation, pad, eviction_policy = None)
+.. py:function:: c2d_im2col(img, col, nhw_step, c_step, kernel, stride, dilation, pad, eviction_policy = None, annotations = None)
 
    Deprecated alias for :func:`im2col`.
 

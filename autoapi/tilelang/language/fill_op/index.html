@@ -546,6 +546,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../utils/index.html">tilelang.language.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ws_schedule/index.html">tilelang.language.ws_schedule</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../layout/index.html">tilelang.layout</a><input aria-label="Toggle navigation of tilelang.layout" class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -743,10 +744,10 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.fill_op.fill" title="tilelang.language.fill_op.fill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill</span></code></a>(buffer, value)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.fill_op.fill" title="tilelang.language.fill_op.fill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill</span></code></a>(buffer, value[, annotations])</p></td>
 <td><p>Fill a buffer or buffer region with a specified value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.fill_op.clear" title="tilelang.language.fill_op.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>(buffer)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.fill_op.clear" title="tilelang.language.fill_op.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>(buffer[, annotations])</p></td>
 <td><p>Clear a buffer by filling it with zeros.</p></td>
 </tr>
 </tbody>
@@ -757,13 +758,14 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.fill_op.fill">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.fill_op.</span></span><span class="sig-name descname"><span class="pre">fill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.fill_op.fill" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.fill_op.</span></span><span class="sig-name descname"><span class="pre">fill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.fill_op.fill" title="Link to this definition">¶</a></dt>
 <dd><p>Fill a buffer or buffer region with a specified value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>buffer</strong> (<em>tilelang._typing.BufferLikeType</em>) – Either a TVM buffer or buffer region to be filled</p></li>
 <li><p><strong>value</strong> (<em>tvm.tirx.PrimExpr</em>) – The value to fill the buffer with</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>) – Optional annotations to attach to the fill call</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -777,11 +779,14 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.fill_op.clear">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.fill_op.</span></span><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.fill_op.clear" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.fill_op.</span></span><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.fill_op.clear" title="Link to this definition">¶</a></dt>
 <dd><p>Clear a buffer by filling it with zeros.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>tilelang._typing.BufferLikeType</em>) – Either a TVM buffer or a variable that contains a buffer region</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>tilelang._typing.BufferLikeType</em>) – Either a TVM buffer or a variable that contains a buffer region</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>) – Optional annotations forwarded to the underlying fill</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A fill operation that sets the buffer contents to zero</p>

@@ -546,6 +546,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../language/utils/index.html">tilelang.language.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../language/ws_schedule/index.html">tilelang.language.ws_schedule</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../layout/index.html">tilelang.layout</a><input aria-label="Toggle navigation of tilelang.layout" class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -782,7 +783,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.transform.AnnotateWarpGroupRegAlloc" title="tilelang.cuda.transform.AnnotateWarpGroupRegAlloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AnnotateWarpGroupRegAlloc</span></code></a>()</p></td>
 <td><p>Inject set_max_nreg calls into warp-specialized functions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.transform.PersistThreadblock" title="tilelang.cuda.transform.PersistThreadblock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PersistThreadblock</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.transform.MaterializeWSSchedule" title="tilelang.cuda.transform.MaterializeWSSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaterializeWSSchedule</span></code></a>()</p></td>
+<td><p>Materialize a user-provided warp-specialization schedule.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.transform.PersistThreadblock" title="tilelang.cuda.transform.PersistThreadblock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PersistThreadblock</span></code></a>()</p></td>
 <td><p>PersistThreadblock</p></td>
 </tr>
 </tbody>
@@ -956,6 +960,24 @@ producer and consumer branches of warp-specialized code.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cuda.transform.MaterializeWSSchedule">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cuda.transform.</span></span><span class="sig-name descname"><span class="pre">MaterializeWSSchedule</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.transform.MaterializeWSSchedule" title="Link to this definition">¶</a></dt>
+<dd><p>Materialize a user-provided warp-specialization schedule.</p>
+<p>Consumes the <code class="docutils literal notranslate"><span class="pre">ws_schedule</span></code> block annotation attached by
+<code class="docutils literal notranslate"><span class="pre">T.annotate_ws_schedule</span></code> and rewrites the kernel into explicit
+warp-specialized form (role branches, multi-versioned buffers,
+mbarrier synchronization, TMA copies, async tcgen05 MMA).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fpass</strong> – The result pass</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.transform.Pass</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.cuda.transform.PersistThreadblock">
 <span class="sig-prename descclassname"><span class="pre">tilelang.cuda.transform.</span></span><span class="sig-name descname"><span class="pre">PersistThreadblock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.transform.PersistThreadblock" title="Link to this definition">¶</a></dt>
 <dd><p>PersistThreadblock</p>
@@ -1035,6 +1057,7 @@ producer and consumer branches of warp-specialized code.</p>
 <li><a class="reference internal" href="#tilelang.cuda.transform.InjectFenceProxy"><code class="docutils literal notranslate"><span class="pre">InjectFenceProxy()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.transform.InjectTcgen05Fence"><code class="docutils literal notranslate"><span class="pre">InjectTcgen05Fence()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.transform.AnnotateWarpGroupRegAlloc"><code class="docutils literal notranslate"><span class="pre">AnnotateWarpGroupRegAlloc()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.transform.MaterializeWSSchedule"><code class="docutils literal notranslate"><span class="pre">MaterializeWSSchedule()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.transform.PersistThreadblock"><code class="docutils literal notranslate"><span class="pre">PersistThreadblock()</span></code></a></li>
 </ul>
 </li>

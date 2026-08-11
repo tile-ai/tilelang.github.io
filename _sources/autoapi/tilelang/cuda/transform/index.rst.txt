@@ -27,6 +27,7 @@ Functions
    tilelang.cuda.transform.InjectFenceProxy
    tilelang.cuda.transform.InjectTcgen05Fence
    tilelang.cuda.transform.AnnotateWarpGroupRegAlloc
+   tilelang.cuda.transform.MaterializeWSSchedule
    tilelang.cuda.transform.PersistThreadblock
 
 
@@ -143,6 +144,19 @@ Package Contents
    This pass analyzes the function to collect register hints from set_max_nreg
    and no_set_max_nreg calls, then injects appropriate set_max_nreg calls into
    producer and consumer branches of warp-specialized code.
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: MaterializeWSSchedule()
+
+   Materialize a user-provided warp-specialization schedule.
+
+   Consumes the ``ws_schedule`` block annotation attached by
+   ``T.annotate_ws_schedule`` and rewrites the kernel into explicit
+   warp-specialized form (role branches, multi-versioned buffers,
+   mbarrier synchronization, TMA copies, async tcgen05 MMA).
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass

@@ -546,6 +546,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../utils/index.html">tilelang.language.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ws_schedule/index.html">tilelang.language.ws_schedule</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../layout/index.html">tilelang.layout</a><input aria-label="Toggle navigation of tilelang.layout" class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -743,16 +744,16 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.scan_op.cumsum_fragment" title="tilelang.language.scan_op.cumsum_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum_fragment</span></code></a>(src, dst, dim, reverse)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.scan_op.cumsum_fragment" title="tilelang.language.scan_op.cumsum_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum_fragment</span></code></a>(src, dst, dim, reverse[, annotations])</p></td>
 <td><p>Compute cumulative sum for fragment buffers by copying to shared memory first.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.scan_op.cumsum" title="tilelang.language.scan_op.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a>(src[, dst, dim, reverse])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.scan_op.cumsum" title="tilelang.language.scan_op.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a>(src[, dst, dim, reverse, annotations])</p></td>
 <td><p>Compute the cumulative sum of <cite>src</cite> along <cite>dim</cite>, writing results to <cite>dst</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.scan_op.cummax_fragment" title="tilelang.language.scan_op.cummax_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cummax_fragment</span></code></a>(src, dst, dim, reverse)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.scan_op.cummax_fragment" title="tilelang.language.scan_op.cummax_fragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cummax_fragment</span></code></a>(src, dst, dim, reverse[, annotations])</p></td>
 <td><p>Compute cumulative maximum for fragment buffers by staging through shared memory.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.scan_op.cummax" title="tilelang.language.scan_op.cummax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cummax</span></code></a>(src[, dst, dim, reverse])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.scan_op.cummax" title="tilelang.language.scan_op.cummax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cummax</span></code></a>(src[, dst, dim, reverse, annotations])</p></td>
 <td><p>Compute the cumulative maximum of <cite>src</cite> along <cite>dim</cite>, writing results to <cite>dst</cite>.</p></td>
 </tr>
 </tbody>
@@ -763,7 +764,7 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.scan_op.cumsum_fragment">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.scan_op.</span></span><span class="sig-name descname"><span class="pre">cumsum_fragment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.scan_op.cumsum_fragment" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.scan_op.</span></span><span class="sig-name descname"><span class="pre">cumsum_fragment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.scan_op.cumsum_fragment" title="Link to this definition">¶</a></dt>
 <dd><p>Compute cumulative sum for fragment buffers by copying to shared memory first.</p>
 <p>This macro handles cumulative sum operations on fragment buffers by first copying
 the data to shared memory, performing the cumsum operation, and then copying back.</p>
@@ -774,6 +775,7 @@ the data to shared memory, performing the cumsum operation, and then copying bac
 <li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – Destination buffer (Buffer, BufferRegion, or BufferLoad) for output data.</p></li>
 <li><p><strong>dim</strong> (<em>int</em>) – Dimension along which to compute cumulative sum.</p></li>
 <li><p><strong>reverse</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – If True, compute cumulative sum in reverse order.</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -784,7 +786,7 @@ the data to shared memory, performing the cumsum operation, and then copying bac
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.scan_op.cumsum">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.scan_op.</span></span><span class="sig-name descname"><span class="pre">cumsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.scan_op.cumsum" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.scan_op.</span></span><span class="sig-name descname"><span class="pre">cumsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.scan_op.cumsum" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the cumulative sum of <cite>src</cite> along <cite>dim</cite>, writing results to <cite>dst</cite>.</p>
 <p>Negative <cite>dim</cite> indices are normalized (Python-style). If <cite>dst</cite> is None, the operation is performed in-place into <cite>src</cite>. Raises ValueError when <cite>dim</cite> is out of bounds for <cite>src.shape</cite>. When <cite>src.scope() == “local.fragment”</cite>, this delegates to <cite>cumsum_fragment</cite>; otherwise it emits the <cite>tl.cumsum</cite> intrinsic.</p>
 <p>Supports Buffer, BufferRegion, and BufferLoad inputs, allowing operations on buffer slices/regions.</p>
@@ -833,6 +835,7 @@ the data to shared memory, performing the cumsum operation, and then copying bac
 <li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>dim</strong> (<em>int</em>)</p></li>
 <li><p><strong>reverse</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -840,7 +843,7 @@ the data to shared memory, performing the cumsum operation, and then copying bac
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.scan_op.cummax_fragment">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.scan_op.</span></span><span class="sig-name descname"><span class="pre">cummax_fragment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.scan_op.cummax_fragment" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.scan_op.</span></span><span class="sig-name descname"><span class="pre">cummax_fragment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.scan_op.cummax_fragment" title="Link to this definition">¶</a></dt>
 <dd><p>Compute cumulative maximum for fragment buffers by staging through shared memory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -849,6 +852,7 @@ the data to shared memory, performing the cumsum operation, and then copying bac
 <li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em>) – Destination buffer (Buffer, BufferRegion, or BufferLoad) for output data.</p></li>
 <li><p><strong>dim</strong> (<em>int</em>) – Dimension along which to compute cumulative maximum.</p></li>
 <li><p><strong>reverse</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – If True, compute cumulative maximum in reverse order.</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -859,7 +863,7 @@ the data to shared memory, performing the cumsum operation, and then copying bac
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.scan_op.cummax">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.scan_op.</span></span><span class="sig-name descname"><span class="pre">cummax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.scan_op.cummax" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.scan_op.</span></span><span class="sig-name descname"><span class="pre">cummax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.scan_op.cummax" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the cumulative maximum of <cite>src</cite> along <cite>dim</cite>, writing results to <cite>dst</cite>.</p>
 <p>Negative <cite>dim</cite> indices are normalized (Python-style). If <cite>dst</cite> is None,
 the operation is performed in-place into <cite>src</cite>. When <cite>src.scope()</cite> is
@@ -872,6 +876,7 @@ the <cite>tl.cummax</cite> intrinsic.</p>
 <li><p><strong>dst</strong> (<em>tilelang._typing.BufferLikeType</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>dim</strong> (<em>int</em>)</p></li>
 <li><p><strong>reverse</strong> (<a class="reference internal" href="../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

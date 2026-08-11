@@ -9,6 +9,14 @@ tilelang.language.annotations
 
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.language.annotations.WSID
+
+
 Functions
 ---------
 
@@ -20,10 +28,16 @@ Functions
    tilelang.language.annotations.annotate_l2_hit_ratio
    tilelang.language.annotations.annotate_min_blocks_per_sm
    tilelang.language.annotations.annotate_restrict_buffers
+   tilelang.language.annotations.annotate_ws_schedule
+   tilelang.language.annotations.ws_op
 
 
 Module Contents
 ---------------
+
+.. py:data:: WSID
+   :value: 'tl.ws_op_id'
+
 
 .. py:function:: use_swizzle(panel_size, order = 'row', enable = True)
 
@@ -81,5 +95,44 @@ Module Contents
    ...     T.annotate_restrict_buffers(x, y)
    ...     with T.Kernel(N, threads=32) as pid:
    ...         y[pid] = x[pid] + 1
+
+
+.. py:function:: annotate_ws_schedule(schedule)
+
+   Attach a warp-specialization schedule to the kernel.
+
+   ``schedule`` is a typed :class:`~tilelang.language.ws_schedule.WSSchedule`
+   object describing how to transform the straight-line kernel into a
+   warp-specialized one: warp roles, pipelines (full/empty barrier pairs
+   protecting multi-versioned buffers), and per-role instruction sequences
+   per loop scope. It is materialized by the ``MaterializeWSSchedule`` pass;
+   see ``examples/aws/gemm.py`` for a complete example.
+
+
+.. py:function:: ws_op(op_id)
+
+   Manually annotate the enclosed statement(s) with a stable
+   warp-specialization op or scope id.
+
+   Wraps the body in an ``AttrStmt`` with key :data:`WSID`. This is the
+   annotation of last resort, for statement forms that cannot carry
+   ``annotations=`` themselves. The enclosed statements — a scalar Bind,
+   or several statements such as an inlined scheduler method — become
+   ONE opaque op:
+
+   >>> with T.ws_op("rescale_vote"):
+   ...     should_rescale = T.any_sync(scale_shared[tid] < 1.0)
+   >>> with T.ws_op("sched_next"):
+   ...     sched.next_tile()
+
+   With a scope id the wrapper encloses a ``while`` loop and opens that
+   scope (serial scope loops carry the id in their own annotations):
+
+   >>> with T.ws_op("loop_wave"):
+   ...     while sched.valid():
+   ...         ...
+
+   Tile ops and loops pass ``annotations={T.WSID: ...}`` directly
+   instead.
 
 

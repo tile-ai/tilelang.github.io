@@ -1,0 +1,206 @@
+tilelang.language.ws_schedule
+=============================
+
+.. py:module:: tilelang.language.ws_schedule
+
+.. autoapi-nested-parse::
+
+   Typed warp-specialization schedule objects.
+
+   A :class:`WSSchedule` is the complete description of how to transform a
+   straight-line kernel into a warp-specialized one. It is built inside the
+   kernel (after buffer allocations, so pipelines can reference the buffers
+   directly), attached with ``T.annotate_ws_schedule``, and consumed by the
+   ``MaterializeWSSchedule`` pass.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.language.ws_schedule.WSSyncKind
+   tilelang.language.ws_schedule.WSRole
+   tilelang.language.ws_schedule.WSPipeline
+   tilelang.language.ws_schedule.WSInstr
+   tilelang.language.ws_schedule.WSOpRef
+   tilelang.language.ws_schedule.WSSync
+   tilelang.language.ws_schedule.WSScope
+   tilelang.language.ws_schedule.WSSchedule
+
+
+Module Contents
+---------------
+
+.. py:class:: WSSyncKind
+
+   Bases: :py:obj:`tvm_ffi.dataclasses.Enum`
+
+
+   Pipeline synchronization kind.
+
+   The producer waits for the empty barrier (ACQUIRE) and signals the full
+   barrier (COMMIT); the consumer waits for the full barrier (WAIT) and
+   signals the empty barrier (RELEASE).
+
+
+   .. py:attribute:: PRODUCER_ACQUIRE
+      :type:  ClassVar[WSSyncKind]
+
+
+   .. py:attribute:: PRODUCER_COMMIT
+      :type:  ClassVar[WSSyncKind]
+
+
+   .. py:attribute:: CONSUMER_WAIT
+      :type:  ClassVar[WSSyncKind]
+
+
+   .. py:attribute:: CONSUMER_RELEASE
+      :type:  ClassVar[WSSyncKind]
+
+
+.. py:class:: WSRole(name, *, warps_lo, warps_hi, max_nreg = 0)
+
+   Bases: :py:obj:`tvm.ir.Node`
+
+
+   A contiguous warp range with a single duty.
+
+   :param name: Role name; keys the per-role bodies of every scope.
+   :type name: str
+   :param warps_lo: First warp of the role's range.
+   :type warps_lo: int
+   :param warps_hi: One past the last warp: the role covers warps lo..hi-1.
+   :type warps_hi: int
+   :param max_nreg: setmaxnreg budget for the role's warps; 0 leaves registers untouched.
+   :type max_nreg: int
+
+
+.. py:class:: WSPipeline(name, buffers, depth)
+
+   Bases: :py:obj:`tvm.ir.Node`
+
+
+   A full/empty mbarrier pair protecting multi-versioned buffers.
+
+   The producer waits for the empty barrier and signals the full barrier;
+   the consumer waits for the full barrier and signals the empty barrier.
+   ``depth`` is the number of buffer versions; multiple buffers can share
+   one pipeline.
+
+   :param name: Pipeline name; referenced by :class:`WSSync` instructions.
+   :type name: str
+   :param buffers: The on-chip buffers this pipeline protects (and multi-versions).
+   :type buffers: list[tirx.Buffer]
+   :param depth: The number of versions of each buffer.
+   :type depth: int
+
+
+.. py:class:: WSInstr
+
+   Bases: :py:obj:`tvm.ir.Node`
+
+
+   Base class of one step in a role's program.
+
+
+.. py:class:: WSOpRef(id)
+
+   Bases: :py:obj:`WSInstr`
+
+
+   Reference to a tile op or child scope by its stable ``tl.ws_op_id``.
+
+
+.. py:class:: WSSync(kind, pipeline, stage = 0)
+
+   Bases: :py:obj:`WSInstr`
+
+
+   A pipeline synchronization point.
+
+   Prefer the classmethod constructors::
+
+       WSSync.producer_acquire("smem", stage=0)
+       WSSync.producer_commit("smem", stage=0)
+       WSSync.consumer_wait("smem", stage=num_stages - 1)
+       WSSync.consumer_release("smem", stage=num_stages - 1)
+
+   Within one role's scope body, acquire/commit (and wait/release) of a
+   pipeline must pair up at the same stage; entries between them execute at
+   that stage's iteration offset.
+
+
+   .. py:method:: producer_acquire(pipeline, stage = 0)
+      :classmethod:
+
+
+      Wait for the empty barrier; binds the stage's buffer versions.
+
+
+
+   .. py:method:: producer_commit(pipeline, stage = 0)
+      :classmethod:
+
+
+      Signal the full barrier; ends the producer's span.
+
+
+
+   .. py:method:: consumer_wait(pipeline, stage = 0)
+      :classmethod:
+
+
+      Wait for the full barrier; binds the stage's buffer versions.
+
+
+
+   .. py:method:: consumer_release(pipeline, stage = 0)
+      :classmethod:
+
+
+      Signal the empty barrier; ends the consumer's span.
+
+
+
+.. py:class:: WSScope(id, bodies)
+
+   Bases: :py:obj:`tvm.ir.Node`
+
+
+   A loop (or the root scope) with per-role instruction lists.
+
+   :param id: The ``tl.ws_op_id`` of the loop this scope schedules, or
+              :data:`WSScope.ROOT` for the kernel's implicit root scope.
+   :type id: str
+   :param bodies: Role name -> instruction sequence. Plain strings are shorthand for
+                  :class:`WSOpRef`.
+   :type bodies: dict[str, list[WSInstr | str]]
+
+
+   .. py:attribute:: ROOT
+      :value: 'tl.ws_scope_root'
+
+
+      The id of the kernel's implicit root scope.
+
+
+.. py:class:: WSSchedule(num_warps, roles, pipelines, scopes)
+
+   Bases: :py:obj:`tvm.ir.Node`
+
+
+   The complete warp-specialization schedule of one kernel.
+
+   :param num_warps: Total warp count; overrides the kernel's thread extent.
+   :type num_warps: int
+   :param roles:
+   :type roles: list[WSRole]
+   :param pipelines:
+   :type pipelines: list[WSPipeline]
+   :param scopes:
+   :type scopes: list[WSScope]
+
+

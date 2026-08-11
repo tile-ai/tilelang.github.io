@@ -25,7 +25,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, k_pack = 1, mbar = None)
+.. py:function:: gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, k_pack = 1, mbar = None, annotations = None)
 
    TileLang GEMM operator.
 
@@ -57,12 +57,14 @@ Module Contents
    :param mbar: Mbarrier in Blackwell.
                 Required when this GEMM lowers to TCGEN5MMA. Defaults to None.
    :type mbar: BarrierType, i.e. Buffer | BufferLoad, or Var, optional
+   :param annotations: Additional annotations.
+   :type annotations: Optional[dict]
 
    :returns: A handle to the GEMM operation.
    :rtype: tirx.Call
 
 
-.. py:function:: wgmma_gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False)
+.. py:function:: wgmma_gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, annotations = None)
 
    Explicit Hopper WGMMA GEMM without an implicit wait.
 
@@ -75,7 +77,7 @@ Module Contents
    compilation fails instead of silently falling back to MMA.
 
 
-.. py:function:: tcgen05_gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, *, mbar, use_2cta = False)
+.. py:function:: tcgen05_gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, *, mbar, use_2cta = False, annotations = None)
 
    Explicit Blackwell TCGEN05 GEMM without an implicit wait.
 
