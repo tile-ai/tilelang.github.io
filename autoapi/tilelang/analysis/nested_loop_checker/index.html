@@ -748,7 +748,7 @@
 <td><p>Check if a for loop is pipelined.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.analysis.nested_loop_checker.is_tile_op" title="tilelang.analysis.nested_loop_checker.is_tile_op"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_tile_op</span></code></a>(op)</p></td>
-<td><p>Check if a call is a tile-op</p></td>
+<td><p>Check if a call is a tile-op (must not appear inside T.Parallel).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.analysis.nested_loop_checker.NestedLoopChecker" title="tilelang.analysis.nested_loop_checker.NestedLoopChecker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NestedLoopChecker</span></code></a>()</p></td>
 <td><p>User-friendly pass which identifies any invalid any nested-loop pattern.</p></td>
@@ -776,7 +776,9 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.analysis.nested_loop_checker.is_tile_op">
 <span class="sig-prename descclassname"><span class="pre">tilelang.analysis.nested_loop_checker.</span></span><span class="sig-name descname"><span class="pre">is_tile_op</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.analysis.nested_loop_checker.is_tile_op" title="Link to this definition">¶</a></dt>
-<dd><p>Check if a call is a tile-op</p>
+<dd><p>Check if a call is a tile-op (must not appear inside T.Parallel).</p>
+<p>Per-iteration intrinsics like <cite>tl.reducer_update</cite> are plain builtins
+(no TLOpBuilder), so they pass this check by construction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>op</strong> (<em>tvm.tirx.Call</em>)</p>

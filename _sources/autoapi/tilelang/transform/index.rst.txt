@@ -60,7 +60,10 @@ Functions
    tilelang.transform.LowerThreadAllreduce
    tilelang.transform.LowerIntrin
    tilelang.transform.LowerDeviceKernelLaunch
-   tilelang.transform.LayoutReducer
+   tilelang.transform.CanonicalizeLegacyReducer
+   tilelang.transform.VerifyReducerEpoch
+   tilelang.transform.ReducerPlanAndMaterialize
+   tilelang.transform.VerifyReducerConsumed
    tilelang.transform.UnrollLoop
 
 
@@ -335,13 +338,50 @@ Package Contents
    :rtype: tvm.transform.Pass
 
 
-.. py:function:: LayoutReducer()
+.. py:function:: CanonicalizeLegacyReducer()
 
-   Return a TVM transform pass that performs layout reduction/normalization.
+   Rewrite legacy (v1) reducer syntax into first-class reducer v2 ops.
 
-   This wrapper delegates to the underlying FFI implementation and returns a pass object suitable for use in a PassContext or pass pipeline. The pass is intended to simplify or reduce tensor/layout-related representations during relay/tile transformations.
+   Deprecation shim: ``T.clear`` + read-modify-write stores + in-place
+   ``T.finalize_reducer(acc)`` become ``reducer_init``/``reducer_update``/
+   out-of-place finalize with a fresh destination fragment. Unrecognized
+   access patterns are compile errors, never silently accepted.
 
-   :returns: The transform pass object produced by the FFI backend.
+   :returns: The canonicalization pass.
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: VerifyReducerEpoch()
+
+   Verify lifecycle and access rules of reducer v2 epochs.
+
+   Enforces that every ``T.alloc_reducer`` has exactly one
+   ``T.reducer_init``, updates only inside ``T.Parallel`` between init and
+   finalize, exactly one out-of-place ``T.finalize_reducer(acc, dst)``, and
+   no ordinary reads/writes/aliasing of the reducer handle.
+
+   :returns: The verification pass.
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: ReducerPlanAndMaterialize()
+
+   Plan physical storage/communication for reducer v2 epochs.
+
+   Runs after LayoutInference (loop layouts are read-only inputs) and
+   materializes the first-class reducer ops into ordinary fragment storage,
+   guarded read-modify-write updates, and an explicit finalize plan.
+
+   :returns: The planning/materialization pass.
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: VerifyReducerConsumed()
+
+   Assert no reducer v2 construct survives past materialization.
+
+   :returns: The verification pass.
+   :rtype: tvm.transform.Pass
 
 
 .. py:function:: UnrollLoop()

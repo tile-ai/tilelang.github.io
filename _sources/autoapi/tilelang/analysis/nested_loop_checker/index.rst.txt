@@ -24,7 +24,10 @@ Module Contents
 
 .. py:function:: is_tile_op(op)
 
-   Check if a call is a tile-op
+   Check if a call is a tile-op (must not appear inside T.Parallel).
+
+   Per-iteration intrinsics like `tl.reducer_update` are plain builtins
+   (no TLOpBuilder), so they pass this check by construction.
 
 
 .. py:function:: NestedLoopChecker()

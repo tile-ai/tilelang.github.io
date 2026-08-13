@@ -800,7 +800,7 @@ with the appropriate memory scope.</p>
 <td><p>Allocate a Tensor Memory (TMEM) buffer for use with 5th generation Tensor Core operations (e.g., TCGEN5.MMA).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_reducer" title="tilelang.language.allocate.alloc_reducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_reducer</span></code></a>(shape, dtype[, op, replication])</p></td>
-<td><p>Allocate a reducer buffer.</p></td>
+<td><p>Allocate a reducer: a first-class deferred reduction epoch handle.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.allocate.alloc_descriptor" title="tilelang.language.allocate.alloc_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alloc_descriptor</span></code></a>([kind, dtype])</p></td>
 <td><p>Allocate a descriptor buffer for WGMMA and TCGEN5.MMA.</p></td>
@@ -1046,25 +1046,35 @@ Use <code class="docutils literal notranslate"><span class="pre">T.deallocate_tm
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.allocate.alloc_reducer">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.allocate.</span></span><span class="sig-name descname"><span class="pre">alloc_reducer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replication</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.allocate.alloc_reducer" title="Link to this definition">¶</a></dt>
-<dd><p>Allocate a reducer buffer.</p>
-<p>Modifications needs to conform with <cite>op</cite>,
-such as <cite>op=”sum”</cite> requires <cite>reducer[…] += …</cite> and
-<cite>op=”max”</cite> requires <cite>reducer[…] = T.max(reducer[…], …)</cite>.</p>
-<p>Only after T.fill with proper initializer the reduction may begin;
-only after T.finalize_reducer the partial results will be available.</p>
-<p>For <cite>op=”sum”</cite>, filled value must be 0; for min and max, the filled initializer will become max or min clamper correspondingly.
-You may want to use <cite>T.max_value</cite> for min and <cite>T.min_value</cite> for max.</p>
+<dd><p>Allocate a reducer: a first-class deferred reduction epoch handle.</p>
+<p>The reducer lives in the virtual <code class="docutils literal notranslate"><span class="pre">local.reducer</span></code> scope and may only be
+accessed through the epoch operations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">acc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_reducer</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">)</span>
+<span class="n">T</span><span class="o">.</span><span class="n">reducer_init</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>          <span class="c1"># or T.reducer_init(acc, init_value)</span>
+<span class="k">for</span> <span class="o">...</span><span class="p">:</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">reducer_update</span><span class="p">(</span><span class="n">acc</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span> <span class="n">contribution</span><span class="p">)</span>
+<span class="n">dst</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+<span class="n">T</span><span class="o">.</span><span class="n">finalize_reducer</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Ordinary reads/writes, <code class="docutils literal notranslate"><span class="pre">T.clear</span></code>/<code class="docutils literal notranslate"><span class="pre">T.fill</span></code>, aliasing, and in-place
+finalize are rejected at compile time. Physical storage and the
+cross-thread communication plan are chosen by the compiler; the physical
+layout can never change how many times a logical contribution is combined.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>shape</strong> (<em>tuple</em>) – The shape of the buffer to allocate</p></li>
-<li><p><strong>dtype</strong> (<em>str</em>) – The data type of the buffer (e.g., ‘float32’, ‘int32’)</p></li>
-<li><p><strong>op</strong> (<em>str</em>) – The reduce operation corresponded with the reducer</p></li>
-<li><p><strong>replication</strong> (<em>str</em><em> | </em><em>None</em>) – Replication strategy, can be “all” or “none”. Defaults to not specified, and the compiler will do whatever it want.</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em>) – Logical shape of the reduction result.</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>) – Element data type (e.g., ‘float32’, ‘int32’).</p></li>
+<li><p><strong>op</strong> (<em>str</em>) – Combine op: “sum”, “max”, “min”, “bitand”, “bitor” or
+“bitxor” (the bitwise ops require an integer dtype).</p></li>
+<li><p><strong>replication</strong> (<em>str</em><em> | </em><em>None</em>) – Deprecated legacy (v1) knob. Passing “all”
+or “none” selects the legacy fragment-based reducer for backward
+compatibility; it will be removed together with the v1 lowering.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A TVM buffer object allocated in thread-private storage, available to reduce values in T.Parallel loops.</p>
+<dd class="field-even"><p>The reducer handle.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>T.Buffer</p>

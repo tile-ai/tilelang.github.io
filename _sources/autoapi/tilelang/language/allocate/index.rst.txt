@@ -221,28 +221,36 @@ Module Contents
 
 .. py:function:: alloc_reducer(shape, dtype, op = 'sum', replication=None)
 
-   Allocate a reducer buffer.
+   Allocate a reducer: a first-class deferred reduction epoch handle.
 
-   Modifications needs to conform with `op`,
-   such as `op="sum"` requires `reducer[...] += ...` and
-   `op="max"` requires `reducer[...] = T.max(reducer[...], ...)`.
+   The reducer lives in the virtual ``local.reducer`` scope and may only be
+   accessed through the epoch operations::
 
-   Only after T.fill with proper initializer the reduction may begin;
-   only after T.finalize_reducer the partial results will be available.
+       acc = T.alloc_reducer(shape, dtype, op="sum")
+       T.reducer_init(acc)          # or T.reducer_init(acc, init_value)
+       for ...:
+           T.reducer_update(acc[indices], contribution)
+       dst = T.alloc_fragment(shape, dtype)
+       T.finalize_reducer(acc, dst)
 
-   For `op="sum"`, filled value must be 0; for min and max, the filled initializer will become max or min clamper correspondingly.
-   You may want to use `T.max_value` for min and `T.min_value` for max.
+   Ordinary reads/writes, ``T.clear``/``T.fill``, aliasing, and in-place
+   finalize are rejected at compile time. Physical storage and the
+   cross-thread communication plan are chosen by the compiler; the physical
+   layout can never change how many times a logical contribution is combined.
 
-   :param shape: The shape of the buffer to allocate
+   :param shape: Logical shape of the reduction result.
    :type shape: tuple
-   :param dtype: The data type of the buffer (e.g., 'float32', 'int32')
+   :param dtype: Element data type (e.g., 'float32', 'int32').
    :type dtype: str
-   :param op: The reduce operation corresponded with the reducer
+   :param op: Combine op: "sum", "max", "min", "bitand", "bitor" or
+              "bitxor" (the bitwise ops require an integer dtype).
    :type op: str
-   :param replication: Replication strategy, can be "all" or "none". Defaults to not specified, and the compiler will do whatever it want.
+   :param replication: Deprecated legacy (v1) knob. Passing "all"
+                       or "none" selects the legacy fragment-based reducer for backward
+                       compatibility; it will be removed together with the v1 lowering.
    :type replication: str | None
 
-   :returns: A TVM buffer object allocated in thread-private storage, available to reduce values in T.Parallel loops.
+   :returns: The reducer handle.
    :rtype: T.Buffer
 
 

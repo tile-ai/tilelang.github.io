@@ -784,8 +784,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.reduce_bitxor" title="tilelang.language.reduce_op.reduce_bitxor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce_bitxor</span></code></a>(buffer, out[, dim, clear, batch, ...])</p></td>
 <td><p>Perform reduce bitwise-xor on input buffer, store the result to output buffer.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.finalize_reducer" title="tilelang.language.reduce_op.finalize_reducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize_reducer</span></code></a>(reducer[, batch, annotations])</p></td>
-<td><p>Finalize a reducer buffer by emitting the <cite>tl.tileop.finalize_reducer</cite> intrinsic.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.reducer_init" title="tilelang.language.reduce_op.reducer_init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reducer_init</span></code></a>(reducer[, init])</p></td>
+<td><p>Open a reducer epoch, optionally with a logical starting value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.reducer_update" title="tilelang.language.reduce_op.reducer_update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reducer_update</span></code></a>(target, value)</p></td>
+<td><p>Contribute <cite>value</cite> to one logical output of a reducer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.finalize_reducer" title="tilelang.language.reduce_op.finalize_reducer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize_reducer</span></code></a>(reducer[, dst, batch, annotations])</p></td>
+<td><p>Close a reducer epoch.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.reduce_op.warp_reduce_sum" title="tilelang.language.reduce_op.warp_reduce_sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_sum</span></code></a>(value)</p></td>
 <td><p>Perform warp reduction sum on a register value.</p></td>
@@ -1074,25 +1080,85 @@ are ignored. CUDA-only.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.reduce_op.finalize_reducer">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce_op.</span></span><span class="sig-name descname"><span class="pre">finalize_reducer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reducer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce_op.finalize_reducer" title="Link to this definition">¶</a></dt>
-<dd><p>Finalize a reducer buffer by emitting the <cite>tl.tileop.finalize_reducer</cite> intrinsic.</p>
-<p>This returns a TVM <cite>tirx.Call</cite> handle that finalizes the given reducer using its writable pointer.
-The call does not modify Python objects directly; it produces the low-level intrinsic call used by the IR.</p>
+<dt class="sig sig-object py" id="tilelang.language.reduce_op.reducer_init">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce_op.</span></span><span class="sig-name descname"><span class="pre">reducer_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reducer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce_op.reducer_init" title="Link to this definition">¶</a></dt>
+<dd><p>Open a reducer epoch, optionally with a logical starting value.</p>
+<p>Must be called exactly once per <cite>T.alloc_reducer</cite> allocation, before any
+<cite>T.reducer_update</cite>. Without <cite>init</cite>, the reduction starts from the combine
+identity (sum -&gt; 0, max -&gt; dtype lowest, min -&gt; dtype highest, bitand -&gt;
+all ones, bitor/bitxor -&gt; 0).</p>
+<p><cite>init</cite> is a LOGICAL starting value: the result is as if one extra
+contribution <cite>init</cite> were combined into every logical output, exactly
+once. It is not a physical fill — physical partials always start from
+the identity, and the compiler combines <cite>init</cite> once per logical output
+at finalize time, so physical replication can never multiply it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>reducer</strong> (<em>tirx.Buffer</em>) – Reducer buffer whose writable pointer will be finalized.</p></li>
-<li><p><strong>batch</strong> (<em>int</em>) – Batch size for the AllReduce call (default 1 = scalar path,
-matching the T.reduce default).  When batch &gt; 1, the compiler emits a
-single batched AllReduce call covering <cite>batch</cite> output elements at a
-time, reducing barrier count by batch×.  batch must evenly divide the
-total number of per-thread output elements.</p></li>
+<li><p><strong>reducer</strong> (<em>tirx.Buffer</em>) – Handle returned by <cite>T.alloc_reducer</cite>.</p></li>
+<li><p><strong>init</strong> (<em>PrimExpr</em><em> | </em><em>int</em><em> | </em><em>float</em><em> | </em><em>None</em>) – Optional logical starting
+value; converted to the reducer’s dtype when given as a Python
+number.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Handle to the reducer_init intrinsic call.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tirx.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.reduce_op.reducer_update">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce_op.</span></span><span class="sig-name descname"><span class="pre">reducer_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce_op.reducer_update" title="Link to this definition">¶</a></dt>
+<dd><p>Contribute <cite>value</cite> to one logical output of a reducer.</p>
+<p><cite>target</cite> must be written as <cite>acc[indices]</cite> directly in the first argument
+position; it is an update-target descriptor, not a read of the reducer’s
+current value. Each dynamic logical iteration of the enclosing
+<cite>T.Parallel</cite> loop contributes exactly once, regardless of how the loop is
+physically replicated over threads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>tirx.BufferLoad</em>) – <cite>acc[indices]</cite> selecting the logical output.</p></li>
+<li><p><strong>value</strong> – Contribution expression (cast to the reducer dtype if needed).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Handle to the reducer_update intrinsic call.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tirx.Call</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.reduce_op.finalize_reducer">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.reduce_op.</span></span><span class="sig-name descname"><span class="pre">finalize_reducer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reducer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.reduce_op.finalize_reducer" title="Link to this definition">¶</a></dt>
+<dd><p>Close a reducer epoch.</p>
+<p>v2 form (<code class="docutils literal notranslate"><span class="pre">dst</span></code> given): complete the cross-participant communication the
+chosen physical plan requires, combine the optional <code class="docutils literal notranslate"><span class="pre">T.reducer_init</span></code>
+starting value exactly once per logical output, and write the logical
+result into the independent destination fragment <code class="docutils literal notranslate"><span class="pre">dst</span></code>. After this
+call the reducer handle is dead; read results from <code class="docutils literal notranslate"><span class="pre">dst</span></code>.</p>
+<p>Legacy v1 form (<code class="docutils literal notranslate"><span class="pre">dst</span></code> omitted): in-place finalize of a legacy
+<code class="docutils literal notranslate"><span class="pre">alloc_reducer(replication=...)</span></code> fragment reducer. Deprecated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reducer</strong> (<em>tirx.Buffer</em>) – Reducer handle.</p></li>
+<li><p><strong>dst</strong> (<em>tirx.Buffer</em><em> | </em><em>None</em>) – Destination fragment (v2). Same logical
+shape and dtype as the reducer.</p></li>
+<li><p><strong>batch</strong> (<em>int</em>) – Batched AllReduce width: the collective covers <cite>batch</cite>
+output elements per call, sharing one pair of barriers.</p></li>
 <li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Handle to the finalize reducer intrinsic call.</p>
+<dd class="field-even"><p>Handle to the finalize intrinsic call.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tirx.Call</p>
@@ -1272,6 +1338,8 @@ will have the bitwise-or of all values across the warp.</p>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.reduce_bitand"><code class="docutils literal notranslate"><span class="pre">reduce_bitand()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.reduce_bitor"><code class="docutils literal notranslate"><span class="pre">reduce_bitor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.reduce_bitxor"><code class="docutils literal notranslate"><span class="pre">reduce_bitxor()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.reduce_op.reducer_init"><code class="docutils literal notranslate"><span class="pre">reducer_init()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.reduce_op.reducer_update"><code class="docutils literal notranslate"><span class="pre">reducer_update()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.finalize_reducer"><code class="docutils literal notranslate"><span class="pre">finalize_reducer()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.warp_reduce_sum"><code class="docutils literal notranslate"><span class="pre">warp_reduce_sum()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.reduce_op.warp_reduce_max"><code class="docutils literal notranslate"><span class="pre">warp_reduce_max()</span></code></a></li>

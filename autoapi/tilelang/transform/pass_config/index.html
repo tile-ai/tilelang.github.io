@@ -942,6 +942,26 @@ CUDA compile callback. Default: None</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_REDUCER_PLAN_VERBOSE">
+<span class="sig-name descname"><span class="pre">TL_ENABLE_REDUCER_PLAN_VERBOSE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tl.enable_reducer_plan_verbose'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_REDUCER_PLAN_VERBOSE" title="Link to this definition">¶</a></dt>
+<dd><p>Log each reducer epoch’s chosen physical plan (and narrow-plan
+rejection reason) at INFO level during ReducerPlanAndMaterialize.
+Default: False</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TL_REDUCER_FORCE_BASELINE">
+<span class="sig-name descname"><span class="pre">TL_REDUCER_FORCE_BASELINE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tl.reducer_force_baseline'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TL_REDUCER_FORCE_BASELINE" title="Link to this definition">¶</a></dt>
+<dd><p>Force the canonical FullParticipant baseline for every reducer epoch,
+disabling narrow physical plans (compact storage / sub-block collectives).</p>
+<p>Not a workaround for expected narrow-plan bugs: the baseline is the
+reducer design’s always-available reference lowering. Use it for
+differential testing (forced baseline and auto plan selection must agree
+numerically), as a field escape hatch if a narrow plan ever miscompiles,
+and for plan-choice A/B measurement. Default: False</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_TMA_LOWER">
 <span class="sig-name descname"><span class="pre">TL_DISABLE_TMA_LOWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tl.disable_tma_lower'</span></em><a class="headerlink" href="#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_TMA_LOWER" title="Link to this definition">¶</a></dt>
 <dd><p>Deprecated flag — prevents plain T.copy() from auto-lowering to TMA store.</p>
@@ -1457,6 +1477,8 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_PTXAS_REGISTER_USAGE_LEVEL"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_PTXAS_REGISTER_USAGE_LEVEL</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_DEVICE_COMPILE_FLAGS"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_DEVICE_COMPILE_FLAGS</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_CONFIG_INDEX_BITWIDTH"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_CONFIG_INDEX_BITWIDTH</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_ENABLE_REDUCER_PLAN_VERBOSE"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_ENABLE_REDUCER_PLAN_VERBOSE</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_REDUCER_FORCE_BASELINE"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_REDUCER_FORCE_BASELINE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_TMA_LOWER"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_DISABLE_TMA_LOWER</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey.TL_DISABLE_VECTORIZE_256"><code class="docutils literal notranslate"><span class="pre">PassConfigKey.TL_DISABLE_VECTORIZE_256</span></code></a></li>

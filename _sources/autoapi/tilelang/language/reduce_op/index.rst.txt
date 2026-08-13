@@ -31,6 +31,8 @@ Functions
    tilelang.language.reduce_op.reduce_bitand
    tilelang.language.reduce_op.reduce_bitor
    tilelang.language.reduce_op.reduce_bitxor
+   tilelang.language.reduce_op.reducer_init
+   tilelang.language.reduce_op.reducer_update
    tilelang.language.reduce_op.finalize_reducer
    tilelang.language.reduce_op.warp_reduce_sum
    tilelang.language.reduce_op.warp_reduce_max
@@ -233,23 +235,73 @@ Module Contents
    :rtype: tirx.Call
 
 
-.. py:function:: finalize_reducer(reducer, batch = 1, annotations = None)
+.. py:function:: reducer_init(reducer, init=None)
 
-   Finalize a reducer buffer by emitting the `tl.tileop.finalize_reducer` intrinsic.
+   Open a reducer epoch, optionally with a logical starting value.
 
-   This returns a TVM `tirx.Call` handle that finalizes the given reducer using its writable pointer.
-   The call does not modify Python objects directly; it produces the low-level intrinsic call used by the IR.
+   Must be called exactly once per `T.alloc_reducer` allocation, before any
+   `T.reducer_update`. Without `init`, the reduction starts from the combine
+   identity (sum -> 0, max -> dtype lowest, min -> dtype highest, bitand ->
+   all ones, bitor/bitxor -> 0).
 
-   :param reducer: Reducer buffer whose writable pointer will be finalized.
+   `init` is a LOGICAL starting value: the result is as if one extra
+   contribution `init` were combined into every logical output, exactly
+   once. It is not a physical fill — physical partials always start from
+   the identity, and the compiler combines `init` once per logical output
+   at finalize time, so physical replication can never multiply it.
+
+   :param reducer: Handle returned by `T.alloc_reducer`.
    :type reducer: tirx.Buffer
-   :param batch: Batch size for the AllReduce call (default 1 = scalar path,
-                 matching the T.reduce default).  When batch > 1, the compiler emits a
-                 single batched AllReduce call covering `batch` output elements at a
-                 time, reducing barrier count by batch×.  batch must evenly divide the
-                 total number of per-thread output elements.
+   :param init: Optional logical starting
+                value; converted to the reducer's dtype when given as a Python
+                number.
+   :type init: PrimExpr | int | float | None
+
+   :returns: Handle to the reducer_init intrinsic call.
+   :rtype: tirx.Call
+
+
+.. py:function:: reducer_update(target, value)
+
+   Contribute `value` to one logical output of a reducer.
+
+   `target` must be written as `acc[indices]` directly in the first argument
+   position; it is an update-target descriptor, not a read of the reducer's
+   current value. Each dynamic logical iteration of the enclosing
+   `T.Parallel` loop contributes exactly once, regardless of how the loop is
+   physically replicated over threads.
+
+   :param target: `acc[indices]` selecting the logical output.
+   :type target: tirx.BufferLoad
+   :param value: Contribution expression (cast to the reducer dtype if needed).
+
+   :returns: Handle to the reducer_update intrinsic call.
+   :rtype: tirx.Call
+
+
+.. py:function:: finalize_reducer(reducer, dst = None, batch = 1, annotations = None)
+
+   Close a reducer epoch.
+
+   v2 form (``dst`` given): complete the cross-participant communication the
+   chosen physical plan requires, combine the optional ``T.reducer_init``
+   starting value exactly once per logical output, and write the logical
+   result into the independent destination fragment ``dst``. After this
+   call the reducer handle is dead; read results from ``dst``.
+
+   Legacy v1 form (``dst`` omitted): in-place finalize of a legacy
+   ``alloc_reducer(replication=...)`` fragment reducer. Deprecated.
+
+   :param reducer: Reducer handle.
+   :type reducer: tirx.Buffer
+   :param dst: Destination fragment (v2). Same logical
+               shape and dtype as the reducer.
+   :type dst: tirx.Buffer | None
+   :param batch: Batched AllReduce width: the collective covers `batch`
+                 output elements per call, sharing one pair of barriers.
    :type batch: int
 
-   :returns: Handle to the finalize reducer intrinsic call.
+   :returns: Handle to the finalize intrinsic call.
    :rtype: tirx.Call
 
 
