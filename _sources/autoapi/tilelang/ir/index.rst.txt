@@ -36,6 +36,7 @@ Functions
    tilelang.ir.set_buffer_span
    tilelang.ir.get_buffer_span
    tilelang.ir.set_prim_func_span
+   tilelang.ir.stamp_stmt_spans
    tilelang.ir.get_prim_func_span
    tilelang.ir.span_to_location
    tilelang.ir.span_coverage
@@ -148,6 +149,16 @@ Module Contents
 .. py:function:: get_buffer_span(buffer)
 
 .. py:function:: set_prim_func_span(func, span)
+
+.. py:function:: stamp_stmt_spans(stmt, span)
+
+   Fill in `span` on every Stmt in the subtree whose span is undefined.
+
+   Nodes that already carry a span are left untouched. Intended for passes
+   that rebuild a user statement into a fresh subtree: stamping the result
+   with the original statement's span keeps source-line information alive
+   through lowering.
+
 
 .. py:function:: get_prim_func_span(func)
 

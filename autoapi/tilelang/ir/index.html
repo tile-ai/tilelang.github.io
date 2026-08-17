@@ -814,13 +814,16 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ir.set_prim_func_span" title="tilelang.ir.set_prim_func_span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_prim_func_span</span></code></a>(func, span)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.get_prim_func_span" title="tilelang.ir.get_prim_func_span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_prim_func_span</span></code></a>(func)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.stamp_stmt_spans" title="tilelang.ir.stamp_stmt_spans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stamp_stmt_spans</span></code></a>(stmt, span)</p></td>
+<td><p>Fill in <cite>span</cite> on every Stmt in the subtree whose span is undefined.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ir.get_prim_func_span" title="tilelang.ir.get_prim_func_span"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_prim_func_span</span></code></a>(func)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ir.span_to_location" title="tilelang.ir.span_to_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">span_to_location</span></code></a>(span)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.span_to_location" title="tilelang.ir.span_to_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">span_to_location</span></code></a>(span)</p></td>
 <td><p>Convert a span to a (file, line) tuple, or None when undefined.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ir.span_coverage" title="tilelang.ir.span_coverage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">span_coverage</span></code></a>(func)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ir.span_coverage" title="tilelang.ir.span_coverage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">span_coverage</span></code></a>(func)</p></td>
 <td><p>Statistics on span injection coverage for a PrimFunc.</p></td>
 </tr>
 </tbody>
@@ -1040,6 +1043,24 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ir.stamp_stmt_spans">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">stamp_stmt_spans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stmt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.stamp_stmt_spans" title="Link to this definition">¶</a></dt>
+<dd><p>Fill in <cite>span</cite> on every Stmt in the subtree whose span is undefined.</p>
+<p>Nodes that already carry a span are left untouched. Intended for passes
+that rebuild a user statement into a fresh subtree: stamping the result
+with the original statement’s span keeps source-line information alive
+through lowering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>span</strong> (<em>tvm.ir.base.Span</em><em> | </em><em>None</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.ir.get_prim_func_span">
 <span class="sig-prename descclassname"><span class="pre">tilelang.ir.</span></span><span class="sig-name descname"><span class="pre">get_prim_func_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ir.get_prim_func_span" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -1211,6 +1232,7 @@ CUTLASS TV atom plus the wrapper’s chaining limit.</p>
 <li><a class="reference internal" href="#tilelang.ir.set_buffer_span"><code class="docutils literal notranslate"><span class="pre">set_buffer_span()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ir.get_buffer_span"><code class="docutils literal notranslate"><span class="pre">get_buffer_span()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ir.set_prim_func_span"><code class="docutils literal notranslate"><span class="pre">set_prim_func_span()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ir.stamp_stmt_spans"><code class="docutils literal notranslate"><span class="pre">stamp_stmt_spans()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ir.get_prim_func_span"><code class="docutils literal notranslate"><span class="pre">get_prim_func_span()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ir.span_to_location"><code class="docutils literal notranslate"><span class="pre">span_to_location()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ir.span_coverage"><code class="docutils literal notranslate"><span class="pre">span_coverage()</span></code></a></li>
