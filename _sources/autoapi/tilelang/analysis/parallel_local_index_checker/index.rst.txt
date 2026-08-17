@@ -1,0 +1,28 @@
+tilelang.analysis.parallel_local_index_checker
+==============================================
+
+.. py:module:: tilelang.analysis.parallel_local_index_checker
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.analysis.parallel_local_index_checker.ParallelLocalIndexChecker
+
+
+Module Contents
+---------------
+
+.. py:function:: ParallelLocalIndexChecker()
+
+   Reject indexing a thread-private local buffer with a T.Parallel loop variable.
+
+   Local buffers have no cross-thread ownership layout. A local access may
+   appear inside a parallel loop when its index is independent of the parallel
+   loop variables, for example a replicated scalar ``scale_local[0]``. For an
+   indexed per-thread loop, use ``T.serial``, ``T.vectorized``, or ``T.unroll``;
+   for distributed ownership, allocate a fragment instead.
+
+
