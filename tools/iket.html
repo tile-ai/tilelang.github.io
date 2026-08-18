@@ -761,7 +761,7 @@ depend on TileScale or the CuTe DSL frontend.</p>
 <li><p>The external IKET Python package and runtime</p></li>
 </ul>
 <p>Verify the active Python environment with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import tilelang, iket, torch&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import tilelang, iket, torch"</span>
 </pre></div>
 </div>
 <p>The TileLang code-generation path supports both pre-Hopper and Hopper targets.
@@ -785,24 +785,24 @@ uses cluster rank <code class="docutils literal notranslate"><span class="pre">0
         <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">n</span><span class="p">,),</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
     <span class="p">):</span>
         <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">threads</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">as</span> <span class="n">bx</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">iket</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="s2">&quot;block_total&quot;</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">iket</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="s2">"block_total"</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">tx</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">threads</span><span class="p">):</span>
                     <span class="n">i</span> <span class="o">=</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">threads</span> <span class="o">+</span> <span class="n">tx</span>
                     <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
-                        <span class="n">iket</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">&quot;before_store&quot;</span><span class="p">)</span>
+                        <span class="n">iket</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">"before_store"</span><span class="p">)</span>
                         <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                        <span class="n">iket</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">&quot;after_store&quot;</span><span class="p">)</span>
+                        <span class="n">iket</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">"after_store"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">main</span>
 
 
-<span class="k">with</span> <span class="n">iket</span><span class="o">.</span><span class="n">session</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;/tmp/tilelang_iket&quot;</span><span class="p">):</span>
+<span class="k">with</span> <span class="n">iket</span><span class="o">.</span><span class="n">session</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s2">"/tmp/tilelang_iket"</span><span class="p">):</span>
     <span class="n">program</span> <span class="o">=</span> <span class="n">instrumented_add</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
     <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
         <span class="n">program</span><span class="p">,</span>
         <span class="n">out_idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
-        <span class="n">execution_backend</span><span class="o">=</span><span class="s2">&quot;cython&quot;</span><span class="p">,</span>
+        <span class="n">target</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">,</span>
+        <span class="n">execution_backend</span><span class="o">=</span><span class="s2">"cython"</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 </div>
@@ -818,19 +818,19 @@ below.</p>
 <section id="markers-and-ranges">
 <h2>Markers and Ranges<a class="headerlink" href="#markers-and-ranges" title="Link to this heading">¶</a></h2>
 <p>Use <code class="docutils literal notranslate"><span class="pre">iket.mark(...)</span></code> for an instant event:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">iket</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">&quot;load_inputs&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">iket</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">"load_inputs"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Use <code class="docutils literal notranslate"><span class="pre">iket.range(...)</span></code> as a Python context manager around a lexical region:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">iket</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="s2">&quot;compute&quot;</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">iket</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="s2">"compute"</span><span class="p">):</span>
     <span class="c1"># TileLang statements</span>
     <span class="o">...</span>
 </pre></div>
 </div>
 <p>The explicit range APIs are also available:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">iket</span><span class="o">.</span><span class="n">range_push</span><span class="p">(</span><span class="s2">&quot;compute&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">iket</span><span class="o">.</span><span class="n">range_push</span><span class="p">(</span><span class="s2">"compute"</span><span class="p">)</span>
 <span class="c1"># TileLang statements</span>
-<span class="n">iket</span><span class="o">.</span><span class="n">range_pop</span><span class="p">(</span><span class="s2">&quot;compute&quot;</span><span class="p">)</span>
+<span class="n">iket</span><span class="o">.</span><span class="n">range_pop</span><span class="p">(</span><span class="s2">"compute"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">iket.range_start(...)</span></code> and <code class="docutils literal notranslate"><span class="pre">iket.range_end(...)</span></code> are aliases for
@@ -851,8 +851,8 @@ supports these payload dtypes:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">float32</span></code></p></li>
 </ul>
 <p>Use an explicit payload descriptor for TileLang expressions:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">iket</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">&quot;store_index&quot;</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">iket</span><span class="o">.</span><span class="n">payload</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int32&quot;</span><span class="p">))</span>
-<span class="n">iket</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">iket</span><span class="o">.</span><span class="n">payload</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">iket</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">"store_index"</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">iket</span><span class="o">.</span><span class="n">payload</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"int32"</span><span class="p">))</span>
+<span class="n">iket</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">"scale"</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">iket</span><span class="o">.</span><span class="n">payload</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"float32"</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Simple Python scalars and expressions with a <code class="docutils literal notranslate"><span class="pre">dtype</span></code> attribute can be passed
@@ -860,7 +860,7 @@ directly, but an explicit dtype makes the trace schema unambiguous.</p>
 <p>Runtime capture is opt-in:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">iket</span><span class="o">.</span><span class="n">session</span><span class="p">(</span><span class="n">runtime_payloads</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">program</span> <span class="o">=</span> <span class="n">instrumented_add</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
-    <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Without <code class="docutils literal notranslate"><span class="pre">runtime_payloads=True</span></code>, the payload schema remains encoded in the TIR
@@ -955,8 +955,8 @@ iket_pid_0x....html
 </div>
 <p>TileLang can construct the same shell command from Python:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">command</span> <span class="o">=</span> <span class="n">iket</span><span class="o">.</span><span class="n">profile_command</span><span class="p">(</span>
-    <span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="s2">&quot;examples/iket/all_features.py&quot;</span><span class="p">,</span> <span class="s2">&quot;--iket-runtime-payloads&quot;</span><span class="p">],</span>
-    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;/tmp/tilelang_iket_all_features_profile&quot;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">"python"</span><span class="p">,</span> <span class="s2">"examples/iket/all_features.py"</span><span class="p">,</span> <span class="s2">"--iket-runtime-payloads"</span><span class="p">],</span>
+    <span class="n">directory</span><span class="o">=</span><span class="s2">"/tmp/tilelang_iket_all_features_profile"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 </pre></div>
@@ -994,18 +994,18 @@ python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class=
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">trace_path</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-    <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/tmp/tilelang_iket_all_features_profile&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.trace.json&quot;</span><span class="p">),</span>
+    <span class="n">Path</span><span class="p">(</span><span class="s2">"/tmp/tilelang_iket_all_features_profile"</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.trace.json"</span><span class="p">),</span>
     <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">path</span><span class="p">:</span> <span class="n">path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">trace_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
-<span class="n">launch</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;launches&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">names</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;stringTable&quot;</span><span class="p">]</span>
+<span class="n">launch</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"launches"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">names</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"stringTable"</span><span class="p">]</span>
 
 <span class="n">store_indices</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">marker</span><span class="p">[</span><span class="s2">&quot;payloadVal&quot;</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">marker</span> <span class="ow">in</span> <span class="n">launch</span><span class="p">[</span><span class="s2">&quot;markers&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">names</span><span class="p">[</span><span class="n">marker</span><span class="p">[</span><span class="s2">&quot;markerNameIdx&quot;</span><span class="p">]]</span> <span class="o">==</span> <span class="s2">&quot;store_index&quot;</span>
-    <span class="ow">and</span> <span class="s2">&quot;payloadVal&quot;</span> <span class="ow">in</span> <span class="n">marker</span>
+    <span class="n">marker</span><span class="p">[</span><span class="s2">"payloadVal"</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">marker</span> <span class="ow">in</span> <span class="n">launch</span><span class="p">[</span><span class="s2">"markers"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">names</span><span class="p">[</span><span class="n">marker</span><span class="p">[</span><span class="s2">"markerNameIdx"</span><span class="p">]]</span> <span class="o">==</span> <span class="s2">"store_index"</span>
+    <span class="ow">and</span> <span class="s2">"payloadVal"</span> <span class="ow">in</span> <span class="n">marker</span>
 <span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">store_indices</span><span class="p">[:</span><span class="mi">8</span><span class="p">])</span>
 </pre></div>
@@ -1014,11 +1014,11 @@ python3<span class="w"> </span>-m<span class="w"> </span>http.server<span class=
 <section id="output-helpers">
 <h2>Output Helpers<a class="headerlink" href="#output-helpers" title="Link to this heading">¶</a></h2>
 <p>The CUDA tool includes small host-side helpers:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">iket</span><span class="o">.</span><span class="n">set_output_dir</span><span class="p">(</span><span class="s2">&quot;/tmp/tilelang_iket&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">iket</span><span class="o">.</span><span class="n">set_output_dir</span><span class="p">(</span><span class="s2">"/tmp/tilelang_iket"</span><span class="p">)</span>
 <span class="n">iket</span><span class="o">.</span><span class="n">output_dir</span><span class="p">()</span>
-<span class="n">iket</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="s2">&quot;kernel.cu&quot;</span><span class="p">)</span>
+<span class="n">iket</span><span class="o">.</span><span class="n">output_path</span><span class="p">(</span><span class="s2">"kernel.cu"</span><span class="p">)</span>
 <span class="n">iket</span><span class="o">.</span><span class="n">trace_files</span><span class="p">()</span>
-<span class="n">iket</span><span class="o">.</span><span class="n">profile_command</span><span class="p">([</span><span class="o">...</span><span class="p">],</span> <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;/tmp/tilelang_iket&quot;</span><span class="p">)</span>
+<span class="n">iket</span><span class="o">.</span><span class="n">profile_command</span><span class="p">([</span><span class="o">...</span><span class="p">],</span> <span class="n">directory</span><span class="o">=</span><span class="s2">"/tmp/tilelang_iket"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">trace_files(...)</span></code> returns <code class="docutils literal notranslate"><span class="pre">.trace.json</span></code> files ordered from largest to smallest.
@@ -1069,7 +1069,7 @@ external IKET runtime and should be treated as experimental.</p></li>
 <h3>Payload schemas appear without <code class="docutils literal notranslate"><span class="pre">payloadVal</span></code><a class="headerlink" href="#payload-schemas-appear-without-payloadval" title="Link to this heading">¶</a></h3>
 <p>Compile the kernel under a session with runtime payloads enabled:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">iket</span><span class="o">.</span><span class="n">session</span><span class="p">(</span><span class="n">runtime_payloads</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Also verify that the marker has a supported payload descriptor.</p>
@@ -1078,7 +1078,7 @@ external IKET runtime and should be treated as experimental.</p></li>
 <h3>The profiler fails while patching a payload kernel<a class="headerlink" href="#the-profiler-fails-while-patching-a-payload-kernel" title="Link to this heading">¶</a></h3>
 <p>Payload instrumentation requires two separate 32-bit stores. Inspect the
 generated binary with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvdisasm<span class="w"> </span>kernel.cubin<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;STS|PMTRIG&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvdisasm<span class="w"> </span>kernel.cubin<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"STS|PMTRIG"</span>
 </pre></div>
 </div>
 <p>The expected shape is:</p>

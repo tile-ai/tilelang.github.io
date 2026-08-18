@@ -792,7 +792,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.cuda.intrinsics</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_mma_swizzle_layout</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">matmul</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">,</span> <span class="n">block_K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">accum_dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">matmul</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">,</span> <span class="n">block_K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"float16"</span><span class="p">,</span> <span class="n">accum_dtype</span><span class="o">=</span><span class="s2">"float"</span><span class="p">):</span>
     <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span>
         <span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
@@ -837,13 +837,13 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <span class="n">func</span> <span class="o">=</span> <span class="n">matmul</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
 
 <span class="c1"># 2. JIT-compile the kernel for NVIDIA GPU</span>
-<span class="n">jit_kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+<span class="n">jit_kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
 <span class="c1"># 3. Prepare input tensors in PyTorch</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
 
 <span class="c1"># 4. Invoke the JIT-compiled kernel</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">jit_kernel</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
@@ -851,16 +851,16 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 
 <span class="c1"># 5. Validate correctness</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ref_c</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Kernel output matches PyTorch reference.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Kernel output matches PyTorch reference."</span><span class="p">)</span>
 
 <span class="c1"># 6. Inspect generated CUDA code (optional)</span>
 <span class="n">cuda_source</span> <span class="o">=</span> <span class="n">jit_kernel</span><span class="o">.</span><span class="n">get_kernel_source</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generated CUDA kernel:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cuda_source</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Generated CUDA kernel:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">cuda_source</span><span class="p">)</span>
 
 <span class="c1"># 7. Profile performance</span>
 <span class="n">profiler</span> <span class="o">=</span> <span class="n">jit_kernel</span><span class="o">.</span><span class="n">get_profiler</span><span class="p">()</span>
 <span class="n">latency</span> <span class="o">=</span> <span class="n">profiler</span><span class="o">.</span><span class="n">do_bench</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latency: </span><span class="si">{</span><span class="n">latency</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Latency: </span><span class="si">{</span><span class="n">latency</span><span class="si">}</span><span class="s2"> ms"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

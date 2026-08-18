@@ -761,7 +761,7 @@
 </pre></div>
 </div>
 <p>After installing tilelang, you can verify the installation by running:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import tilelang; print(tilelang.__version__)&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import tilelang; print(tilelang.__version__)"</span>
 </pre></div>
 </div>
 </section>
@@ -799,12 +799,12 @@ pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </sp
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang.git
 <span class="nb">cd</span><span class="w"> </span>tilelang
 pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
-pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;nvidia-cuda-nvcc&gt;=13&quot;</span><span class="w"> </span><span class="s2">&quot;nvidia-cuda-cccl&gt;=13&quot;</span><span class="w"> </span><span class="s2">&quot;nvidia-cuda-nvrtc&gt;=13&quot;</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"nvidia-cuda-nvcc&gt;=13"</span><span class="w"> </span><span class="s2">"nvidia-cuda-cccl&gt;=13"</span><span class="w"> </span><span class="s2">"nvidia-cuda-nvrtc&gt;=13"</span>
 pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v<span class="w"> </span>--no-build-isolation
 </pre></div>
 </div>
 <p><strong>Option B</strong> — pip toolchain in another virtualenv or path:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Point to the cu&lt;ver&gt; directory inside another venv&#39;s site-packages</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Point to the cu&lt;ver&gt; directory inside another venv's site-packages</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">WITH_PIP_CUDA_TOOLCHAIN</span><span class="o">=</span>/path/to/venv/lib/python3.x/site-packages/nvidia/cu13
 pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span>-v
 </pre></div>
@@ -833,7 +833,7 @@ ninja
 </div>
 <p>Then add the repository root to <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> before importing <code class="docutils literal notranslate"><span class="pre">tilelang</span></code>, for example:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span>/path/to/tilelang:<span class="nv">$PYTHONPATH</span>
-python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import tilelang; print(tilelang.__version__)&quot;</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import tilelang; print(tilelang.__version__)"</span>
 </pre></div>
 </div>
 <p>Some useful CMake options you can toggle while configuring:</p>
@@ -909,7 +909,7 @@ docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>tilelang_b200<span class="w"> </span>/bin/zsh
 <span class="c1"># Inside the container:</span>
-python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import tilelang; print(tilelang.__version__)&quot;</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import tilelang; print(tilelang.__version__)"</span>
 </pre></div>
 </div>
 <section id="rocm-container-build-gfx942-gfx950">
@@ -931,50 +931,50 @@ apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&am
 <span class="w">  </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>/var/lib/apt/lists/*
 
 <span class="c1"># Prefer the container venv (avoid system pip)</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/opt/venv/bin:</span><span class="si">${</span><span class="nv">PATH</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"/opt/venv/bin:</span><span class="si">${</span><span class="nv">PATH</span><span class="si">}</span><span class="s2">"</span>
 
 <span class="c1"># Build GoogleTest static libs (Ubuntu package ships sources only)</span>
 cmake<span class="w"> </span>-S<span class="w"> </span>/usr/src/googletest<span class="w"> </span>-B<span class="w"> </span>/tmp/build-gtest<span class="w"> </span>-DBUILD_GTEST<span class="o">=</span>ON<span class="w"> </span>-DBUILD_GMOCK<span class="o">=</span>ON<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release
-cmake<span class="w"> </span>--build<span class="w"> </span>/tmp/build-gtest<span class="w"> </span>-j<span class="s2">&quot;</span><span class="k">$(</span>nproc<span class="k">)</span><span class="s2">&quot;</span>
+cmake<span class="w"> </span>--build<span class="w"> </span>/tmp/build-gtest<span class="w"> </span>-j<span class="s2">"</span><span class="k">$(</span>nproc<span class="k">)</span><span class="s2">"</span>
 cp<span class="w"> </span>-v<span class="w"> </span>/tmp/build-gtest/lib/*.a<span class="w"> </span>/usr/lib/x86_64-linux-gnu/
 rm<span class="w"> </span>-rf<span class="w"> </span>/tmp/build-gtest
 
 <span class="c1"># Keep setuptools &lt; 80 (compat with some base images)</span>
-pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span><span class="s2">&quot;setuptools&gt;=77.0.3,&lt;80&quot;</span><span class="w"> </span>wheel<span class="w"> </span>cmake<span class="w"> </span>ninja<span class="w"> </span>scikit-build-core
+pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span><span class="s2">"setuptools&gt;=77.0.3,&lt;80"</span><span class="w"> </span>wheel<span class="w"> </span>cmake<span class="w"> </span>ninja<span class="w"> </span>scikit-build-core
 
 <span class="c1"># Locate ROCm llvm-config (install LLVM 18 if missing)</span>
-<span class="nv">LLVM_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="nv">LLVM_CONFIG_PATH</span><span class="o">=</span><span class="s2">""</span>
 <span class="k">for</span><span class="w"> </span>p<span class="w"> </span><span class="k">in</span><span class="w"> </span>/opt/rocm/llvm/bin/llvm-config<span class="w"> </span>/opt/rocm/llvm-*/bin/llvm-config<span class="w"> </span>/opt/rocm-*/llvm*/bin/llvm-config<span class="p">;</span><span class="w"> </span><span class="k">do</span>
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-x<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$p</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nv">LLVM_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$p</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-x<span class="w"> </span><span class="s2">"</span><span class="nv">$p</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nv">LLVM_CONFIG_PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$p</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
 <span class="k">done</span>
-<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LLVM_CONFIG_PATH</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
-<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ROCm llvm-config not found; installing LLVM 18...&quot;</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">"</span><span class="nv">$LLVM_CONFIG_PATH</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"ROCm llvm-config not found; installing LLVM 18..."</span>
 <span class="w">  </span>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://apt.llvm.org/llvm.sh<span class="w"> </span>-o<span class="w"> </span>/tmp/llvm.sh
 <span class="w">  </span>chmod<span class="w"> </span>+x<span class="w"> </span>/tmp/llvm.sh
 <span class="w">  </span>/tmp/llvm.sh<span class="w"> </span><span class="m">18</span>
-<span class="w">  </span><span class="nv">LLVM_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>llvm-config-18<span class="k">)</span><span class="s2">&quot;</span>
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LLVM_CONFIG_PATH</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
-<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ERROR: llvm-config-18 not found after install&quot;</span>
+<span class="w">  </span><span class="nv">LLVM_CONFIG_PATH</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>llvm-config-18<span class="k">)</span><span class="s2">"</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">"</span><span class="nv">$LLVM_CONFIG_PATH</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"ERROR: llvm-config-18 not found after install"</span>
 <span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
 <span class="w">  </span><span class="k">fi</span>
 <span class="k">fi</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">LLVM_CONFIG</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$LLVM_CONFIG_PATH</span><span class="s2">&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LLVM_CONFIG</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">:/usr/local/bin:</span><span class="si">${</span><span class="nv">PATH</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">LLVM_CONFIG</span><span class="o">=</span><span class="s2">"</span><span class="nv">$LLVM_CONFIG_PATH</span><span class="s2">"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">"</span><span class="nv">$LLVM_CONFIG</span><span class="s2">"</span><span class="k">)</span><span class="s2">:/usr/local/bin:</span><span class="si">${</span><span class="nv">PATH</span><span class="si">}</span><span class="s2">"</span>
 
 <span class="c1"># Optional shim for tools that expect llvm-config-16</span>
 mkdir<span class="w"> </span>-p<span class="w"> </span>/usr/local/bin
-<span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;#!/usr/bin/env bash\nexec \&quot;%s\&quot; \&quot;\$@\&quot;\n&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LLVM_CONFIG_PATH</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/usr/local/bin/llvm-config-16
+<span class="nb">printf</span><span class="w"> </span><span class="s2">"#!/usr/bin/env bash\nexec \"%s\" \"\$@\"\n"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$LLVM_CONFIG_PATH</span><span class="s2">"</span><span class="w"> </span>&gt;<span class="w"> </span>/usr/local/bin/llvm-config-16
 chmod<span class="w"> </span>+x<span class="w"> </span>/usr/local/bin/llvm-config-16
 
 <span class="c1"># TVM Python bits need Cython (for system Python used by the build)</span>
-pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span><span class="s2">&quot;cython&gt;=0.29.36,&lt;3.0&quot;</span>
+pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span><span class="s2">"cython&gt;=0.29.36,&lt;3.0"</span>
 
 <span class="c1"># Clone + build TileLang (ROCm)</span>
 <span class="c1"># Default location: /opt/tilelang (adjust if you prefer a different path).</span>
 git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/tile-ai/tilelang.git<span class="w"> </span>/opt/tilelang
 <span class="nb">cd</span><span class="w"> </span>/opt/tilelang
 git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init<span class="w"> </span>--recursive
-<span class="nb">export</span><span class="w"> </span><span class="nv">CMAKE_ARGS</span><span class="o">=</span><span class="s2">&quot;-DUSE_CUDA=OFF -DUSE_ROCM=ON -DROCM_PATH=/opt/rocm -DLLVM_CONFIG=</span><span class="si">${</span><span class="nv">LLVM_CONFIG</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CMAKE_ARGS</span><span class="o">=</span><span class="s2">"-DUSE_CUDA=OFF -DUSE_ROCM=ON -DROCM_PATH=/opt/rocm -DLLVM_CONFIG=</span><span class="si">${</span><span class="nv">LLVM_CONFIG</span><span class="si">}</span><span class="s2">"</span>
 
 <span class="c1"># Avoid pulling CUDA wheels / reinstalling torch by skipping dependency resolution.</span>
 <span class="c1"># Assume torch is already installed in the container.</span>
@@ -982,17 +982,17 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 
 <span class="c1"># Manually install required runtime deps when using --no-deps.</span>
 <span class="c1"># Note: skip torch-c-dlpack-ext on ROCm (its wheel expects CUDA libs).</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;apache-tvm-ffi&gt;=0.1.11,&lt;0.1.13&quot;</span><span class="w"> </span><span class="s2">&quot;z3-solver&gt;=4.13.0&quot;</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"apache-tvm-ffi&gt;=0.1.11,&lt;0.1.13"</span><span class="w"> </span><span class="s2">"z3-solver&gt;=4.13.0"</span>
 <span class="c1"># If you already installed torch-c-dlpack-ext and hit `libtorch_cuda.so` errors:</span>
 <span class="c1"># pip uninstall -y torch-c-dlpack-ext</span>
 
 <span class="c1"># If you hit Cython compile errors like `PyLong_SHIFT`/`digit` not declared,</span>
 <span class="c1"># disable the stable ABI (abi3) for editable builds:</span>
-<span class="c1"># export CMAKE_ARGS=&quot;-DUSE_CUDA=OFF -DUSE_ROCM=ON -DROCM_PATH=/opt/rocm -DLLVM_CONFIG=${LLVM_CONFIG} -DSKBUILD_SABI_VERSION=&quot;</span>
+<span class="c1"># export CMAKE_ARGS="-DUSE_CUDA=OFF -DUSE_ROCM=ON -DROCM_PATH=/opt/rocm -DLLVM_CONFIG=${LLVM_CONFIG} -DSKBUILD_SABI_VERSION="</span>
 <span class="c1"># pip install -e . -v --no-build-isolation --no-deps</span>
 
 <span class="c1"># Verify</span>
-python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import tilelang; print(tilelang.__version__)&quot;</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import tilelang; print(tilelang.__version__)"</span>
 </pre></div>
 </div>
 <p>If you still want to use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span> <span class="pre">-v</span> <span class="pre">--no-build-isolation</span></code> without <code class="docutils literal notranslate"><span class="pre">--no-deps</span></code>, pip will try to resolve TileLang dependencies and may download CUDA wheels (e.g., <code class="docutils literal notranslate"><span class="pre">nvidia_cudnn</span></code>, <code class="docutils literal notranslate"><span class="pre">nvidia_nvshmem</span></code>) and reinstall <code class="docutils literal notranslate"><span class="pre">torch</span></code>. To avoid that in ROCm containers, keep <code class="docutils literal notranslate"><span class="pre">--no-deps</span></code> and ensure required packages are already installed.</p>
@@ -1075,7 +1075,7 @@ ninja
 </div>
 <p>When running in editable/developer mode,
 you’ll see logs like below:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;import tilelang&#39;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import tilelang'</span>
 <span class="go">2025-10-14 11:11:29  [TileLang:tilelang.env:WARNING]: Loading tilelang libs from dev root: /Users/yyc/repo/tilelang/build</span>
 </pre></div>
 </div>

@@ -755,9 +755,9 @@
 <section id="logging-categories">
 <h2>Logging Categories<a class="headerlink" href="#logging-categories" title="Link to this heading">¶</a></h2>
 <p>There are three primary macro types:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;aaa&quot;</span><span class="p">;</span>
-<span class="n">DLOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;aaa&quot;</span><span class="p">;</span>
-<span class="n">VLOG</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;aaa&quot;</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">LOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"aaa"</span><span class="p">;</span>
+<span class="n">DLOG</span><span class="p">(</span><span class="n">INFO</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"aaa"</span><span class="p">;</span>
+<span class="n">VLOG</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"aaa"</span><span class="p">;</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -775,16 +775,16 @@
 </li>
 </ul>
 <p>Additional useful macros include various <strong>CHECK</strong> variants:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CHECK</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;error msg&quot;</span><span class="p">;</span>
-<span class="n">DCHECK</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;error msg&quot;</span><span class="p">;</span>
-<span class="n">ICHECK</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;error msg&quot;</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CHECK</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"error msg"</span><span class="p">;</span>
+<span class="n">DCHECK</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"error msg"</span><span class="p">;</span>
+<span class="n">ICHECK</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"error msg"</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>The implementation routes errors to LogFatal:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define CHECK(x)                                                \</span>
 <span class="cp">  if (!(x))                                                     \</span>
 <span class="cp">  ::tvm::runtime::detail::LogFatal(__FILE__, __LINE__).stream() \</span>
-<span class="cp">      &lt;&lt; &quot;Check failed: (&quot; #x &lt;&lt; &quot;) is false: &quot;</span>
+<span class="cp">      &lt;&lt; "Check failed: (" #x &lt;&lt; ") is false: "</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -840,7 +840,7 @@
 </pre></div>
 </div>
 <p>Tilelang’s CMake logic automatically adds the <code class="docutils literal notranslate"><span class="pre">TVM_LOG_DEBUG</span></code> macro, compiling all DLOG statements:</p>
-<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">target_compile_definitions</span><span class="p">(</span><span class="s">tilelang_objs</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s2">&quot;TVM_LOG_DEBUG&quot;</span><span class="p">)</span>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">target_compile_definitions</span><span class="p">(</span><span class="s">tilelang_objs</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s2">"TVM_LOG_DEBUG"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Then you also need to specify the runtime environment variables. For example, to use <code class="docutils literal notranslate"><span class="pre">DLOG(INFO)</span> <span class="pre">&lt;&lt;</span> <span class="pre">&quot;xxx&quot;</span></code> for debugging, run your code with INFO level (1): <code class="docutils literal notranslate"><span class="pre">TVM_LOG_DEBUG=1</span></code>.</p>

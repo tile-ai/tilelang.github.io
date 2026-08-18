@@ -824,18 +824,18 @@ provided passes in order:</p>
 <span class="n">steps</span> <span class="o">=</span> <span class="n">pass_diff</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span>
     <span class="p">[</span>
-        <span class="p">(</span><span class="s2">&quot;AnnotateDeviceRegions&quot;</span><span class="p">,</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">AnnotateDeviceRegions</span><span class="p">()),</span>
-        <span class="p">(</span><span class="s2">&quot;SplitHostDevice&quot;</span><span class="p">,</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">SplitHostDevice</span><span class="p">()),</span>
-        <span class="p">(</span><span class="s2">&quot;ThreadSync&quot;</span><span class="p">,</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">ThreadSync</span><span class="p">(</span><span class="s2">&quot;shared&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">"AnnotateDeviceRegions"</span><span class="p">,</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">AnnotateDeviceRegions</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s2">"SplitHostDevice"</span><span class="p">,</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">SplitHostDevice</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s2">"ThreadSync"</span><span class="p">,</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">ThreadSync</span><span class="p">(</span><span class="s2">"shared"</span><span class="p">)),</span>
     <span class="p">],</span>
-    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span>
     <span class="n">context</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">html_path</span><span class="o">=</span><span class="s2">&quot;tmp/selected_passes.html&quot;</span><span class="p">,</span>
+    <span class="n">html_path</span><span class="o">=</span><span class="s2">"tmp/selected_passes.html"</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>A single unnamed pass is also accepted:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">steps</span> <span class="o">=</span> <span class="n">pass_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">ThreadSync</span><span class="p">(</span><span class="s2">&quot;shared&quot;</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">steps</span> <span class="o">=</span> <span class="n">pass_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">ThreadSync</span><span class="p">(</span><span class="s2">"shared"</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -905,9 +905,9 @@ provided passes in order:</p>
 </div>
 <p>For example, a test can assert that a transformation introduced an expected
 intrinsic:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">steps</span> <span class="o">=</span> <span class="n">pass_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">ThreadSync</span><span class="p">(</span><span class="s2">&quot;shared&quot;</span><span class="p">))</span>
-<span class="k">assert</span> <span class="n">steps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;changed&quot;</span><span class="p">]</span>
-<span class="k">assert</span> <span class="s2">&quot;tvm_storage_sync&quot;</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;after_script&quot;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">steps</span> <span class="o">=</span> <span class="n">pass_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">ThreadSync</span><span class="p">(</span><span class="s2">"shared"</span><span class="p">))</span>
+<span class="k">assert</span> <span class="n">steps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"changed"</span><span class="p">]</span>
+<span class="k">assert</span> <span class="s2">"tvm_storage_sync"</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"after_script"</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>Do not enable the process-wide <code class="docutils literal notranslate"><span class="pre">TILELANG_PASS_DIFF</span></code> hook when using the

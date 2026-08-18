@@ -784,8 +784,8 @@ dictionary when you need options such as GPU architecture or CPU model. The most
 </table>
 </div>
 <p>To add options, pass a target config dictionary. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="s2">&quot;arch&quot;</span><span class="p">:</span> <span class="s2">&quot;sm_90&quot;</span><span class="p">}</span>
-<span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">execution_backend</span><span class="o">=</span><span class="s2">&quot;cython&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"cuda"</span><span class="p">,</span> <span class="s2">"arch"</span><span class="p">:</span> <span class="s2">"sm_90"</span><span class="p">}</span>
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">execution_backend</span><span class="o">=</span><span class="s2">"cython"</span><span class="p">)</span>
 <span class="c1"># or</span>
 <span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">compiled_kernel</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -797,10 +797,10 @@ dictionary when you need options such as GPU architecture or CPU model. The most
 <h2>Target input forms<a class="headerlink" href="#target-input-forms" title="Link to this heading">¶</a></h2>
 <p>Most TileLang APIs that accept a target, such as <code class="docutils literal notranslate"><span class="pre">tilelang.compile</span></code>, <code class="docutils literal notranslate"><span class="pre">tilelang.jit</span></code>, and the autotuner, accept the
 same input forms:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>                                      <span class="c1"># detect CUDA, HIP, or Metal</span>
-<span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>                                      <span class="c1"># bare TVM target kind</span>
-<span class="n">target</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="s2">&quot;arch&quot;</span><span class="p">:</span> <span class="s2">&quot;sm_90&quot;</span><span class="p">}</span>           <span class="c1"># target config dict</span>
-<span class="n">target</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">Target</span><span class="p">({</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">})</span>         <span class="c1"># already-built TVM Target</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="s2">"auto"</span>                                      <span class="c1"># detect CUDA, HIP, or Metal</span>
+<span class="n">target</span> <span class="o">=</span> <span class="s2">"cuda"</span>                                      <span class="c1"># bare TVM target kind</span>
+<span class="n">target</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"cuda"</span><span class="p">,</span> <span class="s2">"arch"</span><span class="p">:</span> <span class="s2">"sm_90"</span><span class="p">}</span>           <span class="c1"># target config dict</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">Target</span><span class="p">({</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"cuda"</span><span class="p">})</span>         <span class="c1"># already-built TVM Target</span>
 </pre></div>
 </div>
 <p>Use the bare string form for simple cases. Use a config dictionary when you need target attributes such as CUDA
@@ -816,12 +816,12 @@ the default is <code class="docutils literal notranslate"><span class="pre">auto
 </div>
 <p>For target options, use a JSON object string. This is useful in scripts that rely on the default target through
 <code class="docutils literal notranslate"><span class="pre">tilelang.compile(...,</span> <span class="pre">target=None)</span></code>, <code class="docutils literal notranslate"><span class="pre">&#64;tilelang.jit</span></code>, or autotuning:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span><span class="s1">&#39;{&quot;kind&quot;: &quot;cuda&quot;, &quot;arch&quot;: &quot;sm_90&quot;}&#39;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span><span class="s1">&#39;{&quot;kind&quot;: &quot;cuda&quot;, &quot;arch&quot;: &quot;sm_100f&quot;, &quot;code&quot;: [&quot;sm_100a&quot;, &quot;sm_103a&quot;]}&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span><span class="s1">'{"kind": "cuda", "arch": "sm_90"}'</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span><span class="s1">'{"kind": "cuda", "arch": "sm_100f", "code": ["sm_100a", "sm_103a"]}'</span>
 </pre></div>
 </div>
 <p>In Python code, prefer passing a real dictionary instead of a string:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="s2">&quot;arch&quot;</span><span class="p">:</span> <span class="s2">&quot;sm_100f&quot;</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;sm_100a&quot;</span><span class="p">,</span> <span class="s2">&quot;sm_103a&quot;</span><span class="p">]}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"cuda"</span><span class="p">,</span> <span class="s2">"arch"</span><span class="p">:</span> <span class="s2">"sm_100f"</span><span class="p">,</span> <span class="s2">"code"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"sm_100a"</span><span class="p">,</span> <span class="s2">"sm_103a"</span><span class="p">]}</span>
 <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -830,7 +830,7 @@ the default is <code class="docutils literal notranslate"><span class="pre">auto
 <h2>CUDA <code class="docutils literal notranslate"><span class="pre">arch</span></code> and <code class="docutils literal notranslate"><span class="pre">code</span></code><a class="headerlink" href="#cuda-arch-and-code" title="Link to this heading">¶</a></h2>
 <p>For CUDA targets, <code class="docutils literal notranslate"><span class="pre">arch</span></code> selects the SM family TileLang/TVM should compile for. TileLang accepts <code class="docutils literal notranslate"><span class="pre">sm_...</span></code> architecture
 tokens for this field. In the common case, setting only <code class="docutils literal notranslate"><span class="pre">arch</span></code> is enough:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="s2">&quot;arch&quot;</span><span class="p">:</span> <span class="s2">&quot;sm_90&quot;</span><span class="p">}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"cuda"</span><span class="p">,</span> <span class="s2">"arch"</span><span class="p">:</span> <span class="s2">"sm_90"</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>TileLang passes this to NVCC as a single architecture target:</p>
@@ -840,9 +840,9 @@ tokens for this field. In the common case, setting only <code class="docutils li
 <p>Use <code class="docutils literal notranslate"><span class="pre">code</span></code> only when you need explicit NVCC <code class="docutils literal notranslate"><span class="pre">-gencode</span></code> behavior, for example when compiling the virtual architecture
 derived from <code class="docutils literal notranslate"><span class="pre">arch</span></code> but emitting SASS for multiple GPU code instances:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;arch&quot;</span><span class="p">:</span> <span class="s2">&quot;sm_100f&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;sm_100a&quot;</span><span class="p">,</span> <span class="s2">&quot;sm_103a&quot;</span><span class="p">],</span>
+    <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"cuda"</span><span class="p">,</span>
+    <span class="s2">"arch"</span><span class="p">:</span> <span class="s2">"sm_100f"</span><span class="p">,</span>
+    <span class="s2">"code"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"sm_100a"</span><span class="p">,</span> <span class="s2">"sm_103a"</span><span class="p">],</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -945,7 +945,7 @@ by default, or the <code class="docutils literal notranslate"><span class="pre">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.backend.target</span><span class="w"> </span><span class="kn">import</span> <span class="n">determine_target</span>
 
 <span class="n">tvm_target</span> <span class="o">=</span> <span class="n">determine_target</span><span class="p">(</span>
-    <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="s2">&quot;arch&quot;</span><span class="p">:</span> <span class="s2">&quot;sm_100f&quot;</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;sm_100a&quot;</span><span class="p">,</span> <span class="s2">&quot;sm_103a&quot;</span><span class="p">]},</span>
+    <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"cuda"</span><span class="p">,</span> <span class="s2">"arch"</span><span class="p">:</span> <span class="s2">"sm_100f"</span><span class="p">,</span> <span class="s2">"code"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"sm_100a"</span><span class="p">,</span> <span class="s2">"sm_103a"</span><span class="p">]},</span>
     <span class="n">return_object</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">tvm_target</span><span class="p">)</span>
@@ -954,8 +954,8 @@ by default, or the <code class="docutils literal notranslate"><span class="pre">
 <p>You can also build targets directly through TVM:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tvm.target</span><span class="w"> </span><span class="kn">import</span> <span class="n">Target</span>
 
-<span class="n">target</span> <span class="o">=</span> <span class="n">Target</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
-<span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">with_host</span><span class="p">(</span><span class="n">Target</span><span class="p">({</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;llvm&quot;</span><span class="p">,</span> <span class="s2">&quot;mcpu&quot;</span><span class="p">:</span> <span class="s2">&quot;skylake&quot;</span><span class="p">}))</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">Target</span><span class="p">(</span><span class="s2">"cuda"</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">"llvm"</span><span class="p">)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">with_host</span><span class="p">(</span><span class="n">Target</span><span class="p">({</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"llvm"</span><span class="p">,</span> <span class="s2">"mcpu"</span><span class="p">:</span> <span class="s2">"skylake"</span><span class="p">}))</span>
 </pre></div>
 </div>
 <p>TileLang accepts bare target strings, target config dictionaries, and <code class="docutils literal notranslate"><span class="pre">Target</span></code> inputs. For targets with options,

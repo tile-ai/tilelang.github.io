@@ -819,14 +819,14 @@ open<span class="w"> </span>tmp/lower_trace_dir/my_script/report.html
 <h3>Output Directory Structure<a class="headerlink" href="#output-directory-structure" title="Link to this heading">¶</a></h3>
 <p>A single run produces the following layout under <code class="docutils literal notranslate"><span class="pre">TL_LOWER_TRACE_DIR</span></code>:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;TL_LOWER_TRACE_DIR&gt;/
-└── &lt;script_name&gt;/                      # derived from sys.argv[0], e.g. &quot;my_script&quot;
-    ├── report.html                # symlink → latest run&#39;s report
+└── &lt;script_name&gt;/                      # derived from sys.argv[0], e.g. "my_script"
+    ├── report.html                # symlink → latest run's report
     ├── codegen.cpp                     # generated codegen source (editable, see below)
     ├── codegen.cpp.original            # baseline snapshot for edit/recompile workflow
     ├── codegen.cpp.latest              # actual codegen output of the most recent run
     └── .run_records/
         └── run_&lt;YYYYMMDD_HHMMSS_ffffff&gt;_&lt;pid&gt;_&lt;unique-id&gt;/
-            ├── report.html        # this run&#39;s full report
+            ├── report.html        # this run's full report
             ├── pipeline_c/             # one subdir per phase (example)
             │   ├── 00_BindTarget_before.tir
             │   ├── 00_BindTarget_after.tir
@@ -858,18 +858,18 @@ hook:</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.transform</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">transform</span>
 
 <span class="c1"># Diff a single pass</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">lt</span><span class="o">.</span><span class="n">lower_trace</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">Simplify</span><span class="p">(),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;terminal&quot;</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">lt</span><span class="o">.</span><span class="n">lower_trace</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">Simplify</span><span class="p">(),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"terminal"</span><span class="p">)</span>
 
 <span class="c1"># Diff a named chain, write an HTML report</span>
 <span class="n">results</span> <span class="o">=</span> <span class="n">lt</span><span class="o">.</span><span class="n">lower_trace</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span>
     <span class="p">[</span>
-        <span class="p">(</span><span class="s2">&quot;Annotate&quot;</span><span class="p">,</span>   <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">AnnotateDeviceRegions</span><span class="p">()),</span>
-        <span class="p">(</span><span class="s2">&quot;Split&quot;</span><span class="p">,</span>      <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">SplitHostDevice</span><span class="p">()),</span>
-        <span class="p">(</span><span class="s2">&quot;ThreadSync&quot;</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">ThreadSync</span><span class="p">(</span><span class="s2">&quot;shared&quot;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">"Annotate"</span><span class="p">,</span>   <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">AnnotateDeviceRegions</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s2">"Split"</span><span class="p">,</span>      <span class="n">tvm</span><span class="o">.</span><span class="n">tirx</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">SplitHostDevice</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s2">"ThreadSync"</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">ThreadSync</span><span class="p">(</span><span class="s2">"shared"</span><span class="p">)),</span>
     <span class="p">],</span>
-    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span>
-    <span class="n">html_path</span><span class="o">=</span><span class="s2">&quot;my_diff.html&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span>
+    <span class="n">html_path</span><span class="o">=</span><span class="s2">"my_diff.html"</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -916,7 +916,7 @@ environment variable does, but programmatically):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lower_trace</span> <span class="k">as</span> <span class="n">lt</span>
 
 <span class="c1"># Enable tracing for the rest of the process.</span>
-<span class="n">lt</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+<span class="n">lt</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"both"</span><span class="p">)</span>
 
 <span class="c1"># ... run tilelang.compile() / kernel compilation ...</span>
 </pre></div>
@@ -971,7 +971,7 @@ that is already compiling.</p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lower_trace</span> <span class="k">as</span> <span class="n">lt</span>
 
-<span class="n">lt</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+<span class="n">lt</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"both"</span><span class="p">)</span>
 
 <span class="c1"># First kernel — traced.</span>
 <span class="n">kernel1</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">func_a</span><span class="p">)</span>
@@ -1151,10 +1151,10 @@ from TIR during codegen. When the <code class="docutils literal notranslate"><sp
 recorded in the trace for diff viewing but were <strong>not recompiled</strong>. To use
 edit-and-recompile, switch to a source-compiling backend:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For CUDA targets:</span>
-<span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">execution_backend</span><span class="o">=</span><span class="s2">&quot;nvrtc&quot;</span><span class="p">)</span>
+<span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">execution_backend</span><span class="o">=</span><span class="s2">"nvrtc"</span><span class="p">)</span>
 
 <span class="c1"># For HIP targets:</span>
-<span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">execution_backend</span><span class="o">=</span><span class="s2">&quot;cython&quot;</span><span class="p">)</span>
+<span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">execution_backend</span><span class="o">=</span><span class="s2">"cython"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

@@ -775,7 +775,7 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang</span><span class="w"> </span><span class="kn">import</span> <span class="n">tl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tvm</span><span class="w"> </span><span class="kn">import</span> <span class="n">IRModule</span>
 
-<span class="n">mod</span> <span class="o">=</span> <span class="n">IRModule</span><span class="p">({</span><span class="s2">&quot;main&quot;</span><span class="p">:</span> <span class="n">prim_func</span><span class="p">})</span>
+<span class="n">mod</span> <span class="o">=</span> <span class="n">IRModule</span><span class="p">({</span><span class="s2">"main"</span><span class="p">:</span> <span class="n">prim_func</span><span class="p">})</span>
 <span class="k">with</span> <span class="n">tvm</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">PassContext</span><span class="p">():</span>
     <span class="n">mod</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">InjectFenceProxy</span><span class="p">()(</span><span class="n">mod</span><span class="p">)</span>
 </pre></div>
@@ -787,18 +787,18 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">():</span>
     <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">&quot;uint64&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;local.descriptor&quot;</span><span class="p">)</span>
-        <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;shared&quot;</span><span class="p">)</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">"uint64"</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">"local.descriptor"</span><span class="p">)</span>
+        <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">"float16"</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">"shared"</span><span class="p">)</span>
         <span class="n">T</span><span class="o">.</span><span class="n">initialize_wgmma_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
         <span class="n">smem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">T</span><span class="o">.</span><span class="n">ptx_wgmma_ss</span><span class="p">(</span>
-            <span class="s2">&quot;float16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;m64n64k16&quot;</span><span class="p">,</span>
+            <span class="s2">"float16"</span><span class="p">,</span>
+            <span class="s2">"m64n64k16"</span><span class="p">,</span>
             <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
             <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+            <span class="s2">"fp16"</span><span class="p">,</span>
+            <span class="s2">"fp16"</span><span class="p">,</span>
+            <span class="s2">"fp16"</span><span class="p">,</span>
             <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
             <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
             <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
@@ -815,19 +815,19 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">():</span>
     <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">&quot;uint64&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;local.descriptor&quot;</span><span class="p">)</span>
-        <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float16&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;shared&quot;</span><span class="p">)</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s2">"uint64"</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">"local.descriptor"</span><span class="p">)</span>
+        <span class="n">smem</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">decl_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">"float16"</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">"shared"</span><span class="p">)</span>
         <span class="n">T</span><span class="o">.</span><span class="n">initialize_wgmma_descriptor</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
         <span class="n">smem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float16</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">T</span><span class="o">.</span><span class="n">fence_proxy_async</span><span class="p">()</span>
         <span class="n">T</span><span class="o">.</span><span class="n">ptx_wgmma_ss</span><span class="p">(</span>
-            <span class="s2">&quot;float16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;m64n64k16&quot;</span><span class="p">,</span>
+            <span class="s2">"float16"</span><span class="p">,</span>
+            <span class="s2">"m64n64k16"</span><span class="p">,</span>
             <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
             <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;fp16&quot;</span><span class="p">,</span>
+            <span class="s2">"fp16"</span><span class="p">,</span>
+            <span class="s2">"fp16"</span><span class="p">,</span>
+            <span class="s2">"fp16"</span><span class="p">,</span>
             <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
             <span class="n">T</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
             <span class="n">desc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
