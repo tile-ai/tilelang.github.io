@@ -223,7 +223,9 @@ Module Contents
       "io-aware" scores estimated global-memory access cost (vector width /
       warp coalescing of every fragment<->global copy, weighted by bytes
       moved) with register count as the tiebreak; "register-count" is the
-      total-register-slots-only ordering. Default: 'register-count'
+      total-register-slots-only ordering. When unset, the
+      ``TILELANG_LAYOUT_COST_MODEL`` environment variable supplies the
+      default. Default: 'register-count'
 
 
    .. py:attribute:: TL_REDUCER_FORCE_BASELINE
@@ -635,6 +637,7 @@ Module Contents
 
 .. py:function:: normalize_pass_configs(pass_configs)
 
-   Canonicalize known pass-config keys and emit compatibility warnings.
+   Canonicalize known pass-config keys, apply environment-variable
+   defaults, and emit compatibility warnings.
 
 

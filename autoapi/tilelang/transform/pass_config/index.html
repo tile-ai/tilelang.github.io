@@ -758,7 +758,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.transform.pass_config.normalize_pass_configs" title="tilelang.transform.pass_config.normalize_pass_configs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_pass_configs</span></code></a>(pass_configs)</p></td>
-<td><p>Canonicalize known pass-config keys and emit compatibility warnings.</p></td>
+<td><p>Canonicalize known pass-config keys, apply environment-variable</p></td>
 </tr>
 </tbody>
 </table>
@@ -980,7 +980,9 @@ Default: False</p>
 “io-aware” scores estimated global-memory access cost (vector width /
 warp coalescing of every fragment&lt;-&gt;global copy, weighted by bytes
 moved) with register count as the tiebreak; “register-count” is the
-total-register-slots-only ordering. Default: ‘register-count’</p>
+total-register-slots-only ordering. When unset, the
+<code class="docutils literal notranslate"><span class="pre">TILELANG_LAYOUT_COST_MODEL</span></code> environment variable supplies the
+default. Default: ‘register-count’</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1423,7 +1425,8 @@ from tilelang.transform import PassContext, PassConfigKey</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.transform.pass_config.normalize_pass_configs">
 <span class="sig-prename descclassname"><span class="pre">tilelang.transform.pass_config.</span></span><span class="sig-name descname"><span class="pre">normalize_pass_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.pass_config.normalize_pass_configs" title="Link to this definition">¶</a></dt>
-<dd><p>Canonicalize known pass-config keys and emit compatibility warnings.</p>
+<dd><p>Canonicalize known pass-config keys, apply environment-variable
+defaults, and emit compatibility warnings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>pass_configs</strong> (<em>dict</em><em>[</em><em>str</em><em> | </em><a class="reference internal" href="#tilelang.transform.pass_config.PassConfigKey" title="tilelang.transform.pass_config.PassConfigKey"><em>PassConfigKey</em></a><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p>
