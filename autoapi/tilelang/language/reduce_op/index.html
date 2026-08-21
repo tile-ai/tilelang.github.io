@@ -841,7 +841,10 @@ batch must evenly divide the per-thread output element count N.</p></li>
 float16/bfloat16. When True, lower to CUDA __hmax_nan/__hmin_nan so
 NaNs propagate through the reduction. When False (default), use
 __hmax/__hmin which return the non-NaN operand. CUDA-only.</p></li>
-<li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional lowering controls. On CUDA
+SM100+, FP32 sum/abssum reductions accept
+<code class="docutils literal notranslate"><span class="pre">{&quot;enable_fadd2&quot;:</span> <span class="pre">False}</span></code> to keep the reducer scalar. Packed
+FP32x2 reduction remains enabled by default.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -918,7 +921,9 @@ are ignored (CUDA __hmin). CUDA-only.</p></li>
 If False, results will be accumulated on existing values.
 Defaults to True.</p></li>
 <li><p><strong>batch</strong> (<em>int</em>) – Number of output elements per batched AllReduce call (default 1).</p></li>
-<li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em>, </em><em>optional</em>) – On CUDA SM100+, set
+<code class="docutils literal notranslate"><span class="pre">{&quot;enable_fadd2&quot;:</span> <span class="pre">False}</span></code> to disable packed FP32x2 accumulation
+for this reduction. It is enabled by default.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -969,7 +974,9 @@ in the warp). Therefore, the implementation with clear=True follows these steps:
 <li><p><strong>out</strong> (<em>tirx.Buffer</em>) – The output buffer</p></li>
 <li><p><strong>dim</strong> (<em>int</em>) – The dimension to perform reduce on</p></li>
 <li><p><strong>batch</strong> (<em>int</em>) – Number of output elements per batched AllReduce call (default 1).</p></li>
-<li><p><strong>annotations</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>annotations</strong> (<em>dict</em><em>, </em><em>optional</em>) – On CUDA SM100+, set
+<code class="docutils literal notranslate"><span class="pre">{&quot;enable_fadd2&quot;:</span> <span class="pre">False}</span></code> to disable packed FP32x2 accumulation
+for this reduction. It is enabled by default.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

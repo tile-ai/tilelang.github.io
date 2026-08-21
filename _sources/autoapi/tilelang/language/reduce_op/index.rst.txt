@@ -71,6 +71,11 @@ Module Contents
                          NaNs propagate through the reduction. When False (default), use
                          __hmax/__hmin which return the non-NaN operand. CUDA-only.
    :type nan_propagate: bool
+   :param annotations: Additional lowering controls. On CUDA
+                       SM100+, FP32 sum/abssum reductions accept
+                       ``{"enable_fadd2": False}`` to keep the reducer scalar. Packed
+                       FP32x2 reduction remains enabled by default.
+   :type annotations: dict, optional
 
 
 .. py:function:: reduce_max(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False, annotations = None)
@@ -135,6 +140,10 @@ Module Contents
    :type clear: bool, optional
    :param batch: Number of output elements per batched AllReduce call (default 1).
    :type batch: int
+   :param annotations: On CUDA SM100+, set
+                       ``{"enable_fadd2": False}`` to disable packed FP32x2 accumulation
+                       for this reduction. It is enabled by default.
+   :type annotations: dict, optional
 
    Note: When clear=True, reduce_sum will not compute directly on the output buffer. This is because
          during warp reduction, the same value would be accumulated multiple times (number of threads
@@ -160,6 +169,10 @@ Module Contents
    :type dim: int
    :param batch: Number of output elements per batched AllReduce call (default 1).
    :type batch: int
+   :param annotations: On CUDA SM100+, set
+                       ``{"enable_fadd2": False}`` to disable packed FP32x2 accumulation
+                       for this reduction. It is enabled by default.
+   :type annotations: dict, optional
 
    :returns: Handle to the reduction operation
    :rtype: tirx.Call
