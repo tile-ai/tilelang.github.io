@@ -1,0 +1,98 @@
+tilelang.tools.compile_only
+===========================
+
+.. py:module:: tilelang.tools.compile_only
+
+.. autoapi-nested-parse::
+
+   Compile-only tool: emit inspectable ``lower()`` kernel source without a GPU.
+
+   Usage::
+
+       python3 -I -m tilelang.tools.compile_only --output_file out.s example.py
+
+   The default target is ``c`` (CPU C). CUDA is optional::
+
+       python3 -I -m tilelang.tools.compile_only --target cuda --output_file out.s example.py
+
+   Programmatic API::
+
+       from tilelang.tools.compile_only import compile_kernel_source
+
+       source = compile_kernel_source(func)  # default target c
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.tools.compile_only.DEFAULT_TARGET
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.tools.compile_only.cuda_codegen_available
+   tilelang.tools.compile_only.resolve_target
+   tilelang.tools.compile_only.load_example
+   tilelang.tools.compile_only.discover_prim_func
+   tilelang.tools.compile_only.compile_kernel_source
+   tilelang.tools.compile_only.cli_main
+
+
+Module Contents
+---------------
+
+.. py:data:: DEFAULT_TARGET
+   :value: 'c'
+
+
+.. py:function:: cuda_codegen_available()
+
+   Return whether this wheel can lower CUDA (``AnnotateDeviceBoundTmaCopies``).
+
+
+.. py:function:: resolve_target(target)
+
+   Map a CLI/library target string to an explicit lower() target.
+
+   :param target: User-facing target. ``auto`` is rejected. ``cuda`` is pinned to sm_80.
+                  Option-bearing CUDA strings (``cuda -arch=sm_90`` or JSON) keep their arch.
+   :type target: str
+
+   :returns: A TVM target string, or a CUDA target dict.
+   :rtype: str or dict
+
+
+.. py:function:: load_example(path)
+
+   Load ``example.py`` as a module (D2). Do not treat it as a launch script.
+
+
+.. py:function:: discover_prim_func(module)
+
+   Return the first ``@tilelang.jit`` / PrimFunc in module order (D2, 古法: one piece).
+
+
+.. py:function:: compile_kernel_source(func, target = DEFAULT_TARGET)
+
+   Lower ``func`` with ``enable_device_compile=False`` and return ``kernel_source`` (D1).
+
+   :param func: Kernel from ``JITImpl.get_tir()`` or a PrimFunc. No tensor args.
+   :type func: PrimFunc or IRModule
+   :param target: Explicit target. Strings go through :func:`resolve_target`. Default ``c``.
+   :type target: str or dict, optional
+
+   :returns: Non-empty ``CompiledArtifact.kernel_source`` from existing ``lower()``.
+   :rtype: str
+
+
+.. py:function:: cli_main(argv = None)
+
+   CE-shaped CLI (D2): ``--output_file`` + example.py. Default target ``c`` (D3).
+
+
