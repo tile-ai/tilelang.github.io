@@ -26,14 +26,6 @@ Attributes
    tilelang.autotuner.tuner.logger
 
 
-Exceptions
-----------
-
-.. autoapisummary::
-
-   tilelang.autotuner.tuner.TimeoutException
-
-
 Classes
 -------
 
@@ -48,7 +40,6 @@ Functions
 
 .. autoapisummary::
 
-   tilelang.autotuner.tuner.run_with_timeout
    tilelang.autotuner.tuner.autotune
 
 
@@ -66,27 +57,6 @@ Module Contents
 .. py:data:: CompileUnit
 
 .. py:data:: BucketItem
-
-.. py:exception:: TimeoutException
-
-   Bases: :py:obj:`Exception`
-
-
-   Common base class for all non-exit exceptions.
-
-
-.. py:function:: run_with_timeout(func, timeout, *args, **kwargs)
-
-   Run ``func`` under a deadline, raising :class:`TimeoutException` if exceeded.
-
-   Picks the strongest available primitive:
-
-   * **POSIX, main thread**: ``SIGALRM``. The deadline truly interrupts
-     ``func`` mid-execution and frees its resources.
-   * **Otherwise** (Windows, or POSIX off the main thread): a daemon
-     ``ThreadPoolExecutor``. The deadline only unblocks the caller; the
-     runaway worker keeps running until it returns on its own.
-
 
 .. py:data:: logger
 
