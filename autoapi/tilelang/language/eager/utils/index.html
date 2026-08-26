@@ -769,7 +769,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.eager.utils.construct_strides" title="tilelang.language.eager.utils.construct_strides"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_strides</span></code></a>(shape[, allow_prim_expr])</p></td>
-<td><p>Construct row-major strides from shape.</p></td>
+<td><p>Construct contiguous row-major strides from <code class="docutils literal notranslate"><span class="pre">shape</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -821,11 +821,19 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.eager.utils.construct_strides">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.utils.</span></span><span class="sig-name descname"><span class="pre">construct_strides</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_prim_expr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.utils.construct_strides" title="Link to this definition">¶</a></dt>
-<dd><p>Construct row-major strides from shape.</p>
+<dd><p>Construct contiguous row-major strides from <code class="docutils literal notranslate"><span class="pre">shape</span></code>.</p>
+<p>This is the single source of truth for default (contiguous) strides in the
+Python frontend; <code class="docutils literal notranslate"><span class="pre">T.Tensor</span></code>, <code class="docutils literal notranslate"><span class="pre">T.out</span></code> and <code class="docutils literal notranslate"><span class="pre">retrieve_stride</span></code> all route
+here so they cannot drift apart.</p>
+<p>The result always has the same rank as <code class="docutils literal notranslate"><span class="pre">shape</span></code>. In particular a rank-0
+(scalar) shape yields an empty stride tuple, matching the TIR convention
+that <code class="docutils literal notranslate"><span class="pre">len(buffer.strides)</span></code> is either <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">len(buffer.shape)</span></code>.
+Entries may be <code class="docutils literal notranslate"><span class="pre">int</span></code> or <code class="docutils literal notranslate"><span class="pre">PrimExpr</span></code> depending on <code class="docutils literal notranslate"><span class="pre">shape</span></code>; pass
+<code class="docutils literal notranslate"><span class="pre">allow_prim_expr=False</span></code> to require fully static strides.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>shape</strong> (<em>tuple</em><em>[</em><em>Any</em><em>, </em><em>Ellipsis</em><em>]</em>)</p></li>
+<li><p><strong>shape</strong> (<em>collections.abc.Sequence</em><em>[</em><em>Any</em><em>]</em>)</p></li>
 <li><p><strong>allow_prim_expr</strong> (<a class="reference internal" href="../../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
