@@ -1,0 +1,64 @@
+tilelang.layout.partial_fragment
+================================
+
+.. py:module:: tilelang.layout.partial_fragment
+
+.. autoapi-nested-parse::
+
+   Wrapping the reducer partial-fragment layout.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.layout.partial_fragment.PartialFragment
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.layout.partial_fragment.make_fully_replicated_partial_fragment
+
+
+Module Contents
+---------------
+
+.. py:class:: PartialFragment(shape, forward_fn=None, forward_thread_fn=None, replicate=1, forward_index_fn=None, combine=None)
+
+   Bases: :py:obj:`tilelang.layout.fragment.Fragment`
+
+
+   Layout of a reducer's per-thread partials.
+
+   Same algebra as Fragment, but the replication coordinate enumerates
+   addends that still await the finalize collective (combine lanes), not
+   equal copies of a finished value. Inferred by layout inference for
+   ``local.reducer`` buffers, or supplied by the user via
+   ``T.annotate_layout({acc: PartialFragment(...)})`` to pin the reducer's
+   physical plan.
+
+
+   .. py:method:: from_fragment(fragment)
+      :staticmethod:
+
+
+      Reinterpret a solved Fragment as per-thread partials.
+
+
+
+   .. py:method:: as_post_collective()
+
+      The same algebraic map read as a plain Fragment (post-finalize).
+
+
+
+.. py:function:: make_fully_replicated_partial_fragment(shape, thread_extent)
+
+   The wide plan: every participant holds one full-shape partial.
+
+
