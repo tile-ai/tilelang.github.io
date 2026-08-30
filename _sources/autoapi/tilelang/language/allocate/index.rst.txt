@@ -161,7 +161,9 @@ Module Contents
 
    Allocate a barrier buffer.
 
-   :param arrive_count: The number of threads that need to arrive at each barrier
+   :param arrive_count: The number of threads that need to arrive at each barrier.
+                        Every count must be at least 1: an mbarrier arrive count of 0 has no defined meaning,
+                        and a negative count would be reinterpreted as a garbage unsigned value at init.
    :type arrive_count: int | list[int]
 
    :returns: A TVM buffer object allocated as a barrier
@@ -177,7 +179,8 @@ Module Contents
 
    Allocate a cluster barrier buffer.
 
-   :param arrive_count: The number of threads that need to arrive at each barrier
+   :param arrive_count: The number of threads that need to arrive at each barrier.
+                        Every count must be at least 1, as for `alloc_barrier`.
    :type arrive_count: int | list[int]
 
    :returns: A TVM buffer object allocated as a cluster barrier
