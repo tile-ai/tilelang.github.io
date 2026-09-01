@@ -74,7 +74,8 @@ Module Contents
    :param annotations: Additional lowering controls. On CUDA
                        SM100+, FP32 sum/abssum reductions accept
                        ``{"enable_fadd2": False}`` to keep the reducer scalar. Packed
-                       FP32x2 reduction remains enabled by default.
+                       FP32x2 reduction remains enabled by default, and can be disabled
+                       globally with the ``tl.enable_fp32x2_reduction`` pass config.
    :type annotations: dict, optional
 
 
@@ -142,7 +143,8 @@ Module Contents
    :type batch: int
    :param annotations: On CUDA SM100+, set
                        ``{"enable_fadd2": False}`` to disable packed FP32x2 accumulation
-                       for this reduction. It is enabled by default.
+                       for this reduction. It is enabled by default, unless the
+                       ``tl.enable_fp32x2_reduction`` pass config is False.
    :type annotations: dict, optional
 
    Note: When clear=True, reduce_sum will not compute directly on the output buffer. This is because
@@ -171,7 +173,8 @@ Module Contents
    :type batch: int
    :param annotations: On CUDA SM100+, set
                        ``{"enable_fadd2": False}`` to disable packed FP32x2 accumulation
-                       for this reduction. It is enabled by default.
+                       for this reduction. It is enabled by default, unless the
+                       ``tl.enable_fp32x2_reduction`` pass config is False.
    :type annotations: dict, optional
 
    :returns: Handle to the reduction operation

@@ -844,7 +844,8 @@ __hmax/__hmin which return the non-NaN operand. CUDA-only.</p></li>
 <li><p><strong>annotations</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional lowering controls. On CUDA
 SM100+, FP32 sum/abssum reductions accept
 <code class="docutils literal notranslate"><span class="pre">{&quot;enable_fadd2&quot;:</span> <span class="pre">False}</span></code> to keep the reducer scalar. Packed
-FP32x2 reduction remains enabled by default.</p></li>
+FP32x2 reduction remains enabled by default, and can be disabled
+globally with the <code class="docutils literal notranslate"><span class="pre">tl.enable_fp32x2_reduction</span></code> pass config.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -923,7 +924,8 @@ Defaults to True.</p></li>
 <li><p><strong>batch</strong> (<em>int</em>) – Number of output elements per batched AllReduce call (default 1).</p></li>
 <li><p><strong>annotations</strong> (<em>dict</em><em>, </em><em>optional</em>) – On CUDA SM100+, set
 <code class="docutils literal notranslate"><span class="pre">{&quot;enable_fadd2&quot;:</span> <span class="pre">False}</span></code> to disable packed FP32x2 accumulation
-for this reduction. It is enabled by default.</p></li>
+for this reduction. It is enabled by default, unless the
+<code class="docutils literal notranslate"><span class="pre">tl.enable_fp32x2_reduction</span></code> pass config is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -976,7 +978,8 @@ in the warp). Therefore, the implementation with clear=True follows these steps:
 <li><p><strong>batch</strong> (<em>int</em>) – Number of output elements per batched AllReduce call (default 1).</p></li>
 <li><p><strong>annotations</strong> (<em>dict</em><em>, </em><em>optional</em>) – On CUDA SM100+, set
 <code class="docutils literal notranslate"><span class="pre">{&quot;enable_fadd2&quot;:</span> <span class="pre">False}</span></code> to disable packed FP32x2 accumulation
-for this reduction. It is enabled by default.</p></li>
+for this reduction. It is enabled by default, unless the
+<code class="docutils literal notranslate"><span class="pre">tl.enable_fp32x2_reduction</span></code> pass config is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
