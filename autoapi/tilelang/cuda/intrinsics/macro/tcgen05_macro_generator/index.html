@@ -847,6 +847,34 @@ descriptor from the buffer base. <code class="docutils literal notranslate"><spa
 operand. Computed by <a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.compute_umma_descriptor" title="tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.compute_umma_descriptor"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_umma_descriptor()</span></code></a> from the CuTe layout.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.k_panel_elems">
+<span class="sig-name descname"><span class="pre">k_panel_elems</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.k_panel_elems" title="Link to this definition">¶</a></dt>
+<dd><p>Element stride between consecutive K swizzle-atom panels (K-major only),
+read off the decoded layout by <code class="xref py py-func docutils literal notranslate"><span class="pre">decode_k_panel_elems()</span></code>. <code class="docutils literal notranslate"><span class="pre">None</span></code> only
+when no panel step is needed – see <a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.k_panel_stride" title="tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.k_panel_stride"><code class="xref py py-meth docutils literal notranslate"><span class="pre">k_panel_stride()</span></code></a>, which is how
+callers should read it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.k_panel_stride">
+<span class="sig-name descname"><span class="pre">k_panel_stride</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mn_extent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.k_panel_stride" title="Link to this definition">¶</a></dt>
+<dd><p>K-panel step for the atom offset formulas.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mn_extent</span></code> is the operand’s own MN extent, used only for the
+single-panel / MN-major case where the <code class="docutils literal notranslate"><span class="pre">ki</span> <span class="pre">//</span> <span class="pre">k_atom_size</span></code> factor is
+always zero and any value works. Never reconstruct the multi-panel step
+from it: for a slice of a wider buffer the panels stay spaced by the
+<em>buffer’s</em> MN extent, not the operand’s.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mn_extent</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1541,6 +1569,8 @@ via the CuTe <code class="docutils literal notranslate"><span class="pre">make_u
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.elem_bits"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.elem_bits</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.is_k_major"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.is_k_major</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.slice_byte_offset"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.slice_byte_offset</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.k_panel_elems"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.k_panel_elems</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05DescriptorParams.k_panel_stride"><code class="docutils literal notranslate"><span class="pre">TCGEN05DescriptorParams.k_panel_stride()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.tcgen05_macro_generator.TCGEN05TensorMemoryParams"><code class="docutils literal notranslate"><span class="pre">TCGEN05TensorMemoryParams</span></code></a><ul>

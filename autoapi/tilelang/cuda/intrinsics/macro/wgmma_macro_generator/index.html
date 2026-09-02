@@ -773,10 +773,13 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_wgmma_inst_n</span></code></a>(warp_col_tiles)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.decode_k_panel_elems" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.decode_k_panel_elems"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_k_panel_elems</span></code></a>(k_mode, k_major, swizzle_mode, ...)</p></td>
+<td><p>Element stride between consecutive K swizzle-atom panels, off the layout.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_wgmma_inst_n</span></code></a>(warp_col_tiles)</p></td>
 <td><p>Widest legal WGMMA <code class="docutils literal notranslate"><span class="pre">N</span></code> that tiles <code class="docutils literal notranslate"><span class="pre">warp_col_tiles</span></code> exactly.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_gmma_descriptor</span></code></a>(tl_layout, buffer, transposed)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_gmma_descriptor</span></code></a>(tl_layout, buffer, transposed)</p></td>
 <td><p>Port of CuTe <code class="docutils literal notranslate"><span class="pre">make_gmma_desc</span></code>.</p></td>
 </tr>
 </tbody>
@@ -789,6 +792,39 @@
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.lift">
 <span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">lift</span></span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.lift" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.decode_k_panel_elems">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cuda.intrinsics.macro.wgmma_macro_generator.</span></span><span class="sig-name descname"><span class="pre">decode_k_panel_elems</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swizzle_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swizzle_atom_elems</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.decode_k_panel_elems" title="Link to this definition">¶</a></dt>
+<dd><p>Element stride between consecutive K swizzle-atom panels, off the layout.</p>
+<p>Shared by the WGMMA and UMMA descriptor builders. A K-major operand wider
+than one swizzle atom decodes with its K mode split into <code class="docutils literal notranslate"><span class="pre">(atom,</span> <span class="pre">panels)</span></code>,
+and that panel sub-mode’s stride is the step the atom offset formulas need.
+It cannot be reconstructed as <code class="docutils literal notranslate"><span class="pre">mn_extent</span> <span class="pre">*</span> <span class="pre">swizzle_atom_elems</span></code>, which only
+holds when the operand covers its whole buffer – for a slice the MN extent
+shrinks while the panel spacing does not.</p>
+<p><code class="docutils literal notranslate"><span class="pre">k_mode</span></code> is the operand tile’s K mode in element space (post-<code class="docutils literal notranslate"><span class="pre">restrict</span></code>).
+Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> only when no panel step is needed: an MN-major operand, or a
+layout with a single K panel, where the <code class="docutils literal notranslate"><span class="pre">ki</span> <span class="pre">//</span> <span class="pre">k_atom_size</span></code> factor the step
+is multiplied by is always zero.</p>
+<p>A swizzled multi-panel layout whose K mode is not the canonical
+<code class="docutils literal notranslate"><span class="pre">(atom,</span> <span class="pre">panels):(1,</span> <span class="pre">panel_stride)</span></code> asserts rather than falling back to the
+extent-based reconstruction: that fallback is precisely the defect this
+decode exists to remove, so re-entering it silently would reintroduce a
+wrong-code path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k_major</strong> (<a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+<li><p><strong>swizzle_atom_elems</strong> (<em>int</em>)</p></li>
+<li><p><strong>kind</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int | None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n">
@@ -873,6 +909,34 @@ consumed by <code class="docutils literal notranslate"><span class="pre">init_wg
 buffer; passed to <code class="docutils literal notranslate"><span class="pre">T.increase_descriptor_offset</span></code> after building the
 descriptor from the buffer base. <code class="docutils literal notranslate"><span class="pre">0</span></code> for a whole-buffer / base-origin
 operand. Computed by <a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_gmma_descriptor()</span></code></a> from the CuTe layout.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_panel_elems">
+<span class="sig-name descname"><span class="pre">k_panel_elems</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_panel_elems" title="Link to this definition">¶</a></dt>
+<dd><p>Element stride between consecutive K swizzle-atom panels (K-major only),
+read off the decoded layout by <a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.decode_k_panel_elems" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.decode_k_panel_elems"><code class="xref py py-func docutils literal notranslate"><span class="pre">decode_k_panel_elems()</span></code></a>. <code class="docutils literal notranslate"><span class="pre">None</span></code> only
+when no panel step is needed – see <a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_panel_stride" title="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_panel_stride"><code class="xref py py-meth docutils literal notranslate"><span class="pre">k_panel_stride()</span></code></a>, which is how
+callers should read it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_panel_stride">
+<span class="sig-name descname"><span class="pre">k_panel_stride</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mn_extent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_panel_stride" title="Link to this definition">¶</a></dt>
+<dd><p>K-panel step for the atom offset formulas.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mn_extent</span></code> is the operand’s own MN extent, used only for the
+single-panel / MN-major case where the <code class="docutils literal notranslate"><span class="pre">ki</span> <span class="pre">//</span> <span class="pre">k_atom_size</span></code> factor is
+always zero and any value works. Never reconstruct the multi-panel step
+from it: for a slice of a wider buffer the panels stay spaced by the
+<em>buffer’s</em> MN extent, not the operand’s.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mn_extent</strong> (<em>int</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1312,6 +1376,7 @@ in <cite>local_buf</cite> are laid out.</p>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.lift"><code class="docutils literal notranslate"><span class="pre">lift</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.decode_k_panel_elems"><code class="docutils literal notranslate"><span class="pre">decode_k_panel_elems()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n"><code class="docutils literal notranslate"><span class="pre">select_wgmma_inst_n()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.swizzle_mode"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.swizzle_mode</span></code></a></li>
@@ -1322,6 +1387,8 @@ in <cite>local_buf</cite> are laid out.</p>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.elems_in_bytes"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.elems_in_bytes</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.is_k_major"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.is_k_major</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.slice_byte_offset"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.slice_byte_offset</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_panel_elems"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.k_panel_elems</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.WGMMADescriptorParams.k_panel_stride"><code class="docutils literal notranslate"><span class="pre">WGMMADescriptorParams.k_panel_stride()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor"><code class="docutils literal notranslate"><span class="pre">compute_gmma_descriptor()</span></code></a></li>

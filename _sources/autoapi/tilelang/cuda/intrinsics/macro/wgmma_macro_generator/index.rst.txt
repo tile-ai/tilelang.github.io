@@ -26,6 +26,7 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.cuda.intrinsics.macro.wgmma_macro_generator.decode_k_panel_elems
    tilelang.cuda.intrinsics.macro.wgmma_macro_generator.select_wgmma_inst_n
    tilelang.cuda.intrinsics.macro.wgmma_macro_generator.compute_gmma_descriptor
 
@@ -34,6 +35,29 @@ Module Contents
 ---------------
 
 .. py:data:: lift
+
+.. py:function:: decode_k_panel_elems(k_mode, k_major, swizzle_mode, swizzle_atom_elems, kind)
+
+   Element stride between consecutive K swizzle-atom panels, off the layout.
+
+   Shared by the WGMMA and UMMA descriptor builders. A K-major operand wider
+   than one swizzle atom decodes with its K mode split into ``(atom, panels)``,
+   and that panel sub-mode's stride is the step the atom offset formulas need.
+   It cannot be reconstructed as ``mn_extent * swizzle_atom_elems``, which only
+   holds when the operand covers its whole buffer -- for a slice the MN extent
+   shrinks while the panel spacing does not.
+
+   ``k_mode`` is the operand tile's K mode in element space (post-``restrict``).
+   Returns ``None`` only when no panel step is needed: an MN-major operand, or a
+   layout with a single K panel, where the ``ki // k_atom_size`` factor the step
+   is multiplied by is always zero.
+
+   A swizzled multi-panel layout whose K mode is not the canonical
+   ``(atom, panels):(1, panel_stride)`` asserts rather than falling back to the
+   extent-based reconstruction: that fallback is precisely the defect this
+   decode exists to remove, so re-entering it silently would reintroduce a
+   wrong-code path.
+
 
 .. py:function:: select_wgmma_inst_n(warp_col_tiles)
 
@@ -111,6 +135,29 @@ Module Contents
       buffer; passed to ``T.increase_descriptor_offset`` after building the
       descriptor from the buffer base. ``0`` for a whole-buffer / base-origin
       operand. Computed by :func:`compute_gmma_descriptor` from the CuTe layout.
+
+
+   .. py:attribute:: k_panel_elems
+      :type:  int | None
+      :value: None
+
+
+      Element stride between consecutive K swizzle-atom panels (K-major only),
+      read off the decoded layout by :func:`decode_k_panel_elems`. ``None`` only
+      when no panel step is needed -- see :meth:`k_panel_stride`, which is how
+      callers should read it.
+
+
+   .. py:method:: k_panel_stride(mn_extent)
+
+      K-panel step for the atom offset formulas.
+
+      ``mn_extent`` is the operand's own MN extent, used only for the
+      single-panel / MN-major case where the ``ki // k_atom_size`` factor is
+      always zero and any value works. Never reconstruct the multi-panel step
+      from it: for a slice of a wider buffer the panels stay spaced by the
+      *buffer's* MN extent, not the operand's.
+
 
 
 .. py:function:: compute_gmma_descriptor(tl_layout, buffer, transposed, micro_size_k = 16, region=None)

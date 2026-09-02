@@ -96,6 +96,29 @@ Module Contents
       operand. Computed by :func:`compute_umma_descriptor` from the CuTe layout.
 
 
+   .. py:attribute:: k_panel_elems
+      :type:  int | None
+      :value: None
+
+
+      Element stride between consecutive K swizzle-atom panels (K-major only),
+      read off the decoded layout by :func:`decode_k_panel_elems`. ``None`` only
+      when no panel step is needed -- see :meth:`k_panel_stride`, which is how
+      callers should read it.
+
+
+   .. py:method:: k_panel_stride(mn_extent)
+
+      K-panel step for the atom offset formulas.
+
+      ``mn_extent`` is the operand's own MN extent, used only for the
+      single-panel / MN-major case where the ``ki // k_atom_size`` factor is
+      always zero and any value works. Never reconstruct the multi-panel step
+      from it: for a slice of a wider buffer the panels stay spaced by the
+      *buffer's* MN extent, not the operand's.
+
+
+
 .. py:class:: TCGEN05TensorMemoryParams
 
    Pre-computed TMEM addressing for one operand Region.
