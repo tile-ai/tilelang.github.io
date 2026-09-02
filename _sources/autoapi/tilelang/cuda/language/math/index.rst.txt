@@ -1,0 +1,40 @@
+tilelang.cuda.language.math
+===========================
+
+.. py:module:: tilelang.cuda.language.math
+
+.. autoapi-nested-parse::
+
+   CUDA-specific floating-point arithmetic intrinsics.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.cuda.language.math.fmul
+   tilelang.cuda.language.math.fma
+
+
+Module Contents
+---------------
+
+.. py:function:: fmul(x, y)
+
+   Multiply with CUDA round-to-nearest semantics.
+
+   Unlike the ``*`` operator, this intrinsic preserves an explicit multiply
+   boundary during CUDA lowering. Vectorized loops may lower it to packed
+   multiply instructions when the target supports them.
+
+
+.. py:function:: fma(x, y, z)
+
+   Compute ``x * y + z`` as one CUDA fused multiply-add operation.
+
+   The result uses round-to-nearest semantics. Vectorized loops may lower the
+   operation to packed FMA instructions when the target supports them.
+
+
