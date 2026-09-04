@@ -9,6 +9,15 @@ tilelang.contrib.rocm
 
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.contrib.rocm.logger
+   tilelang.contrib.rocm.DEFAULT_ROCM_PATH
+
+
 Functions
 ---------
 
@@ -21,11 +30,14 @@ Functions
    tilelang.contrib.rocm.parse_compute_version
    tilelang.contrib.rocm.have_matrixcore
    tilelang.contrib.rocm.get_rocm_arch
+   tilelang.contrib.rocm.find_hipcc
    tilelang.contrib.rocm.find_rocm_path
 
 
 Module Contents
 ---------------
+
+.. py:data:: logger
 
 .. py:function:: find_lld(required=True)
 
@@ -107,6 +119,31 @@ Module Contents
    :type rocm_path: str
 
    :returns: **gpu_arch** -- The AMD GPU architecture
+   :rtype: str
+
+
+.. py:data:: DEFAULT_ROCM_PATH
+   :value: '/opt/rocm'
+
+
+.. py:function:: find_hipcc()
+
+   Resolve the hipcc executable to invoke for JIT compilation.
+
+   Resolution order:
+       1. ``$ROCM_PATH/bin/hipcc`` -- an explicit ROCM_PATH is honored as-is.
+       2. every ``hipcc`` on PATH, in PATH order.
+       3. ``/opt/rocm/bin/hipcc``.
+
+   Candidates from 2 and 3 are only accepted when their toolchain prefix
+   carries the public HIP headers (``include/hip/hip_runtime.h``). Partial
+   toolchains without headers exist in the wild (e.g. the preview compiler
+   that some ROCm 7 installs prepend to PATH) and fail on any TileLang
+   kernel; skipping them lets a complete sibling install win. If no
+   candidate validates, the first existing one is returned so the compiler
+   can report its own error.
+
+   :returns: **path** -- Path to the hipcc executable.
    :rtype: str
 
 

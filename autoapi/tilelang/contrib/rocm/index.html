@@ -742,6 +742,21 @@
           <section id="module-tilelang.contrib.rocm">
 <span id="tilelang-contrib-rocm"></span><h1>tilelang.contrib.rocm<a class="headerlink" href="#module-tilelang.contrib.rocm" title="Link to this heading">¶</a></h1>
 <p>Utility for ROCm backend</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.rocm.logger" title="tilelang.contrib.rocm.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.rocm.DEFAULT_ROCM_PATH" title="tilelang.contrib.rocm.DEFAULT_ROCM_PATH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_ROCM_PATH</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -768,7 +783,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.rocm.get_rocm_arch" title="tilelang.contrib.rocm.get_rocm_arch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_rocm_arch</span></code></a>([rocm_path])</p></td>
 <td><p>Utility function to get the AMD GPU architecture</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.rocm.find_rocm_path" title="tilelang.contrib.rocm.find_rocm_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_rocm_path</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.rocm.find_hipcc" title="tilelang.contrib.rocm.find_hipcc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_hipcc</span></code></a>()</p></td>
+<td><p>Resolve the hipcc executable to invoke for JIT compilation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.rocm.find_rocm_path" title="tilelang.contrib.rocm.find_rocm_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_rocm_path</span></code></a>()</p></td>
 <td><p>Utility function to find ROCm path</p></td>
 </tr>
 </tbody>
@@ -777,6 +795,11 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.rocm.logger">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.rocm.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#tilelang.contrib.rocm.logger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.rocm.find_lld">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.rocm.</span></span><span class="sig-name descname"><span class="pre">find_lld</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.rocm.find_lld" title="Link to this definition">¶</a></dt>
@@ -897,6 +920,40 @@ The default value is the standard location</p>
 </dl>
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.contrib.rocm.DEFAULT_ROCM_PATH">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.rocm.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_ROCM_PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/opt/rocm'</span></em><a class="headerlink" href="#tilelang.contrib.rocm.DEFAULT_ROCM_PATH" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.rocm.find_hipcc">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.rocm.</span></span><span class="sig-name descname"><span class="pre">find_hipcc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.rocm.find_hipcc" title="Link to this definition">¶</a></dt>
+<dd><p>Resolve the hipcc executable to invoke for JIT compilation.</p>
+<dl class="simple">
+<dt>Resolution order:</dt><dd><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">$ROCM_PATH/bin/hipcc</span></code> – an explicit ROCM_PATH is honored as-is.</p></li>
+<li><p>every <code class="docutils literal notranslate"><span class="pre">hipcc</span></code> on PATH, in PATH order.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/opt/rocm/bin/hipcc</span></code>.</p></li>
+</ol>
+</dd>
+</dl>
+<p>Candidates from 2 and 3 are only accepted when their toolchain prefix
+carries the public HIP headers (<code class="docutils literal notranslate"><span class="pre">include/hip/hip_runtime.h</span></code>). Partial
+toolchains without headers exist in the wild (e.g. the preview compiler
+that some ROCm 7 installs prepend to PATH) and fail on any TileLang
+kernel; skipping them lets a complete sibling install win. If no
+candidate validates, the first existing one is returned so the compiler
+can report its own error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – Path to the hipcc executable.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.rocm.find_rocm_path">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.rocm.</span></span><span class="sig-name descname"><span class="pre">find_rocm_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.rocm.find_rocm_path" title="Link to this definition">¶</a></dt>
@@ -970,8 +1027,10 @@ The default value is the standard location</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.contrib.rocm</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.contrib.rocm.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.rocm.find_lld"><code class="docutils literal notranslate"><span class="pre">find_lld()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.rocm.rocm_link"><code class="docutils literal notranslate"><span class="pre">rocm_link()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.rocm.callback_rocm_link"><code class="docutils literal notranslate"><span class="pre">callback_rocm_link()</span></code></a></li>
@@ -979,6 +1038,8 @@ The default value is the standard location</p>
 <li><a class="reference internal" href="#tilelang.contrib.rocm.parse_compute_version"><code class="docutils literal notranslate"><span class="pre">parse_compute_version()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.rocm.have_matrixcore"><code class="docutils literal notranslate"><span class="pre">have_matrixcore()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.rocm.get_rocm_arch"><code class="docutils literal notranslate"><span class="pre">get_rocm_arch()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.rocm.DEFAULT_ROCM_PATH"><code class="docutils literal notranslate"><span class="pre">DEFAULT_ROCM_PATH</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.rocm.find_hipcc"><code class="docutils literal notranslate"><span class="pre">find_hipcc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.rocm.find_rocm_path"><code class="docutils literal notranslate"><span class="pre">find_rocm_path()</span></code></a></li>
 </ul>
 </li>
