@@ -28,6 +28,7 @@ Functions
    tilelang.language.annotations.annotate_l2_hit_ratio
    tilelang.language.annotations.annotate_min_blocks_per_sm
    tilelang.language.annotations.annotate_restrict_buffers
+   tilelang.language.annotations.annotate_ws_pipeline_depth
    tilelang.language.annotations.annotate_ws_schedule
    tilelang.language.annotations.ws_op
 
@@ -97,11 +98,21 @@ Module Contents
    ...         y[pid] = x[pid] + 1
 
 
+.. py:function:: annotate_ws_pipeline_depth(depth_map)
+
+   Declare the depth of the pipelines the automatic scheduler hosts at
+   the ENCLOSING scope for the given buffers, asserting each recurrence
+   resets per version — otherwise the depth derives from the loop's
+   ``num_stages``, and accumulators pin single-buffered.
+
+   ``depth_map`` maps each buffer to its pipeline depth at this scope.
+
+
 .. py:function:: annotate_ws_schedule(schedule)
 
    Attach a warp-specialization schedule to the kernel.
 
-   ``schedule`` is a typed :class:`~tilelang.language.ws_schedule.WSSchedule`
+   ``schedule`` is a typed :class:`~tilelang.language.warp_specialize.WSSchedule`
    object describing how to transform the straight-line kernel into a
    warp-specialized one: warp roles, pipelines (full/empty barrier pairs
    protecting multi-versioned buffers), and per-role instruction sequences

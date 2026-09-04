@@ -548,7 +548,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../utils/index.html">tilelang.language.utils</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../ws_schedule/index.html">tilelang.language.ws_schedule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../warp_specialize/index.html">tilelang.language.warp_specialize</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../layout/index.html">tilelang.layout</a><input aria-label="Toggle navigation of tilelang.layout" class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -777,10 +777,13 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.annotations.annotate_restrict_buffers" title="tilelang.language.annotations.annotate_restrict_buffers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_restrict_buffers</span></code></a>(*buffers)</p></td>
 <td><p>Mark the given buffer parameters as non-restrict.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.annotations.annotate_ws_schedule" title="tilelang.language.annotations.annotate_ws_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_ws_schedule</span></code></a>(schedule)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.annotations.annotate_ws_pipeline_depth" title="tilelang.language.annotations.annotate_ws_pipeline_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_ws_pipeline_depth</span></code></a>(depth_map)</p></td>
+<td><p>Declare the depth of the pipelines the automatic scheduler hosts at</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.annotations.annotate_ws_schedule" title="tilelang.language.annotations.annotate_ws_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_ws_schedule</span></code></a>(schedule)</p></td>
 <td><p>Attach a warp-specialization schedule to the kernel.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.annotations.ws_op" title="tilelang.language.annotations.ws_op"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ws_op</span></code></a>(op_id)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.annotations.ws_op" title="tilelang.language.annotations.ws_op"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ws_op</span></code></a>(op_id)</p></td>
 <td><p>Manually annotate the enclosed statement(s) with a stable</p></td>
 </tr>
 </tbody>
@@ -886,10 +889,25 @@ alias, for example overlapping slices from the same base tensor.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.language.annotations.annotate_ws_pipeline_depth">
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.annotations.</span></span><span class="sig-name descname"><span class="pre">annotate_ws_pipeline_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth_map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotations.annotate_ws_pipeline_depth" title="Link to this definition">¶</a></dt>
+<dd><p>Declare the depth of the pipelines the automatic scheduler hosts at
+the ENCLOSING scope for the given buffers, asserting each recurrence
+resets per version — otherwise the depth derives from the loop’s
+<code class="docutils literal notranslate"><span class="pre">num_stages</span></code>, and accumulators pin single-buffered.</p>
+<p><code class="docutils literal notranslate"><span class="pre">depth_map</span></code> maps each buffer to its pipeline depth at this scope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>depth_map</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.annotations.annotate_ws_schedule">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.annotations.</span></span><span class="sig-name descname"><span class="pre">annotate_ws_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schedule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.annotations.annotate_ws_schedule" title="Link to this definition">¶</a></dt>
 <dd><p>Attach a warp-specialization schedule to the kernel.</p>
-<p><code class="docutils literal notranslate"><span class="pre">schedule</span></code> is a typed <a class="reference internal" href="../ws_schedule/index.html#tilelang.language.ws_schedule.WSSchedule" title="tilelang.language.ws_schedule.WSSchedule"><code class="xref py py-class docutils literal notranslate"><span class="pre">WSSchedule</span></code></a>
+<p><code class="docutils literal notranslate"><span class="pre">schedule</span></code> is a typed <a class="reference internal" href="../warp_specialize/index.html#tilelang.language.warp_specialize.WSSchedule" title="tilelang.language.warp_specialize.WSSchedule"><code class="xref py py-class docutils literal notranslate"><span class="pre">WSSchedule</span></code></a>
 object describing how to transform the straight-line kernel into a
 warp-specialized one: warp roles, pipelines (full/empty barrier pairs
 protecting multi-versioned buffers), and per-role instruction sequences
@@ -998,6 +1016,7 @@ instead.</p>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_l2_hit_ratio"><code class="docutils literal notranslate"><span class="pre">annotate_l2_hit_ratio()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_min_blocks_per_sm"><code class="docutils literal notranslate"><span class="pre">annotate_min_blocks_per_sm()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_restrict_buffers"><code class="docutils literal notranslate"><span class="pre">annotate_restrict_buffers()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.annotations.annotate_ws_pipeline_depth"><code class="docutils literal notranslate"><span class="pre">annotate_ws_pipeline_depth()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.annotate_ws_schedule"><code class="docutils literal notranslate"><span class="pre">annotate_ws_schedule()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.annotations.ws_op"><code class="docutils literal notranslate"><span class="pre">ws_op()</span></code></a></li>
 </ul>

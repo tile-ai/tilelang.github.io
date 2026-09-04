@@ -14,6 +14,7 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.cuda.transform.AutoSchedule
    tilelang.cuda.transform.AnnotateDeviceBoundTmaCopies
    tilelang.cuda.transform.ProducerConsumerWarpSpecialized
    tilelang.cuda.transform.LowerBlackwell2SM
@@ -33,6 +34,21 @@ Functions
 
 Package Contents
 ----------------
+
+.. py:function:: AutoSchedule()
+
+   Derive a warp-specialization schedule with the scheduler named by
+   the ``tl.enable_auto_schedule`` pass config (currently
+   ``"role_based"``); a no-op when the config is unset.
+
+   Eligible kernels gain stable ``tl.ws_op_id`` markers and a typed
+   ``WSSchedule`` block annotation — the same surface a hand-written
+   schedule uses — which :func:`MaterializeWSSchedule` then lowers.
+   Kernels the scheduler declines are left unchanged.
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
 
 .. py:function:: AnnotateDeviceBoundTmaCopies()
 

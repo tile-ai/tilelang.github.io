@@ -1,7 +1,7 @@
-tilelang.language.ws_schedule
-=============================
+tilelang.language.warp_specialize
+=================================
 
-.. py:module:: tilelang.language.ws_schedule
+.. py:module:: tilelang.language.warp_specialize
 
 .. autoapi-nested-parse::
 
@@ -20,14 +20,14 @@ Classes
 
 .. autoapisummary::
 
-   tilelang.language.ws_schedule.WSSyncKind
-   tilelang.language.ws_schedule.WSRole
-   tilelang.language.ws_schedule.WSPipeline
-   tilelang.language.ws_schedule.WSInstr
-   tilelang.language.ws_schedule.WSOpRef
-   tilelang.language.ws_schedule.WSSync
-   tilelang.language.ws_schedule.WSScope
-   tilelang.language.ws_schedule.WSSchedule
+   tilelang.language.warp_specialize.WSSyncKind
+   tilelang.language.warp_specialize.WSRole
+   tilelang.language.warp_specialize.WSPipeline
+   tilelang.language.warp_specialize.WSInstr
+   tilelang.language.warp_specialize.WSOpRef
+   tilelang.language.warp_specialize.WSSync
+   tilelang.language.warp_specialize.WSScope
+   tilelang.language.warp_specialize.WSSchedule
 
 
 Module Contents
@@ -87,14 +87,16 @@ Module Contents
 
    The producer waits for the empty barrier and signals the full barrier;
    the consumer waits for the full barrier and signals the empty barrier.
-   ``depth`` is the number of buffer versions; multiple buffers can share
-   one pipeline.
+   A pipeline synchronizes exactly one scope, between exactly two roles.
+   Multiple buffers can share one pipeline; conversely, a buffer may be
+   bound to several pipelines whose scopes are strictly nested — its
+   version count is then the product of their depths (outer-major slots).
 
    :param name: Pipeline name; referenced by :class:`WSSync` instructions.
    :type name: str
    :param buffers: The on-chip buffers this pipeline protects (and multi-versions).
    :type buffers: list[tirx.Buffer]
-   :param depth: The number of versions of each buffer.
+   :param depth: The number of versions this pipeline contributes to each buffer.
    :type depth: int
 
 
