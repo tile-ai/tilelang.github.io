@@ -747,7 +747,8 @@
 <ul class="simple">
 <li><p><strong>glibc</strong>: 2.28 (Ubuntu 20.04 or later)</p></li>
 <li><p><strong>Python Version</strong>: &gt;= 3.10</p></li>
-<li><p><strong>CUDA Version</strong>: &gt;= 10.0 (host installation), or pip-provided CUDA toolchain (&gt;= 13.0)</p></li>
+<li><p><strong>NVIDIA GPUs — CUDA Version</strong>: &gt;= 10.0 (host installation), or pip-provided CUDA toolchain (&gt;= 13.0)</p></li>
+<li><p><strong>AMD GPUs — ROCm</strong>: a host ROCm installation providing <code class="docutils literal notranslate"><span class="pre">hipcc</span></code> (see <a class="reference internal" href="#installing-on-amd-gpus-rocm"><span class="xref myst">Installing on AMD GPUs (ROCm)</span></a>)</p></li>
 </ul>
 <p>The easiest way to install tilelang is directly from PyPI using pip. To install the latest version, run the following command in your terminal:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>tilelang
@@ -765,6 +766,35 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import tilelang; print(tilelang.__version__)"</span>
 </pre></div>
 </div>
+<section id="installing-on-amd-gpus-rocm">
+<h3>Installing on AMD GPUs (ROCm)<a class="headerlink" href="#installing-on-amd-gpus-rocm" title="Link to this heading">¶</a></h3>
+<p>The Linux x86_64 wheels on PyPI are fat CUDA+ROCm builds: the same <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">tilelang</span></code> works on AMD GPUs, and no source build or separate package index is required. Two things differ from the CUDA flow:</p>
+<ol class="arabic simple">
+<li><p><strong>A host ROCm installation is required at runtime.</strong> Kernels are JIT-compiled with the host <code class="docutils literal notranslate"><span class="pre">hipcc</span></code> (there is no pip-provided ROCm toolchain, unlike the CUDA <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> extra).</p></li>
+<li><p><strong>Install a ROCm build of PyTorch first.</strong> A plain <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">tilelang</span></code> resolves the default (CUDA) <code class="docutils literal notranslate"><span class="pre">torch</span></code> from PyPI, which cannot detect AMD GPUs. Install torch from the ROCm channel matching your ROCm version before (or when) installing tilelang:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1) Install a ROCm build of PyTorch (pick the channel matching your ROCm version)</span>
+pip<span class="w"> </span>install<span class="w"> </span>torch<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/rocm7.0
+
+<span class="c1"># 2) Install tilelang; the already-installed torch is reused</span>
+pip<span class="w"> </span>install<span class="w"> </span>tilelang
+</pre></div>
+</div>
+<p>Verify that the ROCm target is detected:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import tilelang; from tilelang.backend.target import determine_target; print(tilelang.__version__, determine_target(return_object=True))"</span>
+</pre></div>
+</div>
+<p>This should print a <code class="docutils literal notranslate"><span class="pre">hip</span></code> target with your GPU architecture (e.g. <code class="docutils literal notranslate"><span class="pre">mcpu=gfx942</span></code>).</p>
+<p>If ROCm is installed outside <code class="docutils literal notranslate"><span class="pre">/opt/rocm</span></code>, or several HIP toolchains are visible on <code class="docutils literal notranslate"><span class="pre">PATH</span></code>, set <code class="docutils literal notranslate"><span class="pre">ROCM_PATH</span></code> to pin the installation TileLang should use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">ROCM_PATH</span><span class="o">=</span>/opt/rocm<span class="w">  </span><span class="c1"># or your custom ROCm prefix</span>
+</pre></div>
+</div>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tilelang[nvcc]</span></code> extra is CUDA-only; do not install it on ROCm hosts.</p></li>
+<li><p>Windows and macOS wheels do not include the ROCm backend (Linux only).</p></li>
+</ul>
+</section>
 </section>
 <section id="building-from-source">
 <h2>Building from Source<a class="headerlink" href="#building-from-source" title="Link to this heading">¶</a></h2>
@@ -915,6 +945,11 @@ python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import
 </div>
 <section id="rocm-container-build-gfx942-gfx950">
 <h3>ROCm container build (gfx942/gfx950)<a class="headerlink" href="#rocm-container-build-gfx942-gfx950" title="Link to this heading">¶</a></h3>
+<p>A source build is <strong>not</strong> required just to run TileLang on AMD GPUs — the PyPI
+wheels already include the ROCm backend (see
+<a class="reference internal" href="#installing-on-amd-gpus-rocm"><span class="xref myst">Installing on AMD GPUs (ROCm)</span></a>). Use the
+container/source flow below when developing TileLang itself or when you need a
+custom build.</p>
 <p>If you want a ready-to-use ROCm image that builds TileLang from source, use
 <code class="docutils literal notranslate"><span class="pre">docker/Dockerfile.rocm</span></code>. This is the recommended path for a clean, reproducible
 environment.</p>
@@ -1140,7 +1175,10 @@ you’ll see logs like below:</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Installation Guide</a><ul>
-<li><a class="reference internal" href="#installing-with-pip">Installing with pip</a></li>
+<li><a class="reference internal" href="#installing-with-pip">Installing with pip</a><ul>
+<li><a class="reference internal" href="#installing-on-amd-gpus-rocm">Installing on AMD GPUs (ROCm)</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#building-from-source">Building from Source</a><ul>
 <li><a class="reference internal" href="#with-host-cuda-toolchain">With host CUDA toolchain</a></li>
 <li><a class="reference internal" href="#with-pip-provided-cuda-toolchain-no-host-cuda-required">With pip-provided CUDA toolchain (no host CUDA required)</a></li>
