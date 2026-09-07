@@ -757,6 +757,21 @@
 </table>
 </div>
 </section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.engine.param.dump_kernel_params" title="tilelang.engine.param.dump_kernel_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump_kernel_params</span></code></a>(params)</p></td>
+<td><p>Serialize kernel parameters to JSON text.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.engine.param.load_kernel_params" title="tilelang.engine.param.load_kernel_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_kernel_params</span></code></a>(text)</p></td>
+<td><p>Reconstruct kernel parameters written by <a class="reference internal" href="#tilelang.engine.param.dump_kernel_params" title="tilelang.engine.param.dump_kernel_params"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_kernel_params()</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py class">
@@ -955,6 +970,38 @@ Stores all necessary components for kernel execution in the TVM runtime.</p>
 
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.engine.param.dump_kernel_params">
+<span class="sig-prename descclassname"><span class="pre">tilelang.engine.param.</span></span><span class="sig-name descname"><span class="pre">dump_kernel_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.param.dump_kernel_params" title="Link to this definition">¶</a></dt>
+<dd><p>Serialize kernel parameters to JSON text.</p>
+<p>Uses TVM’s JSON reflection (<code class="docutils literal notranslate"><span class="pre">tvm.ir.save_json</span></code>) so symbolic shape
+expressions round-trip, including shared <code class="docutils literal notranslate"><span class="pre">Var</span></code> identity across params.
+The result contains only IR node data and can be loaded without executing
+any code, unlike a pickle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>list</em><em>[</em><a class="reference internal" href="#tilelang.engine.param.KernelParam" title="tilelang.engine.param.KernelParam"><em>KernelParam</em></a><em>]</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.engine.param.load_kernel_params">
+<span class="sig-prename descclassname"><span class="pre">tilelang.engine.param.</span></span><span class="sig-name descname"><span class="pre">load_kernel_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.engine.param.load_kernel_params" title="Link to this definition">¶</a></dt>
+<dd><p>Reconstruct kernel parameters written by <a class="reference internal" href="#tilelang.engine.param.dump_kernel_params" title="tilelang.engine.param.dump_kernel_params"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump_kernel_params()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<a class="reference internal" href="#tilelang.engine.param.KernelParam" title="tilelang.engine.param.KernelParam">KernelParam</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -1015,6 +1062,7 @@ Stores all necessary components for kernel execution in the TVM runtime.</p>
             <ul>
 <li><a class="reference internal" href="#">tilelang.engine.param</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.engine.param.KernelParam"><code class="docutils literal notranslate"><span class="pre">KernelParam</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.engine.param.KernelParam.dtype"><code class="docutils literal notranslate"><span class="pre">KernelParam.dtype</span></code></a></li>
@@ -1040,6 +1088,8 @@ Stores all necessary components for kernel execution in the TVM runtime.</p>
 <li><a class="reference internal" href="#tilelang.engine.param.CompiledArtifact.target_host"><code class="docutils literal notranslate"><span class="pre">CompiledArtifact.target_host</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#tilelang.engine.param.dump_kernel_params"><code class="docutils literal notranslate"><span class="pre">dump_kernel_params()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.engine.param.load_kernel_params"><code class="docutils literal notranslate"><span class="pre">load_kernel_params()</span></code></a></li>
 </ul>
 </li>
 </ul>

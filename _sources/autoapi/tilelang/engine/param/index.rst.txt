@@ -18,6 +18,15 @@ Classes
    tilelang.engine.param.CompiledArtifact
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.engine.param.dump_kernel_params
+   tilelang.engine.param.load_kernel_params
+
+
 Module Contents
 ---------------
 
@@ -171,5 +180,20 @@ Module Contents
       :type:  tilelang.tvm.target.Target | None
       :value: None
 
+
+
+.. py:function:: dump_kernel_params(params)
+
+   Serialize kernel parameters to JSON text.
+
+   Uses TVM's JSON reflection (``tvm.ir.save_json``) so symbolic shape
+   expressions round-trip, including shared ``Var`` identity across params.
+   The result contains only IR node data and can be loaded without executing
+   any code, unlike a pickle.
+
+
+.. py:function:: load_kernel_params(text)
+
+   Reconstruct kernel parameters written by :func:`dump_kernel_params`.
 
 
