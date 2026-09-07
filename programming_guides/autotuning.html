@@ -759,6 +759,7 @@ values from your config space.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tilelang</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
 
+
 <span class="k">def</span><span class="w"> </span><span class="nf">matmul_configs</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">):</span>
     <span class="c1"># Example space — tailor to your target</span>
     <span class="n">tiles</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">]</span>
@@ -773,17 +774,24 @@ values from your config space.</p>
         <span class="k">for</span> <span class="n">TH</span> <span class="ow">in</span> <span class="n">threads</span>
     <span class="p">]</span>
 
+
 <span class="nd">@tilelang</span><span class="o">.</span><span class="n">autotune</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">matmul_configs</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">rep</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 <span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">matmul</span><span class="p">(</span><span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-           <span class="n">block_M</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span> <span class="n">block_N</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span> <span class="n">block_K</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
-           <span class="n">threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span> <span class="n">num_stages</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-           <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'float16'</span><span class="p">,</span> <span class="n">accum_dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'float32'</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">matmul</span><span class="p">(</span>
+    <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">K</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">block_M</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+    <span class="n">block_N</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+    <span class="n">block_K</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="n">threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+    <span class="n">num_stages</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"float16"</span><span class="p">,</span>
+    <span class="n">accum_dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"float32"</span><span class="p">,</span>
+<span class="p">):</span>
 
     <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-               <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span>
-               <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)):</span>
         <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">block_M</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span>
             <span class="n">A_s</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
             <span class="n">B_s</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_K</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
@@ -799,18 +807,21 @@ values from your config space.</p>
 
     <span class="k">return</span> <span class="n">kernel</span>
 
+
 <span class="c1"># Usage</span>
 <span class="c1"># Provide inputs via context (recommended for reproducibility across configs)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
 <span class="n">M</span> <span class="o">=</span> <span class="n">N</span> <span class="o">=</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">1024</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
-<span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
-<span class="n">C</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.autotuner</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_autotune_inputs</span>
+
 <span class="k">with</span> <span class="n">set_autotune_inputs</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">):</span>
-    <span class="n">tuned_kernel</span> <span class="o">=</span> <span class="n">matmul</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>   <span class="c1"># compiles, tunes, returns best kernel</span>
-    <span class="n">tuned_kernel</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>            <span class="c1"># run best kernel</span>
+    <span class="n">tuned_kernel</span> <span class="o">=</span> <span class="n">matmul</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>  <span class="c1"># compiles, tunes, returns best kernel</span>
+    <span class="n">tuned_kernel</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>  <span class="c1"># run best kernel</span>
 </pre></div>
 </div>
 <p>Notes</p>
@@ -832,22 +843,24 @@ and caches the resulting best kernel in‑process.</p></li>
 <span class="n">tuner</span> <span class="o">=</span> <span class="n">AutoTuner</span><span class="o">.</span><span class="n">from_kernel</span><span class="p">(</span><span class="n">kernel_factory</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">configs</span><span class="o">=</span><span class="n">matmul_configs</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">))</span>
 
 <span class="n">tuner</span><span class="o">.</span><span class="n">set_profile_args</span><span class="p">(</span>
-    <span class="n">warmup</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">rep</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="n">warmup</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">rep</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
     <span class="n">supply_type</span><span class="o">=</span><span class="n">tilelang</span><span class="o">.</span><span class="n">TensorSupplyType</span><span class="o">.</span><span class="n">Auto</span><span class="p">,</span>  <span class="c1"># or provide supply_prog/ref_prog</span>
     <span class="n">ref_prog</span><span class="o">=</span><span class="k">lambda</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="p">(</span><span class="n">A</span> <span class="o">@</span> <span class="n">B</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
 <span class="p">)</span>
 
 <span class="n">tuner</span><span class="o">.</span><span class="n">set_compile_args</span><span class="p">(</span>
-    <span class="n">target</span><span class="o">=</span><span class="s1">'auto'</span><span class="p">,</span>                  <span class="c1"># or 'cuda'/'hip'/'metal'</span>
-    <span class="n">execution_backend</span><span class="o">=</span><span class="s1">'auto'</span><span class="p">,</span>       <span class="c1"># resolves per-target</span>
-    <span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>                   <span class="c1"># which outputs to return if multiple</span>
-    <span class="n">pass_configs</span><span class="o">=</span><span class="p">{</span>                  <span class="c1"># optional TVM passes/flags</span>
+    <span class="n">target</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span>  <span class="c1"># or 'cuda'/'hip'/'metal'</span>
+    <span class="n">execution_backend</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span>  <span class="c1"># resolves per-target</span>
+    <span class="n">out_idx</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># which outputs to return if multiple</span>
+    <span class="n">pass_configs</span><span class="o">=</span><span class="p">{</span>  <span class="c1"># optional TVM passes/flags</span>
         <span class="c1"># tilelang.PassConfigKey.EXAMPLE_KEY: value,</span>
     <span class="p">},</span>
 <span class="p">)</span>
 
-<span class="n">artifact</span> <span class="o">=</span> <span class="n">tuner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>             <span class="c1"># compiles + runs + validates all configs</span>
-<span class="n">best_kernel</span> <span class="o">=</span> <span class="n">artifact</span><span class="o">.</span><span class="n">kernel</span>      <span class="c1"># JITKernel</span>
+<span class="n">artifact</span> <span class="o">=</span> <span class="n">tuner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># compiles + runs + validates all configs</span>
+<span class="n">best_kernel</span> <span class="o">=</span> <span class="n">artifact</span><span class="o">.</span><span class="n">kernel</span>  <span class="c1"># JITKernel</span>
 <span class="n">best_latency</span> <span class="o">=</span> <span class="n">artifact</span><span class="o">.</span><span class="n">latency</span>
 <span class="n">best_config</span> <span class="o">=</span> <span class="n">artifact</span><span class="o">.</span><span class="n">config</span>
 
@@ -886,6 +899,7 @@ three ways (priority order):</p>
     <span class="c1"># signature holds KernelParam objects describing shapes/dtypes</span>
     <span class="c1"># Return a list of torch tensors matching the kernel’s arguments</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">]</span>
+
 
 <span class="n">tuner</span><span class="o">.</span><span class="n">set_profile_args</span><span class="p">(</span><span class="n">supply_prog</span><span class="o">=</span><span class="n">supply_prog</span><span class="p">)</span>
 </pre></div>
@@ -992,11 +1006,10 @@ configs and drive your own benchmarking:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">factory</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_M</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">block_N</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">block_K</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
     <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">k</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="s1">'float16'</span><span class="p">),</span>
-           <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="s1">'float16'</span><span class="p">),</span>
-           <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="s1">'float16'</span><span class="p">)):</span>
-        <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">k</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="s2">"float16"</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="s2">"float16"</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="s2">"float16"</span><span class="p">)):</span> <span class="o">...</span>
+
     <span class="k">return</span> <span class="n">k</span>
+
 
 <span class="n">impl</span> <span class="o">=</span> <span class="n">factory</span>  <span class="c1"># JITImpl</span>
 <span class="n">cfgs</span> <span class="o">=</span> <span class="p">[</span>
@@ -1016,11 +1029,13 @@ reloaded. This is useful for CI, multi‑host workflows, or shipping tuned confi
 
 <span class="c1"># Save to disk</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="n">save_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'out/best/matmul_1024'</span><span class="p">)</span>
+
+<span class="n">save_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"out/best/matmul_1024"</span><span class="p">)</span>
 <span class="n">artifact</span><span class="o">.</span><span class="n">save_to_disk</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Reload later</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.autotuner.param</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutotuneResult</span><span class="p">,</span> <span class="n">CompileArgs</span>
+
 <span class="n">restored</span> <span class="o">=</span> <span class="n">AutotuneResult</span><span class="o">.</span><span class="n">load_from_disk</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">CompileArgs</span><span class="p">())</span>
 <span class="n">best</span> <span class="o">=</span> <span class="n">restored</span><span class="o">.</span><span class="n">kernel</span>
 <span class="n">best</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>
@@ -1044,8 +1059,7 @@ case, re‑compilation is needed on load or use a different backend.</p></li>
             <span class="k">for</span> <span class="n">BK</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">]:</span>
                 <span class="k">for</span> <span class="n">S</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
                     <span class="k">for</span> <span class="n">TH</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]:</span>
-                        <span class="k">yield</span> <span class="nb">dict</span><span class="p">(</span><span class="n">block_M</span><span class="o">=</span><span class="n">BM</span><span class="p">,</span> <span class="n">block_N</span><span class="o">=</span><span class="n">BN</span><span class="p">,</span> <span class="n">block_K</span><span class="o">=</span><span class="n">BK</span><span class="p">,</span>
-                                    <span class="n">num_stages</span><span class="o">=</span><span class="n">S</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">TH</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="nb">dict</span><span class="p">(</span><span class="n">block_M</span><span class="o">=</span><span class="n">BM</span><span class="p">,</span> <span class="n">block_N</span><span class="o">=</span><span class="n">BN</span><span class="p">,</span> <span class="n">block_K</span><span class="o">=</span><span class="n">BK</span><span class="p">,</span> <span class="n">num_stages</span><span class="o">=</span><span class="n">S</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="n">TH</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

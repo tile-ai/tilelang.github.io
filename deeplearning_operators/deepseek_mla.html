@@ -830,9 +830,11 @@ Notably, <strong>TileLang accomplishes this with just around 80 lines of Python 
 <p>In CUDA programming, shared memory is divided into multiple memory banks, with each bank capable of servicing one thread request per clock cycle in parallel. Bank conflicts occur when multiple threads simultaneously access different addresses mapped to the same bank, forcing these accesses to be serialized and degrading performance.</p>
 <p>One common strategy to address bank conflicts is shared memory swizzling. This technique rearranges how data is stored in shared memory by remapping addresses that would originally fall into the same bank to different banks, thereby reducing conflicts. For example, XOR operations or other bit manipulations can be incorporated into address calculations to alter the data layout, resulting in more evenly distributed memory accesses across consecutive threads. This approach is particularly crucial for implementing high-performance computing tasks like matrix multiplication and convolution, as it can significantly improve memory access parallelism and overall execution efficiency.</p>
 <p>Similarly, TileLang also supports shared memory swizzling. Users only need to add a single line of Python code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">annotate_layout</span><span class="p">({</span>
-    <span class="n">S_shared</span><span class="p">:</span> <span class="n">TileLang</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">make_swizzled_layout</span><span class="p">(</span><span class="n">S_shared</span><span class="p">),</span>
-<span class="p">})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">.</span><span class="n">annotate_layout</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="n">S_shared</span><span class="p">:</span> <span class="n">TileLang</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">make_swizzled_layout</span><span class="p">(</span><span class="n">S_shared</span><span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>Here, <code class="docutils literal notranslate"><span class="pre">T.annotate_layout</span></code> allows users to specify any desired layout for a buffer. For convenience, TileLang provides the <code class="docutils literal notranslate"><span class="pre">make_swizzled_layout</span></code> primitive to automatically generate a swizzled layout.</p>

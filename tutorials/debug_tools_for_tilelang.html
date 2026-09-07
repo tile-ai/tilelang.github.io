@@ -829,20 +829,22 @@ ValueError: Check failed: lanes &lt;= 4 (8 vs. 4) : Ramp of more than 4 lanes is
 <span class="kn">from</span><span class="w"> </span><span class="nn">tilelang</span><span class="w"> </span><span class="kn">import</span> <span class="n">tvm</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.engine.callback</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_cuda_postproc_callback</span>
 
+
 <span class="nd">@register_cuda_postproc_callback</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">tilelang_callback_cuda_postproc</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="c1"># print the final CUDA code</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>  <span class="c1"># print the final CUDA code</span>
     <span class="n">code</span> <span class="o">=</span> <span class="s2">"// modified by tilelang_callback_cuda_postproc</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">code</span>
     <span class="k">return</span> <span class="n">code</span>
+
 
 <span class="n">kernel</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">matmul</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">)</span>
 <span class="n">kernel_source</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_source</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">kernel_source</span><span class="p">)</span>
-<span class="sd">'''</span>
+<span class="sd">"""</span>
 <span class="sd">// modified by tilelang_callback_cuda_postproc</span>
 <span class="sd">#include "cuda_runtime.h"</span>
 <span class="sd">...</span>
-<span class="sd">'''</span>
+<span class="sd">"""</span>
 </pre></div>
 </div>
 </section>
@@ -1015,9 +1017,10 @@ which is retained only for backward compatibility. New users should use
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.tools.pass_visualizer.viewer</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_pass_data</span><span class="p">,</span> <span class="n">emit_html</span>
 
 <span class="n">name</span><span class="p">,</span> <span class="n">stages</span> <span class="o">=</span> <span class="n">build_pass_data</span><span class="p">(</span>
-    <span class="s2">"path/to/kernel.py"</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span>
-    <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"M"</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">"N"</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">"K"</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
-            <span class="s2">"block_M"</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span> <span class="s2">"block_N"</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span> <span class="s2">"block_K"</span><span class="p">:</span> <span class="mi">32</span><span class="p">},</span>
+    <span class="s2">"path/to/kernel.py"</span><span class="p">,</span>
+    <span class="n">factory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">target</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span>
+    <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"M"</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">"N"</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">"K"</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">"block_M"</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span> <span class="s2">"block_N"</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span> <span class="s2">"block_K"</span><span class="p">:</span> <span class="mi">32</span><span class="p">},</span>
     <span class="n">source</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">"path/to/kernel.py"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
 <span class="p">)</span>
 <span class="n">html</span> <span class="o">=</span> <span class="n">emit_html</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">stages</span><span class="p">)</span>

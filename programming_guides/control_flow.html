@@ -761,13 +761,13 @@ and express pipelined compute.</p>
 Conditions should be TIR expressions (e.g., <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">&lt;</span> <span class="pre">N</span></code>). Python plain booleans are
 treated as compile‑time constants and will be folded.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">serial</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">:</span>            <span class="c1"># TIR condition</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">:</span>  <span class="c1"># TIR condition</span>
         <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">pass</span>
 
 <span class="c1"># Ternary</span>
-<span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span> <span class="k">else</span> <span class="mi">0</span>
 </pre></div>
 </div>
 <p>Short‑circuit boolean ops are supported. For multi‑dimensional bounds, use
@@ -790,10 +790,10 @@ custom logic or clarity.</p></li>
 <h3>Serial<a class="headerlink" href="#serial" title="Link to this heading">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">T.serial</span></code> creates a plain for‑loop. Common forms:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">serial</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-    <span class="o">...</span>                     <span class="c1"># 0..N-1</span>
+    <span class="o">...</span>  <span class="c1"># 0..N-1</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">serial</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-    <span class="o">...</span>                     <span class="c1"># 0, 2, 4, ...</span>
+    <span class="o">...</span>  <span class="c1"># 0, 2, 4, ...</span>
 </pre></div>
 </div>
 </section>
@@ -831,7 +831,7 @@ pipelines.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ko</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Pipelined</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">BK</span><span class="p">),</span> <span class="n">num_stages</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
     <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">BM</span><span class="p">,</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">],</span> <span class="n">A_s</span><span class="p">)</span>  <span class="c1"># stage: copy A tile</span>
     <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">BN</span><span class="p">],</span> <span class="n">B_s</span><span class="p">)</span>  <span class="c1"># stage: copy B tile</span>
-    <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_s</span><span class="p">,</span> <span class="n">B_s</span><span class="p">,</span> <span class="n">C_f</span><span class="p">)</span>             <span class="c1"># stage: compute</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_s</span><span class="p">,</span> <span class="n">B_s</span><span class="p">,</span> <span class="n">C_f</span><span class="p">)</span>  <span class="c1"># stage: compute</span>
 </pre></div>
 </div>
 <p>For manual <code class="docutils literal notranslate"><span class="pre">stage</span></code> / <code class="docutils literal notranslate"><span class="pre">order</span></code> annotations and the rule that scalar <code class="docutils literal notranslate"><span class="pre">Bind</span></code>
@@ -871,7 +871,7 @@ the explicit guard can be omitted when you don’t need a custom edge path.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
     <span class="n">gi</span> <span class="o">=</span> <span class="n">by</span> <span class="o">*</span> <span class="n">BM</span> <span class="o">+</span> <span class="n">i</span>
     <span class="n">gj</span> <span class="o">=</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">BN</span> <span class="o">+</span> <span class="n">j</span>
-    <span class="k">if</span> <span class="n">T</span><span class="o">.</span><span class="n">all_of</span><span class="p">(</span><span class="n">gi</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">,</span> <span class="n">gj</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">):</span>     <span class="c1"># optional in many cases</span>
+    <span class="k">if</span> <span class="n">T</span><span class="o">.</span><span class="n">all_of</span><span class="p">(</span><span class="n">gi</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">,</span> <span class="n">gj</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">):</span>  <span class="c1"># optional in many cases</span>
         <span class="n">C</span><span class="p">[</span><span class="n">gi</span><span class="p">,</span> <span class="n">gj</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">gi</span><span class="p">,</span> <span class="n">gj</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">gi</span><span class="p">,</span> <span class="n">gj</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -881,7 +881,7 @@ the explicit guard can be omitted when you don’t need a custom edge path.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">T.print</span></code> to inspect values under predicates. For buffers, TileLang prints
 from a single thread to avoid duplicate outputs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="n">T</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">'C tile:'</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s2">"C tile:"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

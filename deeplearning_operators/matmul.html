@@ -793,6 +793,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tilelang.language</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">T</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tilelang.cuda.intrinsics</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_mma_swizzle_layout</span>
 
+
 <span class="k">def</span><span class="w"> </span><span class="nf">matmul</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">,</span> <span class="n">block_K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"float16"</span><span class="p">,</span> <span class="n">accum_dtype</span><span class="o">=</span><span class="s2">"float"</span><span class="p">):</span>
     <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span>
@@ -804,7 +805,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
         <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">block_M</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span>
             <span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
             <span class="n">B_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_K</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="n">C_local</span>  <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">accum_dtype</span><span class="p">)</span>
+            <span class="n">C_local</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">accum_dtype</span><span class="p">)</span>
 
             <span class="c1"># Optional layout hints (commented out by default)</span>
             <span class="c1"># T.annotate_layout({</span>
@@ -833,6 +834,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
             <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">C_local</span><span class="p">,</span> <span class="n">C</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">block_M</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">block_N</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="n">main</span>
+
 
 <span class="c1"># 1. Create the TileLang function</span>
 <span class="n">func</span> <span class="o">=</span> <span class="n">matmul</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
@@ -886,7 +888,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_K</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
 <span class="n">B_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="n">block_K</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
-<span class="n">C_local</span>  <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">accum_dtype</span><span class="p">)</span>
+<span class="n">C_local</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="n">block_M</span><span class="p">,</span> <span class="n">block_N</span><span class="p">),</span> <span class="n">accum_dtype</span><span class="p">)</span>
 </pre></div>
 </div>
 <ul class="simple">
