@@ -1,0 +1,47 @@
+tilelang.cpu.language.kernel
+============================
+
+.. py:module:: tilelang.cpu.language.kernel
+
+.. autoapi-nested-parse::
+
+   CPU dialect of ``T.Kernel``: the common launch plus CPU launch annotations.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.cpu.language.kernel.Kernel
+
+
+Module Contents
+---------------
+
+.. py:function:: Kernel(*blocks, prelude = None)
+
+   Construct a kernel launch frame for CPU: a grid of tile programs.
+
+   The grid becomes the outer loop nest of the generated function and each
+   tile program runs as a plain serial body; ``T.Parallel`` loops are lowered
+   to serial loops. There are no SIMT threads, so this dialect has no
+   ``threads`` and ``T.get_thread_binding()`` is rejected at compile time.
+
+   :param \*blocks: Grid extent along each axis (1-3 dimensions). The launch yields one
+                    program index per axis.
+   :type \*blocks: int | PrimExpr
+   :param prelude: C source injected before the generated kernel, e.g. ``#include`` lines
+                   or helper functions.
+   :type prelude: str, optional
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       with T.Kernel(T.ceildiv(N, 128)) as bx:
+           for i in T.Parallel(128):
+               ...
+
+

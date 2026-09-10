@@ -22,6 +22,14 @@ Submodules
    /autoapi/tilelang/transform/simplify/index
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.transform.DEFAULT_SIMT_THREADS
+
+
 Functions
 ---------
 
@@ -209,18 +217,33 @@ Package Contents
    :rtype: tvm.transform.Pass
 
 
-.. py:function:: MaterializeKernelLaunch(lower_thread_binding = True)
+.. py:data:: DEFAULT_SIMT_THREADS
+   :value: 128
 
-   Materialize the target-neutral kernel launch nest (thread_binding
-   For loops emitted by T.Kernel) into a backend-specific form. Each
-   backend pipeline decides the mode for itself:
 
-   :param lower_thread_binding: If True (SIMT backends, e.g. CUDA/ROCm/Metal), lower the
-                                blockIdx.*/threadIdx.* loops into thread_extent AttrStmts.
-                                If False (backends without SIMT, e.g. CPU), lower blockIdx.*
-                                loops into plain serial For loops and ignore threadIdx.* loops
-                                (their extents are dropped; the loop vars are pinned to 0).
+.. py:function:: MaterializeKernelLaunch(lower_thread_binding = True, default_threads = DEFAULT_SIMT_THREADS, unsupported_annotations = None)
+
+   Materialize the target-neutral kernel launch nest emitted by T.Kernel
+   into a backend-specific form. Each backend pipeline decides the mode for
+   itself; this is where the target-dependent parts of a launch (whether
+   threads exist and how many run by default) are decided.
+
+   :param lower_thread_binding: If True (SIMT backends, e.g. CUDA/ROCm/Metal), lower the blockIdx.*
+                                grid loops into thread_extent AttrStmts and bind the thread
+                                placeholders as threadIdx.* thread_extent scopes.
+                                If False (backends without SIMT, e.g. CPU), lower blockIdx.* loops
+                                into plain serial For loops and drop the thread placeholders. A body
+                                that references a thread index is rejected on such targets.
    :type lower_thread_binding: bool
+   :param default_threads: Thread-block extents used by SIMT backends when T.Kernel was called
+                           without ``threads=``. Ignored when ``lower_thread_binding`` is False.
+                           None means the backend has no default and ``threads=`` is required.
+   :type default_threads: int | list[int] | tuple | None
+   :param unsupported_annotations: Launch annotations (keys on the ``tilelang_root`` block, e.g.
+                                   ``cluster_dims``) that have no meaning on this backend. A launch
+                                   carrying one is rejected here instead of being silently ignored by
+                                   later passes.
+   :type unsupported_annotations: list[str] | None
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass

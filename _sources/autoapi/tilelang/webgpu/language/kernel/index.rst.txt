@@ -1,0 +1,47 @@
+tilelang.webgpu.language.kernel
+===============================
+
+.. py:module:: tilelang.webgpu.language.kernel
+
+.. autoapi-nested-parse::
+
+   WebGPU dialect of ``T.Kernel``: the common launch plus WebGPU launch annotations.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.webgpu.language.kernel.Kernel
+
+
+Module Contents
+---------------
+
+.. py:function:: Kernel(*blocks, threads = None)
+
+   Construct a kernel launch frame for WebGPU: a grid of workgroups.
+
+   Code inside the launch operates at the workgroup level: ``T.Parallel``,
+   ``T.copy`` and friends are mapped onto invocations by the compiler.
+   ``T.get_thread_binding()`` exposes the invocation index for thread-level
+   code. ``threads`` is recorded at trace time and materialized by the WebGPU
+   pipeline once the target is known.
+
+   :param \*blocks: Grid extent along each axis (1-3 dimensions). The launch yields one
+                    workgroup index per axis.
+   :type \*blocks: int | PrimExpr
+   :param threads: Invocations per workgroup: a count or up to three per-dimension
+                   extents. Defaults to 128 when omitted.
+   :type threads: int | list[int] | tuple[int, ...], optional
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       with T.Kernel(T.ceildiv(N, 128), threads=128) as bx:
+           ...
+
+

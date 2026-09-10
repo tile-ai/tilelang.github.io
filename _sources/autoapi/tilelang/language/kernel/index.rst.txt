@@ -23,6 +23,9 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.language.kernel.kernel_launch_factory
+   tilelang.language.kernel.is_kernel_launch_factory
+   tilelang.language.kernel.launch_kernel
    tilelang.language.kernel.Kernel
    tilelang.language.kernel.ClusterKernel
    tilelang.language.kernel.CUDASourceCodeKernel
@@ -34,6 +37,12 @@ Functions
    tilelang.language.kernel.get_thread_extents
    tilelang.language.kernel.get_block_extent
    tilelang.language.kernel.get_block_extents
+   tilelang.language.kernel.get_cluster_dims
+   tilelang.language.kernel.get_cluster_size
+   tilelang.language.kernel.get_cluster_id
+   tilelang.language.kernel.get_cluster_ids
+   tilelang.language.kernel.get_cluster_extent
+   tilelang.language.kernel.get_cluster_extents
 
 
 Module Contents
@@ -92,12 +101,17 @@ Module Contents
    KernelLaunchFrame is a custom TIRFrame that manages block/thread indices
    and handles the entry and exit of the kernel launch scope.
 
+   Grid (program index) vars are bound by the frame itself. Thread vars are
+   placeholders: they have an identity so the body can reference them, but
+   their extent is only known once a backend materializes the launch. Thread
+   extents are therefore available at trace time only when ``threads=`` was
+   passed to :func:`Kernel`.
+
 
    .. py:method:: __enter__()
 
       Enters the KernelLaunchFrame scope and pushes this frame onto the stack.
-      Returns one Var if we detect exactly 5 frames (meaning there is a single
-      block dimension), or a list of Vars otherwise.
+      Returns one Var for a single grid dimension, or a list of Vars otherwise.
 
 
 
@@ -121,6 +135,7 @@ Module Contents
 
       Returns the block extent for the given dimension.
       dim=0 corresponds to blockIdx.x, dim=1 to blockIdx.y, and dim=2 to blockIdx.z.
+      Grid axes that were not launched have extent 1.
 
 
 
@@ -134,6 +149,9 @@ Module Contents
 
       Returns the thread extent for the given dimension.
       dim=0 corresponds to threadIdx.x, dim=1 to threadIdx.y, and dim=2 to threadIdx.z.
+
+      :raises ValueError: If the kernel was launched without ``threads=``. The
+          extent is then chosen by the backend and is not known at trace time.
 
 
 
@@ -176,6 +194,56 @@ Module Contents
 
 
 
+   .. py:method:: get_launch_annotation(key, default=None)
+
+      Returns the launch annotation ``key`` recorded by T.Kernel (e.g. ``cluster_dims``),
+      or ``default`` when it was not given.
+
+
+
+   .. py:method:: get_cluster_dims()
+
+      Returns the cluster dimensions as ``[x, y, z]``. A launch without
+      ``cluster_dims`` has clusters of a single program, i.e. ``[1, 1, 1]``.
+
+
+
+   .. py:method:: get_cluster_size()
+
+      Returns the number of programs per cluster (product of the cluster dimensions).
+
+
+
+   .. py:method:: get_cluster_id(dim = 0)
+
+      Returns the index of the cluster the current program belongs to along
+      ``dim``, in program-space arithmetic: ``block_id // cluster_dims[dim]``.
+
+      A cluster is a ``cluster_dims``-shaped tile of the grid, so this is the
+      same on every target (clusterIdx on CUDA, a group of consecutive
+      programs elsewhere) and stays consistent with threadblock swizzling,
+      which permutes the grid at cluster granularity.
+
+
+
+   .. py:method:: get_cluster_ids()
+
+      Returns the cluster index along every launched grid axis.
+
+
+
+   .. py:method:: get_cluster_extent(dim = 0)
+
+      Returns the number of clusters along ``dim``: ``ceil(grid_extent / cluster_dims[dim])``.
+
+
+
+   .. py:method:: get_cluster_extents()
+
+      Returns the number of clusters along all three dimensions.
+
+
+
    .. py:property:: blocks
       :type: list[tvm.tirx.Var]
 
@@ -197,45 +265,47 @@ Module Contents
       Returns the total number of threads.
 
 
-.. py:function:: Kernel(*blocks, threads = None, prelude = None)
+.. py:function:: kernel_launch_factory(func)
 
-   Tools to quickly construct a kernel launch frame.
+   Mark ``func`` as a launch factory: a callable used as ``with func(...)``
+   to open a kernel launch. Every dialect's ``Kernel`` (and ``ClusterKernel``)
+   carries this mark so the eager JIT rewriter can find the launch regardless
+   of which dialect or alias the user went through.
 
-   The launch nest is emitted in a target-neutral form (thread_binding
-   For loops); each backend pipeline materializes it via
-   MaterializeKernelLaunch. Backends without SIMT (e.g. CPU) simply
-   ignore the thread extents at compile time, so the same kernel can be
-   compiled for any target.
 
-   :param blocks: A list of extent, can be 1-3 dimension, representing gridDim.(x|y|z)
-   :type blocks: int
-   :param threads: A integer representing blockDim.x
-                   Or a list of integers representing blockDim.(x|y|z)
-                   if the value is -1, we skip the threadIdx.x binding.
-   :type threads: int
-   :param prelude: The import c code of the kernel,
-                   will be injected before the generated kernel code.
-   :type prelude: str
+.. py:function:: is_kernel_launch_factory(obj)
 
-   :returns: **res** -- The result LaunchThreadFrame.
-   :rtype: Tuple[frame.LaunchThreadFrame]
+.. py:function:: launch_kernel(blocks, *, threads = None, prelude = None, cluster_dims = None, **annotations)
+
+   Shared implementation behind every dialect's ``T.Kernel``.
+
+   The well-known launch annotations are normalized here; any other keyword
+   a dialect forwards is recorded verbatim on the launch block for that
+   backend's pipeline to consume. Dialects, not this function, decide which
+   keywords exist: they only forward what their own ``Kernel`` signature
+   declares.
+
+
+.. py:function:: Kernel(*blocks)
+
+   Construct a kernel launch frame: a grid of tile programs.
+
+   This is the target-neutral launch: the part every backend shares. Backend
+   dialects offer their own ``T.Kernel`` with the launch annotations that
+   backend understands, e.g. ``tilelang.cuda.language.Kernel(..., threads=128)``;
+   ``tilelang.language`` is the CUDA dialect.
+
+   :param \*blocks: Extent of the grid along each axis (1-3 dimensions). The launch yields
+                    one program index per axis (``blockIdx`` on CUDA, the outer loop on
+                    CPU, the core index on an NPU).
+   :type \*blocks: int | PrimExpr
 
    .. rubric:: Examples
 
-   Create a 1-D CUDA kernel launch and unpack the single block index:
-
    .. code-block:: python
 
-       with T.Kernel(T.ceildiv(N, 128), threads=128) as bx:
-           # bx is the blockIdx.x binding (also iterable as (bx,))
-           ...
-
-   Launch a 2-D grid while requesting two thread dimensions:
-
-   .. code-block:: python
-
-       with T.Kernel(grid_x, grid_y, threads=(64, 2)) as (bx, by):
-           tx, ty = T.get_thread_bindings()
+       with T.Kernel(T.ceildiv(N, 128)) as bx:
+           # bx is the program index along x; also iterable as (bx,)
            ...
 
 
@@ -339,5 +409,36 @@ Module Contents
 .. py:function:: get_block_extents()
 
    Returns all three block extents.
+
+
+.. py:function:: get_cluster_dims()
+
+   Returns the cluster dimensions ``[x, y, z]`` of the current launch (``[1, 1, 1]`` without clusters).
+
+
+.. py:function:: get_cluster_size()
+
+   Returns the number of programs per cluster of the current launch.
+
+
+.. py:function:: get_cluster_id(dim = 0)
+
+   Returns the cluster index of the current program along ``dim``
+   (``block_id // cluster_dims[dim]``). See :meth:`KernelLaunchFrame.get_cluster_id`.
+
+
+.. py:function:: get_cluster_ids()
+
+   Returns the cluster index along every launched grid axis.
+
+
+.. py:function:: get_cluster_extent(dim = 0)
+
+   Returns the number of clusters along ``dim``.
+
+
+.. py:function:: get_cluster_extents()
+
+   Returns the number of clusters along all three dimensions.
 
 
