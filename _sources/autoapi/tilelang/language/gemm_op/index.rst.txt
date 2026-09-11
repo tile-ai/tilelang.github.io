@@ -25,7 +25,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, k_pack = 1, mbar = None, annotations = None)
+.. py:function:: gemm(A, B, C, transpose_A = False, transpose_B = False, policy = GemmWarpPolicy.Square, clear_accum = False, annotations = None)
 
    TileLang GEMM operator.
 
@@ -52,13 +52,12 @@ Module Contents
    :type policy: GemmWarpPolicy
    :param clear_accum: Whether to clear the accumulator.
    :type clear_accum: bool
-   :param k_pack: Number of packed matrix cores, for ROCm only. Must be 1 or 2. Defaults to 1.
-   :type k_pack: int
-   :param mbar: Mbarrier in Blackwell.
-                Required when this GEMM lowers to TCGEN5MMA. Defaults to None.
-   :type mbar: BarrierType, i.e. Buffer | BufferLoad, or Var, optional
    :param annotations: Additional annotations.
    :type annotations: Optional[dict]
+
+   Backend dialects extend this signature with their hardware's knobs:
+   ``tilelang.cuda.language.gemm`` adds ``mbar`` (Blackwell TCGEN5MMA
+   barrier), ``tilelang.rocm.language.gemm`` adds ``k_pack`` (packed MFMA).
 
    :returns: A handle to the GEMM operation.
    :rtype: tirx.Call

@@ -1,0 +1,49 @@
+tilelang.cuda.language.reduce_op
+================================
+
+.. py:module:: tilelang.cuda.language.reduce_op
+
+.. autoapi-nested-parse::
+
+   CUDA dialect of the reduction operators: the common ops plus CUDA knobs.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.cuda.language.reduce_op.reduce_max
+   tilelang.cuda.language.reduce_op.reduce_min
+   tilelang.cuda.language.reduce_op.reduce_absmax
+
+
+Module Contents
+---------------
+
+.. py:function:: reduce_max(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False, annotations = None)
+
+   Perform reduce max, with the CUDA NaN-propagation knob.
+
+   Same semantics as the common :func:`tilelang.language.reduce_op.reduce_max`.
+   ``nan_propagate`` is meaningful for float16/bfloat16 only: when True the
+   reduction lowers to ``__hmax_nan`` so NaNs propagate; when False (default)
+   ``__hmax`` returns the non-NaN operand. Targets without these intrinsics
+   reject the annotation at compile time.
+
+
+.. py:function:: reduce_min(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False, annotations = None)
+
+   Perform reduce min, with the CUDA NaN-propagation knob.
+
+   See :func:`reduce_max`; this lowers to ``__hmin_nan``/``__hmin``.
+
+
+.. py:function:: reduce_absmax(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False, annotations = None)
+
+   Perform reduce absolute max, with the CUDA NaN-propagation knob.
+
+   See :func:`reduce_max`.
+
+

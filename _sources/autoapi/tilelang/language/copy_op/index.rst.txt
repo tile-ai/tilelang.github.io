@@ -9,6 +9,14 @@ tilelang.language.copy_op
 
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.language.copy_op.EVICTION_POLICY_IDS
+
+
 Functions
 ---------
 
@@ -22,6 +30,7 @@ Functions
    tilelang.language.copy_op.tma_gather4_bytes
    tilelang.language.copy_op.tma_scatter4
    tilelang.language.copy_op.transpose
+   tilelang.language.copy_op.im2col_impl
    tilelang.language.copy_op.im2col
    tilelang.language.copy_op.c2d_im2col
 
@@ -29,7 +38,9 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: copy(src, dst, *, coalesced_width = None, disable_tma = False, eviction_policy = None, prefer_instruction = None, annotations = None, loop_layout = None)
+.. py:data:: EVICTION_POLICY_IDS
+
+.. py:function:: copy(src, dst, *, coalesced_width = None, annotations = None, loop_layout = None)
 
    Copy data between memory regions.
 
@@ -39,20 +50,12 @@ Module Contents
    :type dst: Union[tirx.Buffer, tirx.BufferLoad, tirx.BufferRegion]
    :param coalesced_width: Width for coalesced memory access. Defaults to None.
    :type coalesced_width: Optional[int], keyword-only
-   :param disable_tma: Whether to disable TMA acceleration. Defaults to False.
-   :type disable_tma: bool, keyword-only
-   :param eviction_policy: Cache eviction policy. Defaults to None.
-   :type eviction_policy: Optional[str], keyword-only
-   :param prefer_instruction: Backend-specific preferred lowering
-                              instruction category. For CUDA, recognized values include "tma", "cp_async", and
-                              "sync". For "tma", T.copy keeps synchronous copy semantics; global -> shared copies
-                              lower through TMA with an automatically allocated barrier and wait when constraints
-                              are satisfied.
-   :type prefer_instruction: Optional[str], keyword-only
    :param annotations: Additional annotations dict. If provided,
-                       coalesced_width, disable_tma, eviction_policy, and prefer_instruction can also
-                       be specified here.
-                       Values in annotations take precedence over individual arguments.
+                       coalesced_width can also be specified here. Values in annotations take precedence
+                       over individual arguments. Backend-specific copy hints ride through this dict;
+                       the backend dialects expose them as typed keywords instead
+                       (``tilelang.cuda.language.copy`` adds ``disable_tma``, ``eviction_policy`` and
+                       ``prefer_instruction``). Hints a target does not understand are ignored.
    :type annotations: Optional[dict], keyword-only
    :param loop_layout: A parallel loop layout hint for the SIMT copy
                        (only valid for normal SIMT copy; incompatible with TMA/LDSM/STSM/TMem). When provided,
@@ -230,7 +233,15 @@ Module Contents
    :rtype: tirx.Call
 
 
-.. py:function:: im2col(img, col, nhw_step, c_step, kernel, stride, dilation, pad, eviction_policy = None, annotations = None)
+.. py:function:: im2col_impl(img, col, nhw_step, c_step, kernel, stride, dilation, pad, eviction_policy = None, annotations = None)
+
+   Shared im2col implementation behind the common and dialect wrappers.
+
+   ``eviction_policy`` rides in the tile-op annotations; only the CUDA TMA
+   lowering reads it, so only the CUDA dialect exposes it.
+
+
+.. py:function:: im2col(img, col, nhw_step, c_step, kernel, stride, dilation, pad, annotations = None)
 
    Perform im2col transformation for 2D convolution.
 
@@ -251,6 +262,9 @@ Module Contents
    :param pad: Padding size
    :type pad: int
    :param annotations: Optional annotations to attach to the call
+
+   The CUDA dialect (``tilelang.cuda.language.im2col``) additionally accepts
+   ``eviction_policy``, a cache hint for the TMA lowering.
 
    :returns: A handle to the im2col operation
    :rtype: tirx.Call

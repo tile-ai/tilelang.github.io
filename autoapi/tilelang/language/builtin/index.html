@@ -413,13 +413,18 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../cuda/language/index.html">tilelang.cuda.language</a><input aria-label="Toggle navigation of tilelang.cuda.language" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cuda/language/atomic/index.html">tilelang.cuda.language.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../cuda/language/cluster/index.html">tilelang.cuda.language.cluster</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cuda/language/copy_op/index.html">tilelang.cuda.language.copy_op</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cuda/language/gemm_op/index.html">tilelang.cuda.language.gemm_op</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../cuda/language/intrinsics/index.html">tilelang.cuda.language.intrinsics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../cuda/language/kernel/index.html">tilelang.cuda.language.kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cuda/language/loop/index.html">tilelang.cuda.language.loop</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../cuda/language/math/index.html">tilelang.cuda.language.math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../cuda/language/pdl/index.html">tilelang.cuda.language.pdl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../cuda/language/print/index.html">tilelang.cuda.language.print</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../cuda/language/random/index.html">tilelang.cuda.language.random</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cuda/language/reduce_op/index.html">tilelang.cuda.language.reduce_op</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../cuda/language/tir/index.html">tilelang.cuda.language.tir</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../cuda/language/warpgroup/index.html">tilelang.cuda.language.warpgroup</a></li>
 </ul>
@@ -613,6 +618,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../rocm/language/index.html">tilelang.rocm.language</a><input aria-label="Toggle navigation of tilelang.rocm.language" class="toctree-checkbox" id="toctree-checkbox-51" name="toctree-checkbox-51" role="switch" type="checkbox"/><label for="toctree-checkbox-51"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../rocm/language/gemm_op/index.html">tilelang.rocm.language.gemm_op</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../rocm/language/intrinsics/index.html">tilelang.rocm.language.intrinsics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../rocm/language/kernel/index.html">tilelang.rocm.language.kernel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../rocm/language/tir/index.html">tilelang.rocm.language.tir</a></li>
@@ -903,35 +909,29 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.match_all_sync" title="tilelang.language.builtin.match_all_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_all_sync</span></code></a>(value[, mask])</p></td>
 <td><p>Return <code class="docutils literal notranslate"><span class="pre">mask</span></code> if all lanes in <code class="docutils literal notranslate"><span class="pre">mask</span></code> agree on <code class="docutils literal notranslate"><span class="pre">value</span></code>, else 0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_global" title="tilelang.language.builtin.sync_global"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_global</span></code></a>()</p></td>
-<td><p>Synchronize all threads in the entire grid.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_grid" title="tilelang.language.builtin.sync_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_grid</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.sync_grid" title="tilelang.language.builtin.sync_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_grid</span></code></a>()</p></td>
 <td><p>Synchronize all threads in a grid.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.initialize_wgmma_descriptor" title="tilelang.language.builtin.initialize_wgmma_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_wgmma_descriptor</span></code></a>(descriptor, start_address)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.initialize_wgmma_descriptor" title="tilelang.language.builtin.initialize_wgmma_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_wgmma_descriptor</span></code></a>(descriptor, start_address)</p></td>
 <td><p>Initialize a WGMMA/UTCMMA shared-memory descriptor.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.initialize_tcgen05_descriptor" title="tilelang.language.builtin.initialize_tcgen05_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_tcgen05_descriptor</span></code></a>(descriptor, ...[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.initialize_tcgen05_descriptor" title="tilelang.language.builtin.initialize_tcgen05_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_tcgen05_descriptor</span></code></a>(descriptor, ...[, ...])</p></td>
 <td><p>Initialize a TCGEN05 shared-memory descriptor.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.increase_descriptor_offset" title="tilelang.language.builtin.increase_descriptor_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increase_descriptor_offset</span></code></a>(descriptor, offset)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.increase_descriptor_offset" title="tilelang.language.builtin.increase_descriptor_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increase_descriptor_offset</span></code></a>(descriptor, offset)</p></td>
 <td><p>Increase the offset of a memory descriptor.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_fill" title="tilelang.language.builtin.cooperative_tensor_fill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_fill</span></code></a>(data, idx, value, rows, cols)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_fill" title="tilelang.language.builtin.cooperative_tensor_fill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_fill</span></code></a>(data, idx, value, rows, cols)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_load" title="tilelang.language.builtin.cooperative_tensor_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_load</span></code></a>(data, idx, ptr, stride, rows, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_load" title="tilelang.language.builtin.cooperative_tensor_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_load</span></code></a>(data, idx, ptr, stride, rows, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_store" title="tilelang.language.builtin.cooperative_tensor_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_store</span></code></a>(data, idx, ptr, stride, rows, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_store" title="tilelang.language.builtin.cooperative_tensor_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_store</span></code></a>(data, idx, ptr, stride, rows, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_multiply_accumulate" title="tilelang.language.builtin.cooperative_tensor_multiply_accumulate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_multiply_accumulate</span></code></a>(c_data, c_idx, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_multiply_accumulate" title="tilelang.language.builtin.cooperative_tensor_multiply_accumulate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cooperative_tensor_multiply_accumulate</span></code></a>(c_data, c_idx, ...)</p></td>
 <td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.builtin.loop_break" title="tilelang.language.builtin.loop_break"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loop_break</span></code></a>()</p></td>
-<td><p>Break out of the innermost loop.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc" title="tilelang.language.builtin.cp_async_barrier_noinc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cp_async_barrier_noinc</span></code></a>(barrier)</p></td>
 <td><p>Perform a ptx async copy barrier using cp.async.mbarrier.arrive.noinc.</p></td>
@@ -1973,12 +1973,6 @@ on HIP.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.builtin.sync_global">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">sync_global</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.sync_global" title="Link to this definition">¶</a></dt>
-<dd><p>Synchronize all threads in the entire grid.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.builtin.sync_grid">
 <span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">sync_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.sync_grid" title="Link to this definition">¶</a></dt>
 <dd><p>Synchronize all threads in a grid.</p>
@@ -2105,12 +2099,6 @@ on HIP.</p>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tilelang.language.builtin.loop_break">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.builtin.</span></span><span class="sig-name descname"><span class="pre">loop_break</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.builtin.loop_break" title="Link to this definition">¶</a></dt>
-<dd><p>Break out of the innermost loop.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2674,7 +2662,6 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <li><a class="reference internal" href="#tilelang.language.builtin.syncthreads_or"><code class="docutils literal notranslate"><span class="pre">syncthreads_or()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.match_any_sync"><code class="docutils literal notranslate"><span class="pre">match_any_sync()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.match_all_sync"><code class="docutils literal notranslate"><span class="pre">match_all_sync()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.builtin.sync_global"><code class="docutils literal notranslate"><span class="pre">sync_global()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.sync_grid"><code class="docutils literal notranslate"><span class="pre">sync_grid()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.initialize_wgmma_descriptor"><code class="docutils literal notranslate"><span class="pre">initialize_wgmma_descriptor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.initialize_tcgen05_descriptor"><code class="docutils literal notranslate"><span class="pre">initialize_tcgen05_descriptor()</span></code></a></li>
@@ -2683,7 +2670,6 @@ Used for FP32 MFMA matrix B-loads on MI350/MI355X (gfx950).</p>
 <li><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_load"><code class="docutils literal notranslate"><span class="pre">cooperative_tensor_load()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_store"><code class="docutils literal notranslate"><span class="pre">cooperative_tensor_store()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.cooperative_tensor_multiply_accumulate"><code class="docutils literal notranslate"><span class="pre">cooperative_tensor_multiply_accumulate()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.builtin.loop_break"><code class="docutils literal notranslate"><span class="pre">loop_break()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.cp_async_barrier_noinc"><code class="docutils literal notranslate"><span class="pre">cp_async_barrier_noinc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_mma_arrive"><code class="docutils literal notranslate"><span class="pre">tcgen05_mma_arrive()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.builtin.tcgen05_before_thread_sync"><code class="docutils literal notranslate"><span class="pre">tcgen05_before_thread_sync()</span></code></a></li>

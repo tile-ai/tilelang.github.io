@@ -413,13 +413,18 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/cuda/language/index.html">tilelang.cuda.language</a><input aria-label="Toggle navigation of tilelang.cuda.language" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/atomic/index.html">tilelang.cuda.language.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/cluster/index.html">tilelang.cuda.language.cluster</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/copy_op/index.html">tilelang.cuda.language.copy_op</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/gemm_op/index.html">tilelang.cuda.language.gemm_op</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/intrinsics/index.html">tilelang.cuda.language.intrinsics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/kernel/index.html">tilelang.cuda.language.kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/loop/index.html">tilelang.cuda.language.loop</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/math/index.html">tilelang.cuda.language.math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/pdl/index.html">tilelang.cuda.language.pdl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/print/index.html">tilelang.cuda.language.print</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/random/index.html">tilelang.cuda.language.random</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/reduce_op/index.html">tilelang.cuda.language.reduce_op</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/tir/index.html">tilelang.cuda.language.tir</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/cuda/language/warpgroup/index.html">tilelang.cuda.language.warpgroup</a></li>
 </ul>
@@ -613,6 +618,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/tilelang/rocm/language/index.html">tilelang.rocm.language</a><input aria-label="Toggle navigation of tilelang.rocm.language" class="toctree-checkbox" id="toctree-checkbox-51" name="toctree-checkbox-51" role="switch" type="checkbox"/><label for="toctree-checkbox-51"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/rocm/language/gemm_op/index.html">tilelang.rocm.language.gemm_op</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/rocm/language/intrinsics/index.html">tilelang.rocm.language.intrinsics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/rocm/language/kernel/index.html">tilelang.rocm.language.kernel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/tilelang/rocm/language/tir/index.html">tilelang.rocm.language.tir</a></li>
@@ -765,9 +771,13 @@ reductions and scans (<code class="docutils literal notranslate"><span class="pr
 </section>
 <section id="data-movement">
 <h2>Data Movement<a class="headerlink" href="#data-movement" title="Link to this heading">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">T.copy(src,</span> <span class="pre">dst,</span> <span class="pre">*,</span> <span class="pre">coalesced_width=None,</span> <span class="pre">disable_tma=False,</span> <span class="pre">eviction_policy=None,</span> <span class="pre">loop_layout=None)</span></code>
+<p>Use <code class="docutils literal notranslate"><span class="pre">T.copy(src,</span> <span class="pre">dst,</span> <span class="pre">*,</span> <span class="pre">coalesced_width=None,</span> <span class="pre">loop_layout=None)</span></code>
 to move tiles between memory scopes. It accepts <code class="docutils literal notranslate"><span class="pre">tir.Buffer</span></code>, <code class="docutils literal notranslate"><span class="pre">BufferLoad</span></code>, or
-<code class="docutils literal notranslate"><span class="pre">BufferRegion</span></code>; extents are inferred or broadcast when possible.</p>
+<code class="docutils literal notranslate"><span class="pre">BufferRegion</span></code>; extents are inferred or broadcast when possible. Backend
+dialects add their lowering hints as extra keywords: the CUDA dialect (the
+default <code class="docutils literal notranslate"><span class="pre">tilelang.language</span></code> facade) accepts <code class="docutils literal notranslate"><span class="pre">disable_tma</span></code>, <code class="docutils literal notranslate"><span class="pre">eviction_policy</span></code>
+and <code class="docutils literal notranslate"><span class="pre">prefer_instruction</span></code>. Hints are recorded on the op and ignored by targets
+that have no use for them.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Global → Shared tiles (extents inferred from dst)</span>
 <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">by</span> <span class="o">*</span> <span class="n">BM</span><span class="p">,</span> <span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">],</span> <span class="n">A_s</span><span class="p">)</span>
 <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">ko</span> <span class="o">*</span> <span class="n">BK</span><span class="p">,</span> <span class="n">bx</span> <span class="o">*</span> <span class="n">BN</span><span class="p">],</span> <span class="n">B_s</span><span class="p">)</span>
@@ -997,7 +1007,8 @@ signatures, behaviors, constraints, and examples, refer to API Reference
 </div></blockquote>
 <p>Atomics</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T.atomic_add(dst,</span> <span class="pre">value,</span> <span class="pre">memory_order=None,</span> <span class="pre">return_prev=False,</span> <span class="pre">use_tma=False)</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T.atomic_add(dst,</span> <span class="pre">value,</span> <span class="pre">memory_order=None,</span> <span class="pre">return_prev=False)</span></code>; the CUDA
+dialect additionally accepts <code class="docutils literal notranslate"><span class="pre">use_tma=True</span></code> (sm90+ TMA <code class="docutils literal notranslate"><span class="pre">cp.reduce</span></code>).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.atomic_addx2(dst,</span> <span class="pre">value,</span> <span class="pre">return_prev=False)</span></code>; <code class="docutils literal notranslate"><span class="pre">T.atomic_addx4(...)</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.atomic_max(dst,</span> <span class="pre">value,</span> <span class="pre">memory_order=None,</span> <span class="pre">return_prev=False)</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">T.atomic_min(dst,</span> <span class="pre">value,</span> <span class="pre">memory_order=None,</span> <span class="pre">return_prev=False)</span></code>.</p></li>

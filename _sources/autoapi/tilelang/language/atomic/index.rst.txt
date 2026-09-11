@@ -115,7 +115,7 @@ Module Contents
    >>> atomic_min(dst_tensor, src_tensor)  # Min entire tensors atomically
 
 
-.. py:function:: atomic_add(dst, value, memory_order = None, return_prev = False, use_tma = False, annotations = None)
+.. py:function:: atomic_add(dst, value, memory_order = None, return_prev = False, annotations = None)
 
    Atomically add `value` into `dst`, returning a handle to the operation.
 
@@ -129,8 +129,10 @@ Module Contents
    :type memory_order: Optional[str]
    :param return_prev: If True, return the previous value; if False, return handle (default False).
    :type return_prev: bool
-   :param use_tma: If True, use TMA (cp.reduce) to perform the atomic add. This is available only for sm90+ (default False).
-   :type use_tma: bool
+   :param annotations: Extra annotations for the tile-region path. Backend
+                       hints ride through this dict; the CUDA dialect (``tilelang.cuda.language.atomic_add``)
+                       exposes ``use_tma`` (sm90+ TMA cp.reduce) as a typed keyword instead.
+   :type annotations: Optional[dict]
 
    :returns: A handle representing the atomic addition operation, or the previous value if return_prev is True.
    :rtype: PrimExpr

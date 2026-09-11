@@ -1,0 +1,51 @@
+tilelang.cuda.language.atomic
+=============================
+
+.. py:module:: tilelang.cuda.language.atomic
+
+.. autoapi-nested-parse::
+
+   CUDA dialect of the atomic operators: the common ops plus CUDA knobs.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.cuda.language.atomic.atomic_add
+
+
+Module Contents
+---------------
+
+.. py:function:: atomic_add(dst, value, memory_order = None, return_prev = False, use_tma = False, annotations = None)
+
+   Atomically add ``value`` into ``dst``, with CUDA lowering knobs.
+
+   Same semantics as the common :func:`tilelang.language.atomic.atomic_add`.
+   ``use_tma`` selects the sm90+ TMA ``cp.reduce`` lowering for the
+   tile-region path; targets without TMA reject it at compile time.
+
+   :param dst: Destination buffer/address to apply the atomic add.
+   :type dst: Buffer
+   :param value: Value to add atomically.
+   :type value: PrimExpr
+   :param memory_order: Memory-order name controlling the atomic
+                        operation's ordering ("relaxed", "consume", "acquire", "release",
+                        "acq_rel", "seq_cst").
+   :type memory_order: Optional[str]
+   :param return_prev: Return the previous value (scalar path only).
+   :type return_prev: bool
+   :param use_tma: If True, lower the tile-region atomic add through TMA
+                   ``cp.reduce``. Available on sm90+ only (default False).
+   :type use_tma: bool
+   :param annotations: Extra annotations for the tile-region
+                       path; values in it take precedence over the individual keywords.
+   :type annotations: Optional[dict]
+
+   :returns: A handle to the atomic operation.
+   :rtype: PrimExpr
+
+

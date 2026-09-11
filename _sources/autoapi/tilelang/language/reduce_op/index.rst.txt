@@ -46,7 +46,7 @@ Module Contents
 
 .. py:data:: ReduceKind
 
-.. py:function:: reduce(buffer, out, reduce_type, dim, clear, batch = 1, nan_propagate = False, annotations = None)
+.. py:function:: reduce(buffer, out, reduce_type, dim, clear, batch = 1, annotations = None)
 
    Perform a reduction operation on a buffer along a specified dimension.
 
@@ -66,12 +66,10 @@ Module Contents
                  a single pair of barriers, reducing total barrier count by batch×.
                  batch must evenly divide the per-thread output element count N.
    :type batch: int
-   :param nan_propagate: Only meaningful for max/min/absmax on
-                         float16/bfloat16. When True, lower to CUDA __hmax_nan/__hmin_nan so
-                         NaNs propagate through the reduction. When False (default), use
-                         __hmax/__hmin which return the non-NaN operand. CUDA-only.
-   :type nan_propagate: bool
-   :param annotations: Additional lowering controls. On CUDA
+   :param annotations: Additional lowering controls. The CUDA
+                       dialect exposes ``nan_propagate`` on reduce_max/min/absmax as a
+                       typed keyword (lowering to __hmax_nan/__hmin_nan); it rides here
+                       as the ``{"nan_propagate": True}`` annotation. On CUDA
                        SM100+, FP32 sum/abssum reductions accept
                        ``{"enable_fadd2": False}`` to keep the reducer scalar. Packed
                        FP32x2 reduction remains enabled by default, and can be disabled
@@ -79,7 +77,7 @@ Module Contents
    :type annotations: dict, optional
 
 
-.. py:function:: reduce_max(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False, annotations = None)
+.. py:function:: reduce_max(buffer, out, dim = -1, clear = True, batch = 1, annotations = None)
 
    Perform reduce max on input buffer, store the result to output buffer
 
@@ -93,16 +91,12 @@ Module Contents
    :type clear: bool
    :param batch: Number of output elements per batched AllReduce call (default 1).
    :type batch: int
-   :param nan_propagate: For float16/bfloat16 only. When True, NaN inputs propagate through the
-                         reduction (CUDA __hmax_nan). When False (default), NaN inputs are
-                         ignored in favor of the other operand (CUDA __hmax). CUDA-only.
-   :type nan_propagate: bool
 
    :returns: **handle**
    :rtype: PrimExpr
 
 
-.. py:function:: reduce_min(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False, annotations = None)
+.. py:function:: reduce_min(buffer, out, dim = -1, clear = True, batch = 1, annotations = None)
 
    Perform reduce min on input buffer, store the result to output buffer.
 
@@ -116,10 +110,6 @@ Module Contents
    :type clear: bool, optional
    :param batch: Number of output elements per batched AllReduce call (default 1).
    :type batch: int
-   :param nan_propagate: For float16/bfloat16 only. When True,
-                         NaN inputs propagate (CUDA __hmin_nan). When False (default), NaNs
-                         are ignored (CUDA __hmin). CUDA-only.
-   :type nan_propagate: bool, optional
 
    :returns: Handle to the reduction operation
    :rtype: tirx.Call
@@ -181,7 +171,7 @@ Module Contents
    :rtype: tirx.Call
 
 
-.. py:function:: reduce_absmax(buffer, out, dim = -1, clear = True, batch = 1, nan_propagate = False, annotations = None)
+.. py:function:: reduce_absmax(buffer, out, dim = -1, clear = True, batch = 1, annotations = None)
 
    Perform reduce absolute max on input buffer, store the result to output buffer.
 
@@ -193,10 +183,6 @@ Module Contents
    :type dim: int
    :param batch: Number of output elements per batched AllReduce call (default 1).
    :type batch: int
-   :param nan_propagate: For float16/bfloat16 only. When True,
-                         NaN inputs propagate (CUDA __hmax_nan). When False (default), NaNs
-                         are ignored. CUDA-only.
-   :type nan_propagate: bool, optional
 
    :returns: Handle to the reduction operation
    :rtype: tirx.Call

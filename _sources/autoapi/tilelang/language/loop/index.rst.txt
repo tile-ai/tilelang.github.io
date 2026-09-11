@@ -28,7 +28,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: Parallel(*extents, coalesced_width = None, loop_layout = None, prefer_async = None, annotations = None)
+.. py:function:: Parallel(*extents, coalesced_width = None, loop_layout = None, annotations = None)
 
    Tools to construct nested parallel for loop.
       This can be used to create element-wise tensor expression.
@@ -43,14 +43,10 @@ Module Contents
                        For a k-dimensional ``T.Parallel(...)`` nest, the fragment's
                        ``InputDim`` must equal ``k``.
    :type loop_layout: Optional[Fragment]
-   :param prefer_async: Optional hint for PTX async-copy rewrite in this parallel loop subtree.
-                        When set to ``True``, it requests cp.async injection even outside
-                        pipelined loops. ``False``/``None`` keeps default behavior.
-                        Internally lowered as loop annotation ``"parallel_prefer_async"``.
-   :type prefer_async: Optional[bool]
    :param annotations: Optional user-provided loop annotations attached to the outermost
-                       generated parallel loop. For example:
-                       ``{"parallel_async_without_async_commit_wait": True}``.
+                       generated parallel loop. Backend hints ride through this dict; the
+                       CUDA dialect (``tilelang.cuda.language.Parallel``) exposes
+                       ``prefer_async`` (PTX cp.async rewrite) as a typed keyword instead.
    :type annotations: Optional[Dict[str, Any]]
    :param Notes on layout constraints:
    :param ---------------------------:
@@ -166,7 +162,7 @@ Module Contents
    :rtype: frame.ForFrame
 
 
-.. py:function:: unroll(start, stop = None, step = None, *, explicit = False, unroll_factor = None, annotations = None)
+.. py:function:: unroll(start, stop = None, step = None, *, explicit = False, annotations = None)
 
    The unrolled For statement.
 
@@ -178,9 +174,9 @@ Module Contents
    :type step: PrimExpr
    :param explicit: Whether to explicitly unroll the loop.
    :type explicit: bool
-   :param unroll_factor: The unroll factor of the loop.
-   :type unroll_factor: int
-   :param annotations: The optional annotations of the For statement.
+   :param annotations: The optional annotations of the For statement. The CUDA dialect
+                       (``tilelang.cuda.language.unroll``) additionally exposes
+                       ``unroll_factor`` (``#pragma unroll N``, honored by CUDA codegen only).
    :type annotations: Dict[str, Any]
 
    :returns: **res** -- The ForFrame.
@@ -192,7 +188,7 @@ Module Contents
    Alias of T.serial.
 
 
-.. py:function:: Unroll(start, stop = None, step = None, *, explicit = False, unroll_factor = None, annotations = None)
+.. py:function:: Unroll(start, stop = None, step = None, *, explicit = False, annotations = None)
 
    Alias of T.unroll.
 

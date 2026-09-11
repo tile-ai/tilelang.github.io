@@ -1,0 +1,74 @@
+tilelang.cuda.language.loop
+===========================
+
+.. py:module:: tilelang.cuda.language.loop
+
+.. autoapi-nested-parse::
+
+   CUDA dialect of the loop constructs: the common loops plus CUDA hints.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.cuda.language.loop.Parallel
+   tilelang.cuda.language.loop.unroll
+   tilelang.cuda.language.loop.Unroll
+
+
+Module Contents
+---------------
+
+.. py:function:: Parallel(*extents, coalesced_width = None, loop_layout = None, prefer_async = None, annotations = None)
+
+   Construct a nested parallel loop, with CUDA lowering hints.
+
+   Same semantics as the common :func:`tilelang.language.loop.Parallel`.
+   ``prefer_async`` requests the PTX cp.async rewrite for copies in this loop
+   subtree even outside pipelined loops; it is a performance hint ignored by
+   targets without async copy.
+
+   :param extents: Extents of the parallel loop nest.
+   :type extents: int | PrimExpr
+   :param coalesced_width: Width for coalesced memory access.
+   :type coalesced_width: Optional[int]
+   :param loop_layout: Layout annotation for the parallel loop nest.
+   :type loop_layout: Optional[Fragment]
+   :param prefer_async: When True, requests cp.async injection for this subtree; when False,
+                        forbids it. Lowered as the ``"parallel_prefer_async"`` annotation.
+   :type prefer_async: Optional[bool]
+   :param annotations: Additional loop annotations; values in it take precedence.
+   :type annotations: Optional[Dict[str, Any]]
+
+
+.. py:function:: unroll(start, stop = None, step = None, *, explicit = False, unroll_factor = None, annotations = None)
+
+   The unrolled For statement, with the CUDA unroll-factor pragma.
+
+   Same semantics as the common :func:`tilelang.language.loop.unroll`.
+   ``unroll_factor`` emits ``#pragma unroll N``, which only the CUDA codegen
+   honors; it is mutually exclusive with ``explicit``.
+
+   :param start: Iteration range.
+   :type start: PrimExpr
+   :param stop: Iteration range.
+   :type stop: PrimExpr
+   :param step: Iteration range.
+   :type step: PrimExpr
+   :param explicit: Whether to explicitly unroll the loop at compile time.
+   :type explicit: bool
+   :param unroll_factor: Partial unroll factor, lowered as the ``"pragma_unroll_factor"``
+                         annotation.
+   :type unroll_factor: Optional[int]
+   :param annotations: Additional loop annotations; values in it take precedence.
+   :type annotations: Optional[Dict[str, Any]]
+
+
+.. py:function:: Unroll(start, stop = None, step = None, *, explicit = False, unroll_factor = None, annotations = None)
+
+   Alias of the CUDA dialect's :func:`unroll`.
+
+
