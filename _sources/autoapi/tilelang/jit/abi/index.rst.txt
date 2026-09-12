@@ -9,6 +9,15 @@ tilelang.jit.abi
 
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.jit.abi.OUT_IDX_ATTR
+   tilelang.jit.abi.CALLEE_ALLOCATED_OUTPUTS_ATTR
+
+
 Functions
 ---------
 
@@ -20,8 +29,22 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: prepare_tvm_ffi_callee_allocated_outputs(func, out_idx)
+.. py:data:: OUT_IDX_ATTR
+   :value: 'tilelang_out_idx'
+
+
+.. py:data:: CALLEE_ALLOCATED_OUTPUTS_ATTR
+   :value: 'tilelang_callee_allocated_outputs'
+
+
+.. py:function:: prepare_tvm_ffi_callee_allocated_outputs(func, out_idx, *, supports_callee_allocated_outputs = False)
 
    Resolve output indices and expose them to TVM-FFI lowering.
+
+   When the resolved execution backend declares
+   ``supports_callee_allocated_outputs``, the ABI decision is recorded on the
+   derived PrimFunc so lowering and the runtime adapter both honor it.
+   Otherwise ``tilelang_out_idx`` stays purely declarative and the kernel
+   keeps the caller-preallocated output path.
 
 

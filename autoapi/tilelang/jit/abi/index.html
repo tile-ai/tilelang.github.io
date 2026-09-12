@@ -757,12 +757,27 @@
           <section id="module-tilelang.jit.abi">
 <span id="tilelang-jit-abi"></span><h1>tilelang.jit.abi<a class="headerlink" href="#module-tilelang.jit.abi" title="Link to this heading">¶</a></h1>
 <p>Shared helpers for preparing TVM-FFI callable ABIs.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.abi.OUT_IDX_ATTR" title="tilelang.jit.abi.OUT_IDX_ATTR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OUT_IDX_ATTR</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.jit.abi.CALLEE_ALLOCATED_OUTPUTS_ATTR" title="tilelang.jit.abi.CALLEE_ALLOCATED_OUTPUTS_ATTR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CALLEE_ALLOCATED_OUTPUTS_ATTR</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.abi.prepare_tvm_ffi_callee_allocated_outputs" title="tilelang.jit.abi.prepare_tvm_ffi_callee_allocated_outputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_tvm_ffi_callee_allocated_outputs</span></code></a>(func, out_idx)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.abi.prepare_tvm_ffi_callee_allocated_outputs" title="tilelang.jit.abi.prepare_tvm_ffi_callee_allocated_outputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_tvm_ffi_callee_allocated_outputs</span></code></a>(func, out_idx, *)</p></td>
 <td><p>Resolve output indices and expose them to TVM-FFI lowering.</p></td>
 </tr>
 </tbody>
@@ -771,15 +786,31 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.jit.abi.OUT_IDX_ATTR">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.abi.</span></span><span class="sig-name descname"><span class="pre">OUT_IDX_ATTR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tilelang_out_idx'</span></em><a class="headerlink" href="#tilelang.jit.abi.OUT_IDX_ATTR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tilelang.jit.abi.CALLEE_ALLOCATED_OUTPUTS_ATTR">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.abi.</span></span><span class="sig-name descname"><span class="pre">CALLEE_ALLOCATED_OUTPUTS_ATTR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tilelang_callee_allocated_outputs'</span></em><a class="headerlink" href="#tilelang.jit.abi.CALLEE_ALLOCATED_OUTPUTS_ATTR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.jit.abi.prepare_tvm_ffi_callee_allocated_outputs">
-<span class="sig-prename descclassname"><span class="pre">tilelang.jit.abi.</span></span><span class="sig-name descname"><span class="pre">prepare_tvm_ffi_callee_allocated_outputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.abi.prepare_tvm_ffi_callee_allocated_outputs" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.abi.</span></span><span class="sig-name descname"><span class="pre">prepare_tvm_ffi_callee_allocated_outputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supports_callee_allocated_outputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.abi.prepare_tvm_ffi_callee_allocated_outputs" title="Link to this definition">¶</a></dt>
 <dd><p>Resolve output indices and expose them to TVM-FFI lowering.</p>
+<p>When the resolved execution backend declares
+<code class="docutils literal notranslate"><span class="pre">supports_callee_allocated_outputs</span></code>, the ABI decision is recorded on the
+derived PrimFunc so lowering and the runtime adapter both honor it.
+Otherwise <code class="docutils literal notranslate"><span class="pre">tilelang_out_idx</span></code> stays purely declarative and the kernel
+keeps the caller-preallocated output path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>func</strong> (<em>tvm.tirx.PrimFunc</em>)</p></li>
 <li><p><strong>out_idx</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>supports_callee_allocated_outputs</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -847,8 +878,11 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">tilelang.jit.abi</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.jit.abi.OUT_IDX_ATTR"><code class="docutils literal notranslate"><span class="pre">OUT_IDX_ATTR</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.abi.CALLEE_ALLOCATED_OUTPUTS_ATTR"><code class="docutils literal notranslate"><span class="pre">CALLEE_ALLOCATED_OUTPUTS_ATTR</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.abi.prepare_tvm_ffi_callee_allocated_outputs"><code class="docutils literal notranslate"><span class="pre">prepare_tvm_ffi_callee_allocated_outputs()</span></code></a></li>
 </ul>
 </li>
