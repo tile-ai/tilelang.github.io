@@ -1,0 +1,32 @@
+tilelang.profiler.wall
+======================
+
+.. py:module:: tilelang.profiler.wall
+
+.. autoapi-nested-parse::
+
+   Wall-clock benchmarking with optional explicit device synchronization.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.profiler.wall.bench_with_wall
+
+
+Module Contents
+---------------
+
+.. py:function:: bench_with_wall(fn, n_repeat, quantiles = None, return_mode = 'mean', synchronize = None)
+
+   Time each call in milliseconds, including optional synchronization.
+
+   Synchronize before starting each sample to exclude preceding device work,
+   then wait for the timed call to complete before stopping the clock.
+   Quantiles use linear interpolation; median returns the lower middle sample,
+   matching the GPU benchmark's aggregation conventions.
+
+

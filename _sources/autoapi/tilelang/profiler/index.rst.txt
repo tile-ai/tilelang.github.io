@@ -16,6 +16,8 @@ Submodules
    :maxdepth: 1
 
    /autoapi/tilelang/profiler/bench/index
+   /autoapi/tilelang/profiler/torch_bench/index
+   /autoapi/tilelang/profiler/wall/index
 
 
 Classes
@@ -121,12 +123,14 @@ Package Contents
       :param rep: Number of repetitions for timing
       :param n_warmup: Number of warmup iterations
       :param n_repeat: Number of timing iterations
-      :param backend: Which profiling backend to use - "event", "cupti", or "cudagraph"
+      :param backend: Which profiling backend to use - "event", "cupti", "cudagraph", or "wall"
       :param input_tensors: Optional pre-generated input tensors
       :param dynamic_symbolic_constraints: Optional dict mapping dynamic symbolic variable
                                            names to concrete int values. Use this when benchmarking kernels with
                                            dynamic shapes, e.g., {"m": 2048, "n": 1024}
-      :param device: Optional CUDA device to benchmark on.
+      :param device: Optional device to benchmark on. MPS supports "event" and
+                     "wall"; CPU requires "wall". Asynchronous wall timing needs
+                     an explicit device.
 
       :returns: Average execution time in milliseconds
       :rtype: float

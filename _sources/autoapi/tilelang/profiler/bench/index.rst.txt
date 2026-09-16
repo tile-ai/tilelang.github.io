@@ -5,7 +5,7 @@ tilelang.profiler.bench
 
 .. autoapi-nested-parse::
 
-   Profiler and benchmarking utilities for PyTorch functions.
+   Common entry point for GPU and wall-clock benchmarking.
 
 
 
@@ -15,16 +15,7 @@ Attributes
 .. autoapisummary::
 
    tilelang.profiler.bench.logger
-   tilelang.profiler.bench.IS_CUDA
    tilelang.profiler.bench.device
-
-
-Classes
--------
-
-.. autoapisummary::
-
-   tilelang.profiler.bench.suppress_stdout_stderr
 
 
 Functions
@@ -40,34 +31,24 @@ Module Contents
 
 .. py:data:: logger
 
-.. py:class:: suppress_stdout_stderr
-
-   Context manager to suppress stdout and stderr output.
-
-   Source: https://github.com/deepseek-ai/DeepGEMM/blob/main/deep_gemm/testing/bench.py
-
-
-   .. py:method:: __enter__()
-
-
-   .. py:method:: __exit__(*_)
-
-
-.. py:data:: IS_CUDA
-
 .. py:data:: device
    :value: 'cuda:0'
 
 
 .. py:function:: do_bench(fn, warmup = 25, rep = 100, _n_warmup = 0, _n_repeat = 0, quantiles = None, fast_flush = True, backend = 'event', return_mode = 'mean', device = None, cache_size = 256, early_stop_baseline = None)
 
-   Benchmark the runtime of a PyTorch function with L2 cache management.
+   Benchmark a callable with GPU timing or host wall-clock timing.
 
-   This function provides accurate GPU kernel timing by:
+   The existing GPU timing methods provide accurate kernel timing by:
    - Clearing L2 cache between runs for consistent measurements
    - Auto-calculating warmup and repeat counts based on kernel runtime
-   - Supporting multiple profiling backends (CUDA events, CUPTI, or CUDA graph replay)
+   - Supporting multiple profiling backends (CUDA/MPS events, CUPTI, or CUDA graph replay)
    - Offering flexible result aggregation (mean/median/min/max/quantiles)
+
+   Wall timing measures host elapsed time without cache flushing. With no
+   device or a CPU device, the callable is assumed to be synchronous. An
+   explicit CUDA/HIP or MPS device enables synchronization before and after
+   each wall-clock sample, including launch and synchronization overhead.
 
    :param fn: Function to benchmark
    :param warmup: Target warmup time in milliseconds (default: 25)
@@ -75,13 +56,13 @@ Module Contents
    :param _n_warmup: Manual override for warmup iterations (default: 0 = auto)
    :param _n_repeat: Manual override for benchmark iterations (default: 0 = auto)
    :param quantiles: Performance percentiles to compute (e.g., [0.5, 0.95])
-   :param fast_flush: Use faster L2 cache flush with int32 vs int8 (default: True)
-   :param backend: Profiler backend - "event" (CUDA events), "cupti", or "cudagraph" (default: "event")
+   :param fast_flush: Use faster GPU L2 cache flush with int32 vs int8 (default: True); ignored by "wall"
+   :param backend: Timing method - "event", "cupti", "cudagraph", or "wall" (default: "event")
    :param return_mode: Result aggregation method - "mean", "median", "min", or "max"
-   :param device: Optional CUDA device to benchmark on. When provided, CUDA
-                  events, streams, cache buffers, and synchronizations are scoped to
-                  that device.
-   :param cache_size: L2 cache flush buffer size in MB (default: 256)
+   :param device: Optional device to benchmark on. CUDA/HIP events, streams,
+                  cache buffers, and synchronization are scoped to that device.
+                  Event timing also accepts MPS; wall timing accepts CPU and MPS.
+   :param cache_size: GPU L2 cache flush buffer size in MB (default: 256); ignored by "wall"
 
    :returns: Runtime in milliseconds (float) or list of quantile values if quantiles specified
 

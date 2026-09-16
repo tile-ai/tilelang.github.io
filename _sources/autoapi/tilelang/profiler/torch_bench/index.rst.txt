@@ -1,0 +1,67 @@
+tilelang.profiler.torch_bench
+=============================
+
+.. py:module:: tilelang.profiler.torch_bench
+
+.. autoapi-nested-parse::
+
+   PyTorch GPU timing implementations.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.profiler.torch_bench.suppress_stdout_stderr
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.profiler.torch_bench.bench_with_cuda_events
+   tilelang.profiler.torch_bench.bench_with_cupti
+   tilelang.profiler.torch_bench.bench_with_cudagraph
+
+
+Module Contents
+---------------
+
+.. py:class:: suppress_stdout_stderr
+
+   Context manager to suppress stdout and stderr output.
+
+   Source: https://github.com/deepseek-ai/DeepGEMM/blob/main/deep_gemm/testing/bench.py
+
+
+   .. py:method:: __enter__()
+
+
+   .. py:method:: __exit__(*_)
+
+
+.. py:function:: bench_with_cuda_events(fn, cache, n_repeat, quantiles, return_mode, device_idx)
+
+   Benchmark using CUDA/HIP or MPS events for timing.
+
+
+.. py:function:: bench_with_cupti(fn, cache, n_repeat)
+
+   Benchmark using CUPTI profiler for detailed kernel timing.
+
+
+.. py:function:: bench_with_cudagraph(fn, cache, n_repeat, quantiles, return_mode, device_idx)
+
+   Benchmark using CUDA graph for minimal launch overhead.
+
+   This implementation follows triton.testing.do_bench_cudagraph.
+   It captures the kernel execution in a CUDA graph and replays it multiple
+   times to minimize host overhead and provide accurate timing measurements.
+
+   Note: Cache flushing is done before graph replay, not within the graph,
+   since CUDA graphs require fixed execution patterns.
+
+

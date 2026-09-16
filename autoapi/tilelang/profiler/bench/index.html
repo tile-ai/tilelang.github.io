@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="tilelang.rocm" href="../../rocm/index.html"><link rel="prev" title="tilelang.profiler" href="../index.html">
+<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="tilelang.profiler.torch_bench" href="../torch_bench/index.html"><link rel="prev" title="tilelang.profiler" href="../index.html">
         <link rel="prefetch" href="../../../../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../../../../_static/img/logo-v2.png" as="image">
 
@@ -603,6 +603,8 @@
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">tilelang.profiler</a><input aria-label="Toggle navigation of tilelang.profiler" checked="" class="toctree-checkbox" id="toctree-checkbox-48" name="toctree-checkbox-48" role="switch" type="checkbox"/><label for="toctree-checkbox-48"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">tilelang.profiler.bench</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../torch_bench/index.html">tilelang.profiler.torch_bench</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../wall/index.html">tilelang.profiler.wall</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../rocm/index.html">tilelang.rocm</a><input aria-label="Toggle navigation of tilelang.rocm" class="toctree-checkbox" id="toctree-checkbox-49" name="toctree-checkbox-49" role="switch" type="checkbox"/><label for="toctree-checkbox-49"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -756,7 +758,7 @@
         <article role="main" id="furo-main-content">
           <section id="module-tilelang.profiler.bench">
 <span id="tilelang-profiler-bench"></span><h1>tilelang.profiler.bench<a class="headerlink" href="#module-tilelang.profiler.bench" title="Link to this heading">¶</a></h1>
-<p>Profiler and benchmarking utilities for PyTorch functions.</p>
+<p>Common entry point for GPU and wall-clock benchmarking.</p>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -765,23 +767,8 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.profiler.bench.logger" title="tilelang.profiler.bench.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.profiler.bench.IS_CUDA" title="tilelang.profiler.bench.IS_CUDA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IS_CUDA</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.profiler.bench.device" title="tilelang.profiler.bench.device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code></a></p></td>
 <td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.profiler.bench.device" title="tilelang.profiler.bench.device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.profiler.bench.suppress_stdout_stderr" title="tilelang.profiler.bench.suppress_stdout_stderr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">suppress_stdout_stderr</span></code></a></p></td>
-<td><p>Context manager to suppress stdout and stderr output.</p></td>
 </tr>
 </tbody>
 </table>
@@ -793,7 +780,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.profiler.bench.do_bench" title="tilelang.profiler.bench.do_bench"><code class="xref py py-obj docutils literal notranslate"><span class="pre">do_bench</span></code></a>(fn[, warmup, rep, _n_warmup, _n_repeat, ...])</p></td>
-<td><p>Benchmark the runtime of a PyTorch function with L2 cache management.</p></td>
+<td><p>Benchmark a callable with GPU timing or host wall-clock timing.</p></td>
 </tr>
 </tbody>
 </table>
@@ -806,28 +793,6 @@
 <span class="sig-prename descclassname"><span class="pre">tilelang.profiler.bench.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#tilelang.profiler.bench.logger" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="tilelang.profiler.bench.suppress_stdout_stderr">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.profiler.bench.</span></span><span class="sig-name descname"><span class="pre">suppress_stdout_stderr</span></span><a class="headerlink" href="#tilelang.profiler.bench.suppress_stdout_stderr" title="Link to this definition">¶</a></dt>
-<dd><p>Context manager to suppress stdout and stderr output.</p>
-<p>Source: <a class="reference external" href="https://github.com/deepseek-ai/DeepGEMM/blob/main/deep_gemm/testing/bench.py">https://github.com/deepseek-ai/DeepGEMM/blob/main/deep_gemm/testing/bench.py</a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.profiler.bench.suppress_stdout_stderr.__enter__">
-<span class="sig-name descname"><span class="pre">__enter__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.profiler.bench.suppress_stdout_stderr.__enter__" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.profiler.bench.suppress_stdout_stderr.__exit__">
-<span class="sig-name descname"><span class="pre">__exit__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.profiler.bench.suppress_stdout_stderr.__exit__" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="tilelang.profiler.bench.IS_CUDA">
-<span class="sig-prename descclassname"><span class="pre">tilelang.profiler.bench.</span></span><span class="sig-name descname"><span class="pre">IS_CUDA</span></span><a class="headerlink" href="#tilelang.profiler.bench.IS_CUDA" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py data">
 <dt class="sig sig-object py" id="tilelang.profiler.bench.device">
 <span class="sig-prename descclassname"><span class="pre">tilelang.profiler.bench.</span></span><span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cuda:0'</span></em><a class="headerlink" href="#tilelang.profiler.bench.device" title="Link to this definition">¶</a></dt>
@@ -836,12 +801,16 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.profiler.bench.do_bench">
 <span class="sig-prename descclassname"><span class="pre">tilelang.profiler.bench.</span></span><span class="sig-name descname"><span class="pre">do_bench</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warmup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n_warmup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n_repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_flush</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'event'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stop_baseline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.profiler.bench.do_bench" title="Link to this definition">¶</a></dt>
-<dd><p>Benchmark the runtime of a PyTorch function with L2 cache management.</p>
-<p>This function provides accurate GPU kernel timing by:
+<dd><p>Benchmark a callable with GPU timing or host wall-clock timing.</p>
+<p>The existing GPU timing methods provide accurate kernel timing by:
 - Clearing L2 cache between runs for consistent measurements
 - Auto-calculating warmup and repeat counts based on kernel runtime
-- Supporting multiple profiling backends (CUDA events, CUPTI, or CUDA graph replay)
+- Supporting multiple profiling backends (CUDA/MPS events, CUPTI, or CUDA graph replay)
 - Offering flexible result aggregation (mean/median/min/max/quantiles)</p>
+<p>Wall timing measures host elapsed time without cache flushing. With no
+device or a CPU device, the callable is assumed to be synchronous. An
+explicit CUDA/HIP or MPS device enables synchronization before and after
+each wall-clock sample, including launch and synchronization overhead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -851,13 +820,13 @@
 <li><p><strong>_n_warmup</strong> (<em>int</em>) – Manual override for warmup iterations (default: 0 = auto)</p></li>
 <li><p><strong>_n_repeat</strong> (<em>int</em>) – Manual override for benchmark iterations (default: 0 = auto)</p></li>
 <li><p><strong>quantiles</strong> (<em>list</em><em>[</em><em>float</em><em>] </em><em>| </em><em>None</em>) – Performance percentiles to compute (e.g., [0.5, 0.95])</p></li>
-<li><p><strong>fast_flush</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Use faster L2 cache flush with int32 vs int8 (default: True)</p></li>
-<li><p><strong>backend</strong> (<em>Literal</em><em>[</em><em>'event'</em><em>, </em><em>'cupti'</em><em>, </em><em>'cudagraph'</em><em>]</em>) – Profiler backend - “event” (CUDA events), “cupti”, or “cudagraph” (default: “event”)</p></li>
+<li><p><strong>fast_flush</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>) – Use faster GPU L2 cache flush with int32 vs int8 (default: True); ignored by “wall”</p></li>
+<li><p><strong>backend</strong> (<em>Literal</em><em>[</em><em>'event'</em><em>, </em><em>'cupti'</em><em>, </em><em>'cudagraph'</em><em>, </em><em>'wall'</em><em>]</em>) – Timing method - “event”, “cupti”, “cudagraph”, or “wall” (default: “event”)</p></li>
 <li><p><strong>return_mode</strong> (<em>Literal</em><em>[</em><em>'min'</em><em>, </em><em>'max'</em><em>, </em><em>'mean'</em><em>, </em><em>'median'</em><em>]</em>) – Result aggregation method - “mean”, “median”, “min”, or “max”</p></li>
-<li><p><strong>device</strong> (<em>int</em><em> | </em><em>torch.device</em><em> | </em><em>None</em>) – Optional CUDA device to benchmark on. When provided, CUDA
-events, streams, cache buffers, and synchronizations are scoped to
-that device.</p></li>
-<li><p><strong>cache_size</strong> (<em>int</em>) – L2 cache flush buffer size in MB (default: 256)</p></li>
+<li><p><strong>device</strong> (<em>int</em><em> | </em><em>torch.device</em><em> | </em><em>None</em>) – Optional device to benchmark on. CUDA/HIP events, streams,
+cache buffers, and synchronization are scoped to that device.
+Event timing also accepts MPS; wall timing accepts CPU and MPS.</p></li>
+<li><p><strong>cache_size</strong> (<em>int</em>) – GPU L2 cache flush buffer size in MB (default: 256); ignored by “wall”</p></li>
 <li><p><strong>early_stop_baseline</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
@@ -878,12 +847,12 @@ that device.</p></li>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../../rocm/index.html">
+          <a class="next-page" href="../torch_bench/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">tilelang.rocm</div>
+                <div class="title">tilelang.profiler.torch_bench</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -930,16 +899,9 @@ that device.</p></li>
             <ul>
 <li><a class="reference internal" href="#">tilelang.profiler.bench</a><ul>
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
-<li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.profiler.bench.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.profiler.bench.suppress_stdout_stderr"><code class="docutils literal notranslate"><span class="pre">suppress_stdout_stderr</span></code></a><ul>
-<li><a class="reference internal" href="#tilelang.profiler.bench.suppress_stdout_stderr.__enter__"><code class="docutils literal notranslate"><span class="pre">suppress_stdout_stderr.__enter__()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.profiler.bench.suppress_stdout_stderr.__exit__"><code class="docutils literal notranslate"><span class="pre">suppress_stdout_stderr.__exit__()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#tilelang.profiler.bench.IS_CUDA"><code class="docutils literal notranslate"><span class="pre">IS_CUDA</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.profiler.bench.device"><code class="docutils literal notranslate"><span class="pre">device</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.profiler.bench.do_bench"><code class="docutils literal notranslate"><span class="pre">do_bench()</span></code></a></li>
 </ul>
