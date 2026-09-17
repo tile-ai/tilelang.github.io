@@ -1,0 +1,75 @@
+tilelang.cuda.op.gemm.gemm_tcgen05_blockscaled
+==============================================
+
+.. py:module:: tilelang.cuda.op.gemm.gemm_tcgen05_blockscaled
+
+.. autoapi-nested-parse::
+
+   Blackwell TCGEN5MMA block-scaled GEMM lowering.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.cuda.op.gemm.gemm_tcgen05_blockscaled.GEMM_INST_TCGEN05_BLOCK_SCALED
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.cuda.op.gemm.gemm_tcgen05_blockscaled.GemmTCGEN5BlockScaled
+
+
+Module Contents
+---------------
+
+.. py:data:: GEMM_INST_TCGEN05_BLOCK_SCALED
+   :value: 'cuda.tcgen05.blockscaled'
+
+
+.. py:class:: GemmTCGEN5BlockScaled
+
+   Bases: :py:obj:`tilelang.tileop.gemm_blockscaled.gemm_blockscaled_base.GemmBlockScaledMixin`, :py:obj:`tilelang.cuda.op.gemm.gemm_tcgen05.GemmTCGEN5`
+
+
+   ``kind::mxf8f6f4.block_scale`` TCGEN5MMA with A/B in shared memory,
+   the accumulator in tensor memory and SFA/SFB already resident in tensor
+   memory.
+
+   Shares the shared-operand swizzle inference and emitter plumbing with the
+   dense ``GemmTCGEN5``; differs in the fixed 1x1 warp partition (kept even
+   under ``cta_group::2``), the dense-only (no ``.ws``) instruction shapes and
+   the block-scaled MMA issue.
+
+
+   .. py:attribute:: tcgen05_allow_ws
+      :value: False
+
+
+
+   .. py:method:: infer_layout(target, thread_nums)
+
+      Infer swizzled layouts for operands and accumulator.
+
+      For SS: both A and B get swizzled shared-memory layouts.
+      For TS: A and C get TMEM store layouts, B gets a swizzled shared-memory layout.
+
+
+
+   .. py:method:: lower(layout_map, target, thread_bounds, thread_index, mbar_phase_expr = None)
+
+      Lower to TIR containing block-scaled TCGEN5MMA calls.
+
+      Follows the same completion protocol as the dense TCGEN05 lowering:
+      the synchronous `T.gemm_blockscaled` posts completion to `mbar` and
+      waits on it right after issue, while the explicit `is_tcgen05` op
+      never waits and may omit `mbar` when the caller or WS schedule emits
+      a later completion arrival.
+
+
+

@@ -34,13 +34,24 @@ Module Contents
 
    GEMM operator for Blackwell (SM100) TCGEN5MMA instructions.
 
-   Supports the SS (Shared-Shared) and TS (TensorMemory-Shared) variants,
-   as well as block-scaled MXFP8 GEMM when SFA/SFB scale factors are present.
+   Supports the SS (Shared-Shared) and TS (TensorMemory-Shared) variants.
    Layout inference and lowering are dispatched based on the memory scopes
-   of operands A and B.
+   of operands A and B. The block-scaled variant lives in
+   ``GemmTCGEN5BlockScaled`` and reuses the emitter and layout plumbing
+   through the hooks below.
+
+
+   .. py:attribute:: tcgen05_allow_ws
+      :value: True
+
 
 
    .. py:property:: allow_f8f6f4_mixed_dtypes
+      :type: bool
+
+
+
+   .. py:property:: use_2cta
       :type: bool
 
 
@@ -57,7 +68,6 @@ Module Contents
 
       For SS: both A and B get swizzled shared-memory layouts.
       For TS: A and C get TMEM store layouts, B gets a swizzled shared-memory layout.
-      For block-scaled: same as SS (A and B get swizzle, C gets TMEM store layout).
 
 
 

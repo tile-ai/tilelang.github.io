@@ -1,0 +1,63 @@
+tilelang.tileop.gemm_blockscaled
+================================
+
+.. py:module:: tilelang.tileop.gemm_blockscaled
+
+.. autoapi-nested-parse::
+
+   Common block-scaled GEMM tile op.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/tilelang/tileop/gemm_blockscaled/gemm_blockscaled_base/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.tileop.gemm_blockscaled.GemmBlockScaled
+
+
+Package Contents
+----------------
+
+.. py:class:: GemmBlockScaled
+
+   Bases: :py:obj:`tilelang.tileop.gemm.Gemm`
+
+
+   Block-scaled GEMM tile op: ``C (+)= (A * SFA) @ (B * SFB)``.
+
+   A ``GemmNode`` subclass on the C++ side, so it shares the dense GEMM's
+   operand layouts, warp partition and scheduling, and is lowered through the
+   same ``tl.gemm.infer_layout`` / ``tl.gemm.lower`` entry points, which
+   dispatch on this Python class. The extra FFI fields are ``sfaRegion``,
+   ``sfbRegion`` and ``sfKStart``. The C++ selector returns a block-scaled
+   instruction key (``cuda.tcgen05.blockscaled``, ``cuda.mma.blockscaled``)
+   that the backend registry maps to an implementation class built on
+   ``GemmBlockScaledMixin``, so dense implementation classes never see the
+   scale factors.
+
+
+   .. py:property:: SFARegion
+
+
+   .. py:property:: SFBRegion
+
+
+   .. py:property:: sf_k_start
+
+
+   .. py:property:: is_blockscaled
+      :type: bool
+
+
+

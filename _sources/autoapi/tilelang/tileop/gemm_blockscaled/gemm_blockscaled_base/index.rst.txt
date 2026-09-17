@@ -1,0 +1,69 @@
+tilelang.tileop.gemm_blockscaled.gemm_blockscaled_base
+======================================================
+
+.. py:module:: tilelang.tileop.gemm_blockscaled.gemm_blockscaled_base
+
+.. autoapi-nested-parse::
+
+   Shared accessors for block-scaled GEMM backend implementations.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.tileop.gemm_blockscaled.gemm_blockscaled_base.GemmBlockScaledMixin
+
+
+Module Contents
+---------------
+
+.. py:class:: GemmBlockScaledMixin
+
+   Scale-factor operands and knobs of a block-scaled GEMM implementation.
+
+   Mixed into a dense backend implementation class (``GemmTCGEN5``,
+   ``GemmMMA``, ...) whose ``gemm_node`` is a ``GemmBlockScaled``. It owns
+   everything the dense classes must not know about: the SFA/SFB regions,
+   the logical K-axis start and the ``sf_*`` annotations. Which scale
+   layouts a backend supports stays with that backend.
+
+
+   .. py:attribute:: gemm_node
+      :type:  object
+
+
+   .. py:property:: SFARegion
+      :type: tvm.tirx.BufferRegion
+
+
+
+   .. py:property:: SFBRegion
+      :type: tvm.tirx.BufferRegion
+
+
+
+   .. py:property:: sf_k_start
+      :type: tvm.ir.PrimExpr
+
+
+
+   .. py:property:: sf_a_granularity_k
+      :type: int
+
+
+
+   .. py:property:: sf_b_granularity_k
+      :type: int
+
+
+
+   .. py:property:: sf_layout
+      :type: str
+
+
+      Scale-factor layout name from the annotations; ``"rowmajor"`` by default.
+
+
