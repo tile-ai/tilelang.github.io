@@ -768,10 +768,10 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.fp8.determine_fp8_type" title="tilelang.language.fp8.determine_fp8_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_fp8_type</span></code></a>([fp8_format])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.fp8.determine_fp8_type" title="tilelang.language.fp8.determine_fp8_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_fp8_type</span></code></a>([fp8_format, device])</p></td>
 <td><p>Select the correct FP8 dtype string for the current platform.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.fp8.determine_torch_fp8_type" title="tilelang.language.fp8.determine_torch_fp8_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_torch_fp8_type</span></code></a>([fp8_format])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.fp8.determine_torch_fp8_type" title="tilelang.language.fp8.determine_torch_fp8_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_torch_fp8_type</span></code></a>([fp8_format, device])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -782,13 +782,16 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.fp8.determine_fp8_type">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.fp8.</span></span><span class="sig-name descname"><span class="pre">determine_fp8_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fp8_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'e4m3'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.fp8.determine_fp8_type" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.fp8.</span></span><span class="sig-name descname"><span class="pre">determine_fp8_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fp8_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'e4m3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.fp8.determine_fp8_type" title="Link to this definition">¶</a></dt>
 <dd><p>Select the correct FP8 dtype string for the current platform.
 - CUDA defaults to FP8 E4M3FN / E5M2.
 - ROCm uses FNUZ except gfx950 (OCP), which prefers non-FNUZ when available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>fp8_format</strong> (<em>Literal</em><em>[</em><em>'e4m3'</em><em>, </em><em>'e5m2'</em><em>]</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fp8_format</strong> (<em>Literal</em><em>[</em><em>'e4m3'</em><em>, </em><em>'e5m2'</em><em>]</em>)</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em> | </em><em>int</em><em> | </em><em>str</em><em> | </em><em>None</em>)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
@@ -798,10 +801,13 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.fp8.determine_torch_fp8_type">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.fp8.</span></span><span class="sig-name descname"><span class="pre">determine_torch_fp8_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fp8_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'e4m3'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.fp8.determine_torch_fp8_type" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.fp8.</span></span><span class="sig-name descname"><span class="pre">determine_torch_fp8_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fp8_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'e4m3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.fp8.determine_torch_fp8_type" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>fp8_format</strong> (<em>Literal</em><em>[</em><em>'e4m3'</em><em>, </em><em>'e5m2'</em><em>]</em>)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fp8_format</strong> (<em>Literal</em><em>[</em><em>'e4m3'</em><em>, </em><em>'e5m2'</em><em>]</em>)</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em> | </em><em>int</em><em> | </em><em>str</em><em> | </em><em>None</em>)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>torch.dtype</p>
