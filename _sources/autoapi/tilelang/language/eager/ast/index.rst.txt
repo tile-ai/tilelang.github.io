@@ -23,6 +23,7 @@ Classes
 
    tilelang.language.eager.ast.QuoteVisitor
    tilelang.language.eager.ast.BaseBuilder
+   tilelang.language.eager.ast.LoopControlFinder
    tilelang.language.eager.ast.DSLMutator
    tilelang.language.eager.ast.SpanAttacher
    tilelang.language.eager.ast.IRGenerator
@@ -148,6 +149,39 @@ Module Contents
 
 .. py:class:: BaseBuilder
 
+   .. py:exception:: PythonLoopBreak
+
+      Bases: :py:obj:`BaseException`
+
+
+      Common base class for all exceptions
+
+
+
+   .. py:exception:: PythonLoopContinue
+
+      Bases: :py:obj:`BaseException`
+
+
+      Common base class for all exceptions
+
+
+
+   .. py:method:: loop(iterable)
+
+
+   .. py:method:: iter_call(func, /, *args, **kwargs)
+
+
+   .. py:method:: resolve_call(func)
+
+
+   .. py:method:: python_iterable(value, context)
+
+
+   .. py:method:: comprehension_filter(cond)
+
+
    .. py:attribute:: empty
 
 
@@ -217,7 +251,45 @@ Module Contents
    .. py:method:: arg(name, value)
 
 
-   .. py:method:: override(name)
+.. py:class:: LoopControlFinder
+
+   Bases: :py:obj:`ast.NodeVisitor`
+
+
+   Find exits targeting a loop, without attributing nested loops' exits to it.
+
+
+   .. py:attribute:: depth
+      :value: 0
+
+
+
+   .. py:attribute:: has_control
+      :value: False
+
+
+
+   .. py:attribute:: has_return
+      :value: False
+
+
+
+   .. py:method:: visit_For(node)
+
+
+   .. py:attribute:: visit_While
+
+
+   .. py:method:: visit_Break(node)
+
+
+   .. py:attribute:: visit_Continue
+
+
+   .. py:method:: visit_Return(node)
+
+
+   .. py:method:: visit_FunctionDef(node)
 
 
 .. py:class:: DSLMutator(nonlocals, globals, filename)
@@ -277,6 +349,10 @@ Module Contents
    .. py:attribute:: filename
 
 
+   .. py:attribute:: comprehension_locals
+      :type:  set[str]
+
+
    .. py:method:: get_tmp()
 
 
@@ -332,6 +408,21 @@ Module Contents
 
 
    .. py:method:: visit_Name(node)
+
+
+   .. py:method:: visit_Call(node)
+
+
+   .. py:method:: visit_ListComp(node)
+
+
+   .. py:attribute:: visit_SetComp
+
+
+   .. py:attribute:: visit_DictComp
+
+
+   .. py:attribute:: visit_GeneratorExp
 
 
 .. py:class:: SpanAttacher(filename_var, func_name_var)

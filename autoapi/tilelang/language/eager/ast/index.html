@@ -798,13 +798,16 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder" title="tilelang.language.eager.ast.BaseBuilder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseBuilder</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator" title="tilelang.language.eager.ast.DSLMutator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DSLMutator</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder" title="tilelang.language.eager.ast.LoopControlFinder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LoopControlFinder</span></code></a></p></td>
+<td><p>Find exits targeting a loop, without attributing nested loops' exits to it.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator" title="tilelang.language.eager.ast.DSLMutator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DSLMutator</span></code></a></p></td>
 <td><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">NodeVisitor</span></code> subclass that walks the abstract syntax tree and</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.SpanAttacher" title="tilelang.language.eager.ast.SpanAttacher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpanAttacher</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.SpanAttacher" title="tilelang.language.eager.ast.SpanAttacher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpanAttacher</span></code></a></p></td>
 <td><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">NodeVisitor</span></code> subclass that walks the abstract syntax tree and</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.IRGenerator" title="tilelang.language.eager.ast.IRGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IRGenerator</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.eager.ast.IRGenerator" title="tilelang.language.eager.ast.IRGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IRGenerator</span></code></a></p></td>
 <td><p>Abstract base class for generic types.</p></td>
 </tr>
 </tbody>
@@ -1137,7 +1140,46 @@ just a single node.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.language.eager.ast.BaseBuilder">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.ast.</span></span><span class="sig-name descname"><span class="pre">BaseBuilder</span></span><a class="headerlink" href="#tilelang.language.eager.ast.BaseBuilder" title="Link to this definition">¶</a></dt>
-<dd><dl class="py attribute">
+<dd><dl class="py exception">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.BaseBuilder.PythonLoopBreak">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PythonLoopBreak</span></span><a class="headerlink" href="#tilelang.language.eager.ast.BaseBuilder.PythonLoopBreak" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseException</span></code></p>
+<p>Common base class for all exceptions</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.BaseBuilder.PythonLoopContinue">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PythonLoopContinue</span></span><a class="headerlink" href="#tilelang.language.eager.ast.BaseBuilder.PythonLoopContinue" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseException</span></code></p>
+<p>Common base class for all exceptions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.BaseBuilder.loop">
+<span class="sig-name descname"><span class="pre">loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.BaseBuilder.loop" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.BaseBuilder.iter_call">
+<span class="sig-name descname"><span class="pre">iter_call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.BaseBuilder.iter_call" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.BaseBuilder.resolve_call">
+<span class="sig-name descname"><span class="pre">resolve_call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.BaseBuilder.resolve_call" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.BaseBuilder.python_iterable">
+<span class="sig-name descname"><span class="pre">python_iterable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.BaseBuilder.python_iterable" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.BaseBuilder.comprehension_filter">
+<span class="sig-name descname"><span class="pre">comprehension_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cond</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.BaseBuilder.comprehension_filter" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.eager.ast.BaseBuilder.empty">
 <span class="sig-name descname"><span class="pre">empty</span></span><a class="headerlink" href="#tilelang.language.eager.ast.BaseBuilder.empty" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1404,7 +1446,7 @@ just a single node.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>name</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>value</strong> (<em>Any</em>)</p></li>
 </ul>
 </dd>
@@ -1424,15 +1466,57 @@ just a single node.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="tilelang.language.eager.ast.BaseBuilder.override">
-<span class="sig-name descname"><span class="pre">override</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.BaseBuilder.override" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>)</p>
-</dd>
-</dl>
 </dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.LoopControlFinder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.language.eager.ast.</span></span><span class="sig-name descname"><span class="pre">LoopControlFinder</span></span><a class="headerlink" href="#tilelang.language.eager.ast.LoopControlFinder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">ast.NodeVisitor</span></code></p>
+<p>Find exits targeting a loop, without attributing nested loops’ exits to it.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.LoopControlFinder.depth">
+<span class="sig-name descname"><span class="pre">depth</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#tilelang.language.eager.ast.LoopControlFinder.depth" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.LoopControlFinder.has_control">
+<span class="sig-name descname"><span class="pre">has_control</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#tilelang.language.eager.ast.LoopControlFinder.has_control" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.LoopControlFinder.has_return">
+<span class="sig-name descname"><span class="pre">has_return</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#tilelang.language.eager.ast.LoopControlFinder.has_return" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.LoopControlFinder.visit_For">
+<span class="sig-name descname"><span class="pre">visit_For</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.LoopControlFinder.visit_For" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.LoopControlFinder.visit_While">
+<span class="sig-name descname"><span class="pre">visit_While</span></span><a class="headerlink" href="#tilelang.language.eager.ast.LoopControlFinder.visit_While" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.LoopControlFinder.visit_Break">
+<span class="sig-name descname"><span class="pre">visit_Break</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.LoopControlFinder.visit_Break" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.LoopControlFinder.visit_Continue">
+<span class="sig-name descname"><span class="pre">visit_Continue</span></span><a class="headerlink" href="#tilelang.language.eager.ast.LoopControlFinder.visit_Continue" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.LoopControlFinder.visit_Return">
+<span class="sig-name descname"><span class="pre">visit_Return</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.LoopControlFinder.visit_Return" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.LoopControlFinder.visit_FunctionDef">
+<span class="sig-name descname"><span class="pre">visit_FunctionDef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.LoopControlFinder.visit_FunctionDef" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1501,6 +1585,11 @@ just a single node.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.language.eager.ast.DSLMutator.filename">
 <span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#tilelang.language.eager.ast.DSLMutator.filename" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.DSLMutator.comprehension_locals">
+<span class="sig-name descname"><span class="pre">comprehension_locals</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tilelang.language.eager.ast.DSLMutator.comprehension_locals" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1699,6 +1788,36 @@ just a single node.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.DSLMutator.visit_Call">
+<span class="sig-name descname"><span class="pre">visit_Call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.DSLMutator.visit_Call" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>ast.Call</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.DSLMutator.visit_ListComp">
+<span class="sig-name descname"><span class="pre">visit_ListComp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.eager.ast.DSLMutator.visit_ListComp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.DSLMutator.visit_SetComp">
+<span class="sig-name descname"><span class="pre">visit_SetComp</span></span><a class="headerlink" href="#tilelang.language.eager.ast.DSLMutator.visit_SetComp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.DSLMutator.visit_DictComp">
+<span class="sig-name descname"><span class="pre">visit_DictComp</span></span><a class="headerlink" href="#tilelang.language.eager.ast.DSLMutator.visit_DictComp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.language.eager.ast.DSLMutator.visit_GeneratorExp">
+<span class="sig-name descname"><span class="pre">visit_GeneratorExp</span></span><a class="headerlink" href="#tilelang.language.eager.ast.DSLMutator.visit_GeneratorExp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1952,6 +2071,13 @@ _T (return type).</p>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.eval_op"><code class="docutils literal notranslate"><span class="pre">eval_op()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.eval_aug_assign"><code class="docutils literal notranslate"><span class="pre">eval_aug_assign()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder"><code class="docutils literal notranslate"><span class="pre">BaseBuilder</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.PythonLoopBreak"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.PythonLoopBreak</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.PythonLoopContinue"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.PythonLoopContinue</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.loop"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.loop()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.iter_call"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.iter_call()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.resolve_call"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.resolve_call()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.python_iterable"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.python_iterable()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.comprehension_filter"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.comprehension_filter()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.empty"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.empty</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.get_parent_locals"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.get_parent_locals()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.ctx_if"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.ctx_if()</span></code></a></li>
@@ -1975,7 +2101,18 @@ _T (return type).</p>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.assert_expr"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.assert_expr()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.rval"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.rval()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.arg"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.arg()</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.language.eager.ast.BaseBuilder.override"><code class="docutils literal notranslate"><span class="pre">BaseBuilder.override()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder"><code class="docutils literal notranslate"><span class="pre">LoopControlFinder</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder.depth"><code class="docutils literal notranslate"><span class="pre">LoopControlFinder.depth</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder.has_control"><code class="docutils literal notranslate"><span class="pre">LoopControlFinder.has_control</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder.has_return"><code class="docutils literal notranslate"><span class="pre">LoopControlFinder.has_return</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder.visit_For"><code class="docutils literal notranslate"><span class="pre">LoopControlFinder.visit_For()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder.visit_While"><code class="docutils literal notranslate"><span class="pre">LoopControlFinder.visit_While</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder.visit_Break"><code class="docutils literal notranslate"><span class="pre">LoopControlFinder.visit_Break()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder.visit_Continue"><code class="docutils literal notranslate"><span class="pre">LoopControlFinder.visit_Continue</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder.visit_Return"><code class="docutils literal notranslate"><span class="pre">LoopControlFinder.visit_Return()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.LoopControlFinder.visit_FunctionDef"><code class="docutils literal notranslate"><span class="pre">LoopControlFinder.visit_FunctionDef()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator"><code class="docutils literal notranslate"><span class="pre">DSLMutator</span></code></a><ul>
@@ -1984,6 +2121,7 @@ _T (return type).</p>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.globals"><code class="docutils literal notranslate"><span class="pre">DSLMutator.globals</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.extra_type_hints"><code class="docutils literal notranslate"><span class="pre">DSLMutator.extra_type_hints</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.filename"><code class="docutils literal notranslate"><span class="pre">DSLMutator.filename</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.comprehension_locals"><code class="docutils literal notranslate"><span class="pre">DSLMutator.comprehension_locals</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.get_tmp"><code class="docutils literal notranslate"><span class="pre">DSLMutator.get_tmp()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.visit_If"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_If()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.visit_Expr"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_Expr()</span></code></a></li>
@@ -2003,6 +2141,11 @@ _T (return type).</p>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.visit_With"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_With()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.visit_Assert"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_Assert()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.visit_Name"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_Name()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.visit_Call"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_Call()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.visit_ListComp"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_ListComp()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.visit_SetComp"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_SetComp</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.visit_DictComp"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_DictComp</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.language.eager.ast.DSLMutator.visit_GeneratorExp"><code class="docutils literal notranslate"><span class="pre">DSLMutator.visit_GeneratorExp</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.language.eager.ast.SpanAttacher"><code class="docutils literal notranslate"><span class="pre">SpanAttacher</span></code></a><ul>

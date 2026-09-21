@@ -29,6 +29,7 @@ Classes
    tilelang.language.eager.builder.BoolOpFrame
    tilelang.language.eager.builder.ContinueFrame
    tilelang.language.eager.builder.BreakFrame
+   tilelang.language.eager.builder.PythonLoopFrame
    tilelang.language.eager.builder.SerialForWithStep
    tilelang.language.eager.builder.OutTensor
    tilelang.language.eager.builder.Ref
@@ -123,6 +124,15 @@ Module Contents
 
 
 .. py:class:: BreakFrame
+
+   Bases: :py:obj:`Frame`
+
+
+   Frame are virtual context managers used in frontend only
+   They do not have any runtime representation in the generated TIR.
+
+
+.. py:class:: PythonLoopFrame
 
    Bases: :py:obj:`Frame`
 
@@ -384,7 +394,19 @@ Module Contents
    .. py:method:: arg(name, value)
 
 
-   .. py:method:: override(name)
+   .. py:method:: iter_call(func, /, *args, **kwargs)
+
+
+   .. py:method:: python_iterable(value, context)
+
+      Reject device values before Python can acquire an iterator over them.
+
+
+
+   .. py:method:: resolve_call(func)
+
+
+   .. py:method:: comprehension_filter(cond)
 
 
    .. py:method:: constexpr(name, dtype = 'int32')
