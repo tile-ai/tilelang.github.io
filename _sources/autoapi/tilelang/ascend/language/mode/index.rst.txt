@@ -1,0 +1,88 @@
+tilelang.ascend.language.mode
+=============================
+
+.. py:module:: tilelang.ascend.language.mode
+
+.. autoapi-nested-parse::
+
+   Ascend stateful hardware mode controls for Cube and GM stores.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.mode.set_mmad_direction
+   tilelang.ascend.language.mode.set_hf32_mode
+   tilelang.ascend.language.mode.set_atomic
+   tilelang.ascend.language.mode.set_atomic_none
+
+
+Module Contents
+---------------
+
+.. py:function:: set_mmad_direction(direction)
+
+   Select whether Cube generates results along M or N first.
+
+   ``direction`` is ``"m"`` or ``"n"``. The setting applies to subsequent
+   GEMMs on the AIC, including block-scaled GEMMs. It changes the traversal
+   within a MAD, independently of the kernel's outer tile-loop order.
+
+
+.. py:function:: set_hf32_mode(mode=None)
+
+   Set HF32 mode for Ascend Cube fp32 matmul.
+
+   Controls whether fp32 inputs to the Cube unit are truncated to
+   HF32 (19-bit mantissa) before multiplication, trading precision for
+   throughput (~2x).  Ignored for non-fp32 input types.
+
+   Generates: AscendC::SetHF32Mode(HF32Mode::DISABLE/ENABLE) and
+              AscendC::SetHF32TransMode(HF32TransMode::NEAREST_ZERO/NEAREST_EVEN).
+
+   :param mode:
+                - None (default): disable HF32, full fp32 precision.
+                - "nearest_zero": enable HF32, round toward zero.
+                - "nearest_even": enable HF32, round to nearest even.
+   :type mode: None | "nearest_zero" | "nearest_even"
+
+   .. rubric:: Example
+
+   >>> T.set_hf32_mode("nearest_even")   # enable HF32
+   >>> T.set_hf32_mode(None)             # restore full fp32
+
+
+.. py:function:: set_atomic(op='add', dtype='float32')
+
+   Arm an Ascend hardware store-mode atomic op.
+
+   Call once before the stores it should affect. With the flag armed, an
+   ordinary L0C->GM (``T.copy``) or UB->GM (``T.dual_copy``) store reduces into
+   GM (``D op= tile``) in hardware instead of overwriting — no vector loop.
+   Clear with :func:`set_atomic_none` to restore plain stores.
+
+   Generates ``AscendC::SetAtomic{Add,Max,Min}<T>()``.
+
+   :param op: The store-mode reduction.
+   :type op: "add" | "max" | "min"
+   :param dtype: Accumulate type of the GM destination. One of float32/float16/bfloat16/
+                 int8/int16/int32 (the dav_3510-supported set).
+   :type dtype: str
+
+   .. rubric:: Example
+
+   >>> T.set_atomic("add", "float32")   # arm
+   >>> # ... stores that should accumulate into GM ...
+   >>> T.set_atomic_none()              # restore
+
+
+.. py:function:: set_atomic_none()
+
+   Clear the Ascend store-mode atomic flag, restoring plain (overwrite) stores.
+
+   Call once to undo :func:`set_atomic`.
+
+

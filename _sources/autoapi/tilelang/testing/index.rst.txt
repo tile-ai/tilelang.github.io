@@ -19,6 +19,7 @@ Attributes
 .. autoapisummary::
 
    tilelang.testing.__all__
+   tilelang.testing.requires_ascend
 
 
 Functions
@@ -26,6 +27,7 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.testing.ascend_backend_compiled
    tilelang.testing.requires_cdna
    tilelang.testing.requires_cuda_or_cdna
    tilelang.testing.requires_gfx950
@@ -43,6 +45,17 @@ Package Contents
 ----------------
 
 .. py:data:: __all__
+
+.. py:function:: ascend_backend_compiled()
+
+   Whether this build includes the Ascend backend (USE_ASCEND).
+
+   The Ascend sources are gated behind USE_ASCEND, so a CUDA-only build has no
+   Ascend tile ops and no Ascend pass-config options. The pass-config key is the
+   cheapest reliable probe: it is registered from src/ascend.
+
+
+.. py:data:: requires_ascend
 
 .. py:function:: requires_cdna(func)
 

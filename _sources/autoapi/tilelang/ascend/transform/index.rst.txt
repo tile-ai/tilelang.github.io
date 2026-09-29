@@ -1,0 +1,260 @@
+tilelang.ascend.transform
+=========================
+
+.. py:module:: tilelang.ascend.transform
+
+.. autoapi-nested-parse::
+
+   Ascend-only TIR transform passes.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/tilelang/ascend/transform/z3_scheduler/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.transform.InsertNd2Nz
+   tilelang.ascend.transform.NormalizeControlFlowForSchedule
+   tilelang.ascend.transform.RestoreWhileLoops
+   tilelang.ascend.transform.AnnotateMultiBufferEligible
+   tilelang.ascend.transform.NormalizeConflictHints
+   tilelang.ascend.transform.EstimateLatency
+   tilelang.ascend.transform.AscendRemoveNoOp
+   tilelang.ascend.transform.LegalizeSimdMerging
+   tilelang.ascend.transform.UnrollLoopSkipVF
+   tilelang.ascend.transform.AutoSchedule
+   tilelang.ascend.transform.AssignCore
+   tilelang.ascend.transform.PrepareMultiBuffer
+   tilelang.ascend.transform.ResolveCore
+   tilelang.ascend.transform.InsertSync
+   tilelang.ascend.transform.MaterializeMultiBuffer
+   tilelang.ascend.transform.LowerScheduledTIR
+   tilelang.ascend.transform.RewriteDualCopy
+   tilelang.ascend.transform.NormalizeBufferVersion
+   tilelang.ascend.transform.RewriteAscendBufferVersionLayout
+   tilelang.ascend.transform.NormalizeAscendFractalStorage
+   tilelang.ascend.transform.AscendSimdVFLowerParallel
+   tilelang.ascend.transform.AscendThreadSync
+   tilelang.ascend.transform.AscendLayoutInference
+   tilelang.ascend.transform.AscendLowerTileOp
+   tilelang.ascend.transform.AscendInsertOOBPadding
+   tilelang.ascend.transform.InferBufferAliases
+   tilelang.ascend.transform.MergeUBAllocations
+   tilelang.ascend.transform.MarkScalarDcacheBypass
+   tilelang.ascend.transform.RewriteFp4ToFp4x2
+   tilelang.ascend.transform.RewriteFlagToBuf
+
+
+Package Contents
+----------------
+
+.. py:function:: InsertNd2Nz()
+
+   Rewrite layout-driven UB ND->UB NZ and UB->L1 ND->NZ copies.
+
+
+.. py:function:: NormalizeControlFlowForSchedule()
+
+   Normalize control flow ahead of AutoSchedule.
+
+   Rewrites each ``while cond: BODY`` into a bounded serial ``for`` loop
+   (tagged ``synthetic_while``) so AutoSchedule can pipeline the body, then
+   extracts complex ``if`` conditions and buffer-dependent serial/unrolled
+   loop bounds into temporary ``Bind`` variables.
+   :func:`RestoreWhileLoops` undoes the while-rewrite after scheduling.
+
+
+.. py:function:: RestoreWhileLoops()
+
+   Rewrite ``synthetic_while``-tagged for loops back into ``while(true)``.
+
+
+.. py:function:: AnnotateMultiBufferEligible()
+
+   Annotate scheduled For loops with buffers that can be multi-buffered.
+
+   Requires :func:`NormalizeControlFlowForSchedule` followed by
+   :func:`MaterializeScheduleUnits`, so buffer-dependent control expressions
+   are schedulable tasks and manual stages and flattened scheduling guards are
+   available through the shared IRStructure codec.
+
+
+.. py:function:: NormalizeConflictHints()
+
+   Normalize ``T.assume_no_conflict`` and ``T.assume_conflict`` markers.
+
+
+.. py:function:: EstimateLatency()
+
+   Annotate every Ascend AutoSchedule task with latency and II.
+
+
+.. py:function:: AscendRemoveNoOp()
+
+   Remove no-op statements using equality-safe store analysis.
+
+
+.. py:function:: LegalizeSimdMerging()
+
+   Lower MODE_MERGING SIMD assignments to explicit read-write calls.
+
+
+.. py:function:: UnrollLoopSkipVF()
+
+   Expand explicit unroll loops outside SIMD_VF / SIMT_VF blocks.
+
+   This pre-AutoSchedule pass only materializes ``T.unroll(..., explicit=True)``
+   loops. Non-explicit unroll hints, serial loops, and all VF block interiors
+   are preserved for their later lowering stages.
+
+
+.. py:function:: AutoSchedule()
+
+   Schedule materialized internal schedule units for downstream lowering.
+
+
+.. py:function:: AssignCore()
+
+   Annotate each scheduled task with its widest legal AIV/AIC mask.
+
+
+.. py:function:: PrepareMultiBuffer()
+
+   Choose multi-buffer clocks and add counter init/advance tasks.
+
+
+.. py:function:: ResolveCore()
+
+   Narrow core candidates from actual scalar and counter consumers.
+
+
+.. py:function:: InsertSync()
+
+   Insert synchronization into scheduled Ascend TIR.
+
+
+.. py:function:: MaterializeMultiBuffer()
+
+   Lower logical multi-buffer accesses to physical buffer versions.
+
+
+.. py:function:: LowerScheduledTIR()
+
+   Lower scheduled TIR into final AIV/AIC core bodies.
+
+
+.. py:function:: RewriteDualCopy()
+
+   Lower dual-copy operations using the enclosing vector-core sid.
+
+
+.. py:function:: NormalizeBufferVersion()
+
+   Lower staged manual/automatic versions to scoped internal attributes.
+
+
+.. py:function:: RewriteAscendBufferVersionLayout()
+
+   Align each physical version of a multi-buffered UB allocation to 32 bytes.
+
+
+.. py:function:: NormalizeAscendFractalStorage()
+
+   Normalize Cube storage and aliases before OOB padding and scheduling.
+
+
+.. py:function:: AscendSimdVFLowerParallel()
+
+   Lower T.Parallel inside SIMD_VF blocks to MicroAPI register-level vector ops.
+
+
+.. py:function:: AscendThreadSync(storage_scope)
+
+   Insert thread-storage synchronization independently within each SIMT_VF.
+
+
+.. py:function:: AscendLayoutInference()
+
+   Ascend fork of LayoutInference: VF regions are opaque to the worklist
+   and SIMT_VF bodies infer against the region's own lane scope.
+
+
+.. py:function:: AscendLowerTileOp()
+
+   Ascend fork of LowerTileOp: VF region scopes, buffer-version key remap,
+   and no CUDA async-copy post-processing.
+
+
+.. py:function:: AscendInsertOOBPadding()
+
+   Clamp DMA copy OOB tails and emit GM->L1 padding fills before AutoSchedule.
+
+   For every supported DMA copy this rewrites the copy to its in-bounds ranges;
+   for a padded GM->L1 copy it also appends semantic T.fill operations with
+   exact destination regions. Runs after InsertNd2Nz and before AutoSchedule
+   so each fill is scheduled as its own MTE2 task and ordered against L1->L0
+   consumers. LowerTileOp later converts the fills to ascend_fill_l1, which
+   codegen emits as asc_fill_l1.
+
+
+.. py:function:: InferBufferAliases()
+
+   Infer which on-chip buffers in a manually scheduled kernel may reuse storage.
+
+   The resulting pairwise compatibility contract is consumed by
+   :func:`MergeUBAllocations`.
+
+
+.. py:function:: MergeUBAllocations(align_bytes = 16, disable_reuse = False)
+
+   Merge Ascend on-chip allocations from a pairwise reuse contract.
+
+   AutoSchedule writes this contract during synchronization insertion. Manual
+   schedules must run :func:`InferBufferAliases` first.
+
+   Buffer reuse is always performed unless ``disable_reuse`` is set.
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: MarkScalarDcacheBypass()
+
+   Rewrite scalar global buffer accesses to use dcache bypass intrinsics
+   for buffers that have writes (scalar BufferStore or MTE copy). Pure-read
+   buffers keep normal BufferLoad (dcache path).
+
+
+.. py:function:: RewriteFp4ToFp4x2()
+
+   Retype genuine fp4 (float4_e2m1fn, lanes=1) storage into the 1-byte
+   packed-pair form (float4_e2m1fnx2, lanes=2), halving fp4 element counts /
+   offsets / indices so pointer arithmetic addresses bytes correctly. fp4
+   views over non-fp4 storage are left untouched.
+
+
+.. py:function:: RewriteFlagToBuf()
+
+   Normalize each hard_event's synchronization into its 8-slot flag namespace.
+   Sparse flag_ids that extend outside [0,8) and occupy at most 8 slots are
+   compacted into [0,8) without spilling. When more than 8 slots are required,
+   a 0/1 knapsack (capacity 8) keeps the subset of sync-point blocks that fills
+   the flag slots best (renumbered into [0,8)); the rest spill to the shared
+   32-slot get_buf/rls_buf mutex pool. Hard_events whose flag_ids are already
+   within [0,8) are untouched.
+
+   Must run after InferBufferAliases for manual schedules because alias
+   inference uses set_flag/wait_flag as its liveness-graph anchors. The
+   standard pipeline places this after MergeUBAllocations.
+
+

@@ -1,0 +1,60 @@
+tilelang.ascend.op.gemm.gemm_mad_blockscaled
+============================================
+
+.. py:module:: tilelang.ascend.op.gemm.gemm_mad_blockscaled
+
+.. autoapi-nested-parse::
+
+   Ascend block-scaled MAD GEMM lowering.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.ascend.op.gemm.gemm_mad_blockscaled.GEMM_INST_MAD_BLOCK_SCALED
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.ascend.op.gemm.gemm_mad_blockscaled.GemmMADBlockScaled
+
+
+Module Contents
+---------------
+
+.. py:data:: GEMM_INST_MAD_BLOCK_SCALED
+   :value: 'ascend.mad.blockscaled'
+
+
+.. py:class:: GemmMADBlockScaled
+
+   Bases: :py:obj:`tilelang.tileop.gemm_blockscaled.gemm_blockscaled_base.GemmBlockScaledMixin`, :py:obj:`tilelang.ascend.op.gemm.gemm_mad.GemmMAD`
+
+
+   MXFP8 MAD with explicit SFA/SFB scale-factor operands.
+
+   L1 A/B inputs lower to ``tl.ascend_blockscaled_gemm_l1`` with the scale
+   pointers. L0 A/B inputs lower to ``tl.ascend_mad_mx``: SFA/SFB are the MX
+   slot handles of the data tiles (``alloc_l0a_sf``/``alloc_l0b_sf``), loaded
+   by a preceding ``T.copy(sf_l1, view)``; the MAD reads the slots implied
+   by its A/B data addresses, so the SF operands only contribute their read
+   regions to scheduling.
+
+
+   .. py:property:: is_blockscaled
+      :type: bool
+
+
+
+   .. py:method:: infer_layout(target, thread_nums)
+
+
+   .. py:method:: lower(layout_map, target, thread_bounds, thread_index, mbar_phase_expr = None)
+
+

@@ -5,12 +5,11 @@ tilelang.jit.adapter.tvm_ffi
 
 .. autoapi-nested-parse::
 
-   Utilities to adapt TVM FFI kernels to Torch tensors.
+   Utilities to adapt TVM-FFI kernels to Torch tensors.
 
-   This adapter intentionally captures PyTorch's current CUDA stream and device
-   via light-weight callables so that, when the wrapped function is invoked,
-   the execution observes the same stream context as the active Torch code.
-   On non-CUDA builds, the stream/device fall back to 0/CPU semantics.
+   TVM-FFI obtains the active work stream through Torch's DLPack Exchange API.
+   The Ascend adapter installs TileLang's Torch NPU callback before the first
+   tensor reaches an executable.
 
 
 
@@ -43,12 +42,9 @@ Module Contents
    Adapter that runs a TVM runtime.Executable with Torch tensors.
 
    Notes
-   - We capture the "current" PyTorch CUDA stream/device as thunks (callables)
-     rather than materializing them at construction time. This ensures the
-     actual stream/device is read just-in-time when the function runs, matching
-     the user's current Torch context (e.g., after a stream guard/switch).
-   - The stream pointer returned is a raw CUDA stream handle compatible with
-     TVM's device API; on CPU or when CUDA is unavailable, we return 0.
+   - Torch tensors use TVM-FFI's zero-copy DLPack Exchange API conversion.
+   - Ascend execution installs a Cython callback that reads Torch's current
+     NPU stream for every invocation.
 
 
    .. py:attribute:: target

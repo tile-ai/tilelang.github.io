@@ -1,0 +1,59 @@
+tilelang.ascend.callback
+========================
+
+.. py:module:: tilelang.ascend.callback
+
+.. autoapi-nested-parse::
+
+   Ascend dialect code-generation callbacks.
+
+   The Ascend runtime-module build (src/ascend/codegen/rt_mod_ascend.cc) looks up
+   the ``tilelang_callback_ascend_postproc`` global before emitting the final
+   AscendC source; registering a function here lets users rewrite the generated
+   code the same way the CUDA/HIP postproc callbacks do for their backends.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.callback.register_ascend_postproc
+   tilelang.ascend.callback.register_ascend_postproc_callback
+
+
+Module Contents
+---------------
+
+.. py:function:: register_ascend_postproc(func, override = True)
+
+   Register a post-processing function for Ascend-family code generation.
+
+   The callback receives the generated AscendC source for an Ascend target.
+
+   :param func: A callable that takes generated code (str) and target (Target) as input,
+                and returns the processed code (str).
+   :param override: Whether to override existing registered function. Defaults to True.
+
+
+.. py:function:: register_ascend_postproc_callback(func = None, override = True)
+
+   Decorator for registering an Ascend-family post-processing callback.
+
+   The callback receives the generated AscendC source for an Ascend target.
+
+   Can be used with or without parentheses:
+       @register_ascend_postproc_callback
+       def func(code, target): ...
+
+       @register_ascend_postproc_callback()
+       def func(code, target): ...
+
+       @register_ascend_postproc_callback(override=False)
+       def func(code, target): ...
+
+   :param func: The function to be decorated or a boolean override flag
+   :param override: Whether to override existing registered function. Defaults to True.
+
+

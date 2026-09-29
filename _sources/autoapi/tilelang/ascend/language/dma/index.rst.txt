@@ -1,0 +1,51 @@
+tilelang.ascend.language.dma
+============================
+
+.. py:module:: tilelang.ascend.language.dma
+
+.. autoapi-nested-parse::
+
+   Ascend MTE DMA copy primitives and their pad-value / ND->NZ helpers.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.dma.ascend_set_copy_pad_value
+   tilelang.ascend.language.dma.ascend_nd2nz_post_copy
+
+
+Module Contents
+---------------
+
+.. py:function:: ascend_set_copy_pad_value(value, dtype=None)
+
+   Set the padding fill value for subsequent Ascend padded MTE copies.
+
+   Generates: asc_set_copy_pad_val(value_bits);
+
+   This call moves no data; it configures the stateful hardware pad value
+   consumed by a following padded GM -> UB/L1 copy. Set it immediately
+   before each padded copy rather than relying on a single set persisting
+   across unrelated copies.
+
+   :param value: Padding fill value.
+   :type value: int, float, or PrimExpr
+   :param dtype: Copy element dtype (one of int8/uint8/int16/uint16/float16/bfloat16/
+                 int32/uint32/float32). Required when ``value`` is a Python literal;
+                 for a typed PrimExpr it defaults to ``value.dtype``.
+   :type dtype: str, optional
+
+   .. rubric:: Example
+
+   >>> T.ascend_set_copy_pad_value(0.0, dtype="float32")
+
+
+.. py:function:: ascend_nd2nz_post_copy(dst, src, rows, cols, full_rows, dst_dtype)
+
+   Ascend ND->NZ post-copy from UB scratch to L1 with NZ pointer correction.
+
+

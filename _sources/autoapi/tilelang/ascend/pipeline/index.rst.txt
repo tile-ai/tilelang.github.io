@@ -1,0 +1,41 @@
+tilelang.ascend.pipeline
+========================
+
+.. py:module:: tilelang.ascend.pipeline
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.ascend.pipeline.ascend_pipeline
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.pipeline.allow_autoschedule
+   tilelang.ascend.pipeline.AscendPassPipelineBody
+
+
+Module Contents
+---------------
+
+.. py:function:: allow_autoschedule(pass_ctx=None)
+
+   Whether the Ascend auto-scheduler should run for this pass context.
+
+   Ascend-owned: TL_ENABLE_AUTO_SCHEDULE only exists when the Ascend backend is
+   compiled in, so this does not belong on the backend-neutral
+   pipeline_utils surface. AutoSchedule schedules Ascend per-core tasks, so
+   disabling it leaves the kernel unscheduled rather than handing it to another
+   scheduler.
+
+
+.. py:function:: AscendPassPipelineBody(mod, target)
+
+.. py:data:: ascend_pipeline
+

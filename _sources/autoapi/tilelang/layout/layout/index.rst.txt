@@ -160,6 +160,26 @@ Module Contents
 
 
 
+   .. py:method:: map_region_bounds(region)
+
+      Map a logical (input-space) sub-region to its physical (output-space)
+      bounding-box region.
+
+      This is the region-aware generalization of ``get_output_shape()``, which
+      is equivalent to ``map_region_bounds`` with full-extent ranges.
+
+      Example (NZ layout): a logical slice ``[m0:m1, k0:k1]`` on a ``[M, K]``
+      buffer maps to physical ``[m0//16 : (m1-m0)//16, k0//C0 : (k1-k0)//C0,
+      0:16, 0:C0]``.
+
+      :param region: One ``Range`` per input dimension, each ``[min, min+extent)``.
+      :type region: list[Range]
+
+      :returns: One ``Range`` per output dimension.
+      :rtype: list[Range]
+
+
+
    .. py:method:: __call__(*args)
 
 

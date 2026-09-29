@@ -1,0 +1,142 @@
+tilelang.ascend.language.frame
+==============================
+
+.. py:module:: tilelang.ascend.language.frame
+
+.. autoapi-nested-parse::
+
+   Execution-region frames for Ascend NPU.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.frame.CubeFrame
+   tilelang.ascend.language.frame.VectorFrame
+   tilelang.ascend.language.frame.SimtVFFrame
+   tilelang.ascend.language.frame.SimdVFFrame
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.frame.Cube
+   tilelang.ascend.language.frame.Vector
+   tilelang.ascend.language.frame.SimtVF
+   tilelang.ascend.language.frame.inside_simdvf
+   tilelang.ascend.language.frame.SimdVF
+
+
+Module Contents
+---------------
+
+.. py:class:: CubeFrame
+
+   Bases: :py:obj:`tvm.tirx.script.builder.frame.TIRFrame`
+
+
+   Frame for Cube (AIC) execution region.
+
+
+.. py:function:: Cube()
+
+   Construct a Cube (AIC) execution region frame.
+
+
+.. py:class:: VectorFrame
+
+   Bases: :py:obj:`tvm.tirx.script.builder.frame.TIRFrame`
+
+
+   Frame for Vector (AIV) execution region.
+
+   In Mix mode, provides a subblock ID variable via ``as`` binding::
+
+       with T.Vector(vector=2) as sid:
+           # sid = asc_get_sub_block_id()
+           ...
+
+
+   .. py:method:: __enter__()
+
+
+.. py:function:: Vector(vector = 2)
+
+   Construct a Vector (AIV) execution region frame.
+
+   :param vector: Number of AIV cores (1 or 2). Default 2.
+   :type vector: int
+
+   :returns: **res** -- The VectorFrame used to denote an AIV execution region.
+   :rtype: VectorFrame
+
+
+.. py:class:: SimtVFFrame
+
+   Bases: :py:obj:`tvm.tirx.script.builder.frame.TIRFrame`
+
+
+   Frame for SimtVF (SIMT Vector Fixed) region.
+
+   The C++ frame generates the ``SIMT_VF`` block and its thread-extent
+   bindings. The Python frame additionally maintains the active SIMT context.
+
+
+   .. py:method:: __enter__()
+
+
+   .. py:method:: __exit__(ptype, value, trace)
+
+
+.. py:function:: SimtVF(threads = 128, latency = 0)
+
+   Construct a dedicated SIMT vector-fragment region frame.
+
+   :param threads: Thread count for the SimtVF frame. A sequence may contain up to three
+                   dimensions; omitted dimensions default to one.
+   :type threads: int | list[int] | tuple
+   :param latency: Measured latency in cycles. Zero uses the scheduler's latency model.
+   :type latency: int
+
+   :returns: **res** -- The SimtVFFrame used to denote a SIMT vector-fragment region.
+   :rtype: SimtVFFrame
+
+
+.. py:class:: SimdVFFrame
+
+   Bases: :py:obj:`tvm.tirx.script.builder.frame.TIRFrame`
+
+
+   Frame for SimdVF (SIMD Vector Fragment) region.
+
+   This is a register-level SIMD region without thread dimensions. The C++
+   frame generates the ``SIMD_VF`` block and its scope marker.
+
+
+   .. py:method:: __enter__()
+
+
+   .. py:method:: __exit__(ptype, value, trace)
+
+
+.. py:function:: inside_simdvf()
+
+   Return whether the current builder is inside a SimdVF region.
+
+
+.. py:function:: SimdVF(latency = 0)
+
+   Construct a SimdVF region for Ascend NPU MicroAPI operations.
+
+   :param latency: Measured latency in cycles. Zero uses the scheduler's latency model.
+   :type latency: int
+
+   :returns: **res** -- The SimdVFFrame used to denote a register-level SIMD region.
+   :rtype: SimdVFFrame
+
+

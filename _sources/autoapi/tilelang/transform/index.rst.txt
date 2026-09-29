@@ -221,19 +221,21 @@ Package Contents
    :value: 128
 
 
-.. py:function:: MaterializeKernelLaunch(lower_thread_binding = True, default_threads = DEFAULT_SIMT_THREADS, unsupported_annotations = None)
+.. py:function:: MaterializeKernelLaunch(lower_thread_binding = True, default_threads = DEFAULT_SIMT_THREADS, unsupported_annotations = None, *, lower_grid_binding = None, launch_dim_tags = None)
 
    Materialize the target-neutral kernel launch nest emitted by T.Kernel
    into a backend-specific form. Each backend pipeline decides the mode for
-   itself; this is where the target-dependent parts of a launch (whether
-   threads exist and how many run by default) are decided.
+   itself; this is where the target-dependent parts of a launch (whether a
+   program-index space exists, whether threads exist and how many run by
+   default) are decided.
 
-   :param lower_thread_binding: If True (SIMT backends, e.g. CUDA/ROCm/Metal), lower the blockIdx.*
-                                grid loops into thread_extent AttrStmts and bind the thread
+   :param lower_thread_binding: If True (SIMT backends, e.g. CUDA/ROCm/Metal), bind the thread
                                 placeholders as threadIdx.* thread_extent scopes.
-                                If False (backends without SIMT, e.g. CPU), lower blockIdx.* loops
-                                into plain serial For loops and drop the thread placeholders. A body
-                                that references a thread index is rejected on such targets.
+                                If False (backends without SIMT, e.g. CPU and Ascend), drop the thread
+                                placeholders. A body that references a thread index is rejected on such
+                                targets. Ascend pairs this with ``lower_grid_binding=True``: its NPU
+                                launch is a real 1-D core grid, while thread domains only exist inside
+                                ``T.SimtVF``, which emits its own thread scopes below the launch nest.
    :type lower_thread_binding: bool
    :param default_threads: Thread-block extents used by SIMT backends when T.Kernel was called
                            without ``threads=``. Ignored when ``lower_thread_binding`` is False.
@@ -244,6 +246,21 @@ Package Contents
                                    carrying one is rejected here instead of being silently ignored by
                                    later passes.
    :type unsupported_annotations: list[str] | None
+   :param lower_grid_binding: Keyword-only. If True (targets with a real block/core-level launch,
+                              e.g. CUDA, Ascend), lower the launch loops (blockIdx.* grid axes and
+                              any tag in ``launch_dim_tags``) into thread_extent AttrStmts carrying
+                              each loop's own thread tag.
+                              If False (targets with no program-index space, e.g. CPU), lower those
+                              loops into plain serial For loops.
+                              If None (the default), follow ``lower_thread_binding``: a backend with
+                              SIMT threads has a program-index space too, and a backend without them
+                              has none. Pass this explicitly to decouple the two, as Ascend does.
+   :type lower_grid_binding: bool | None
+   :param launch_dim_tags: Keyword-only. Extra thread_binding tags that belong to the launch
+                           nest rather than to the thread domain, so a backend can extend the
+                           launch vocabulary without this pass knowing about it. Ascend passes
+                           ``["cthread"]`` for ``T.MixedKernel``'s sub-block-id dimension.
+   :type launch_dim_tags: list[str] | None
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass

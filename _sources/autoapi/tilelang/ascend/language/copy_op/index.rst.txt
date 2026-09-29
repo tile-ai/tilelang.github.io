@@ -1,0 +1,135 @@
+tilelang.ascend.language.copy_op
+================================
+
+.. py:module:: tilelang.ascend.language.copy_op
+
+.. autoapi-nested-parse::
+
+   Ascend dialect of the copy operators: the common ops plus Ascend copy hints.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.copy_op.dual_copy
+   tilelang.ascend.language.copy_op.copy
+
+
+Module Contents
+---------------
+
+.. py:function:: dual_copy(src, dst, *, unit_flag_ctrl = None, l2_cache_ctrl = 0)
+
+   Copy a region using an M- or N-split across the two AIVs.
+
+   ``dual_copy`` is a mixed-kernel operation: the user must also provide the
+   Cube-side work in the enclosing kernel. It is not supported as a way to
+   turn an otherwise pure Vector kernel into a two-AIV launch; the compiler
+   assumes this contract and does not synthesize Cube-side work.
+
+   With auto-scheduling disabled, write a manual mixed kernel as ``T.Kernel``
+   containing explicit ``T.Cube()`` and ``T.Vector()`` blocks, and place each
+   software dual copy inside the ``T.Vector()`` block. The rewrite pass reuses
+   that block's ``cthread`` sid and rejects unscoped software dual copies.
+
+   Software dual copies also accept one-dimensional regions whose sole extent
+   has a 2:1 ratio. For regions with rank at least two, exactly one trailing
+   dimension must have a 2:1 extent ratio between source and destination. The
+   supported memory paths are:
+
+   - L0C→UB: lowered as a hardware dual-destination copy.
+   - GM→UB, UB→GM, and UB→L1: lowered as an ordinary per-AIV copy
+     indexed by the ``cthread`` sid.
+
+   For UB→L1, the InsertNd2Nz pass also handles ND→NZ format conversion.
+
+   - ``[M, N]`` ↔ ``[M/2, N]``: M-split (``dual_dst_ctl=0b01``)
+   - ``[M, N]`` ↔ ``[M, N/2]``: N-split (``dual_dst_ctl=0b10``)
+
+   Hardware L0C→UB requires rank at least two. Its N-split additionally
+   requires the full N extent to be a multiple of 32.
+
+   The larger region is the full logical tile. Each AIV processes the
+   corresponding half of that tile along the inferred split dimension.
+   A statically known full extent must therefore be even; odd extents are
+   rejected rather than rounded into unequal partitions.
+
+   :param src: Source region in GM, L0C, or UB, according to the supported paths.
+   :param dst: Destination region in UB, GM, or L1, according to the supported paths.
+   :param unit_flag_ctrl: Unit flag control (0=manual sync, 3=pipelined with mad).
+                          ``None`` omits the annotation and lowers as 0.
+   :param l2_cache_ctrl: Ascend L2 cache control policy for the UB→GM
+                         store path. Accepts an integer or case-insensitive string name
+                         (e.g. ``"notalloc_clean"``). Defaults to 0 (``"normal_fv"``).
+                         Ascend only; ignored on other backends.
+   :type l2_cache_ctrl: int | str
+
+   :raises ValueError: If the split direction cannot be inferred from shapes.
+
+
+.. py:function:: copy(src, dst, *, coalesced_width = None, transpose = False, l2_cache_ctrl = None, unit_flag_ctrl = None, sub_blockid = None, pad_value = None, data_select = False, annotations = None, loop_layout = None)
+
+   Copy data between memory regions, with Ascend DMA lowering hints.
+
+   Uses the common region handling with Ascend-specific whole-buffer checks.
+   Whole buffers must have equal element counts, but their shapes may differ
+   for Ascend format conversion and transpose paths (for example, copying
+   ``[K, M]`` into ``[M, K]``). The extra keywords steer how the Ascend backend
+   lowers the copy (GM↔L1 L2 cache control, ND/NZ transpose, MTE pad handling,
+   Cube unit-flag control for the following MAD, sub-block routing).
+
+   A UB-to-UB copy from a dense source into a destination annotated with
+   ``make_ascend_compact_nz_layout`` lowers to the ND-to-NZ scatter. The
+   destination allocation must reserve one padding row, and the copied region
+   must exclude that row (for example, ``T.copy(src, dst[:rows, :])``).
+
+   A copy whose destination is an MX scale-factor handle
+   (:func:`tilelang.ascend.language.alloc_l0a_sf` /
+   :func:`~tilelang.ascend.language.alloc_l0b_sf`) loads the per-block
+   scales into the L0 tile's MX slot shadow instead of moving data.
+
+   :param src: Source memory region (Buffer, BufferLoad or BufferRegion).
+   :param dst: Destination memory region.
+   :param coalesced_width: Width for coalesced
+                           memory access. Defaults to None.
+   :type coalesced_width: Optional[int], keyword-only
+   :param transpose: Ascend GM→L1 only. Emit dn2nz (which
+                     transposes the N/D mapping) instead of nd2nz. Defaults to False.
+   :type transpose: bool, keyword-only
+   :param l2_cache_ctrl: L2 cache
+                         control for the GM↔L1 and UB↔GM DMA paths. Accepts the raw integer
+                         or a cache-policy name (case-insensitive, suffix-matched), e.g.
+                         ``"NOTALLOC_KEEP"``.
+   :type l2_cache_ctrl: Optional[Union[int, str]], keyword-only
+   :param unit_flag_ctrl: Unit flag
+                          control for the Cube instruction; ``None`` omits the annotation.
+   :type unit_flag_ctrl: Optional[Union[int, PrimExpr]], keyword-only
+   :param sub_blockid: Sub-block id
+                       that routes the copy to one of the AIV sub-blocks.
+   :type sub_blockid: Optional[Union[int, PrimExpr]], keyword-only
+   :param pad_value: Ascend
+                     GM→UB only. Round the row width up to the next 32B boundary and fill
+                     the pad lanes with this value. Emits a leading
+                     ``T.ascend_set_copy_pad_value(value)`` so AutoSchedule syncs the
+                     pad-register write before the copy. Mutually exclusive with
+                     ``data_select``.
+   :type pad_value: Optional[Union[int, float, PrimExpr]], keyword-only
+   :param data_select: Ascend GM→UB only. Same right-pad
+                       behavior as ``pad_value``, but reuses whatever the hardware pad
+                       register currently holds, which the caller must have set via
+                       ``T.ascend_set_copy_pad_value(...)`` beforehand.
+   :type data_select: bool, keyword-only
+   :param annotations: Additional annotations
+                       dict; values in it take precedence over the individual keywords.
+   :type annotations: Optional[dict], keyword-only
+   :param loop_layout: Parallel loop layout
+                       hint for the SIMT copy path.
+   :type loop_layout: Optional[Fragment], keyword-only
+
+   :returns: A handle to the copy operation.
+   :rtype: tirx.PrimExpr | tirx.Stmt
+
+

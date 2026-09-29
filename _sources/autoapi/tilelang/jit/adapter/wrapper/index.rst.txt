@@ -32,6 +32,7 @@ Classes
    tilelang.jit.adapter.wrapper.TLCUDASourceWrapper
    tilelang.jit.adapter.wrapper.TLHIPSourceWrapper
    tilelang.jit.adapter.wrapper.TLCPUSourceWrapper
+   tilelang.jit.adapter.wrapper.TLAscendSourceWrapper
    tilelang.jit.adapter.wrapper.TLMetalSourceWrapper
    tilelang.jit.adapter.wrapper.TLWrapper
    tilelang.jit.adapter.wrapper.TLPyWrapper
@@ -666,6 +667,40 @@ Module Contents
 
 
    .. py:property:: prim_func
+
+
+.. py:class:: TLAscendSourceWrapper(scheduled_ir_module, source, target, device_mod = None, host_mod = None, pass_configs = None)
+
+   Bases: :py:obj:`TLCUDASourceWrapper`
+
+
+   Wrapper for Ascend backend kernel source.
+
+   Ascend kernels use ``__global__ __vector__`` qualifiers and the triple-
+   chevron launch syntax ``<<<grid, smem, stream>>>`` (no block dim).
+   This wrapper reuses the CUDA wrapper infrastructure but overrides the
+   launch code generation and init/stream helpers for ACL runtime.
+
+
+   .. py:method:: get_declaration(declare_kernel_code)
+
+
+   .. py:method:: create_dispatch_func(code, function_informations)
+
+      Generate the host ``call()`` function with Ascend launch semantics.
+
+      Ascend uses ``<<<grid, smem, stream>>>`` (three arguments, no block
+      dim) and ACL error checking instead of CUDA equivalents.
+
+
+
+   .. py:method:: get_init_func()
+
+
+   .. py:method:: update_lib_code(code)
+
+
+   .. py:method:: get_stream_type()
 
 
 .. py:class:: TLMetalSourceWrapper(scheduled_ir_module, source, target, device_mod = None, host_mod = None, pass_configs = None)

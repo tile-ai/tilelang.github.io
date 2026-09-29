@@ -1,0 +1,66 @@
+tilelang.cache.binary_cache
+===========================
+
+.. py:module:: tilelang.cache.binary_cache
+
+.. autoapi-nested-parse::
+
+   Cross-host cache for compiled device binaries, shared by backend caches.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.cache.binary_cache.BinaryCache
+
+
+Module Contents
+---------------
+
+.. py:class:: BinaryCache
+
+   Immutable, verified cache of raw device binaries keyed by content hash.
+
+   Each key is an immutable directory containing metadata.json (format tag,
+   payload size, sha256) and a raw kernel binary. Entries are staged privately
+   and published with a single directory rename, so concurrent writers cannot
+   observe partial entries and the first publication wins. Published entries
+   are never modified or deleted: on 3FS, unlinking a binary can invalidate
+   another reader's open fd, so corruption is handled as a plain cache miss.
+
+   Subclasses set ``cache_root_dir`` (directory under the version namespace),
+   ``cache_format`` (metadata format tag) and ``binary_kind`` (backend name
+   used in error messages), and provide their own ``make_key`` built on
+   :meth:`_finalize_key`.
+
+
+   .. py:attribute:: cache_root_dir
+      :type:  ClassVar[str]
+
+
+   .. py:attribute:: cache_format
+      :type:  ClassVar[str]
+
+
+   .. py:attribute:: binary_kind
+      :type:  ClassVar[str]
+
+
+   .. py:method:: get_path(key, compile_format)
+      :classmethod:
+
+
+
+   .. py:method:: load(key, compile_format)
+      :classmethod:
+
+
+
+   .. py:method:: save(key, compile_format, data)
+      :classmethod:
+
+
+

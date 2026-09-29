@@ -1,0 +1,150 @@
+tilelang.ascend.language.kernel
+===============================
+
+.. py:module:: tilelang.ascend.language.kernel
+
+.. autoapi-nested-parse::
+
+   Ascend NPU dialect of ``T.Kernel``.
+
+   Ascend owns its launch surface. The NPU launch is a 1-D grid of AI cores with
+   no SIMT thread domain at kernel scope, so this dialect's ``Kernel`` declares
+   ``prelude`` and nothing else: passing ``threads=`` or ``cluster_dims=`` is
+   rejected by Python itself rather than by a runtime probe inside the shared
+   launch path. Thread domains are declared explicitly *inside* the kernel body by
+   ``T.SimtVF(threads=...)`` (real threadIdx scopes) or ``T.SimdVF()`` (register
+   level, no threads); both emit their own thread scopes below the launch nest, so
+   the kernel-level ``tx/ty/tz`` placeholders are dropped by the Ascend pipeline.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.kernel.SimtVFContext
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.kernel.push_simtvf_context
+   tilelang.ascend.language.kernel.pop_simtvf_context
+   tilelang.ascend.language.kernel.get_thread_binding
+   tilelang.ascend.language.kernel.get_thread_bindings
+   tilelang.ascend.language.kernel.get_thread_extent
+   tilelang.ascend.language.kernel.get_thread_extents
+   tilelang.ascend.language.kernel.Kernel
+   tilelang.ascend.language.kernel.MixedKernel
+
+
+Module Contents
+---------------
+
+.. py:class:: SimtVFContext(thread_vars, thread_extents)
+
+   Thread vars and extents of the innermost nested thread scope.
+
+
+   .. py:attribute:: __slots__
+      :value: ('thread_vars', 'thread_extents')
+
+
+
+   .. py:attribute:: thread_vars
+
+
+   .. py:attribute:: thread_extents
+
+
+.. py:function:: push_simtvf_context(ctx)
+
+   Enter a nested thread scope, making its thread vars the current ones.
+
+
+.. py:function:: pop_simtvf_context()
+
+   Leave the innermost nested thread scope.
+
+
+.. py:function:: get_thread_binding(dim = 0)
+
+   Returns the thread binding for the given dimension.
+
+
+.. py:function:: get_thread_bindings()
+
+   Returns all three thread bindings.
+
+
+.. py:function:: get_thread_extent(dim = 0)
+
+   Returns the thread extent for the given dimension.
+
+
+.. py:function:: get_thread_extents()
+
+   Returns all three thread extents.
+
+
+.. py:function:: Kernel(*blocks, prelude = None)
+
+   Construct a kernel launch frame for Ascend: a 1-D grid of AI cores.
+
+   The grid becomes the NPU core index (``blockIdx.x``). There is no SIMT
+   thread domain at this scope, so this dialect has no ``threads`` parameter:
+   ``with T.Kernel(N) as bx`` yields one program index, and ``bx`` is iterable
+   as ``(bx,)``. Use ``T.SimtVF(threads=...)`` inside the body to run
+   thread-parallel code, or ``T.MixedKernel`` for an AIC+AIV mixed kernel.
+
+   :param \*blocks: Extent of the 1-D core grid. Exactly one dimension is allowed; a
+                    multi-dimensional launch is rejected here rather than silently
+                    flattened downstream.
+   :type \*blocks: int | PrimExpr
+   :param prelude: AscendC source injected before the generated kernel, e.g. ``#include``
+                   lines or helper functions.
+   :type prelude: str, optional
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       with T.Kernel(NUM_CORES) as bx:
+           with T.SimtVF(threads=128):
+               for i in T.Parallel(128):
+                   out[bx * 128 + i] = x[bx * 128 + i] * 2.0
+
+
+.. py:function:: MixedKernel(*blocks, sids = 2, prelude = None)
+
+   Construct an Ascend NPU Mixed-kernel launch frame with sub-kernel ID binding.
+
+   :param blocks: Number of blocks in the 1-D grid (blockIdx.x extent).
+   :type blocks: int
+   :param sids: Number of active AIV sub-cores (1 or 2). Default is 2. On dav-3510,
+                mixed kernels always launch the physical ``__mix__(1, 2)`` group;
+                ``sids=1`` restricts the vector body to sub-core 0. Binds as ``sid``
+                via ``asc_get_sub_block_id()`` in generated code.
+   :type sids: int
+   :param prelude: Import C code injected before the generated kernel.
+   :type prelude: str, optional
+
+   :returns: **res** -- The resulting frame providing ``(bx, sid)`` variable bindings.
+   :rtype: KernelLaunchFrame
+
+   .. rubric:: Examples
+
+   .. code-block:: python
+
+       with T.MixedKernel(NUM_BLOCKS, sids=2) as (bx, sid):
+           with T.Cube():
+               # AIC code using bx
+               ...
+           with T.Vector():
+               # AIV code using both bx and sid
+               ...
+
+

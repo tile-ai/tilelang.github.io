@@ -1,0 +1,152 @@
+tilelang.ascend.transform.z3_scheduler
+======================================
+
+.. py:module:: tilelang.ascend.transform.z3_scheduler
+
+.. autoapi-nested-parse::
+
+   Z3-based scheduler for auto-scheduling.
+
+   This module provides a Python implementation of the Z3 scheduler that can be
+   called from C++ via TVM FFI.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.ascend.transform.z3_scheduler.Z3_AVAILABLE
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.transform.z3_scheduler.z3_schedule_python
+   tilelang.ascend.transform.z3_scheduler.z3_schedule_ffi
+   tilelang.ascend.transform.z3_scheduler.z3_schedule_loop_python
+   tilelang.ascend.transform.z3_scheduler.z3_schedule_loop_ffi
+
+
+Module Contents
+---------------
+
+.. py:data:: Z3_AVAILABLE
+   :value: True
+
+
+.. py:function:: z3_schedule_python(latencies, iis, resource_flags, data_deps, resource_deps, owner_exclusion_deps = None, pipe_order_deps = None, verbose = False)
+
+   Schedule a straight-line task list.
+
+   :param latencies: Execution latency of each task in cycles.
+   :type latencies: list[int]
+   :param iis: Initiation interval of each task in cycles.
+   :type iis: list[int]
+   :param resource_flags: Resource pipe mask for each task (bitmask of ResourcePipe values):
+                          MTE1=1, MTE2=2, MTE3=4, Cube=8, Vector=16, Fixpipe=32, Scalar=64.
+   :type resource_flags: list[int]
+   :param data_deps: Directed ``(i, j, latency)`` constraints requiring task ``j`` to start
+                     at least ``latency`` cycles after task ``i``.
+   :type data_deps: list[tuple[int, int, int]]
+   :param resource_deps: Unordered task pairs that cannot issue concurrently on one resource.
+   :type resource_deps: list[tuple[int, int]]
+   :param owner_exclusion_deps: Undirected shared-storage owner conflicts ``(i, j, latency_i_j,
+                                latency_j_i)``. Either owner may run first, but their conflicting
+                                storage lifetimes cannot overlap.
+   :type owner_exclusion_deps: list[tuple[int, int, int, int]] | None
+   :param pipe_order_deps: Source-ordered task pairs that share a hardware pipe.
+   :type pipe_order_deps: list[tuple[int, int]] | None
+   :param verbose: Print solver inputs and the selected schedule.
+   :type verbose: bool
+
+   :returns: start_times: Start time for each task
+             sorted_indices: Task indices sorted by start time
+   :rtype: tuple[list[int], list[int]]
+
+
+.. py:function:: z3_schedule_ffi(latencies, iis, resource_flags, data_deps, resource_deps, owner_exclusion_deps=None, pipe_order_deps=None)
+
+   FFI wrapper for z3_schedule_python.
+
+   This function accepts TVM containers and converts them to Python lists.
+
+
+.. py:function:: z3_schedule_loop_python(num_stages, latencies, iis, resource_flags, data_deps, resource_deps, owner_exclusion_deps, pipe_order_deps, buffer_sizes, memory_groups, stage_order_deps = None, recalculate_buffer_versions = True, enable_offset = False, manual_stages = None, manual_schedule = False, seed = 42, verbose = False)
+
+   Schedule a loop body with modulo, stage, and storage constraints.
+
+   Each start time is represented as ``k * II + r``. Directed dependencies
+   constrain absolute start times, while resource and owner exclusions choose
+   a non-overlapping modulo order. The solver finds the minimum feasible II by
+   binary search.
+
+   :param num_stages: Maximum number of physical versions available to automatic buffers.
+   :type num_stages: int
+   :param latencies: Execution latency of each task in cycles.
+   :type latencies: list[int]
+   :param iis: Initiation interval of each task in cycles.
+   :type iis: list[int]
+   :param resource_flags: Resource pipe mask for each task (bitmask of ResourcePipe values):
+                          MTE1=1, MTE2=2, MTE3=4, Cube=8, Vector=16, Fixpipe=32, Scalar=64.
+   :type resource_flags: list[int]
+   :param data_deps: Directed ``(i, j, distance, latency)`` constraints. Negative distances
+                     encode automatic buffer-version variables.
+   :type data_deps: list[tuple[int, int, int, int]]
+   :param resource_deps: Unordered task pairs that cannot issue concurrently on one resource.
+   :type resource_deps: list[tuple[int, int]]
+   :param owner_exclusion_deps: Undirected shared-storage owner conflicts ``(i, j, latency_i_j,
+                                latency_j_i)``. The chosen modulo order also constrains the reverse
+                                wraparound hand-off.
+   :type owner_exclusion_deps: list[tuple[int, int, int, int]] | None
+   :param pipe_order_deps: Source-ordered task pairs sharing a hardware pipe.
+   :type pipe_order_deps: list[tuple[int, int]] | None
+   :param buffer_sizes: Bytes occupied by one version of each automatic buffer.
+   :type buffer_sizes: list[int]
+   :param memory_groups: Capacity followed by member buffer indices for each memory scope.
+   :type memory_groups: list[list[int]]
+   :param stage_order_deps: Stage-order constraints (u, w) requiring k_u <= k_w (same or earlier
+                            iteration-stage).
+   :type stage_order_deps: list[tuple[int, int]] | None
+   :param recalculate_buffer_versions: Recompute the minimum version counts from the selected schedule.
+   :type recalculate_buffer_versions: bool
+   :param enable_offset: When False, constrain each resource so that, among the tasks using that
+                         resource (pipe bit in resource_flags), max(start_time) - min(start_time) < II.
+                         This keeps all tasks on a resource within a single II window (no offsetting
+                         a resource's tasks across pipeline stages). When True, no such
+                         constraint is added. Defaults to False (constraint applied).
+   :type enable_offset: bool
+   :param manual_stages: Frontend stages for tasks in source order. Used only when
+                         ``manual_schedule`` is True; omitted entries are not allowed.
+   :type manual_stages: list[int] | None
+   :param manual_schedule: Preserve source issue order independently on every hardware pipe and
+                           constrain every task's Z3 stage to the corresponding
+                           ``manual_stages`` entry.
+   :type manual_schedule: bool
+   :param seed: Z3 random seed; ``None`` leaves the solver default unchanged.
+   :type seed: int | None
+   :param verbose: Print solver inputs, search progress, and the selected schedule.
+   :type verbose: bool
+
+   :returns: start_times: Start time for each task
+             buffer_versions: Number of versions for each buffer
+             minimal_II: The minimal initiation interval found
+   :rtype: tuple[list[int], list[int], int]
+
+
+.. py:function:: z3_schedule_loop_ffi(num_stages, latencies, iis, resource_flags, data_deps, resource_deps, owner_exclusion_deps, pipe_order_deps, buffer_sizes, memory_groups, stage_order_deps=None, enable_offset=False, manual_stages=None, manual_schedule=False)
+
+   FFI wrapper for z3_schedule_loop_python.
+
+   This function accepts TVM containers and converts them to Python lists.
+   Dependency arrays are ordered as directed data dependencies, resource
+   exclusions, shared-storage owner exclusions, and source pipe ordering.
+   ``memory_groups`` contains ``[capacity, idx0, idx1, ...]`` entries;
+   ``stage_order_deps`` contains ``(u, w)`` constraints requiring ``k_u <=
+   k_w``. The remaining arguments carry the loop's offset and manual-stage
+   policy from C++.
+
+

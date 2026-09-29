@@ -1,0 +1,45 @@
+tilelang.ascend.language.loop
+=============================
+
+.. py:module:: tilelang.ascend.language.loop
+
+.. autoapi-nested-parse::
+
+   Ascend dialect of the loop constructs: the common ops plus Ascend knobs.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.loop.unroll
+
+
+Module Contents
+---------------
+
+.. py:function:: unroll(start, stop = None, step = None, *, explicit = False, unroll_factor = None, annotations = None)
+
+   The unrolled For statement, with the Ascend unroll-factor pragma.
+
+   Same semantics as the common :func:`tilelang.language.loop.unroll`.
+   ``unroll_factor`` is lowered as the ``"pragma_unroll_factor"`` annotation,
+   which the Ascend codegen emits as ``#pragma unroll N``.
+
+   :param start: Iteration range.
+   :type start: PrimExpr
+   :param stop: Iteration range.
+   :type stop: PrimExpr
+   :param step: Iteration range.
+   :type step: PrimExpr
+   :param explicit: Whether to explicitly unroll the loop at compile time.
+   :type explicit: bool
+   :param unroll_factor: Partial unroll factor, lowered as the ``"pragma_unroll_factor"``
+                         annotation.
+   :type unroll_factor: Optional[int]
+   :param annotations: Additional loop annotations; values in it take precedence.
+   :type annotations: Optional[Dict[str, Any]]
+
+

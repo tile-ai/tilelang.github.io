@@ -1,0 +1,95 @@
+tilelang.contrib.bisheng
+========================
+
+.. py:module:: tilelang.contrib.bisheng
+
+.. autoapi-nested-parse::
+
+   Utility to invoke bisheng compiler for Ascend NPU targets.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.bisheng.find_bisheng_path
+   tilelang.contrib.bisheng.find_ld_lld_path
+   tilelang.contrib.bisheng.normalize_options
+   tilelang.contrib.bisheng.get_npu_arch
+   tilelang.contrib.bisheng.get_target_npu_arch
+   tilelang.contrib.bisheng.get_bisheng_compile_options
+   tilelang.contrib.bisheng.get_aibin_linker_options
+   tilelang.contrib.bisheng.compile_ascend
+
+
+Module Contents
+---------------
+
+.. py:function:: find_bisheng_path()
+
+   Find the bisheng compiler binary.
+
+   Searches ``BISHENG_HOME/bin/bisheng``, then ``PATH``.
+
+   :returns: **path** -- Full path to the ``bisheng`` executable.
+   :rtype: str
+
+   :raises RuntimeError: If the compiler cannot be found.
+
+
+.. py:function:: find_ld_lld_path()
+
+   Find the CCE-capable ``ld.lld`` shipped with the Ascend toolkit.
+
+
+.. py:function:: normalize_options(options)
+
+   Normalize shell-like compiler options into individual argv tokens.
+
+
+.. py:function:: get_npu_arch(npu_arch = None)
+
+   Resolve the Bisheng NPU architecture option.
+
+
+.. py:function:: get_target_npu_arch(target)
+
+   Resolve the Bisheng NPU architecture from an Ascend target.
+
+
+.. py:function:: get_bisheng_compile_options(npu_arch = None, options = None)
+
+   Return common Bisheng options shared by tvm-ffi and Cython paths.
+
+
+.. py:function:: get_aibin_linker_options()
+
+   Return options used to turn relocatable CCE code into executable ELF.
+
+
+.. py:function:: compile_ascend(code, target_format='o', npu_arch=None, options=None, path_target=None, verbose=False)
+
+   Compile Ascend source code with the bisheng compiler.
+
+   :param code: The Ascend kernel source code.
+   :type code: str
+   :param target_format: Output format: ``"o"`` for a relocatable host object, ``"so"`` for a
+                         host shared library, or ``"aibin"`` for an executable CCE ELF suitable
+                         for ``aclrtBinaryLoadFromData``.
+   :type target_format: str
+   :param npu_arch: NPU architecture string passed via ``--npu-arch=<arch>`` (e.g.
+                    ``"dav-3510"``).  If *None*, ``ASCEND_NPU_ARCH`` env-var is used.
+   :type npu_arch: str, optional
+   :param options: Extra flags forwarded to bisheng.
+   :type options: str or list of str, optional
+   :param path_target: Explicit output path.  A temporary file is used when not given.
+   :type path_target: str, optional
+   :param verbose: Print compiler output.
+   :type verbose: bool
+
+   :returns: **data** -- Contents of the compiled output file.
+   :rtype: bytearray
+
+

@@ -1,0 +1,38 @@
+tilelang.ascend.language.random
+===============================
+
+.. py:module:: tilelang.ascend.language.random
+
+.. autoapi-nested-parse::
+
+   Ascend dialect RNG ops.
+
+   Same tl.rng_* emission as the common implementation, but rng_init's default
+   sequence id derives from the thread context — and on Ascend the thread domain
+   lives in the enclosing T.SimtVF scope, so the derivation must go through this
+   dialect's thread accessors rather than the launch-frame ones the CUDA module
+   consults.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.random.rng_init
+
+
+Module Contents
+---------------
+
+.. py:function:: rng_init(seed, seq=None, off=0, generator='curandStatePhilox4_32_10_t')
+
+   Initialize the random number generator state.
+
+   See :func:`tilelang.cuda.language.random.rng_init`; the only difference is
+   that the default ``seq`` (one stream per lane) is derived from the Ascend
+   thread scope: the SimtVF lane id plus the AI-core index times the lane
+   count.
+
+

@@ -1,0 +1,213 @@
+tilelang.layout.ascend
+======================
+
+.. py:module:: tilelang.layout.ascend
+
+.. autoapi-nested-parse::
+
+   Ascend fractal/NZ layout wrappers (moved out of swizzle.py).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.layout.ascend.FractalLayoutInfo
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.layout.ascend.make_ascend_nz_layout
+   tilelang.layout.ascend.make_ascend_compact_nz_layout
+   tilelang.layout.ascend.make_ascend_major_k_layout
+   tilelang.layout.ascend.make_ascend_major_mn_layout
+   tilelang.layout.ascend.make_ascend_l0c_layout
+   tilelang.layout.ascend.make_ascend_sf_layout
+   tilelang.layout.ascend.make_strided_slice
+   tilelang.layout.ascend.try_extract_fractal_layout
+
+
+Module Contents
+---------------
+
+.. py:function:: make_ascend_nz_layout(buffer)
+
+   Create an Ascend NZ (zN fractal) layout for a Cube operand buffer.
+
+   A logical ``[.., rows, cols]`` tile maps to physical
+   ``[.., rows / 16, cols / C0, 16, C0]`` -- a grid of 16xC0 fractals -- where
+   ``C0 = 32 bytes / element_size`` is the Cube unit's fractal width and the
+   forward map is ``(.., r, c) -> [.., r / 16, c / C0, r % 16, c % C0]``.
+
+   :param buffer: BufferLikeType (rank >= 2, constant last-2 dims)
+
+   :returns: The NZ fractal layout for the buffer.
+   :rtype: Layout
+
+
+.. py:function:: make_ascend_compact_nz_layout(buffer)
+
+   Create a compact staged-NZ layout for a pre-packed UB buffer.
+
+   Unlike :func:`make_ascend_nz_layout`, this layout does not round the row
+   extent of every leading stage up to 16.  A logical
+   ``[..., rows, cols]`` buffer is stored as consecutive
+   ``[C0-group, rows, C0]`` blocks, with all leading dimensions flattened
+   into the C0-group axis.  Consequently, a padded ``rows = tile_rows + 1``
+   stage has exactly the source pitch expected by
+   ``ascend_nd2nz_post_copy``.
+
+   This layout is intended for UB data that is produced directly in NZ order
+   (for example with ``vsstb`` or a layout-driven ``T.copy``) and then copied
+   to L1. It is not an L1 Cube operand layout. For an ND-to-NZ ``T.copy``, the
+   allocation's row extent must include one trailing padding row while the
+   copied destination region excludes it.
+
+
+.. py:function:: make_ascend_major_k_layout(buffer, k_align = 1)
+
+   Create an Ascend fractal layout for logical ``[.., MN, K]`` tiles.
+
+   The contiguous reduce-K axis is grouped by C0 and is the outer physical
+   major: ``(.., mn, k) -> [.., k / C0, mn / 16, mn % 16, k % C0]``.
+
+
+.. py:function:: make_ascend_major_mn_layout(buffer, k_align = 1)
+
+   Create an Ascend fractal layout for logical ``[.., K, MN]`` tiles.
+
+   The contiguous output M/N axis is grouped by C0 and is the outer physical
+   major: ``(.., k, mn) -> [.., mn / C0, k / 16, k % 16, mn % C0]``.
+
+
+.. py:function:: make_ascend_l0c_layout(buffer)
+
+   Create the fixed Ascend L0C accumulator fractal layout for logical
+   ``[.., M, N]`` tiles.
+
+   The physical shape is ``[.., N / 16, M / 16, 16, 16]`` and the forward map
+   is ``(.., m, n) -> [.., n / 16, m / 16, m % 16, n % 16]``.
+
+
+.. py:function:: make_ascend_sf_layout(buffer)
+
+   Create an Ascend SF layout for MX scale-factor L1 buffers.
+
+   A logical ``[..., MN, K]`` scale tile maps to physical
+   ``[..., MN/16, K / (16 / dtype.bits), 16, 16 / dtype.bits]``.
+   For uint8/int8 SF this is ``[..., MN/16, K/2, 16, 2]``.
+
+
+.. py:function:: make_strided_slice(phys_buf, layout, logical_region)
+
+   Compute a 0-origin strided buffer view for a logical sub-region on a
+   layout-annotated physical buffer.
+
+   The result is a plain strided Buffer sharing ``phys_buf``'s data pointer,
+   with explicit shape (extents) and strides pointing at the sub-region's
+   base element. No layout knowledge is needed by the consumer.
+
+   :param phys_buf: The physical (remapped) buffer, e.g. with NZ shape
+                    ``[M/16, K/C0, 16, C0]``.
+   :param layout: The Layout whose forward map describes the physical layout.
+   :param logical_region: One ``Range`` per layout input dim, ``[min, min+extent)``.
+
+   :returns: A strided buffer view into ``phys_buf``.
+   :rtype: Buffer
+
+
+.. py:class:: FractalLayoutInfo(kind, c0, row_frac, rows, cols, outer0, outer1, c0_axis, row16_axis)
+
+   Semantic view of a canonical Ascend fractal layout.
+
+   This is a Python wrapper around the C++ ``TryExtractAscendFractalLayout``
+   utility. The layout kind is recorded by the canonical constructor; the
+   remaining fields are derived from that tag and the buffer.
+
+   .. attribute:: kind
+
+      0 = MajorK, 1 = L0C (fixed 16×16), 2 = SF, 3 = MajorMN
+
+   .. attribute:: c0
+
+      C0 value (or 16 for L0C, pack for SF)
+
+   .. attribute:: row_frac
+
+      always 16
+
+   .. attribute:: rows
+
+      logical rows (dim -2)
+
+   .. attribute:: cols
+
+      logical cols (dim -1)
+
+   .. attribute:: outer0
+
+      full physical extent of C0-axis outer for matrix data or row16-axis outer for SF
+
+   .. attribute:: outer1
+
+      full physical extent of row16-axis outer for matrix data or C0-axis outer for SF
+
+   .. attribute:: c0_axis
+
+      0 = row, 1 = col (pack axis for SF)
+
+   .. attribute:: row16_axis
+
+      0 = row, 1 = col
+
+
+   .. py:attribute:: __slots__
+      :value: ('kind', 'c0', 'row_frac', 'rows', 'cols', 'outer0', 'outer1', 'c0_axis', 'row16_axis')
+
+
+
+   .. py:attribute:: kind
+
+
+   .. py:attribute:: c0
+
+
+   .. py:attribute:: row_frac
+
+
+   .. py:attribute:: rows
+
+
+   .. py:attribute:: cols
+
+
+   .. py:attribute:: outer0
+
+
+   .. py:attribute:: outer1
+
+
+   .. py:attribute:: c0_axis
+
+
+   .. py:attribute:: row16_axis
+
+
+   .. py:method:: __repr__()
+
+
+.. py:function:: try_extract_fractal_layout(layout, buffer)
+
+   Get semantic information from a canonical Ascend fractal layout.
+
+   :returns: FractalLayoutInfo, or None when the input is undefined/invalid.
+
+   :raises InternalError: If ``layout`` was not made by a canonical Ascend layout
+       constructor or a transform dropped its semantic tag.
+
+

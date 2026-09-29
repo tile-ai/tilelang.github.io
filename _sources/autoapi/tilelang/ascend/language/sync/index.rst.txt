@@ -1,0 +1,193 @@
+tilelang.ascend.language.sync
+=============================
+
+.. py:module:: tilelang.ascend.language.sync
+
+.. autoapi-nested-parse::
+
+   Ascend pipeline, cross-core, and pipe-buffer synchronization primitives.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.sync.ascend_pipe_barrier
+   tilelang.ascend.language.sync.ascend_set_flag
+   tilelang.ascend.language.sync.ascend_wait_flag
+   tilelang.ascend.language.sync.ascend_sync_inter_arrive
+   tilelang.ascend.language.sync.ascend_sync_inter_wait
+   tilelang.ascend.language.sync.ascend_threadfence
+   tilelang.ascend.language.sync.ascend_cross_core_set_flag
+   tilelang.ascend.language.sync.ascend_cross_core_wait_flag
+   tilelang.ascend.language.sync.ascend_get_buf
+   tilelang.ascend.language.sync.ascend_rls_buf
+
+
+Module Contents
+---------------
+
+.. py:function:: ascend_pipe_barrier(pipe_t)
+
+   Insert an AscendC pipeline barrier.
+
+   Generates: AscendC::PipeBarrier<pipe_t::XXX>();
+
+   :param pipe_t: Pipeline type string, e.g., "PIPE_ALL", "PIPE_V", "PIPE_M",
+                  "PIPE_MTE1", "PIPE_MTE2", "PIPE_MTE3", "PIPE_S".
+   :type pipe_t: str
+
+   .. rubric:: Example
+
+   >>> T.ascend_pipe_barrier("PIPE_ALL")
+
+
+.. py:function:: ascend_set_flag(hard_event, event_id)
+
+   Insert an AscendC SetFlag for pipeline synchronization.
+
+   Generates: AscendC::SetFlag<AscendC::HardEvent::XXX>(eventID);
+
+   :param hard_event: HardEvent enum name, e.g., "MTE2_MTE1", "S_MTE3", "V_MTE2".
+   :type hard_event: str
+   :param event_id: Event ID for synchronization.
+   :type event_id: int or PrimExpr
+
+   .. rubric:: Example
+
+   >>> T.ascend_set_flag("S_MTE3", event_id)
+
+
+.. py:function:: ascend_wait_flag(hard_event, event_id)
+
+   Insert an AscendC WaitFlag for pipeline synchronization.
+
+   Generates: AscendC::WaitFlag<AscendC::HardEvent::XXX>(eventID);
+
+   :param hard_event: HardEvent enum name, e.g., "MTE2_MTE1", "S_MTE3", "V_MTE2".
+   :type hard_event: str
+   :param event_id: Event ID for synchronization.
+   :type event_id: int or PrimExpr
+
+   .. rubric:: Example
+
+   >>> T.ascend_wait_flag("S_MTE3", event_id)
+
+
+.. py:function:: ascend_sync_inter_arrive(pipe, flag_id)
+
+   Signal an Ascend inter-core synchronization event.
+
+   Generates: AscendC::CrossCoreSetFlag<0, pipe>(flag_id);
+
+   :param pipe: Pipeline type, e.g., "PIPE_MTE3", "PIPE_FIX".
+   :type pipe: str
+   :param flag_id: Inter-core synchronization flag ID.
+   :type flag_id: int or PrimExpr
+
+   .. rubric:: Example
+
+   >>> T.ascend_sync_inter_arrive("PIPE_FIX", flag_id)
+
+
+.. py:function:: ascend_sync_inter_wait(pipe, flag_id)
+
+   Wait for an Ascend inter-core synchronization event.
+
+   Generates: AscendC::CrossCoreWaitFlag<0, pipe>(flag_id);
+
+   :param pipe: Pipeline type, e.g., "PIPE_MTE3", "PIPE_FIX".
+   :type pipe: str
+   :param flag_id: Inter-core synchronization flag ID.
+   :type flag_id: int or PrimExpr
+
+   .. rubric:: Example
+
+   >>> T.ascend_sync_inter_wait("PIPE_MTE3", flag_id)
+
+
+.. py:function:: ascend_threadfence()
+
+   Insert an AscendC thread fence.
+
+   Generates: asc_threadfence();
+
+   .. rubric:: Example
+
+   >>> T.ascend_threadfence()
+
+
+.. py:function:: ascend_cross_core_set_flag(mode_id, pipe, flag_id)
+
+   Insert an AscendC CrossCoreSetFlag for cross-core synchronization.
+
+   Generates: AscendC::CrossCoreSetFlag<modeId, pipe>(flagId);
+
+   :param mode_id: Cross-core sync mode: 0, 1, 2, or 4.
+   :type mode_id: int
+   :param pipe: Pipeline type, e.g., "PIPE_MTE3", "PIPE_FIX".
+   :type pipe: str
+   :param flag_id: Cross-core synchronization flag ID.
+   :type flag_id: int or PrimExpr
+
+   .. rubric:: Example
+
+   >>> T.ascend_cross_core_set_flag(0, "PIPE_MTE3", 0x8)
+
+
+.. py:function:: ascend_cross_core_wait_flag(mode_id, pipe, flag_id)
+
+   Insert an AscendC CrossCoreWaitFlag for cross-core synchronization.
+
+   Generates: AscendC::CrossCoreWaitFlag<modeId, pipe>(flagId);
+
+   :param mode_id: Cross-core sync mode: 0, 1, 2, or 4.
+   :type mode_id: int
+   :param pipe: Pipeline type, e.g., "PIPE_MTE3", "PIPE_FIX".
+   :type pipe: str
+   :param flag_id: Cross-core synchronization flag ID.
+   :type flag_id: int or PrimExpr
+
+   .. rubric:: Example
+
+   >>> T.ascend_cross_core_wait_flag(0, "PIPE_MTE3", 0x8)
+
+
+.. py:function:: ascend_get_buf(pipe, buf_id, mode=False)
+
+   Acquire a pipe buffer for double-buffer management.
+
+   Generates: asc_lock(pipe, buf_id, mode);
+
+   :param pipe: Pipeline type, e.g., "PIPE_MTE1", "PIPE_M".
+   :type pipe: str
+   :param buf_id: Buffer slot index, typically (sk & 1) for double-buffering.
+   :type buf_id: int or PrimExpr
+   :param mode: Optional mode flag (default False).
+   :type mode: bool
+
+   .. rubric:: Example
+
+   >>> T.ascend_get_buf("PIPE_MTE1", sk & 1)
+
+
+.. py:function:: ascend_rls_buf(pipe, buf_id, mode=False)
+
+   Release a pipe buffer for double-buffer management.
+
+   Generates: asc_unlock(pipe, buf_id, mode);
+
+   :param pipe: Pipeline type, e.g., "PIPE_MTE1", "PIPE_M".
+   :type pipe: str
+   :param buf_id: Buffer slot index, typically (sk & 1) for double-buffering.
+   :type buf_id: int or PrimExpr
+   :param mode: Optional mode flag (default False).
+   :type mode: bool
+
+   .. rubric:: Example
+
+   >>> T.ascend_rls_buf("PIPE_M", sk & 1)
+
+

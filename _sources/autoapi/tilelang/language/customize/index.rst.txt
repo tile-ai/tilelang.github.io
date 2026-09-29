@@ -66,11 +66,21 @@ Module Contents
    :rtype: Buffer
 
 
-.. py:function:: view(src, shape = None, dtype = None)
+.. py:function:: view(src, shape = None, dtype = None, strides = None)
 
-   Return a Tensor view of the input buffer with an optional new shape and dtype.
+   Return a Tensor view with an optional new shape, dtype, and explicit strides.
 
-   If `shape` is None the source buffer's shape is used; if `dtype` is None the source buffer's dtype is used. The returned buffer shares the same underlying data as `src` (no copy).
+   If ``shape`` is None, the source buffer's shape is used. If ``dtype`` is None,
+   the source buffer's dtype is used. The returned buffer shares its data with
+   ``src`` without copying.
+
+   Without ``strides``, ``src`` must be densely packed and the result uses a dense
+   layout. A non-contiguous source requires explicit ``strides``. Explicit strides are
+   expressed in units of ``dtype`` elements and allow rank changes.
+
+   The source must have zero ``elem_offset``. The caller must guarantee that explicit
+   strides are valid for the backing storage, including dtype alignment and physical
+   contiguity between any source dimensions merged by a rank-changing view.
 
 
 .. py:function:: loop_break()
