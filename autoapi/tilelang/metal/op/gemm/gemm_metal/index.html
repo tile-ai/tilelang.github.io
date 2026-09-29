@@ -8,7 +8,7 @@
         <link rel="prefetch" href="../../../../../../_static/img/logo-v2.png" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
-        <title>tilelang.metal.op.gemm.gemm_metal - TileLang 0.1.14 documentation</title>
+        <title>tilelang.metal.op.gemm.gemm_metal - TileLang 0.1.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -165,7 +165,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">TileLang <br> 0.1.14 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">TileLang <br> 0.1.15 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
     <img class="sidebar-logo only-dark" src="../../../../../../_static/img/logo-v2.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">TileLang <br> 0.1.14 documentation</span>
+  <span class="sidebar-brand-text">TileLang <br> 0.1.15 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -837,10 +837,10 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup" title="tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmMetalSimdGroup</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Base class for GEMM tile operators.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal" title="tilelang.metal.op.gemm.gemm_metal.GemmMetal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmMetal</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Base class for GEMM tile operators.</p></td>
 </tr>
 </tbody>
 </table>
@@ -862,10 +862,15 @@
 <dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.metal.op.gemm.gemm_metal.</span></span><span class="sig-name descname"><span class="pre">GemmMetalSimdGroup</span></span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../../../../tileop/gemm/gemm_base/index.html#tilelang.tileop.gemm.gemm_base.GemmBase" title="tilelang.tileop.gemm.gemm_base.GemmBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.tileop.gemm.gemm_base.GemmBase</span></code></a></p>
+<p>Base class for GEMM tile operators.</p>
+<p>Classifies the GEMM variant by the memory scopes of operands A and B
+(SS, SR, RS, TS, RR) and provides common property accessors for the
+underlying <code class="docutils literal notranslate"><span class="pre">gemm_node</span></code> IR node.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.is_gemm_ss">
 <span class="sig-name descname"><span class="pre">is_gemm_ss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetalSimdGroup.is_gemm_ss" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if both A and B are in shared memory (SS variant).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
 </dd>
@@ -907,10 +912,15 @@
 <dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetal">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.metal.op.gemm.gemm_metal.</span></span><span class="sig-name descname"><span class="pre">GemmMetal</span></span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../../../../tileop/gemm/gemm_base/index.html#tilelang.tileop.gemm.gemm_base.GemmBase" title="tilelang.tileop.gemm.gemm_base.GemmBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.tileop.gemm.gemm_base.GemmBase</span></code></a></p>
+<p>Base class for GEMM tile operators.</p>
+<p>Classifies the GEMM variant by the memory scopes of operands A and B
+(SS, SR, RS, TS, RR) and provides common property accessors for the
+underlying <code class="docutils literal notranslate"><span class="pre">gemm_node</span></code> IR node.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.metal.op.gemm.gemm_metal.GemmMetal.is_gemm_ss">
 <span class="sig-name descname"><span class="pre">is_gemm_ss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.metal.op.gemm.gemm_metal.GemmMetal.is_gemm_ss" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if both A and B are in shared memory (SS variant).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
 </dd>
@@ -1048,7 +1058,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=468bc497"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=e2f3408e"></script>
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
