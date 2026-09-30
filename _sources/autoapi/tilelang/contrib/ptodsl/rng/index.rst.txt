@@ -1,0 +1,51 @@
+tilelang.contrib.ptodsl.rng
+===========================
+
+.. py:module:: tilelang.contrib.ptodsl.rng
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.contrib.ptodsl.rng.PhiloxRNG
+
+
+Module Contents
+---------------
+
+.. py:class:: PhiloxRNG(seed, seq, off)
+
+   Philox 4x32-10 PRNG for PTO SIMT path.
+
+   Each SIMT thread creates its own instance with a unique (seed, seq) pair.
+   The seed and initial 128-bit counter are immutable. The caller owns a
+   logical draw index and threads it through each method explicitly, so
+   PTODSL can carry the ordinary Python SSA name through runtime control
+   flow. ``rand()`` returns a uint32; ``rand_uniform()`` returns float32 in
+   [0, 1); ``rand_normal()`` uses the same cached Box-Muller construction as
+   the AscendC backend.
+
+
+   .. py:attribute:: base_counter_lo
+
+
+   .. py:attribute:: base_counter_hi
+
+
+   .. py:attribute:: base_lane
+
+
+   .. py:method:: rand(draw_index)
+
+
+   .. py:method:: rand_uniform(draw_index)
+
+
+   .. py:method:: rand_normal(draw_index, normal_cache, has_normal)
+
+      Return one normal draw and the updated cached Box-Muller state.
+
+
+

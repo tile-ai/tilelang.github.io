@@ -1,0 +1,90 @@
+tilelang.contrib.ptodsl.simt
+============================
+
+.. py:module:: tilelang.contrib.ptodsl.simt
+
+.. autoapi-nested-parse::
+
+   PTODSL tracing helpers for TileLang PTO SIMT codegen.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.ptodsl.simt.shuffle_vec
+   tilelang.contrib.ptodsl.simt.vector_from_list
+   tilelang.contrib.ptodsl.simt.vector_to_list
+   tilelang.contrib.ptodsl.simt.store_vector_to_list
+   tilelang.contrib.ptodsl.simt.vectorize_unary_f32x2
+   tilelang.contrib.ptodsl.simt.vectorize_binary_f32x2
+   tilelang.contrib.ptodsl.simt.vectorize_binary_fp8
+   tilelang.contrib.ptodsl.simt.fp8_byte_load
+   tilelang.contrib.ptodsl.simt.fp8_byte_store
+   tilelang.contrib.ptodsl.simt.scalar_binary_fp8
+   tilelang.contrib.ptodsl.simt.scalar_div
+   tilelang.contrib.ptodsl.simt.scalar_rsqrt
+   tilelang.contrib.ptodsl.simt.simt_allreduce_sum
+   tilelang.contrib.ptodsl.simt.simt_allreduce_max
+   tilelang.contrib.ptodsl.simt.simt_allreduce_min
+
+
+Module Contents
+---------------
+
+.. py:function:: shuffle_vec(dtype, values, indices)
+
+   Pick lanes by constant index from concatenated scalar/vector inputs.
+
+
+.. py:function:: vector_from_list(dtype, values)
+
+   Build a PTODSL builtin vector from scalar values in a Python sequence.
+
+
+.. py:function:: vector_to_list(value)
+
+   Extract all lanes of a PTODSL builtin vector into a Python list.
+
+
+.. py:function:: store_vector_to_list(dst, offset, value)
+
+   Store all lanes of a PTODSL vector into a Python-list local buffer.
+
+
+.. py:function:: vectorize_unary_f32x2(op, value)
+
+.. py:function:: vectorize_binary_f32x2(op, lhs, rhs)
+
+.. py:function:: vectorize_binary_fp8(op, lhs, rhs, dtype)
+
+   Compute FP8 vectors through the supported packed two-lane conversions.
+
+
+.. py:function:: fp8_byte_load(buffer, index, dtype)
+
+   Load one FP8 storage byte without materializing an unsupported scalar FP8.
+
+
+.. py:function:: fp8_byte_store(value, buffer, index, dtype)
+
+   Store one FP8 storage byte through its integer representation.
+
+
+.. py:function:: scalar_binary_fp8(op, lhs, rhs, dtype)
+
+   Use the packed FP8 conversion primitive for one logical element.
+
+
+.. py:function:: scalar_div(lhs, rhs)
+
+.. py:function:: scalar_rsqrt(value)
+
+.. py:function:: simt_allreduce_sum(value, **kwargs)
+
+.. py:function:: simt_allreduce_max(value, **kwargs)
+
+.. py:function:: simt_allreduce_min(value, **kwargs)
+

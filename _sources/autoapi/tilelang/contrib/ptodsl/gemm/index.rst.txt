@@ -1,0 +1,100 @@
+tilelang.contrib.ptodsl.gemm
+============================
+
+.. py:module:: tilelang.contrib.ptodsl.gemm
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.contrib.ptodsl.gemm.PTOGemmL1Template
+   tilelang.contrib.ptodsl.gemm.PTOBlockscaledGemmL1Template
+
+
+Module Contents
+---------------
+
+.. py:class:: PTOGemmL1Template(tile_m, tile_n, tile_k, base_k, sub_k_tiles, input_c0, sub_k_c0_blocks, a_l0_stage_elems, b_l0_stage_elems, input_pack_factor = 1)
+
+   PTODSL helper for the dav-3510 Ascend L1 cube GEMM pipeline.
+
+   The constructor arguments are the static template parameters. Calling
+   ``run_l1_tile`` emits the L1->L0 sub-K pipeline for one already-loaded
+   L1 tile.
+
+   dav-3510 requires the TRANS_B=true path. The right operand must be
+   staged in L1 as logical W[N, K]. If you write NN matmul with W[K, N],
+   then during GM->L1 you must use DN2NZ to transpose B into this layout
+   before calling the helper.
+
+
+   .. py:attribute:: tile_m
+
+
+   .. py:attribute:: tile_n
+
+
+   .. py:attribute:: tile_k
+
+
+   .. py:attribute:: base_k
+
+
+   .. py:attribute:: sub_k_tiles
+
+
+   .. py:attribute:: input_c0
+
+
+   .. py:attribute:: sub_k_c0_blocks
+
+
+   .. py:attribute:: a_l0_stage_elems
+
+
+   .. py:attribute:: b_l0_stage_elems
+
+
+   .. py:attribute:: input_pack_factor
+      :value: 1
+
+
+
+   .. py:attribute:: sub_k_storage_cols
+
+
+   .. py:method:: run_l1_tile(a_mat, b_mat, a_l0_0, b_l0_0, acc, *, clear_accum, unit_flag_ctrl=0, tf32_mode=None)
+
+      Emit GEMM for one L1 A/B tile into ``acc``.
+
+
+
+.. py:class:: PTOBlockscaledGemmL1Template(tile_m, tile_n, tile_k, base_k, sub_k_tiles, input_c0, sub_k_c0_blocks, a_l0_stage_elems, b_l0_stage_elems, sf_nz_stride, input_pack_factor = 1)
+
+   Bases: :py:obj:`PTOGemmL1Template`
+
+
+   PTODSL helper for an E4M3 or E2M1 blockscaled L1 cube GEMM tile.
+
+   Matrix data uses the regular L1-to-L0 loads inherited from
+   :class:`PTOGemmL1Template`. Pair-packed ``uint16`` scale storage is viewed
+   as E8M0 only at the MX load boundary, where the caller supplies an
+   ``pto.ptr(pto.f8e8m0, "mat")`` pointer to the same L1 allocation. FP4
+   uses ``input_pack_factor=2`` so data-load start columns and L0 stage
+   offsets remain in packed-storage units.
+
+
+   .. py:attribute:: sf_nz_stride
+
+
+   .. py:attribute:: sf_pairs_per_inner
+
+
+   .. py:method:: run_l1_tile(a_mat, b_mat, sfa_e8m0_mat, sfb_e8m0_mat, a_l0_0, b_l0_0, acc, *, sf_k_offset, clear_accum, unit_flag_ctrl=0)
+
+      Emit one blockscaled L1 tile with E8M0 scale staging.
+
+
+

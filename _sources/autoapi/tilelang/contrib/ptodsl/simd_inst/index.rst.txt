@@ -1,0 +1,57 @@
+tilelang.contrib.ptodsl.simd_inst
+=================================
+
+.. py:module:: tilelang.contrib.ptodsl.simd_inst
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.ptodsl.simd_inst.vdiv_precise_f32
+   tilelang.contrib.ptodsl.simd_inst.vexp_1ulp_ftz_false
+   tilelang.contrib.ptodsl.simd_inst.vln_1ulp_ftz_false
+   tilelang.contrib.ptodsl.simd_inst.vsqrt_0ulp_ftz_false
+
+
+Module Contents
+---------------
+
+.. py:function:: vdiv_precise_f32(src0, src1, mask)
+
+   Emit precise f32 vector division matching Ascend ``vdiv_precise``.
+
+
+.. py:function:: vexp_1ulp_ftz_false(src, mask)
+
+   Emit subnormal-preserving f32 vexp matching Ascend ``vexp_1ulp_ftz_false``.
+
+   Normal outputs pass through; outputs that would land in the subnormal
+   range are computed as ``(e^(x/2))^2`` so the SFU input stays normal.
+   Self-consistent at x < -174.7: ``e^(x/2)`` itself is flushed to 0,
+   squaring yields 0, and the true ``e^x < 2^-252`` correctly rounds to 0.
+
+
+.. py:function:: vln_1ulp_ftz_false(src, mask)
+
+   Emit subnormal-preserving f32 vln matching Ascend ``vln_1ulp_ftz_false``.
+
+   Positive subnormal inputs are scaled by ``2^23`` before VLN and
+   compensated by ``-ln(2^23)`` (the scaled value is exact: the subnormal
+   mantissa shifts into the normal range). Other inputs keep hardware
+   semantics (0 -> -inf, negative -> NaN).
+
+
+.. py:function:: vsqrt_0ulp_ftz_false(src, mask)
+
+   Emit subnormal-preserving f32 vsqrt matching Ascend ``vsqrt_0ulp_ftz_false``.
+
+   Replica of CANN ``SqrtFastInverseImpl`` (``PRECISION_0ULP_FTZ_FALSE`` /
+   ``FAST_INVERSE``), chosen over the 1ULP scale/unscale variant because the
+   latter mis-rounds ``0x007fffff`` to +0. Inputs < 1 are scaled by ``2^24``
+   so the chain stays in the normal range, then unscaled by ``2^-12``; a
+   1/sqrt initial value plus a Newton step and a second residual correction
+   gives correct rounding; +-0 and +inf pass through.
+
+

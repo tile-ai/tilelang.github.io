@@ -1,0 +1,107 @@
+tilelang.jit.adapter.pto.adapter
+================================
+
+.. py:module:: tilelang.jit.adapter.pto.adapter
+
+.. autoapi-nested-parse::
+
+   Compile and execute PTODSL kernels using the PTO launch wrapper.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.pto.adapter.PTOKernelAdapter
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.pto.adapter.is_symbolic_expr
+
+
+Module Contents
+---------------
+
+.. py:function:: is_symbolic_expr(expr)
+
+   Check if the expression is a symbolic expression.
+   A symbolic expression can be a simple tvm.Var, or an tvm.PrimExpr containing tvm.Var.
+
+
+.. py:class:: PTOKernelAdapter(params, result_idx, target, func_or_mod, host_mod = None, device_mod = None, device_kernel_source = None, verbose = False, pass_configs = None, compile_flags = None)
+
+   Bases: :py:obj:`tilelang.jit.adapter.base.BaseKernelAdapter`
+
+
+   Own PTO compilation and cached-library loading with a Cython launch ABI.
+
+
+   .. py:attribute:: device_kernel_source
+      :value: None
+
+
+
+   .. py:attribute:: kernel_global_source
+      :value: None
+
+
+
+   .. py:attribute:: wrapper
+
+
+   .. py:attribute:: host_kernel_source
+
+
+   .. py:method:: from_database(params, result_idx, target, func_or_mod, host_kernel_source, device_kernel_source, kernel_lib_path, verbose = False, pass_configs = None, compile_flags = None)
+      :classmethod:
+
+
+      Load the compiled PTO library without regenerating device or host code.
+
+
+
+   .. py:property:: prim_func
+      :type: tvm.tirx.PrimFunc
+
+
+      Returns the primary TIR function from the IR module.
+
+
+   .. py:property:: srcpath
+
+      Returns the source path of the compiled library.
+
+
+   .. py:property:: libpath
+
+      Returns the path to the compiled library.
+
+
+   .. py:property:: lib_code
+
+      Returns the code of the compiled library.
+
+
+   .. py:property:: is_dynamic
+
+      Indicates whether the kernel handles dynamic shapes.
+
+
+   .. py:method:: get_kernel_source(kernel_only = False)
+
+      Returns the source code of the compiled kernel.
+
+
+
+   .. py:method:: get_host_source()
+
+      Returns the source code of the host function.
+
+
+

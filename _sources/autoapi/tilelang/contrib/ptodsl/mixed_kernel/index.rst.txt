@@ -1,0 +1,48 @@
+tilelang.contrib.ptodsl.mixed_kernel
+====================================
+
+.. py:module:: tilelang.contrib.ptodsl.mixed_kernel
+
+.. autoapi-nested-parse::
+
+   PTODSL compatibility helpers for mixed Cube/Vector kernels.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.contrib.ptodsl.mixed_kernel.MixedKernelRole
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.ptodsl.mixed_kernel.mixed_kernel_section
+   tilelang.contrib.ptodsl.mixed_kernel.finalize_mixed_kernel
+
+
+Module Contents
+---------------
+
+.. py:data:: MixedKernelRole
+
+.. py:function:: mixed_kernel_section(role)
+
+   Emit one PTO physical section in the active kernel entry.
+
+   The public context records the physical core while tracing.  Helpers such
+   as ``pto.init_core()`` use that context to specialize their Cube and Vector
+   implementations, while the emitted section remains a direct child of the
+   entry function for ``vpto-split-cv-module``.
+
+
+.. py:function:: finalize_mixed_kernel(kernel)
+
+   Select PTODSL's flat module layout before the first specialization.
+
+
