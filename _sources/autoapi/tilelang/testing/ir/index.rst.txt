@@ -1,0 +1,58 @@
+tilelang.testing.ir
+===================
+
+.. py:module:: tilelang.testing.ir
+
+.. autoapi-nested-parse::
+
+   Small, exact queries for compiler tests, without running any passes.
+
+   Counts describe unique static IR nodes within each visited function, following
+   TVM's post-order visitor. They do not describe dynamic execution counts or order.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.testing.ir.collect_nodes
+   tilelang.testing.ir.collect_calls
+   tilelang.testing.ir.assert_call_count
+   tilelang.testing.ir.collect_extern_calls
+
+
+Module Contents
+---------------
+
+.. py:function:: collect_nodes(root, node_type, *, function = None)
+
+   Collect nodes of a TVM object type from bodies or an expression.
+
+   A module query visits all PrimFunc bodies unless ``function`` selects one
+   by global name. Other module functions are skipped. Function signatures and
+   module metadata are not traversed. Shared nodes are visited once per body.
+
+
+.. py:function:: collect_calls(root, *, op, function = None)
+
+   Collect calls to one exact registered Op; never match name fragments.
+
+   GlobalVar and other non-Op callees do not match. An unregistered name raises
+   the Op registry's error instead of silently producing an empty result.
+
+
+.. py:function:: assert_call_count(root, *, op, count, function = None)
+
+   Assert a static call count, showing function ownership on failure.
+
+
+.. py:function:: collect_extern_calls(root, *, symbol, function = None)
+
+   Collect tirx.call_extern calls with an exact StringImm symbol argument.
+
+   Other call operators, missing arguments and non-string symbols do not match.
+   This function does not interpret prefixes, templates or regular expressions.
+
+
