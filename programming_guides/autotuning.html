@@ -314,6 +314,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/capture/index.html">tilelang.autotuner.capture</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/grouped_compile/index.html">tilelang.autotuner.grouped_compile</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/param/index.html">tilelang.autotuner.param</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/report/index.html">tilelang.autotuner.report</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/autotuner/tuner/index.html">tilelang.autotuner.tuner</a></li>
 </ul>
 </li>
@@ -962,6 +963,38 @@ and caches the resulting best kernel in‑process.</p></li>
 <span class="n">best_kernel</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>
 </pre></div>
 </div>
+<section id="observe-trial-outcomes-experimental">
+<h3>Observe trial outcomes (experimental)<a class="headerlink" href="#observe-trial-outcomes-experimental" title="Link to this heading">¶</a></h3>
+<p>The programmatic <code class="docutils literal notranslate"><span class="pre">AutoTuner.run</span></code> method accepts an optional synchronous
+<code class="docutils literal notranslate"><span class="pre">on_trial</span></code> callback. For example, after configuring <code class="docutils literal notranslate"><span class="pre">tuner</span></code> as above:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trial_records</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">artifact</span> <span class="o">=</span> <span class="n">tuner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">on_trial</span><span class="o">=</span><span class="n">trial_records</span><span class="o">.</span><span class="n">append</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">trial_records</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">"index"</span><span class="p">],</span> <span class="n">record</span><span class="p">[</span><span class="s2">"status"</span><span class="p">],</span> <span class="n">record</span><span class="p">[</span><span class="s2">"latency_ms"</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Each record is a dictionary with <code class="docutils literal notranslate"><span class="pre">status</span></code>, <code class="docutils literal notranslate"><span class="pre">index</span></code>, <code class="docutils literal notranslate"><span class="pre">config</span></code>, <code class="docutils literal notranslate"><span class="pre">latency_ms</span></code>,
+<code class="docutils literal notranslate"><span class="pre">validation</span></code>, and <code class="docutils literal notranslate"><span class="pre">error</span></code>. The config is a detached, JSON-compatible copy;
+<code class="docutils literal notranslate"><span class="pre">error</span></code> is a string truncated to 2048 characters or <code class="docutils literal notranslate"><span class="pre">None</span></code>. Successful trials
+use <code class="docutils literal notranslate"><span class="pre">status=&quot;ok&quot;</span></code> and report latency in milliseconds. Compilation failures use
+<code class="docutils literal notranslate"><span class="pre">compile_error</span></code>; benchmark failures use <code class="docutils literal notranslate"><span class="pre">benchmark_error</span></code>; timed-out benchmarks
+use <code class="docutils literal notranslate"><span class="pre">timeout</span></code>. Failed trials have no latency. <code class="docutils literal notranslate"><span class="pre">validation</span></code> is <code class="docutils literal notranslate"><span class="pre">passed</span></code> only
+when reference validation ran successfully, <code class="docutils literal notranslate"><span class="pre">not_run</span></code> when it was skipped or
+not configured, and <code class="docutils literal notranslate"><span class="pre">unknown</span></code> for benchmark failures and timeouts.</p>
+<p>For a healthy, uncached tuning run with JSON-compatible configs, the callback
+receives one terminal outcome per configuration. Records arrive in aggregation
+order, which may differ from configuration index order. A cache hit emits only
+one <code class="docutils literal notranslate"><span class="pre">cache_hit</span></code> marker; a direct JIT path emits only one <code class="docutils literal notranslate"><span class="pre">direct_jit</span></code> marker.
+Both markers have <code class="docutils literal notranslate"><span class="pre">index</span></code>, <code class="docutils literal notranslate"><span class="pre">config</span></code>, and <code class="docutils literal notranslate"><span class="pre">latency_ms</span></code> set to <code class="docutils literal notranslate"><span class="pre">None</span></code> and do not
+reconstruct trial history. The callback is not part of the cache identity.</p>
+<p>Callbacks run synchronously on the aggregation thread. Keep them fast; do not
+mutate or re-enter the tuner from a callback. An ordinary <code class="docutils literal notranslate"><span class="pre">Exception</span></code> raised
+by the callback or while serializing a record disables reporting for the rest
+of that run while tuning continues. <code class="docutils literal notranslate"><span class="pre">on_trial</span></code> with <code class="docutils literal notranslate"><span class="pre">early_stop=True</span></code> is
+currently unsupported and raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. This option is available on
+<code class="docutils literal notranslate"><span class="pre">AutoTuner.run</span></code> only, not the <code class="docutils literal notranslate"><span class="pre">&#64;tilelang.autotune</span></code> decorator, and it does not
+create a persistent trial history in the cache.</p>
+</section>
 <section id="example-gallery-in-repo">
 <h3>Example Gallery (in repo)<a class="headerlink" href="#example-gallery-in-repo" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -1239,6 +1272,7 @@ your reference check isn’t the bottleneck.</p></li>
 <li><a class="reference internal" href="#">Autotuning</a><ul>
 <li><a class="reference internal" href="#decoratorbased-autotune">1) Decorator‑based Autotune</a></li>
 <li><a class="reference internal" href="#programmatic-autotune">2) Programmatic Autotune</a><ul>
+<li><a class="reference internal" href="#observe-trial-outcomes-experimental">Observe trial outcomes (experimental)</a></li>
 <li><a class="reference internal" href="#example-gallery-in-repo">Example Gallery (in repo)</a></li>
 </ul>
 </li>

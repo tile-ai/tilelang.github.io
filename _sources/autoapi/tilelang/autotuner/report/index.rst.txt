@@ -1,0 +1,40 @@
+tilelang.autotuner.report
+=========================
+
+.. py:module:: tilelang.autotuner.report
+
+.. autoapi-nested-parse::
+
+   Experimental, opt-in autotuning observations; not a persistent tuning cache.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.autotuner.report.TrialReporter
+
+
+Module Contents
+---------------
+
+.. py:class:: TrialReporter(sink, logger)
+
+   Invoke a caller-owned sink synchronously on the run's aggregation thread.
+
+   Records contain detached JSON representations of configs, not arbitrary objects.
+   The sink must not mutate/re-enter the tuner and should not perform slow work.
+   An ordinary reporting error disables the sink for this run, not tuning.
+
+
+   .. py:attribute:: sink
+
+
+   .. py:attribute:: logger
+
+
+   .. py:method:: emit(status, index=None, config=None, latency=None, validation='not_run', error=None)
+
+

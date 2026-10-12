@@ -170,7 +170,7 @@ Module Contents
 
 
 
-   .. py:method:: run(warmup = 25, rep = 100, timeout = 180, use_pipeline = False, enable_grouped_compile = False, group_compile_size = 2, benchmark_devices = None, benchmark_multi_gpu = False, early_stop = False, early_stop_factor = 2.0)
+   .. py:method:: run(warmup = 25, rep = 100, timeout = 180, use_pipeline = False, enable_grouped_compile = False, group_compile_size = 2, benchmark_devices = None, benchmark_multi_gpu = False, early_stop = False, early_stop_factor = 2.0, on_trial = None)
 
       Run the auto-tuning process.
 
@@ -184,6 +184,10 @@ Module Contents
       :param benchmark_multi_gpu: Whether to benchmark configurations across multiple CUDA GPUs.
       :param early_stop: Whether to skip full benchmark when estimate exceeds best * early_stop_factor.
       :param early_stop_factor: Multiplier for best latency to compute early stop threshold.
+      :param on_trial: Experimental, synchronous observer of detached outcome records.
+                       Not part of the cache identity. Cache hits have no trial history.
+                       Ordinary sink errors disable reporting without failing tuning.
+                       Not supported with early_stop until estimated latency is distinguishable.
 
       :returns: Results of the auto-tuning process.
       :rtype: AutotuneResult
