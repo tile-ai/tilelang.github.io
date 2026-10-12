@@ -1,0 +1,57 @@
+tilelang.contrib.ptodsl.allreduce
+=================================
+
+.. py:module:: tilelang.contrib.ptodsl.allreduce
+
+.. autoapi-nested-parse::
+
+   SIMT cross-workitem all-reduce.
+
+   Vendored from the PTOAS project (``ptodsl/ptodsl/_allreduce.py``); upstream
+   commit f5eff3ee249697f6157088f649c6434fcc9d7c5b ("refactor(ptodsl): remove
+   the SIMT allreduce helpers") removed the module expecting TileLang to own the
+   implementation. contrib.ptodsl's integer-signedness compatibility, previously
+   applied as monkey patches from ``simt.py``, is merged directly into the
+   reducer tables and the dtype dispatch.
+
+   All-reduce ops are emitted **inline** at the current insertion point.
+   Three reducer variants: ``simt_allreduce_sum``, ``simt_allreduce_max``, ``simt_allreduce_min``.
+
+   Dispatch tree (compile-time, since *threads* / *scale* are Python ints)::
+
+       threads <= scale                                       →  identity
+       threads ≤ 32,  pow2(threads), pow2(scale)              →  warp_reduce
+       threads ≤ 32                                           →  ub_reduce
+       threads > 32,  pow2(threads), scale≤32, pow2(scale)   →  cross_warp_reduce
+       otherwise                                              →  ub_reduce (fallback)
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.ptodsl.allreduce.simt_allreduce_sum
+   tilelang.contrib.ptodsl.allreduce.simt_allreduce_max
+   tilelang.contrib.ptodsl.allreduce.simt_allreduce_min
+
+
+Module Contents
+---------------
+
+.. py:function:: simt_allreduce_sum(value, *, threads, scale=1, thread_offset=0, scratch=None)
+
+   Sum reduce across SIMT work-items.
+
+
+.. py:function:: simt_allreduce_max(value, *, threads, scale=1, thread_offset=0, scratch=None)
+
+   Max reduce across SIMT work-items.
+
+
+.. py:function:: simt_allreduce_min(value, *, threads, scale=1, thread_offset=0, scratch=None)
+
+   Min reduce across SIMT work-items.
+
+
