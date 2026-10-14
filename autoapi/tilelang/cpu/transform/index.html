@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="tilelang.cuda" href="../../cuda/index.html"><link rel="prev" title="tilelang.cpu.pipeline" href="../pipeline/index.html">
+<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="tilelang.cuda" href="../../cuda/index.html"><link rel="prev" title="tilelang.cpu.toolchain" href="../toolchain/index.html">
         <link rel="prefetch" href="../../../../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../../../../_static/img/logo-v2.png" as="image">
 
@@ -445,6 +445,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../pipeline/index.html">tilelang.cpu.pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../toolchain/index.html">tilelang.cpu.toolchain</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">tilelang.cpu.transform</a></li>
 </ul>
 </li>
@@ -843,8 +844,17 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cpu.transform.LowerCPUAtomics" title="tilelang.cpu.transform.LowerCPUAtomics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerCPUAtomics</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cpu.transform.LowerCPUKernelLaunch" title="tilelang.cpu.transform.LowerCPUKernelLaunch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerCPUKernelLaunch</span></code></a>()</p></td>
+<td><p>Prepare grid markers and per-launch thread counts before MaterializeKernelLaunch.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cpu.transform.LowerCPUAtomics" title="tilelang.cpu.transform.LowerCPUAtomics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerCPUAtomics</span></code></a>()</p></td>
 <td><p>Lower tl.atomic_*_elem_op intrinsics to serial read-modify-write.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cpu.transform.MarkCPUAtomics" title="tilelang.cpu.transform.MarkCPUAtomics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MarkCPUAtomics</span></code></a>()</p></td>
+<td><p>Mark atomic kernels before LowerTileOp to prevent parallel RMW races.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cpu.transform.MaterializeCPUParallelGrid" title="tilelang.cpu.transform.MaterializeCPUParallelGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaterializeCPUParallelGrid</span></code></a>()</p></td>
+<td><p>Convert the annotated CPU grid loop nest to OpenMP parallel loops.</p></td>
 </tr>
 </tbody>
 </table>
@@ -853,6 +863,12 @@
 <section id="package-contents">
 <h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cpu.transform.LowerCPUKernelLaunch">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cpu.transform.</span></span><span class="sig-name descname"><span class="pre">LowerCPUKernelLaunch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cpu.transform.LowerCPUKernelLaunch" title="Link to this definition">¶</a></dt>
+<dd><p>Prepare grid markers and per-launch thread counts before MaterializeKernelLaunch.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.cpu.transform.LowerCPUAtomics">
 <span class="sig-prename descclassname"><span class="pre">tilelang.cpu.transform.</span></span><span class="sig-name descname"><span class="pre">LowerCPUAtomics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cpu.transform.LowerCPUAtomics" title="Link to this definition">¶</a></dt>
 <dd><p>Lower tl.atomic_*_elem_op intrinsics to serial read-modify-write.</p>
@@ -860,6 +876,33 @@
 plain BufferLoad/BufferStore RMW so that both CPU codegens (<cite>c</cite> and
 <cite>llvm</cite>) can consume them. Tile-region atomics are lowered separately by
 the cpu.AtomicAdd/cpu.AtomicReduce impls inside LowerTileOp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fpass</strong> – The result pass</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.transform.Pass</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cpu.transform.MarkCPUAtomics">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cpu.transform.</span></span><span class="sig-name descname"><span class="pre">MarkCPUAtomics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cpu.transform.MarkCPUAtomics" title="Link to this definition">¶</a></dt>
+<dd><p>Mark atomic kernels before LowerTileOp to prevent parallel RMW races.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cpu.transform.MaterializeCPUParallelGrid">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cpu.transform.</span></span><span class="sig-name descname"><span class="pre">MaterializeCPUParallelGrid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cpu.transform.MaterializeCPUParallelGrid" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the annotated CPU grid loop nest to OpenMP parallel loops.</p>
+<p>CPU targets only; runs at the tail of the CPU pipeline (only inserted
+when the <code class="docutils literal notranslate"><span class="pre">tl.cpu_parallel</span></code> pass config is enabled). Consumes the
+<code class="docutils literal notranslate"><span class="pre">tl.cpu_grid_dim</span></code> annotations added by LowerCPUKernelLaunch,
+converts the grid loops to ForKind::kParallel (all dims on the <code class="docutils literal notranslate"><span class="pre">c</span></code>
+target for collapse(n); the first non-unit dim on <code class="docutils literal notranslate"><span class="pre">llvm</span></code>), and sinks
+function-scope allocations whose uses all lie inside the parallel
+region into the parallel loop body for per-worker privacy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fpass</strong> – The result pass</p>
@@ -887,14 +930,14 @@ the cpu.AtomicAdd/cpu.AtomicReduce impls inside LowerTileOp.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../pipeline/index.html">
+          <a class="prev-page" href="../toolchain/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">tilelang.cpu.pipeline</div>
+                <div class="title">tilelang.cpu.toolchain</div>
                 
               </div>
             </a>
@@ -931,7 +974,10 @@ the cpu.AtomicAdd/cpu.AtomicReduce impls inside LowerTileOp.</p>
 <li><a class="reference internal" href="#">tilelang.cpu.transform</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.cpu.transform.LowerCPUKernelLaunch"><code class="docutils literal notranslate"><span class="pre">LowerCPUKernelLaunch()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cpu.transform.LowerCPUAtomics"><code class="docutils literal notranslate"><span class="pre">LowerCPUAtomics()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cpu.transform.MarkCPUAtomics"><code class="docutils literal notranslate"><span class="pre">MarkCPUAtomics()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cpu.transform.MaterializeCPUParallelGrid"><code class="docutils literal notranslate"><span class="pre">MaterializeCPUParallelGrid()</span></code></a></li>
 </ul>
 </li>
 </ul>

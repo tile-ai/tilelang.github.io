@@ -14,11 +14,19 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.cpu.transform.LowerCPUKernelLaunch
    tilelang.cpu.transform.LowerCPUAtomics
+   tilelang.cpu.transform.MarkCPUAtomics
+   tilelang.cpu.transform.MaterializeCPUParallelGrid
 
 
 Package Contents
 ----------------
+
+.. py:function:: LowerCPUKernelLaunch()
+
+   Prepare grid markers and per-launch thread counts before MaterializeKernelLaunch.
+
 
 .. py:function:: LowerCPUAtomics()
 
@@ -28,6 +36,27 @@ Package Contents
    plain BufferLoad/BufferStore RMW so that both CPU codegens (`c` and
    `llvm`) can consume them. Tile-region atomics are lowered separately by
    the cpu.AtomicAdd/cpu.AtomicReduce impls inside LowerTileOp.
+
+   :returns: **fpass** -- The result pass
+   :rtype: tvm.transform.Pass
+
+
+.. py:function:: MarkCPUAtomics()
+
+   Mark atomic kernels before LowerTileOp to prevent parallel RMW races.
+
+
+.. py:function:: MaterializeCPUParallelGrid()
+
+   Convert the annotated CPU grid loop nest to OpenMP parallel loops.
+
+   CPU targets only; runs at the tail of the CPU pipeline (only inserted
+   when the ``tl.cpu_parallel`` pass config is enabled). Consumes the
+   ``tl.cpu_grid_dim`` annotations added by LowerCPUKernelLaunch,
+   converts the grid loops to ForKind::kParallel (all dims on the ``c``
+   target for collapse(n); the first non-unit dim on ``llvm``), and sinks
+   function-scope allocations whose uses all lie inside the parallel
+   region into the parallel loop body for per-worker privacy.
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass

@@ -445,6 +445,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../pipeline/index.html">tilelang.cpu.pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../toolchain/index.html">tilelang.cpu.toolchain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../transform/index.html">tilelang.cpu.transform</a></li>
 </ul>
 </li>
@@ -843,7 +844,7 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cpu.language.kernel.Kernel" title="tilelang.cpu.language.kernel.Kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Kernel</span></code></a>(*blocks[, prelude])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cpu.language.kernel.Kernel" title="tilelang.cpu.language.kernel.Kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Kernel</span></code></a>(*blocks[, prelude, cpu_num_threads])</p></td>
 <td><p>Construct a kernel launch frame for CPU: a grid of tile programs.</p></td>
 </tr>
 </tbody>
@@ -854,7 +855,7 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.cpu.language.kernel.Kernel">
-<span class="sig-prename descclassname"><span class="pre">tilelang.cpu.language.kernel.</span></span><span class="sig-name descname"><span class="pre">Kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">blocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prelude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cpu.language.kernel.Kernel" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.cpu.language.kernel.</span></span><span class="sig-name descname"><span class="pre">Kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">blocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prelude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu_num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cpu.language.kernel.Kernel" title="Link to this definition">¶</a></dt>
 <dd><p>Construct a kernel launch frame for CPU: a grid of tile programs.</p>
 <p>The grid becomes the outer loop nest of the generated function and each
 tile program runs as a plain serial body; <code class="docutils literal notranslate"><span class="pre">T.Parallel</span></code> loops are lowered
@@ -867,6 +868,13 @@ to serial loops. There are no SIMT threads, so this dialect has no
 program index per axis.</p></li>
 <li><p><strong>prelude</strong> (<em>str</em><em>, </em><em>optional</em>) – C source injected before the generated kernel, e.g. <code class="docutils literal notranslate"><span class="pre">#include</span></code> lines
 or helper functions.</p></li>
+<li><p><strong>cpu_num_threads</strong> (<em>int</em><em>, </em><em>optional</em>) – OpenMP thread count for the grid parallel region when the
+<code class="docutils literal notranslate"><span class="pre">tl.cpu_parallel</span></code> pass config is enabled: emitted as the
+<code class="docutils literal notranslate"><span class="pre">num_threads(n)</span></code> clause. <code class="docutils literal notranslate"><span class="pre">None</span></code> (default) omits the clause and
+lets the OpenMP runtime pick the thread count (e.g. from
+<code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code>). Only the <code class="docutils literal notranslate"><span class="pre">c</span></code> target consumes it — on the
+<code class="docutils literal notranslate"><span class="pre">llvm</span></code> target it has no effect, since that path lowers to
+<code class="docutils literal notranslate"><span class="pre">TVMBackendParallelLaunch</span></code> and uses TVM’s own thread pool.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
