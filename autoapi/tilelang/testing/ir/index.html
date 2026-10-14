@@ -840,7 +840,8 @@
 <span id="tilelang-testing-ir"></span><h1>tilelang.testing.ir<a class="headerlink" href="#module-tilelang.testing.ir" title="Link to this heading">¶</a></h1>
 <p>Small, exact queries for compiler tests, without running any passes.</p>
 <p>Counts describe unique static IR nodes within each visited function, following
-TVM’s post-order visitor. They do not describe dynamic execution counts or order.</p>
+TVM’s post-order visitor. They do not describe dynamic execution counts or order.
+Call queries automatically reuse an index of the most recently queried body.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -886,7 +887,10 @@ module metadata are not traversed. Shared nodes are visited once per body.</p>
 <span class="sig-prename descclassname"><span class="pre">tilelang.testing.ir.</span></span><span class="sig-name descname"><span class="pre">collect_calls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.testing.ir.collect_calls" title="Link to this definition">¶</a></dt>
 <dd><p>Collect calls to one exact registered Op; never match name fragments.</p>
 <p>GlobalVar and other non-Op callees do not match. An unregistered name raises
-the Op registry’s error instead of silently producing an empty result.</p>
+the Op registry’s error instead of silently producing an empty result.
+Consecutive queries of the same body share an internal LRU index. A new
+body rebuilds the index, including after replacing a module function.
+The returned list can be changed without affecting subsequent queries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -904,6 +908,8 @@ the Op registry’s error instead of silently producing an empty result.</p>
 <dt class="sig sig-object py" id="tilelang.testing.ir.assert_call_count">
 <span class="sig-prename descclassname"><span class="pre">tilelang.testing.ir.</span></span><span class="sig-name descname"><span class="pre">assert_call_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.testing.ir.assert_call_count" title="Link to this definition">¶</a></dt>
 <dd><p>Assert a static call count, showing function ownership on failure.</p>
+<p>Reuse the same internal body index as collect_calls. Function selection
+is resolved anew on every query; diagnostic ownership is read on failure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -923,7 +929,8 @@ the Op registry’s error instead of silently producing an empty result.</p>
 <span class="sig-prename descclassname"><span class="pre">tilelang.testing.ir.</span></span><span class="sig-name descname"><span class="pre">collect_extern_calls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.testing.ir.collect_extern_calls" title="Link to this definition">¶</a></dt>
 <dd><p>Collect tirx.call_extern calls with an exact StringImm symbol argument.</p>
 <p>Other call operators, missing arguments and non-string symbols do not match.
-This function does not interpret prefixes, templates or regular expressions.</p>
+This function does not interpret prefixes, templates or regular expressions.
+Reuse the same internal body index through collect_calls.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

@@ -9,6 +9,7 @@ tilelang.testing.ir
 
    Counts describe unique static IR nodes within each visited function, following
    TVM's post-order visitor. They do not describe dynamic execution counts or order.
+   Call queries automatically reuse an index of the most recently queried body.
 
 
 
@@ -41,11 +42,17 @@ Module Contents
 
    GlobalVar and other non-Op callees do not match. An unregistered name raises
    the Op registry's error instead of silently producing an empty result.
+   Consecutive queries of the same body share an internal LRU index. A new
+   body rebuilds the index, including after replacing a module function.
+   The returned list can be changed without affecting subsequent queries.
 
 
 .. py:function:: assert_call_count(root, *, op, count, function = None)
 
    Assert a static call count, showing function ownership on failure.
+
+   Reuse the same internal body index as collect_calls. Function selection
+   is resolved anew on every query; diagnostic ownership is read on failure.
 
 
 .. py:function:: collect_extern_calls(root, *, symbol, function = None)
@@ -54,5 +61,6 @@ Module Contents
 
    Other call operators, missing arguments and non-string symbols do not match.
    This function does not interpret prefixes, templates or regular expressions.
+   Reuse the same internal body index through collect_calls.
 
 
