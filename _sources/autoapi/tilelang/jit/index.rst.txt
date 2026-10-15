@@ -355,6 +355,10 @@ Package Contents
    - **lazy**: Function returns PrimFunc explicitly. Returns compiled kernel object.
    - **eager**: Function uses DSL builder pattern. Executes kernel immediately.
 
+   Compile-time arguments and their defaults must be hashable. Their hash and
+   equality semantics must remain stable while cached kernels are in use.
+   Runtime tensor arguments are excluded from this requirement.
+
    :param out_idx: Output tensor index(es). Only supported in lazy mode.
    :type out_idx: list[int] | int | None
    :param target: Compilation target (e.g., "cuda", "llvm", "auto").

@@ -1062,6 +1062,12 @@ before the first read from <code class="docutils literal notranslate"><span clas
 <li><p>The <code class="docutils literal notranslate"><span class="pre">&#64;jit</span></code> wrapper returns a callable kernel after the first compilation.</p></li>
 <li><p>You can pass compile‑time tunables (tile sizes, dtypes) through the outer
 Python function and bake them into the generated TIR.</p></li>
+<li><p>Compile-time arguments and their defaults must be hashable. Lists, dictionaries,
+sets, and tuples containing unhashable values raise <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>; use immutable,
+hashable values such as tuples or frozen dataclasses instead. Values that affect
+specialization, along with their hash and equality behavior, must remain stable
+while cached kernels are in use. Runtime tensor arguments are excluded from this
+requirement.</p></li>
 </ul>
 </section>
 <section id="tiled-gemm-skeleton">
