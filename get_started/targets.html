@@ -869,13 +869,16 @@ dictionary when you need options such as GPU architecture or CPU model. The most
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metal</span></code></p></td>
 <td><p>Apple Silicon GPUs (arm64 Macs).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">llvm</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ascend</span></code></p></td>
+<td><p>Huawei Ascend NPUs. Use <code class="docutils literal notranslate"><span class="pre">execution_backend=&quot;pto&quot;</span></code> to select PTO code generation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">llvm</span></code></p></td>
 <td><p>CPU execution. Use a config dict for options such as <code class="docutils literal notranslate"><span class="pre">{&quot;kind&quot;:</span> <span class="pre">&quot;llvm&quot;,</span> <span class="pre">&quot;mtriple&quot;:</span> <span class="pre">&quot;x86_64-linux-gnu&quot;}</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">webgpu</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">webgpu</span></code></p></td>
 <td><p>Browser / WebGPU runtimes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">c</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">c</span></code></p></td>
 <td><p>Emit plain C source for inspection or custom toolchains.</p></td>
 </tr>
 </tbody>
@@ -914,6 +917,16 @@ the default is <code class="docutils literal notranslate"><span class="pre">auto
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span>cuda
 </pre></div>
 </div>
+<p>For Ascend, the target and execution backend can be selected independently.
+The following defaults keep the native <code class="docutils literal notranslate"><span class="pre">ascend</span></code> target while selecting the PTO
+target variant and PTO code generator:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span>ascend
+<span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_EXECUTION_BACKEND</span><span class="o">=</span>pto
+</pre></div>
+</div>
+<p>This is equivalent to passing <code class="docutils literal notranslate"><span class="pre">target=&quot;ascend&quot;,</span> <span class="pre">execution_backend=&quot;pto&quot;</span></code> to
+<code class="docutils literal notranslate"><span class="pre">tilelang.compile</span></code> or <code class="docutils literal notranslate"><span class="pre">&#64;tilelang.jit</span></code>. Omitting the execution backend, or using
+<code class="docutils literal notranslate"><span class="pre">execution_backend=&quot;auto&quot;</span></code>, keeps the default AscendC code generator.</p>
 <p>For target options, use a JSON object string. This is useful in scripts that rely on the default target through
 <code class="docutils literal notranslate"><span class="pre">tilelang.compile(...,</span> <span class="pre">target=None)</span></code>, <code class="docutils literal notranslate"><span class="pre">&#64;tilelang.jit</span></code>, or autotuning:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">TILELANG_DEFAULT_TARGET</span><span class="o">=</span><span class="s1">'{"kind": "cuda", "arch": "sm_90"}'</span>

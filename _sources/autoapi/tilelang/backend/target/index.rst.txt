@@ -14,6 +14,7 @@ Attributes
    tilelang.backend.target.TargetLike
    tilelang.backend.target.TargetDetector
    tilelang.backend.target.TargetNormalizer
+   tilelang.backend.target.TargetExecutionNormalizer
 
 
 Classes
@@ -23,6 +24,7 @@ Classes
 
    tilelang.backend.target.TargetDetectorSpec
    tilelang.backend.target.TargetNormalizerSpec
+   tilelang.backend.target.TargetExecutionNormalizerSpec
 
 
 Functions
@@ -32,6 +34,8 @@ Functions
 
    tilelang.backend.target.register_target_detector
    tilelang.backend.target.register_target_normalizer
+   tilelang.backend.target.register_target_execution_normalizer
+   tilelang.backend.target.normalize_target_for_execution
    tilelang.backend.target.auto_detect_target
    tilelang.backend.target.list_target_detectors
    tilelang.backend.target.determine_target
@@ -49,6 +53,8 @@ Module Contents
 .. py:data:: TargetDetector
 
 .. py:data:: TargetNormalizer
+
+.. py:data:: TargetExecutionNormalizer
 
 .. py:class:: TargetDetectorSpec
 
@@ -70,9 +76,29 @@ Module Contents
       :type:  TargetNormalizer
 
 
+.. py:class:: TargetExecutionNormalizerSpec
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: normalize
+      :type:  TargetExecutionNormalizer
+
+
 .. py:function:: register_target_detector(name, detect, *, override = False)
 
 .. py:function:: register_target_normalizer(name, normalize, *, override = False)
+
+.. py:function:: register_target_execution_normalizer(name, normalize, *, override = False)
+
+   Register target specialization driven by an execution backend choice.
+
+
+.. py:function:: normalize_target_for_execution(target, execution_backend)
+
+   Apply the first registered execution-aware target specialization.
+
 
 .. py:function:: auto_detect_target()
 
