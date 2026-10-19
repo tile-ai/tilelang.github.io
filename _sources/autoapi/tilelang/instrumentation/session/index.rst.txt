@@ -40,7 +40,7 @@ Module Contents
 
 .. py:class:: CodegenEvent
 
-   One explicit backend code-generation call within a compile session.
+   One backend code-generation call; ``role=None`` means unspecified.
 
 
    .. py:attribute:: name
@@ -53,6 +53,12 @@ Module Contents
 
    .. py:attribute:: target
       :type:  Any
+
+
+   .. py:attribute:: role
+      :type:  Literal['device', 'host'] | None
+      :value: None
+
 
 
 .. py:class:: PassInstrumentationTool
@@ -183,9 +189,9 @@ Module Contents
    they must not attach a duplicate set.
 
 
-.. py:function:: run_codegen_with_instrumentation(name, mod, target, call)
+.. py:function:: run_codegen_with_instrumentation(name, mod, target, call, *, role = None)
 
-   Run an explicit backend codegen call through the active session.
+   Run codegen through the active session, leaving omitted roles unspecified.
 
 
 .. py:function:: pass_pipeline(name)

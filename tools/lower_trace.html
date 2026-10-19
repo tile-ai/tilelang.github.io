@@ -920,13 +920,16 @@ open<span class="w"> </span>tmp/lower_trace_dir/my_script/report.html
 <p>A single run produces the following layout under <code class="docutils literal notranslate"><span class="pre">TL_LOWER_TRACE_DIR</span></code>:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;TL_LOWER_TRACE_DIR&gt;/
 └── &lt;script_name&gt;/                      # derived from sys.argv[0], e.g. "my_script"
-    ├── report.html                # symlink → latest run's report
-    ├── codegen.cpp                     # generated codegen source (editable, see below)
-    ├── codegen.cpp.original            # baseline snapshot for edit/recompile workflow
-    ├── codegen.cpp.latest              # actual codegen output of the most recent run
+    ├── report.html                     # symlink → latest run's report
+    ├── codegen_device.cpp              # generated device source (editable, see below)
+    ├── codegen_device.cpp.original     # device baseline for edit/recompile workflow
+    ├── codegen_device.cpp.latest       # latest generated device source
+    ├── codegen_host.cpp                # generated CPU wrapper, when host codegen runs
+    ├── codegen_host.cpp.original       # independent host baseline
+    ├── codegen_host.cpp.latest         # latest generated host source
     └── .run_records/
         └── run_&lt;YYYYMMDD_HHMMSS_ffffff&gt;_&lt;pid&gt;_&lt;unique-id&gt;/
-            ├── report.html        # this run's full report
+            ├── report.html             # this run's full report
             ├── pipeline_c/             # one subdir per phase (example)
             │   ├── 00_BindTarget_before.tir
             │   ├── 00_BindTarget_after.tir
@@ -935,15 +938,28 @@ open<span class="w"> </span>tmp/lower_trace_dir/my_script/report.html
             ├── phase2_optimize/        # another phase (illustrative)
             │   └── ...
             ├── codegen/
-            │   ├── 42_codegen_before.tir
-            │   └── 42_codegen_after.cpp
+            │   ├── 42_codegen_device_before.tir
+            │   ├── 42_codegen_device_after.cpp
+            │   ├── 49_codegen_host_before.tir
+            │   └── 49_codegen_host_after.cpp
             └── unscoped/               # passes outside any pipeline window
                 └── ...
 </pre></div>
 </div>
 <p>Each phase gets its own subdirectory; passes are numbered globally (<code class="docutils literal notranslate"><span class="pre">00_</span></code>, <code class="docutils literal notranslate"><span class="pre">01_</span></code>,
 …) so ordering is unambiguous. Codegen records write the <em>after</em> artifact as
-<code class="docutils literal notranslate"><span class="pre">.cpp</span></code> (the generated source), while ordinary passes use <code class="docutils literal notranslate"><span class="pre">.tir</span></code> for both sides.</p>
+<code class="docutils literal notranslate"><span class="pre">.cpp</span></code> (the generated source), while ordinary passes use <code class="docutils literal notranslate"><span class="pre">.tir</span></code> for both sides.
+Both device and host records belong to the <code class="docutils literal notranslate"><span class="pre">codegen</span></code> phase, with names
+<code class="docutils literal notranslate"><span class="pre">codegen_device</span></code> and <code class="docutils literal notranslate"><span class="pre">codegen_host</span></code> respectively. Host files and records appear
+only when the execution backend invokes host codegen. Each working file has its
+own baseline, latest output, and backups; host codegen cannot overwrite the
+device working file or its editing state.</p>
+<p>The standard backend wrappers explicitly identify each event as device or host
+codegen. Generic instrumentation calls that omit <code class="docutils literal notranslate"><span class="pre">role</span></code> leave it unspecified
+(<code class="docutils literal notranslate"><span class="pre">None</span></code>): these retain the <code class="docutils literal notranslate"><span class="pre">codegen</span></code> record name and default <code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code> working
+file. An explicit <code class="docutils literal notranslate"><span class="pre">codegen_output</span></code> path is used unchanged for such events.
+Custom callers should supply a role to distinguish device and host output;
+unspecified events share the legacy working file and edit state.</p>
 </section>
 </section>
 <section id="programmatic-api">
@@ -1042,12 +1058,19 @@ vars (or sensible defaults) when omitted.</p>
 <td><p><code class="docutils literal notranslate"><span class="pre">TL_LOWER_TRACE_DIR</span></code>, then <code class="docutils literal notranslate"><span class="pre">./tmp/lower_trace_dir</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">codegen_output</span></code></p></td>
-<td><p>Path to save the generated codegen source (enables the edit-recompile workflow). Pass <code class="docutils literal notranslate"><span class="pre">None</span></code> explicitly to suppress. Defaults to <code class="docutils literal notranslate"><span class="pre">&lt;script_dir&gt;/codegen.cpp</span></code> in <code class="docutils literal notranslate"><span class="pre">html</span></code>/<code class="docutils literal notranslate"><span class="pre">both</span></code> mode; <code class="docutils literal notranslate"><span class="pre">None</span></code> (no file) in <code class="docutils literal notranslate"><span class="pre">terminal</span></code> mode unless overridden.</p></td>
-<td><p></p></td>
+<td><p>Device working-file path; a host working-file path is derived when host codegen runs. Pass <code class="docutils literal notranslate"><span class="pre">None</span></code> explicitly to suppress both working files.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&lt;script_dir&gt;/codegen_device.cpp</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;script_dir&gt;/codegen_host.cpp</span></code> in <code class="docutils literal notranslate"><span class="pre">html</span></code>/<code class="docutils literal notranslate"><span class="pre">both</span></code> mode; no working files in <code class="docutils literal notranslate"><span class="pre">terminal</span></code> mode</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>An explicit <code class="docutils literal notranslate"><span class="pre">codegen_output=&quot;foo.cpp&quot;</span></code> writes device source to <code class="docutils literal notranslate"><span class="pre">foo.cpp</span></code> and
+host source to <code class="docutils literal notranslate"><span class="pre">foo_host.cpp</span></code>. The host path inserts <code class="docutils literal notranslate"><span class="pre">_host</span></code> before the final
+extension: <code class="docutils literal notranslate"><span class="pre">foo.kernel.cpp</span></code> becomes <code class="docutils literal notranslate"><span class="pre">foo.kernel_host.cpp</span></code>, and a path without an
+extension, such as <code class="docutils literal notranslate"><span class="pre">foo</span></code>, becomes <code class="docutils literal notranslate"><span class="pre">foo_host</span></code>. Each path has its own <code class="docutils literal notranslate"><span class="pre">.original</span></code>,
+<code class="docutils literal notranslate"><span class="pre">.latest</span></code>, and backup files. Setting <code class="docutils literal notranslate"><span class="pre">codegen_output=None</span></code> suppresses these
+stable working files and their edit state, while codegen records still appear
+in the trace and raw snapshots remain available.</p>
 <p><code class="docutils literal notranslate"><span class="pre">enable()</span></code> is idempotent — calling it multiple times is safe. Its values are
 snapshotted when a compilation begins, so changing them cannot mutate a kernel
 that is already compiling.</p>
@@ -1121,12 +1144,21 @@ expand/collapse all, <code class="docutils literal notranslate"><span class="pre
 </section>
 <section id="codegen-source-capture-edit-recompile-workflow">
 <h2>Codegen Source Capture &amp; Edit-Recompile Workflow<a class="headerlink" href="#codegen-source-capture-edit-recompile-workflow" title="Link to this heading">¶</a></h2>
-<p>When tracing is enabled, the final codegen step (TIR → C/CUDA/HIP/…) is
-intercepted. The generated source is written to <code class="docutils literal notranslate"><span class="pre">&lt;script_dir&gt;/codegen.cpp</span></code> (or
-the path passed to <code class="docutils literal notranslate"><span class="pre">codegen_output=</span></code>), so you can inspect — and even edit — the
-code that will actually be compiled.</p>
+<p>When tracing is enabled, device and host codegen steps (TIR → C/CUDA/HIP/…)
+are intercepted separately. Device source runs on the GPU or NPU and contains
+the computation, device memory transfers, and synchronization. Host source
+runs on the CPU and wraps runtime operations such as argument checks, output
+allocation, and launching the device kernel.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">html</span></code>/<code class="docutils literal notranslate"><span class="pre">both</span></code> mode, the generated sources are written to
+<code class="docutils literal notranslate"><span class="pre">&lt;script_dir&gt;/codegen_device.cpp</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;script_dir&gt;/codegen_host.cpp</span></code> by default.
+For CUDA and Ascend, <code class="docutils literal notranslate"><span class="pre">tvm_ffi</span></code> invokes both device and host codegen; <code class="docutils literal notranslate"><span class="pre">nvrtc</span></code> and
+<code class="docutils literal notranslate"><span class="pre">cython</span></code> do not invoke a separate host codegen step at this layer. Their runtime
+adapters still provide CPU-side launch logic. Only backends that invoke host
+codegen produce <code class="docutils literal notranslate"><span class="pre">codegen_host.cpp</span></code>.</p>
 <p>To support editing the generated code and re-running with your edits applied,
-IR Lower Trace maintains <strong>three cooperating files</strong>:</p>
+IR Lower Trace maintains <strong>three cooperating files for each codegen role</strong>.
+The device files are shown below; the host files use the same suffixes on
+<code class="docutils literal notranslate"><span class="pre">codegen_host.cpp</span></code> and keep an independent edit state:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -1135,13 +1167,13 @@ IR Lower Trace maintains <strong>three cooperating files</strong>:</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code></p></td>
-<td><p><strong>Working copy</strong> — user-editable. This is what gets compiled when you rerun.</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">codegen_device.cpp</span></code></p></td>
+<td><p><strong>Working copy</strong> — user-editable. Edits are recompiled when the backend supports the workflow described below.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">codegen.cpp.original</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">codegen_device.cpp.original</span></code></p></td>
 <td><p><strong>Baseline</strong> — the codegen snapshot the working copy was last synced from. Written only on init or re-sync, never blindly overwritten.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">codegen.cpp.latest</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">codegen_device.cpp.latest</span></code></p></td>
 <td><p><strong>Latest codegen output</strong> — the actual output of the most recent run, overwritten every run for diff reference.</p></td>
 </tr>
 </tbody>
@@ -1153,7 +1185,7 @@ output) decides how to proceed:</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Situation</p></th>
-<th class="head"><p><code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code> vs <code class="docutils literal notranslate"><span class="pre">.original</span></code></p></th>
+<th class="head"><p>Working copy vs <code class="docutils literal notranslate"><span class="pre">.original</span></code></p></th>
 <th class="head"><p><code class="docutils literal notranslate"><span class="pre">.latest</span></code> vs <code class="docutils literal notranslate"><span class="pre">.original</span></code></p></th>
 <th class="head"><p>Action</p></th>
 <th class="head"><p>Console tag</p></th>
@@ -1169,7 +1201,7 @@ output) decides how to proceed:</p>
 <tr class="row-odd"><td><p>Codegen changed only</p></td>
 <td><p>identical</p></td>
 <td><p><strong>differs</strong></p></td>
-<td><p>Regenerate <code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code> and <code class="docutils literal notranslate"><span class="pre">.original</span></code> from new codegen</p></td>
+<td><p>Regenerate the working copy and <code class="docutils literal notranslate"><span class="pre">.original</span></code> from new codegen</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">REGENERATED</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>User edited only</p></td>
@@ -1193,13 +1225,13 @@ output) decides how to proceed:</p>
 <tr class="row-odd"><td><p>First run (no baseline)</p></td>
 <td><p>—</p></td>
 <td><p>—</p></td>
-<td><p>Initialise <code class="docutils literal notranslate"><span class="pre">.original</span></code>, copy to <code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code></p></td>
+<td><p>Initialise <code class="docutils literal notranslate"><span class="pre">.original</span></code>, copy to the working file</p></td>
 <td><p>(init)</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code> exists without baseline</p></td>
+<tr class="row-even"><td><p>Working copy exists without baseline</p></td>
 <td><p>—</p></td>
 <td><p>—</p></td>
-<td><p>Back up pre-existing <code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code> → <code class="docutils literal notranslate"><span class="pre">.bak</span></code> (<em>safety backup</em>), then initialise baseline</p></td>
+<td><p>Back up the pre-existing working file → <code class="docutils literal notranslate"><span class="pre">.bak</span></code> (<em>safety backup</em>), then initialise baseline</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">INIT-BACKUP</span></code></p></td>
 </tr>
 </tbody>
@@ -1208,21 +1240,23 @@ output) decides how to proceed:</p>
 <blockquote>
 <div><p><strong>Note on <code class="docutils literal notranslate"><span class="pre">.bak</span></code> files:</strong> The backups created by <code class="docutils literal notranslate"><span class="pre">CONFLICT</span></code> and <code class="docutils literal notranslate"><span class="pre">INIT-BACKUP</span></code>
 serve different purposes. <code class="docutils literal notranslate"><span class="pre">INIT-BACKUP</span></code> preserves a pre-existing
-<code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code> of unknown origin before the trace tool takes it over.
+working file of unknown origin before the trace tool takes it over.
 <code class="docutils literal notranslate"><span class="pre">CONFLICT</span></code> preserves the user’s edits before a codegen change overwrites them.
 Recover <code class="docutils literal notranslate"><span class="pre">CONFLICT</span></code> edits with
-<code class="docutils literal notranslate"><span class="pre">diff</span> <span class="pre">codegen.cpp.original.bak</span> <span class="pre">codegen.cpp.bak</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">diff</span> <span class="pre">codegen_device.cpp.original.bak</span> <span class="pre">codegen_device.cpp.bak</span></code> for the device
+working copy, or the equivalent command with <code class="docutils literal notranslate"><span class="pre">codegen_host.cpp</span></code> for the host
+working copy. These backup files are created only when needed.</p>
 </div></blockquote>
 <section id="typical-workflow">
 <h3>Typical Workflow<a class="headerlink" href="#typical-workflow" title="Link to this heading">¶</a></h3>
 <ol class="arabic simple">
-<li><p><strong>Inspect</strong> — Run once with <code class="docutils literal notranslate"><span class="pre">TL_LOWER_TRACE=1</span></code>. Open <code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code> to read
+<li><p><strong>Inspect</strong> — Run once with <code class="docutils literal notranslate"><span class="pre">TL_LOWER_TRACE=1</span></code>. Open <code class="docutils literal notranslate"><span class="pre">codegen_device.cpp</span></code> to read
 the generated source.</p></li>
-<li><p><strong>Edit</strong> — Modify <code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code> (e.g. add a <code class="docutils literal notranslate"><span class="pre">printf</span></code>, tweak a loop). Do <em>not</em>
+<li><p><strong>Edit</strong> — Modify <code class="docutils literal notranslate"><span class="pre">codegen_device.cpp</span></code> (e.g. add a <code class="docutils literal notranslate"><span class="pre">printf</span></code>, tweak a loop). Do <em>not</em>
 touch <code class="docutils literal notranslate"><span class="pre">.original</span></code>.</p></li>
-<li><p><strong>Rerun</strong> — Run again. Because <code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code> differs from <code class="docutils literal notranslate"><span class="pre">.original</span></code> but
-codegen output is unchanged, you’ll see <code class="docutils literal notranslate"><span class="pre">PATCHED</span> <span class="pre">from</span> <span class="pre">…/codegen.cpp</span></code> and your
-edited source is compiled.</p></li>
+<li><p><strong>Rerun</strong> — Run again. Because <code class="docutils literal notranslate"><span class="pre">codegen_device.cpp</span></code> differs from <code class="docutils literal notranslate"><span class="pre">.original</span></code>
+but codegen output is unchanged, you’ll see
+<code class="docutils literal notranslate"><span class="pre">PATCHED</span> <span class="pre">from</span> <span class="pre">…/codegen_device.cpp</span></code> and your edited source is compiled.</p></li>
 <li><p><strong>Iterate</strong> — Keep editing and rerunning. Each run re-injects your working
 copy.</p></li>
 <li><p><strong>If codegen itself changes</strong> (e.g. you modified the TileLang program) — two
@@ -1231,10 +1265,10 @@ outcomes:</p>
 <li><p>If your edits happen to match the new codegen output → <code class="docutils literal notranslate"><span class="pre">SYNCED</span></code> (baseline
 advances, your edits preserved).</p></li>
 <li><p>If both your edits and codegen changed and they differ → <code class="docutils literal notranslate"><span class="pre">CONFLICT</span></code>. Your
-working copy is backed up to <code class="docutils literal notranslate"><span class="pre">codegen.cpp.bak</span></code> and the old baseline to
-<code class="docutils literal notranslate"><span class="pre">codegen.cpp.original.bak</span></code>. Recover your edits with
-<code class="docutils literal notranslate"><span class="pre">diff</span> <span class="pre">codegen.cpp.original.bak</span> <span class="pre">codegen.cpp.bak</span></code>, then re-apply them against
-the freshly regenerated <code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code>.</p></li>
+working copy is backed up to <code class="docutils literal notranslate"><span class="pre">codegen_device.cpp.bak</span></code> and the old baseline to
+<code class="docutils literal notranslate"><span class="pre">codegen_device.cpp.original.bak</span></code>. Recover your edits with
+<code class="docutils literal notranslate"><span class="pre">diff</span> <span class="pre">codegen_device.cpp.original.bak</span> <span class="pre">codegen_device.cpp.bak</span></code>, then re-apply
+them against the freshly regenerated <code class="docutils literal notranslate"><span class="pre">codegen_device.cpp</span></code>.</p></li>
 </ul>
 </li>
 </ol>
@@ -1247,7 +1281,7 @@ source-only modules, then compile the (edited) source string at runtime via
 NVRTC / Cython / CuTeDSL.</p>
 <p>The default <code class="docutils literal notranslate"><span class="pre">tvm_ffi</span></code> backend pre-compiles device code to a binary (PTX/hsaco)
 from TIR during codegen. When the <code class="docutils literal notranslate"><span class="pre">tvm_ffi</span></code> backend is active and you edit
-<code class="docutils literal notranslate"><span class="pre">codegen.cpp</span></code>, you’ll see a <code class="docutils literal notranslate"><span class="pre">NOTE</span></code> message indicating that your edits are
+<code class="docutils literal notranslate"><span class="pre">codegen_device.cpp</span></code>, you’ll see a <code class="docutils literal notranslate"><span class="pre">NOTE</span></code> message indicating that your edits are
 recorded in the trace for diff viewing but were <strong>not recompiled</strong>. To use
 edit-and-recompile, switch to a source-compiling backend:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For CUDA targets:</span>
@@ -1257,6 +1291,8 @@ edit-and-recompile, switch to a source-compiling backend:</p>
 <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">execution_backend</span><span class="o">=</span><span class="s2">"cython"</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Capturing host source and preserving host edits does not add host
+edit-and-recompile support; the existing backend requirements still apply.</p>
 </div>
 </section>
 </section>
@@ -1280,9 +1316,10 @@ the compile session. This is a normal pipeline boundary, not a class
 monkey-patch.</p></li>
 <li><p><strong>Explicit backend codegen hook</strong> — TileLang’s device/host codegen registry
 routes each <code class="docutils literal notranslate"><span class="pre">target.build.*</span></code> call through the active compile session. This
-captures final TIR → source lowering and drives the three-file
-edit-recompile workflow without replacing a process-global FFI. When no
-session is active, the registry invokes the underlying codegen directly.</p></li>
+captures final TIR → source lowering, labels events as device or host, and
+drives each role’s three-file edit-recompile workflow without replacing a
+process-global FFI. When no session is active, the registry invokes the
+underlying codegen directly.</p></li>
 </ol>
 <p>Pass records are appended <strong>at runtime</strong> (not pre-registered), so conditional
 passes that are skipped at runtime — e.g. <code class="docutils literal notranslate"><span class="pre">LetInline</span></code> when

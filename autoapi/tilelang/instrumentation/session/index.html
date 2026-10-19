@@ -847,7 +847,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.instrumentation.session.CodegenEvent" title="tilelang.instrumentation.session.CodegenEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CodegenEvent</span></code></a></p></td>
-<td><p>One explicit backend code-generation call within a compile session.</p></td>
+<td><p>One backend code-generation call; <code class="docutils literal notranslate"><span class="pre">role=None</span></code> means unspecified.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.instrumentation.session.PassInstrumentationTool" title="tilelang.instrumentation.session.PassInstrumentationTool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PassInstrumentationTool</span></code></a></p></td>
 <td><p>Per-compile extension point for pass and codegen developer tools.</p></td>
@@ -885,8 +885,8 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.instrumentation.session.instrument_current_pass_context" title="tilelang.instrumentation.session.instrument_current_pass_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instrument_current_pass_context</span></code></a>()</p></td>
 <td><p>Temporarily add active-session instruments to TVM's current context.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.instrumentation.session.run_codegen_with_instrumentation" title="tilelang.instrumentation.session.run_codegen_with_instrumentation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_codegen_with_instrumentation</span></code></a>(name, mod, target, call)</p></td>
-<td><p>Run an explicit backend codegen call through the active session.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.instrumentation.session.run_codegen_with_instrumentation" title="tilelang.instrumentation.session.run_codegen_with_instrumentation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_codegen_with_instrumentation</span></code></a>(name, mod, target, ...)</p></td>
+<td><p>Run codegen through the active session, leaving omitted roles unspecified.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.instrumentation.session.pass_pipeline" title="tilelang.instrumentation.session.pass_pipeline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pass_pipeline</span></code></a>(name)</p></td>
 <td><p>Run a backend pipeline under its phase and compile-session tools.</p></td>
@@ -900,7 +900,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.instrumentation.session.CodegenEvent">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.instrumentation.session.</span></span><span class="sig-name descname"><span class="pre">CodegenEvent</span></span><a class="headerlink" href="#tilelang.instrumentation.session.CodegenEvent" title="Link to this definition">¶</a></dt>
-<dd><p>One explicit backend code-generation call within a compile session.</p>
+<dd><p>One backend code-generation call; <code class="docutils literal notranslate"><span class="pre">role=None</span></code> means unspecified.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.instrumentation.session.CodegenEvent.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#tilelang.instrumentation.session.CodegenEvent.name" title="Link to this definition">¶</a></dt>
@@ -914,6 +914,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.instrumentation.session.CodegenEvent.target">
 <span class="sig-name descname"><span class="pre">target</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#tilelang.instrumentation.session.CodegenEvent.target" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.instrumentation.session.CodegenEvent.role">
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'device'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'host'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.instrumentation.session.CodegenEvent.role" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1193,8 +1198,8 @@ they must not attach a duplicate set.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.instrumentation.session.run_codegen_with_instrumentation">
-<span class="sig-prename descclassname"><span class="pre">tilelang.instrumentation.session.</span></span><span class="sig-name descname"><span class="pre">run_codegen_with_instrumentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.instrumentation.session.run_codegen_with_instrumentation" title="Link to this definition">¶</a></dt>
-<dd><p>Run an explicit backend codegen call through the active session.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.instrumentation.session.</span></span><span class="sig-name descname"><span class="pre">run_codegen_with_instrumentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.instrumentation.session.run_codegen_with_instrumentation" title="Link to this definition">¶</a></dt>
+<dd><p>Run codegen through the active session, leaving omitted roles unspecified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1202,6 +1207,7 @@ they must not attach a duplicate set.</p>
 <li><p><strong>mod</strong> (<em>Any</em>)</p></li>
 <li><p><strong>target</strong> (<em>Any</em>)</p></li>
 <li><p><strong>call</strong> (<em>collections.abc.Callable</em><em>[</em><em>[</em><em>]</em><em>, </em><em>_CodegenResult</em><em>]</em>)</p></li>
+<li><p><strong>role</strong> (<em>Literal</em><em>[</em><em>'device'</em><em>, </em><em>'host'</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1290,6 +1296,7 @@ they must not attach a duplicate set.</p>
 <li><a class="reference internal" href="#tilelang.instrumentation.session.CodegenEvent.name"><code class="docutils literal notranslate"><span class="pre">CodegenEvent.name</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.instrumentation.session.CodegenEvent.mod"><code class="docutils literal notranslate"><span class="pre">CodegenEvent.mod</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.instrumentation.session.CodegenEvent.target"><code class="docutils literal notranslate"><span class="pre">CodegenEvent.target</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.instrumentation.session.CodegenEvent.role"><code class="docutils literal notranslate"><span class="pre">CodegenEvent.role</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.instrumentation.session.PassInstrumentationTool"><code class="docutils literal notranslate"><span class="pre">PassInstrumentationTool</span></code></a><ul>
