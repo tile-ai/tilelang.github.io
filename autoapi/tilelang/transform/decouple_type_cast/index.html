@@ -935,7 +935,7 @@ instead of being hoisted to the kernel entry.</p>
 <td><p>Return <code class="docutils literal notranslate"><span class="pre">stmt</span></code> with dominating flat Bind values substituted into uses.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.transform.decouple_type_cast.extract_if_condition" title="tilelang.transform.decouple_type_cast.extract_if_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_if_condition</span></code></a>(stmt)</p></td>
-<td><p>Extract IfThenElse condition from statement if present.</p></td>
+<td><p>Combine leading guards without evaluating an inner guard eagerly.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.transform.decouple_type_cast.DecoupleTypeCast" title="tilelang.transform.decouple_type_cast.DecoupleTypeCast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DecoupleTypeCast</span></code></a>()</p></td>
 <td><p>Create a TVM pass that decouples type cast vectorization constraints.</p></td>
@@ -1069,16 +1069,13 @@ in the compute loop as broadcasts.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.extract_if_condition">
 <span class="sig-prename descclassname"><span class="pre">tilelang.transform.decouple_type_cast.</span></span><span class="sig-name descname"><span class="pre">extract_if_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stmt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.extract_if_condition" title="Link to this definition">¶</a></dt>
-<dd><p>Extract IfThenElse condition from statement if present.</p>
+<dd><p>Combine leading guards without evaluating an inner guard eagerly.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A tuple of (condition, inner_body). If no IfThenElse, returns (None, stmt).</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stmt</strong> (<em>tvm.tirx.Stmt</em>)</p>
 </dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>stmt</strong> (<em>tvm.tirx.Stmt</em>)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple[tvm.tirx.PrimExpr | None, tvm.tirx.Stmt]</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[tvm.tirx.PrimExpr | None, tvm.tirx.Stmt]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1114,7 +1111,7 @@ cache buffers as intermediate stages.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.AccessReplacer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.transform.decouple_type_cast.</span></span><span class="sig-name descname"><span class="pre">AccessReplacer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">store_entries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_entries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.AccessReplacer" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.transform.decouple_type_cast.</span></span><span class="sig-name descname"><span class="pre">AccessReplacer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">store_entries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_entries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordinal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.AccessReplacer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tvm.tirx.PyStmtExprMutator</span></code></p>
 <p>Mutator to replace memory BufferStores/BufferLoads with cast buffer accesses.</p>
 <p>Matches by both buffer and indices (structural equality) so that accesses
@@ -1124,7 +1121,7 @@ like a[i] and a[i+32] from the same buffer map to different cast buffers.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>store_entries</strong> (<em>list</em><em>[</em><em>CastEntry</em><em>]</em>)</p></li>
 <li><p><strong>load_entries</strong> (<em>list</em><em>[</em><em>CastEntry</em><em>]</em>)</p></li>
-<li><p><strong>loop_var</strong> (<em>tvm.tirx.Var</em>)</p></li>
+<li><p><strong>ordinal</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1139,8 +1136,8 @@ like a[i] and a[i+32] from the same buffer map to different cast buffers.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.AccessReplacer.loop_var">
-<span class="sig-name descname"><span class="pre">loop_var</span></span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.AccessReplacer.loop_var" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.transform.decouple_type_cast.AccessReplacer.ordinal">
+<span class="sig-name descname"><span class="pre">ordinal</span></span><a class="headerlink" href="#tilelang.transform.decouple_type_cast.AccessReplacer.ordinal" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1277,7 +1274,7 @@ while the IR still uses BufferLoad/BufferStore (not tvm_access_ptr).</p>
 <li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.AccessReplacer"><code class="docutils literal notranslate"><span class="pre">AccessReplacer</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.AccessReplacer.store_entries"><code class="docutils literal notranslate"><span class="pre">AccessReplacer.store_entries</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.AccessReplacer.load_entries"><code class="docutils literal notranslate"><span class="pre">AccessReplacer.load_entries</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.AccessReplacer.loop_var"><code class="docutils literal notranslate"><span class="pre">AccessReplacer.loop_var</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.AccessReplacer.ordinal"><code class="docutils literal notranslate"><span class="pre">AccessReplacer.ordinal</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.AccessReplacer.visit_buffer_store_"><code class="docutils literal notranslate"><span class="pre">AccessReplacer.visit_buffer_store_()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.transform.decouple_type_cast.AccessReplacer.visit_buffer_load_"><code class="docutils literal notranslate"><span class="pre">AccessReplacer.visit_buffer_load_()</span></code></a></li>
 </ul>

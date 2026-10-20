@@ -145,9 +145,7 @@ Module Contents
 
 .. py:function:: extract_if_condition(stmt)
 
-   Extract IfThenElse condition from statement if present.
-
-   :returns: A tuple of (condition, inner_body). If no IfThenElse, returns (None, stmt).
+   Combine leading guards without evaluating an inner guard eagerly.
 
 
 .. py:data:: CastEntry
@@ -170,7 +168,7 @@ Module Contents
 
 
 
-.. py:class:: AccessReplacer(store_entries, load_entries, loop_var)
+.. py:class:: AccessReplacer(store_entries, load_entries, ordinal)
 
    Bases: :py:obj:`tvm.tirx.PyStmtExprMutator`
 
@@ -187,7 +185,7 @@ Module Contents
    .. py:attribute:: load_entries
 
 
-   .. py:attribute:: loop_var
+   .. py:attribute:: ordinal
 
 
    .. py:method:: visit_buffer_store_(op)
