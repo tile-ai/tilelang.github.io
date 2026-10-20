@@ -117,7 +117,7 @@ Module Contents
 
 .. py:function:: bar_sync_ptx(barrier_id, number_of_threads)
 
-.. py:class:: CumSum1D(threads, reverse)
+.. py:class:: CumSum1D(threads, reverse, thread_offset = 0)
 
    1D cumulative sum operation.
    Based on tl::CumSum1D from scan.h
@@ -125,12 +125,18 @@ Module Contents
    Template params:
        threads: Number of threads
        reverse: Whether to cumsum in reverse order
+       thread_offset: First participating thread in the block
 
 
    .. py:attribute:: threads
 
 
    .. py:attribute:: reverse
+
+
+   .. py:attribute:: thread_offset
+      :value: 0
+
 
 
    .. py:attribute:: WARP_SIZE
@@ -148,7 +154,7 @@ Module Contents
 
 
 
-.. py:class:: CumSum2D(threads, dim, reverse)
+.. py:class:: CumSum2D(threads, dim, reverse, thread_offset = 0)
 
    2D cumulative sum operation.
    Based on tl::CumSum2D from scan.h
@@ -157,6 +163,7 @@ Module Contents
        threads: Number of threads (must be power of 2, 32-1024)
        dim: Axis along which to cumsum (0 or 1)
        reverse: Whether to cumsum in reverse order
+       thread_offset: First participating thread in the block
 
 
    .. py:attribute:: threads
@@ -166,6 +173,11 @@ Module Contents
 
 
    .. py:attribute:: reverse
+
+
+   .. py:attribute:: thread_offset
+      :value: 0
+
 
 
    .. py:attribute:: WARP_SIZE
@@ -187,7 +199,7 @@ Module Contents
 
 
 
-.. py:class:: CumMax1D(threads, reverse)
+.. py:class:: CumMax1D(threads, reverse, thread_offset = 0)
 
    1D cumulative maximum operation.
    Based on tl::CumMax1D from scan.h
@@ -199,6 +211,11 @@ Module Contents
    .. py:attribute:: reverse
 
 
+   .. py:attribute:: thread_offset
+      :value: 0
+
+
+
    .. py:attribute:: WARP_SIZE
       :value: 32
 
@@ -207,7 +224,7 @@ Module Contents
    .. py:method:: run(src, dst, N)
 
 
-.. py:class:: CumMax2D(threads, dim, reverse)
+.. py:class:: CumMax2D(threads, dim, reverse, thread_offset = 0)
 
    2D cumulative maximum operation.
    Based on tl::CumMax2D from scan.h
@@ -220,6 +237,11 @@ Module Contents
 
 
    .. py:attribute:: reverse
+
+
+   .. py:attribute:: thread_offset
+      :value: 0
+
 
 
    .. py:attribute:: WARP_SIZE
