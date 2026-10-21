@@ -50,6 +50,7 @@ Functions
    tilelang.ascend.language.simd.vld
    tilelang.ascend.language.simd.vld2
    tilelang.ascend.language.simd.vsts
+   tilelang.ascend.language.simd.vst2
    tilelang.ascend.language.simd.vsstb
    tilelang.ascend.language.simd.make_ubuf_ptr
    tilelang.ascend.language.simd.vadd
@@ -274,6 +275,16 @@ Module Contents
    offsets in ``addr``.
    Optional ``extent`` overrides the default access_ptr footprint (e.g. 8 for
    a dense PAT_VL8 NORM_B16 recip pack).
+
+
+.. py:function:: vst2(addr, src0, src1)
+
+   Interleave two full vectors into UB with one dual-source store.
+
+   Writes ``src0[0], src1[0], src0[1], src1[1], ...`` (512 bytes).
+   Sources and destination must have the same 8-, 16-, or 32-bit element
+   dtype. The destination must be 32-byte aligned. There is no mask;
+   a pre-wrapped access_ptr must cover both vectors.
 
 
 .. py:function:: vsstb(src, base, stride, mask=None, update=False)
