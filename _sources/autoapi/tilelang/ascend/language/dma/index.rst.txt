@@ -44,8 +44,13 @@ Module Contents
    >>> T.ascend_set_copy_pad_value(0.0, dtype="float32")
 
 
-.. py:function:: ascend_nd2nz_post_copy(dst, src, rows, cols, full_rows, dst_dtype)
+.. py:function:: ascend_nd2nz_post_copy(dst, src, rows, cols, *, src_pitch, dst_pitch, dtype)
 
-   Ascend ND->NZ post-copy from UB scratch to L1 with NZ pointer correction.
+   Copy a prepacked NZ region from UB to L1 using explicit storage pitches.
+
+   ``rows`` and ``cols`` describe this transfer. Pitches are the distance
+   between C0-group starts in 32-byte blocks, independent of the region size.
+   Both pointers must include the region origin and be 32-byte aligned.
+   This operation does not initialize gaps or convert element types.
 
 

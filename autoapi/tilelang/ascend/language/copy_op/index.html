@@ -931,8 +931,9 @@ lowers the copy (GM↔L1 L2 cache control, ND/NZ transpose, MTE pad handling,
 Cube unit-flag control for the following MAD, sub-block routing).</p>
 <p>A UB-to-UB copy from a dense source into a destination annotated with
 <code class="docutils literal notranslate"><span class="pre">make_ascend_compact_nz_layout</span></code> lowers to the ND-to-NZ scatter. The
-destination allocation must reserve one padding row, and the copied region
-must exclude that row (for example, <code class="docutils literal notranslate"><span class="pre">T.copy(src,</span> <span class="pre">dst[:rows,</span> <span class="pre">:])</span></code>).</p>
+destination allocation includes any desired padding rows, and the copied
+region excludes them (for example, <code class="docutils literal notranslate"><span class="pre">T.copy(src,</span> <span class="pre">dst[:rows,</span> <span class="pre">:])</span></code>).
+Partial NZ-to-L1 copies derive both pitches from the complete layouts.</p>
 <p>A copy whose destination is an MX scale-factor handle
 (<code class="xref py py-func docutils literal notranslate"><span class="pre">tilelang.ascend.language.alloc_l0a_sf()</span></code> /
 <code class="xref py py-func docutils literal notranslate"><span class="pre">alloc_l0b_sf()</span></code>) loads the per-block

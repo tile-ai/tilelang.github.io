@@ -849,8 +849,8 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.language.dma.ascend_set_copy_pad_value" title="tilelang.ascend.language.dma.ascend_set_copy_pad_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascend_set_copy_pad_value</span></code></a>(value[, dtype])</p></td>
 <td><p>Set the padding fill value for subsequent Ascend padded MTE copies.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.language.dma.ascend_nd2nz_post_copy" title="tilelang.ascend.language.dma.ascend_nd2nz_post_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascend_nd2nz_post_copy</span></code></a>(dst, src, rows, cols, ...)</p></td>
-<td><p>Ascend ND-&gt;NZ post-copy from UB scratch to L1 with NZ pointer correction.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.language.dma.ascend_nd2nz_post_copy" title="tilelang.ascend.language.dma.ascend_nd2nz_post_copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascend_nd2nz_post_copy</span></code></a>(dst, src, rows, cols, *, ...)</p></td>
+<td><p>Copy a prepacked NZ region from UB to L1 using explicit storage pitches.</p></td>
 </tr>
 </tbody>
 </table>
@@ -888,11 +888,15 @@ for a typed PrimExpr it defaults to <code class="docutils literal notranslate"><
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.ascend.language.dma.ascend_nd2nz_post_copy">
-<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.language.dma.</span></span><span class="sig-name descname"><span class="pre">ascend_nd2nz_post_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.language.dma.ascend_nd2nz_post_copy" title="Link to this definition">¶</a></dt>
-<dd><p>Ascend ND-&gt;NZ post-copy from UB scratch to L1 with NZ pointer correction.</p>
+<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.language.dma.</span></span><span class="sig-name descname"><span class="pre">ascend_nd2nz_post_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.language.dma.ascend_nd2nz_post_copy" title="Link to this definition">¶</a></dt>
+<dd><p>Copy a prepacked NZ region from UB to L1 using explicit storage pitches.</p>
+<p><code class="docutils literal notranslate"><span class="pre">rows</span></code> and <code class="docutils literal notranslate"><span class="pre">cols</span></code> describe this transfer. Pitches are the distance
+between C0-group starts in 32-byte blocks, independent of the region size.
+Both pointers must include the region origin and be 32-byte aligned.
+This operation does not initialize gaps or convert element types.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dst_dtype</strong> (<em>str</em>)</p>
+<dd class="field-odd"><p><strong>dtype</strong> (<em>str</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>

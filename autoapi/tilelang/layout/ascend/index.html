@@ -917,14 +917,14 @@ forward map is <code class="docutils literal notranslate"><span class="pre">(..,
 extent of every leading stage up to 16.  A logical
 <code class="docutils literal notranslate"><span class="pre">[...,</span> <span class="pre">rows,</span> <span class="pre">cols]</span></code> buffer is stored as consecutive
 <code class="docutils literal notranslate"><span class="pre">[C0-group,</span> <span class="pre">rows,</span> <span class="pre">C0]</span></code> blocks, with all leading dimensions flattened
-into the C0-group axis.  Consequently, a padded <code class="docutils literal notranslate"><span class="pre">rows</span> <span class="pre">=</span> <span class="pre">tile_rows</span> <span class="pre">+</span> <span class="pre">1</span></code>
-stage has exactly the source pitch expected by
-<code class="docutils literal notranslate"><span class="pre">ascend_nd2nz_post_copy</span></code>.</p>
+into the C0-group axis.  The allocated row extent determines the pitch in 32-byte blocks,
+including any trailing gap rows. Partial copies retain that pitch.</p>
 <p>This layout is intended for UB data that is produced directly in NZ order
 (for example with <code class="docutils literal notranslate"><span class="pre">vsstb</span></code> or a layout-driven <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>) and then copied
 to L1. It is not an L1 Cube operand layout. For an ND-to-NZ <code class="docutils literal notranslate"><span class="pre">T.copy</span></code>, the
-allocation’s row extent must include one trailing padding row while the
-copied destination region excludes it.</p>
+allocation’s row extent includes any desired padding, for example
+<code class="docutils literal notranslate"><span class="pre">(tile_rows</span> <span class="pre">+</span> <span class="pre">1,</span> <span class="pre">cols)</span></code>. Copy only the valid region with
+<code class="docutils literal notranslate"><span class="pre">T.copy(src,</span> <span class="pre">dst[:tile_rows,</span> <span class="pre">:])</span></code>; gap rows are not initialized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>buffer</strong> (<em>tilelang._typing.BufferLikeType</em>)</p>
