@@ -41,10 +41,8 @@ Module Contents
 
    Clamps the input value dst between [min_val, max_val]
 
-   Floating-point ``NaN`` values in the input or either bound propagate to
-   the result. When ``min_val > max_val``, the result is ``max_val`` (unless
-   an operand is ``NaN``), matching ``torch.clamp``. Each operand is evaluated
-   once, and vector operands are clamped independently in each lane.
+   Equivalent to ``T.min(T.max(dst, min_val), max_val)``. NaN behavior follows
+   the target's min/max operations without additional checks.
 
    :param dst: Input value to be clamped
    :param min_val: Minimum value
