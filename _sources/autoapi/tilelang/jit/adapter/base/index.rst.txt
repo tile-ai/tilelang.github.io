@@ -26,6 +26,14 @@ Classes
    tilelang.jit.adapter.base.BaseKernelAdapter
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.jit.adapter.base.output_allocation_stream
+
+
 Module Contents
 ---------------
 
@@ -44,6 +52,16 @@ Module Contents
 
 
 .. py:data:: CachedTextSourceLike
+
+.. py:function:: output_allocation_stream(stream, device)
+
+   Return the caller-supplied launch stream when outputs must be allocated on it.
+
+   torch's caching allocator orders reuse of a block only after earlier work on
+   the stream the block was allocated on, so tensors written by a kernel launched
+   on ``stream`` are allocated on ``stream``. ``None`` means the launch stream is
+   the current stream, where a plain ``torch.empty`` is already correct.
+
 
 .. py:class:: BaseKernelAdapter(mod, params, result_idx)
 

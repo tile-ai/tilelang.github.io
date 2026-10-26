@@ -868,6 +868,18 @@
 </table>
 </div>
 </section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.jit.adapter.base.output_allocation_stream" title="tilelang.jit.adapter.base.output_allocation_stream"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_allocation_stream</span></code></a>(stream, device)</p></td>
+<td><p>Return the caller-supplied launch stream when outputs must be allocated on it.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py class">
@@ -889,6 +901,27 @@
 <dt class="sig sig-object py" id="tilelang.jit.adapter.base.CachedTextSourceLike">
 <span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.base.</span></span><span class="sig-name descname"><span class="pre">CachedTextSourceLike</span></span><a class="headerlink" href="#tilelang.jit.adapter.base.CachedTextSourceLike" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.jit.adapter.base.output_allocation_stream">
+<span class="sig-prename descclassname"><span class="pre">tilelang.jit.adapter.base.</span></span><span class="sig-name descname"><span class="pre">output_allocation_stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.jit.adapter.base.output_allocation_stream" title="Link to this definition">¶</a></dt>
+<dd><p>Return the caller-supplied launch stream when outputs must be allocated on it.</p>
+<p>torch’s caching allocator orders reuse of a block only after earlier work on
+the stream the block was allocated on, so tensors written by a kernel launched
+on <code class="docutils literal notranslate"><span class="pre">stream</span></code> are allocated on <code class="docutils literal notranslate"><span class="pre">stream</span></code>. <code class="docutils literal notranslate"><span class="pre">None</span></code> means the launch stream is
+the current stream, where a plain <code class="docutils literal notranslate"><span class="pre">torch.empty</span></code> is already correct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stream</strong> (<em>int</em>)</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>torch.cuda.Stream | None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.jit.adapter.base.BaseKernelAdapter">
@@ -1050,6 +1083,7 @@ compilation target. If neither NPU nor CUDA is available, returns
 <li><a class="reference internal" href="#">tilelang.jit.adapter.base</a><ul>
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.CachedTextSource"><code class="docutils literal notranslate"><span class="pre">CachedTextSource</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.CachedTextSource.text"><code class="docutils literal notranslate"><span class="pre">CachedTextSource.text</span></code></a></li>
@@ -1057,6 +1091,7 @@ compilation target. If neither NPU nor CUDA is available, returns
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.CachedTextSourceLike"><code class="docutils literal notranslate"><span class="pre">CachedTextSourceLike</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.jit.adapter.base.output_allocation_stream"><code class="docutils literal notranslate"><span class="pre">output_allocation_stream()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.BaseKernelAdapter"><code class="docutils literal notranslate"><span class="pre">BaseKernelAdapter</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.BaseKernelAdapter.func"><code class="docutils literal notranslate"><span class="pre">BaseKernelAdapter.func</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.jit.adapter.base.BaseKernelAdapter.mod"><code class="docutils literal notranslate"><span class="pre">BaseKernelAdapter.mod</span></code></a></li>
