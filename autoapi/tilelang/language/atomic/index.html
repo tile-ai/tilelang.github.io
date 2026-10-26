@@ -917,8 +917,11 @@ If provided, it is translated to the corresponding numeric memory-order id befor
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use in parallel reduction to find global maximum</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">find_max</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># `result[0]` must already hold a lower bound for the domain when the</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># kernel is launched: an initialization written here would run in every</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># thread and could overwrite an update another thread already made.</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">thread_binding</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="s2">"threadIdx.x"</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">atomic_max</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">atomic_max</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># a whole-buffer destination applies once</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Tensor-to-tensor atomic max (tile-region based)</span>
@@ -960,8 +963,9 @@ If provided, it is translated to the corresponding numeric memory-order id befor
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Find minimum across threads</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">find_min</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># As above, but `result[0]` has to hold an upper bound for the domain.</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">thread_binding</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="s2">"threadIdx.x"</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">atomic_min</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">atomic_min</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># a whole-buffer destination applies once</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Track minimum with previous value</span>
@@ -1015,8 +1019,9 @@ exposes <code class="docutils literal notranslate"><span class="pre">use_tma</sp
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Parallel sum reduction</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">parallel_sum</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># As above: the identity for a sum is zero.</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">thread_binding</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="s2">"threadIdx.x"</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">atomic_add</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">atomic_add</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># a whole-buffer destination applies once</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get previous value for debugging</span>
