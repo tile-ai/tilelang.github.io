@@ -52,7 +52,10 @@ Module Contents
 
    :param buffer: Input buffer to reduce
    :type buffer: tirx.Buffer
-   :param out: Output buffer to store results
+   :param out: Output buffer whose dtype also determines accumulation
+               precision. Sub-byte numeric dtypes (such as FP4/int4) are unsupported;
+               use float16/float32 or an integer dtype of at least 8 bits. Boolean
+               reductions are allowed. The input may use a narrower dtype.
    :type out: tirx.Buffer
    :param reduce_type: Type of reduction ('max', 'min', 'sum', 'abssum')
    :type reduce_type: str
