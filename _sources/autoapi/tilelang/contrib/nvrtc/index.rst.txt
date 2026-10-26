@@ -10,6 +10,7 @@ Functions
 .. autoapisummary::
 
    tilelang.contrib.nvrtc.get_nvrtc_version
+   tilelang.contrib.nvrtc.default_compile_options
    tilelang.contrib.nvrtc.compile_cuda
 
 
@@ -17,6 +18,14 @@ Module Contents
 ---------------
 
 .. py:function:: get_nvrtc_version()
+
+   Return the loaded NVRTC's version, cached for this process.
+
+
+.. py:function:: default_compile_options(compile_flags = None)
+
+   Extend the common CUDA compile options with NVRTC header compatibility.
+
 
 .. py:function:: compile_cuda(code, target_format = 'ptx', arch = None, options = None, verbose = False)
 
@@ -26,8 +35,11 @@ Module Contents
    :type code: str
    :param target_format: The target format of nvrtc compiler.
    :type target_format: Literal["ptx", "cubin"]
-   :param arch: The cuda architecture code.
-   :type arch: Optional[int]
+   :param arch: The CUDA architecture code. String tokens preserve the exact suffix,
+                such as "90", "90a", or "100f". Integer values use the legacy
+                architecture-specific suffix for SM90 and newer. If None, use the
+                current target architecture or detect it from the GPU, as in NVCC.
+   :type arch: Optional[Union[int, str]]
    :param options: The additional options.
    :type options: Optional[Union[str, List[str]]]
    :param verbose: Whether to print the verbose output.

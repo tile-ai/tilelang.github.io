@@ -392,6 +392,7 @@
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">tilelang.contrib</a><input aria-label="Toggle navigation of tilelang.contrib" checked="" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../bisheng/index.html">tilelang.contrib.bisheng</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../cc/index.html">tilelang.contrib.cc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cuda_include/index.html">tilelang.contrib.cuda_include</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../cutedsl/index.html">tilelang.contrib.cutedsl</a><input aria-label="Toggle navigation of tilelang.contrib.cutedsl" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../cutedsl/atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cutedsl/cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
@@ -558,7 +559,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../../jit/adapter/libgen/index.html">tilelang.jit.adapter.libgen</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../jit/adapter/nvrtc/index.html">tilelang.jit.adapter.nvrtc</a><input aria-label="Toggle navigation of tilelang.jit.adapter.nvrtc" class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../jit/adapter/nvrtc/adapter/index.html">tilelang.jit.adapter.nvrtc.adapter</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../jit/adapter/nvrtc/include_paths/index.html">tilelang.jit.adapter.nvrtc.include_paths</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../jit/adapter/nvrtc/kernel_cache/index.html">tilelang.jit.adapter.nvrtc.kernel_cache</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../jit/adapter/nvrtc/libgen/index.html">tilelang.jit.adapter.nvrtc.libgen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../jit/adapter/nvrtc/wrapper/index.html">tilelang.jit.adapter.nvrtc.wrapper</a></li>
@@ -862,7 +862,7 @@
 <td><p>Compile cuda code with NVCC from env.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.default_compile_options" title="tilelang.contrib.nvcc.default_compile_options"><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_compile_options</span></code></a>([compile_flags])</p></td>
-<td><p>Build a set of default NVCC compile options for TileLang generated sources.</p></td>
+<td><p>Build common CUDA compile options for TileLang generated sources.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_ptx_from_source" title="tilelang.contrib.nvcc.get_ptx_from_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ptx_from_source</span></code></a>(code[, compile_flags, verbose])</p></td>
 <td><p>Compile CUDA C++ source to PTX using NVCC and return as text.</p></td>
@@ -920,6 +920,9 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_nvcc_compiler" title="tilelang.contrib.nvcc.get_nvcc_compiler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nvcc_compiler</span></code></a>()</p></td>
 <td><p>Get the path to the nvcc compiler</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.nvcc.get_nvcc_version" title="tilelang.contrib.nvcc.get_nvcc_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nvcc_version</span></code></a>()</p></td>
+<td><p>Return the selected NVCC's full version, cached for this process.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1006,15 +1009,15 @@ install, but nvcc still needs MSVC’s host compiler environment.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.nvcc.default_compile_options">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.nvcc.</span></span><span class="sig-name descname"><span class="pre">default_compile_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.nvcc.default_compile_options" title="Link to this definition">¶</a></dt>
-<dd><p>Build a set of default NVCC compile options for TileLang generated sources.</p>
+<dd><p>Build common CUDA compile options for TileLang generated sources.</p>
 <p>Includes C++ standard and common include paths (TileLang templates, CUTLASS,
 CUDA include). Merges user-provided compile flags if given.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>compile_flags</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Additional flags to include. Items are split on whitespace.</p>
+<dd class="field-odd"><p><strong>compile_flags</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>]</em>) – Additional flags to include. Shell quoting and repeated flags are preserved.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of flags suitable for NVCC’s command line.</p>
+<dd class="field-even"><p>Flags shared by NVCC and NVRTC, including caller overrides.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[str]</p>
@@ -1261,6 +1264,17 @@ tl_shuffle_elect, fence_barrier_init) is available on the target.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.nvcc.get_nvcc_version">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.nvcc.</span></span><span class="sig-name descname"><span class="pre">get_nvcc_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.nvcc.get_nvcc_version" title="Link to this definition">¶</a></dt>
+<dd><p>Return the selected NVCC’s full version, cached for this process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[int, Ellipsis]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -1347,6 +1361,7 @@ tl_shuffle_elect, fence_barrier_init) is available on the target.</p>
 <li><a class="reference internal" href="#tilelang.contrib.nvcc.have_pdl"><code class="docutils literal notranslate"><span class="pre">have_pdl()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.nvcc.have_mbarrier"><code class="docutils literal notranslate"><span class="pre">have_mbarrier()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.nvcc.get_nvcc_compiler"><code class="docutils literal notranslate"><span class="pre">get_nvcc_compiler()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.nvcc.get_nvcc_version"><code class="docutils literal notranslate"><span class="pre">get_nvcc_version()</span></code></a></li>
 </ul>
 </li>
 </ul>

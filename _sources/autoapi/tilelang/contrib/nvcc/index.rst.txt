@@ -39,6 +39,7 @@ Functions
    tilelang.contrib.nvcc.have_pdl
    tilelang.contrib.nvcc.have_mbarrier
    tilelang.contrib.nvcc.get_nvcc_compiler
+   tilelang.contrib.nvcc.get_nvcc_version
 
 
 Module Contents
@@ -82,15 +83,15 @@ Module Contents
 
 .. py:function:: default_compile_options(compile_flags = None)
 
-   Build a set of default NVCC compile options for TileLang generated sources.
+   Build common CUDA compile options for TileLang generated sources.
 
    Includes C++ standard and common include paths (TileLang templates, CUTLASS,
    CUDA include). Merges user-provided compile flags if given.
 
-   :param compile_flags: Additional flags to include. Items are split on whitespace.
-   :type compile_flags: Optional[List[str]]
+   :param compile_flags: Additional flags to include. Shell quoting and repeated flags are preserved.
+   :type compile_flags: Optional[Union[List[str], str]]
 
-   :returns: A list of flags suitable for NVCC's command line.
+   :returns: Flags shared by NVCC and NVRTC, including caller overrides.
    :rtype: List[str]
 
 
@@ -249,5 +250,10 @@ Module Contents
 .. py:function:: get_nvcc_compiler()
 
    Get the path to the nvcc compiler
+
+
+.. py:function:: get_nvcc_version()
+
+   Return the selected NVCC's full version, cached for this process.
 
 
