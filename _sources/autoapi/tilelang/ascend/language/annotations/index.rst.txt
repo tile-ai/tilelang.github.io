@@ -5,8 +5,7 @@ tilelang.ascend.language.annotations
 
 .. autoapi-nested-parse::
 
-   Ascend auto-schedule annotations: multi-buffer version control and memory
-   capacity overrides consumed by the Z3 scheduler.
+   Ascend storage placement, multi-buffer versions and scheduling capacity annotations.
 
 
 
@@ -15,6 +14,7 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.ascend.language.annotations.annotate_buffer_addresses
    tilelang.ascend.language.annotations.annotate_buffer_versions
    tilelang.ascend.language.annotations.annotate_manual_multi_buffer
    tilelang.ascend.language.annotations.annotate_unlimit_memory
@@ -22,6 +22,37 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:function:: annotate_buffer_addresses(buffer_addresses)
+
+   Place on-chip buffers at exact byte addresses within their memory pools.
+
+   Supports UB, L1, L0A, L0B, L0C and SS in the Ascend scheduled pipeline.
+   Each placed storage must also have an explicit positive version count in
+   :func:`annotate_buffer_versions`, including ``1`` for unversioned storage.
+   A mode without a count, inferred versions, and manual multi-buffer metadata
+   alone do not satisfy this requirement. Annotation order does not matter.
+
+   Addresses are non-negative Python integers, aligned to 32 bytes for UB/SS,
+   512 for L1/L0A/L0B, and 1024 for L0C. A placement includes all physical
+   versions and layout padding; views of one storage share the same base.
+   Bound L0 scale-factor handles follow their data buffer's placement.
+
+   Partial maps are allowed. Other allocations in a placed pool use the first
+   aligned free interval, without storage reuse. Overlap is rejected even for
+   disjoint lifetimes or positive conflict hints. Different pools and private
+   AIV UBs have independent addresses; common UB storage reserves both UBs.
+   Placement does not change synchronization or ownership.
+
+   Every allocation in a placed pool must have a positive static physical size
+   and fit its hardware capacity, including the 32 KiB UB reservation for SIMT.
+   Pools without placements retain their ordinary allocation behavior.
+
+   .. rubric:: Example
+
+   >>> T.annotate_buffer_versions({left: 2, accum: 1})
+   >>> T.annotate_buffer_addresses({left: 262144, accum: 1024})
+
 
 .. py:function:: annotate_buffer_versions(buffer_versions_map)
 
