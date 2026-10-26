@@ -17,6 +17,7 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.jit.adapter.utils.get_output_scalar_dim_map
    tilelang.jit.adapter.utils.match_global_kernel
    tilelang.jit.adapter.utils.match_declare_kernel
    tilelang.jit.adapter.utils.match_declare_kernel_cutedsl
@@ -36,6 +37,15 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:function:: get_output_scalar_dim_map(func, result_idx)
+
+   Resolve output dimensions to authored scalar argument positions.
+
+   Match Vars only within the PrimFunc: cached KernelParam shapes are loaded
+   separately and do not share Var identities with it. Positional metadata
+   also distinguishes different scalar parameters with the same name.
+
 
 .. py:function:: match_global_kernel(source, annotation = '__global__')
 
