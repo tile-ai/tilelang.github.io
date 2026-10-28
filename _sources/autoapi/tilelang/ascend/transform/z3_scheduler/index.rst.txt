@@ -75,7 +75,7 @@ Module Contents
    This function accepts TVM containers and converts them to Python lists.
 
 
-.. py:function:: z3_schedule_loop_python(num_stages, latencies, iis, resource_flags, data_deps, resource_deps, owner_exclusion_deps, pipe_order_deps, buffer_sizes, memory_groups, stage_order_deps = None, recalculate_buffer_versions = True, enable_offset = False, manual_stages = None, manual_schedule = False, seed = 42, verbose = False)
+.. py:function:: z3_schedule_loop_python(num_stages, latencies, iis, resource_flags, data_deps, resource_deps, owner_exclusion_deps, pipe_order_deps, buffer_sizes, memory_groups, stage_order_deps = None, recalculate_buffer_versions = True, enable_offset = False, manual_stages = None, manual_schedule = False, seed = 42, verbose = False, register_phase_deps = None)
 
    Schedule a loop body with modulo, stage, and storage constraints.
 
@@ -130,6 +130,11 @@ Module Contents
    :type seed: int | None
    :param verbose: Print solver inputs, search progress, and the selected schedule.
    :type verbose: bool
+   :param register_phase_deps: Configuration-register ordering (u, v, physical_wrap, gap),
+                               requiring r[v] + physical_wrap * II >= r[u] + gap. Reaching writes
+                               have already been matched and logical distances converted to a
+                               physical wrap of zero or one. Buffer dependencies stay in data_deps.
+   :type register_phase_deps: list[tuple[int, int, int, int]] | None
 
    :returns: start_times: Start time for each task
              buffer_versions: Number of versions for each buffer
@@ -137,7 +142,7 @@ Module Contents
    :rtype: tuple[list[int], list[int], int]
 
 
-.. py:function:: z3_schedule_loop_ffi(num_stages, latencies, iis, resource_flags, data_deps, resource_deps, owner_exclusion_deps, pipe_order_deps, buffer_sizes, memory_groups, stage_order_deps=None, enable_offset=False, manual_stages=None, manual_schedule=False)
+.. py:function:: z3_schedule_loop_ffi(num_stages, latencies, iis, resource_flags, data_deps, resource_deps, owner_exclusion_deps, pipe_order_deps, buffer_sizes, memory_groups, stage_order_deps=None, enable_offset=False, manual_stages=None, manual_schedule=False, register_phase_deps=None)
 
    FFI wrapper for z3_schedule_loop_python.
 

@@ -28,6 +28,7 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.testing.without_kernel_cache
    tilelang.testing.ascend_backend_compiled
    tilelang.testing.requires_cdna
    tilelang.testing.requires_cuda_or_cdna
@@ -46,6 +47,21 @@ Package Contents
 ----------------
 
 .. py:data:: __all__
+
+.. py:function:: without_kernel_cache()
+
+   Disable the `CacheState` kernel cache for the enclosed block.
+
+   Use it when a test calls `tilelang.compile()` (or `JITImpl.compile()`) and
+   asserts on work that only the compile path performs: the lowered artifact
+   (`Kernel.artifact`) or compile-time diagnostics. A kernel served from the
+   cache carries neither, so such a test passes only on a cold cache unless it
+   opts out.
+
+   The `@tilelang.jit` wrapper keeps its own kernel cache and consults it
+   before `JITImpl.compile()` runs, so repeated jit calls are not covered
+   here. A cache state the caller had already disabled is restored on exit.
+
 
 .. py:function:: ascend_backend_compiled()
 

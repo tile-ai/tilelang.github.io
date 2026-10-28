@@ -15,6 +15,7 @@ Functions
 .. autoapisummary::
 
    tilelang.contrib.bisheng.find_bisheng_path
+   tilelang.contrib.bisheng.get_bisheng_version
    tilelang.contrib.bisheng.find_ld_lld_path
    tilelang.contrib.bisheng.normalize_options
    tilelang.contrib.bisheng.get_npu_arch
@@ -37,6 +38,15 @@ Module Contents
    :rtype: str
 
    :raises RuntimeError: If the compiler cannot be found.
+
+
+.. py:function:: get_bisheng_version()
+
+   Return the selected Bisheng's version line, cached for this process.
+
+   Keep the build time and revision: different Bisheng builds can report the
+   same Clang version. Ignore subsequent lines such as ``InstalledDir`` so
+   relocating an identical compiler does not change its cache identity.
 
 
 .. py:function:: find_ld_lld_path()
