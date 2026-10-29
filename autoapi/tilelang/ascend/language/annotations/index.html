@@ -846,16 +846,19 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_buffer_addresses" title="tilelang.ascend.language.annotations.annotate_buffer_addresses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_buffer_addresses</span></code></a>(buffer_addresses)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_layout" title="tilelang.ascend.language.annotations.annotate_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_layout</span></code></a>(layout_map)</p></td>
+<td><p>Annotate each Buffer view, preserving aliases with distinct Cube layouts.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_buffer_addresses" title="tilelang.ascend.language.annotations.annotate_buffer_addresses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_buffer_addresses</span></code></a>(buffer_addresses)</p></td>
 <td><p>Place on-chip buffers at exact byte addresses within their memory pools.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_buffer_versions" title="tilelang.ascend.language.annotations.annotate_buffer_versions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_buffer_versions</span></code></a>(buffer_versions_map)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_buffer_versions" title="tilelang.ascend.language.annotations.annotate_buffer_versions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_buffer_versions</span></code></a>(buffer_versions_map)</p></td>
 <td><p>Control automatic multi-buffer version counts and indexing modes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_manual_multi_buffer" title="tilelang.ascend.language.annotations.annotate_manual_multi_buffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_manual_multi_buffer</span></code></a>(*items)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_manual_multi_buffer" title="tilelang.ascend.language.annotations.annotate_manual_multi_buffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_manual_multi_buffer</span></code></a>(*items)</p></td>
 <td><p>Declare buffers that the user has <em>manually</em> multi-buffered.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_unlimit_memory" title="tilelang.ascend.language.annotations.annotate_unlimit_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_unlimit_memory</span></code></a>(*scopes)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_unlimit_memory" title="tilelang.ascend.language.annotations.annotate_unlimit_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate_unlimit_memory</span></code></a>(*scopes)</p></td>
 <td><p>Remove the memory capacity limit for the given scopes during auto-scheduling.</p></td>
 </tr>
 </tbody>
@@ -864,6 +867,26 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ascend.language.annotations.annotate_layout">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.language.annotations.</span></span><span class="sig-name descname"><span class="pre">annotate_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.language.annotations.annotate_layout" title="Link to this definition">¶</a></dt>
+<dd><p>Annotate each Buffer view, preserving aliases with distinct Cube layouts.</p>
+<p>Views share storage, not a layout conversion. A producer must write the
+representation consumed through each view; annotating a view never moves
+or transposes existing values. Canonical Cube views sharing storage must
+have the same dtype and padded physical size.</p>
+<p>Each memory view keeps its explicit or operation-required layout. Layouts
+never propagate to other memory views sharing the same storage; annotate
+every view that needs a non-default interpretation. Unannotated views use
+normal inference or their ordinary dense/strided addressing. Fragment
+aliases must always agree on thread ownership.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>layout_map</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.ascend.language.annotations.annotate_buffer_addresses">
 <span class="sig-prename descclassname"><span class="pre">tilelang.ascend.language.annotations.</span></span><span class="sig-name descname"><span class="pre">annotate_buffer_addresses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_addresses</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.language.annotations.annotate_buffer_addresses" title="Link to this definition">¶</a></dt>
@@ -1070,6 +1093,7 @@ know a particular scope has spare headroom.</p>
 <li><a class="reference internal" href="#">tilelang.ascend.language.annotations</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_layout"><code class="docutils literal notranslate"><span class="pre">annotate_layout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_buffer_addresses"><code class="docutils literal notranslate"><span class="pre">annotate_buffer_addresses()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_buffer_versions"><code class="docutils literal notranslate"><span class="pre">annotate_buffer_versions()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.language.annotations.annotate_manual_multi_buffer"><code class="docutils literal notranslate"><span class="pre">annotate_manual_multi_buffer()</span></code></a></li>

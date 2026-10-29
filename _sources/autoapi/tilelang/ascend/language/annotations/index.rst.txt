@@ -14,6 +14,7 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.ascend.language.annotations.annotate_layout
    tilelang.ascend.language.annotations.annotate_buffer_addresses
    tilelang.ascend.language.annotations.annotate_buffer_versions
    tilelang.ascend.language.annotations.annotate_manual_multi_buffer
@@ -22,6 +23,22 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:function:: annotate_layout(layout_map)
+
+   Annotate each Buffer view, preserving aliases with distinct Cube layouts.
+
+   Views share storage, not a layout conversion. A producer must write the
+   representation consumed through each view; annotating a view never moves
+   or transposes existing values. Canonical Cube views sharing storage must
+   have the same dtype and padded physical size.
+
+   Each memory view keeps its explicit or operation-required layout. Layouts
+   never propagate to other memory views sharing the same storage; annotate
+   every view that needs a non-default interpretation. Unannotated views use
+   normal inference or their ordinary dense/strided addressing. Fragment
+   aliases must always agree on thread ownership.
+
 
 .. py:function:: annotate_buffer_addresses(buffer_addresses)
 
