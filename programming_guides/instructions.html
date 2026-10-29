@@ -1044,7 +1044,17 @@ signatures, behaviors, constraints, and examples, refer to API Reference
 <li><p><code class="docutils literal notranslate"><span class="pre">T.gemm_blockscaled(A_s,</span> <span class="pre">B_s,</span> <span class="pre">C,</span> <span class="pre">SFA,</span> <span class="pre">SFB,</span> <span class="pre">...)</span></code>: Block‑scaled GEMM with
 target‑selected instruction; explicit <code class="docutils literal notranslate"><span class="pre">T.tcgen05_gemm_blockscaled</span></code> /
 <code class="docutils literal notranslate"><span class="pre">T.mma_gemm_blockscaled</span></code>.</p></li>
-<li><p>Reductions: <code class="docutils literal notranslate"><span class="pre">T.reduce_sum/max/min/abssum/absmax</span></code>, bitwise <code class="docutils literal notranslate"><span class="pre">and/or/xor</span></code>.</p></li>
+<li><p>Reductions: <code class="docutils literal notranslate"><span class="pre">T.reduce_sum/max/min/abssum/absmax</span></code>, bitwise <code class="docutils literal notranslate"><span class="pre">and/or/xor</span></code>.
+The CUDA cross-thread reduction delegates warp-aligned, full-warp groups with
+unit thread stride to the same helper as <code class="docutils literal notranslate"><span class="pre">T.warp_reduce_*</span></code>. The helper selects
+hardware <code class="docutils literal notranslate"><span class="pre">redux.sync</span></code> for scalar <code class="docutils literal notranslate"><span class="pre">int32</span></code>/<code class="docutils literal notranslate"><span class="pre">uint32</span></code> sum, min, max, and bitwise
+operations on SM80+, promoting smaller scalar integers to 32 bits. Scalar FP32
+min/max uses redux on <code class="docutils literal notranslate"><span class="pre">sm_100a</span></code>/<code class="docutils literal notranslate"><span class="pre">sm_100f</span></code> and <code class="docutils literal notranslate"><span class="pre">sm_103a</span></code>/<code class="docutils literal notranslate"><span class="pre">sm_103f</span></code> targets, with
+scalar FP16/BF16 promoted to FP32. This also applies to the final warp stage
+of larger reductions and unpacked batched reductions. Sub-warp, strided,
+packed, FP64, and unsupported dtype/operator combinations retain the shuffle
+implementation, as do targets without the required instructions. Cross-warp
+shared-memory exchanges and barriers are unchanged.</p></li>
 <li><p>Scans: <code class="docutils literal notranslate"><span class="pre">T.cumsum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cummax</span></code>, finalize: <code class="docutils literal notranslate"><span class="pre">T.finalize_reducer</span></code>.</p></li>
 <li><p>Warp reducers: <code class="docutils literal notranslate"><span class="pre">T.warp_reduce_sum/max/min/bitand/bitor</span></code>.</p></li>
 <li><p>Elementwise math: TIR ops (<code class="docutils literal notranslate"><span class="pre">T.exp</span></code>, <code class="docutils literal notranslate"><span class="pre">T.log</span></code>, <code class="docutils literal notranslate"><span class="pre">T.max</span></code>, <code class="docutils literal notranslate"><span class="pre">T.min</span></code>, <code class="docutils literal notranslate"><span class="pre">T.rsqrt</span></code>, …).</p></li>
