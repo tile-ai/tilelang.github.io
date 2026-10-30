@@ -293,6 +293,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../language/simd/index.html">tilelang.ascend.language.simd</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../language/sync/index.html">tilelang.ascend.language.sync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../language/tile_schedule/index.html">tilelang.ascend.language.tile_schedule</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../language/vmi/index.html">tilelang.ascend.language.vmi</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../op/index.html">tilelang.ascend.op</a><input aria-label="Toggle navigation of tilelang.ascend.op" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -881,67 +882,88 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.UnrollLoopSkipVF" title="tilelang.ascend.transform.UnrollLoopSkipVF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnrollLoopSkipVF</span></code></a>()</p></td>
 <td><p>Expand explicit unroll loops outside SIMD_VF / SIMT_VF blocks.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AutoSchedule" title="tilelang.ascend.transform.AutoSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AutoSchedule</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.NormalizePTOAllocMarkers" title="tilelang.ascend.transform.NormalizePTOAllocMarkers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NormalizePTOAllocMarkers</span></code></a>()</p></td>
+<td><p>Move VMI allocation kinds onto scoped carriers in the owning VF.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.ImportPTOAllocMarkers" title="tilelang.ascend.transform.ImportPTOAllocMarkers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImportPTOAllocMarkers</span></code></a>()</p></td>
+<td><p>Attach normalized VMI allocation kinds to final <code class="docutils literal notranslate"><span class="pre">AllocBuffer</span></code> nodes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.LegalizePTOVMIMemoryAccess" title="tilelang.ascend.transform.LegalizePTOVMIMemoryAccess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LegalizePTOVMIMemoryAccess</span></code></a>()</p></td>
+<td><p>Build and verify the explicit VMI memory descriptor before scheduling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AutoSchedule" title="tilelang.ascend.transform.AutoSchedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AutoSchedule</span></code></a>()</p></td>
 <td><p>Schedule materialized internal schedule units for downstream lowering.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AssignCore" title="tilelang.ascend.transform.AssignCore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AssignCore</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AssignCore" title="tilelang.ascend.transform.AssignCore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AssignCore</span></code></a>()</p></td>
 <td><p>Annotate each scheduled task with its widest legal AIV/AIC mask.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.PrepareMultiBuffer" title="tilelang.ascend.transform.PrepareMultiBuffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrepareMultiBuffer</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.PrepareMultiBuffer" title="tilelang.ascend.transform.PrepareMultiBuffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrepareMultiBuffer</span></code></a>()</p></td>
 <td><p>Choose multi-buffer clocks and add counter init/advance tasks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.ResolveCore" title="tilelang.ascend.transform.ResolveCore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ResolveCore</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.ResolveCore" title="tilelang.ascend.transform.ResolveCore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ResolveCore</span></code></a>()</p></td>
 <td><p>Narrow core candidates from actual scalar and counter consumers.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.InsertSync" title="tilelang.ascend.transform.InsertSync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InsertSync</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.InsertSync" title="tilelang.ascend.transform.InsertSync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InsertSync</span></code></a>()</p></td>
 <td><p>Insert synchronization into scheduled Ascend TIR.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.MaterializeMultiBuffer" title="tilelang.ascend.transform.MaterializeMultiBuffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaterializeMultiBuffer</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.MaterializeMultiBuffer" title="tilelang.ascend.transform.MaterializeMultiBuffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaterializeMultiBuffer</span></code></a>()</p></td>
 <td><p>Lower logical multi-buffer accesses to physical buffer versions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.LowerScheduledTIR" title="tilelang.ascend.transform.LowerScheduledTIR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerScheduledTIR</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.LowerScheduledTIR" title="tilelang.ascend.transform.LowerScheduledTIR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LowerScheduledTIR</span></code></a>()</p></td>
 <td><p>Lower scheduled TIR into final AIV/AIC core bodies.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.RewriteDualCopy" title="tilelang.ascend.transform.RewriteDualCopy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewriteDualCopy</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.RewriteDualCopy" title="tilelang.ascend.transform.RewriteDualCopy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewriteDualCopy</span></code></a>()</p></td>
 <td><p>Lower dual-copy operations using the enclosing vector-core sid.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.NormalizeBufferVersion" title="tilelang.ascend.transform.NormalizeBufferVersion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NormalizeBufferVersion</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.NormalizeBufferVersion" title="tilelang.ascend.transform.NormalizeBufferVersion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NormalizeBufferVersion</span></code></a>()</p></td>
 <td><p>Lower staged manual/automatic versions to scoped internal attributes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.RewriteAscendBufferVersionLayout" title="tilelang.ascend.transform.RewriteAscendBufferVersionLayout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewriteAscendBufferVersionLayout</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.RewriteAscendBufferVersionLayout" title="tilelang.ascend.transform.RewriteAscendBufferVersionLayout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewriteAscendBufferVersionLayout</span></code></a>()</p></td>
 <td><p>Align each physical version of a multi-buffered UB allocation to 32 bytes.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.NormalizeAscendFractalStorage" title="tilelang.ascend.transform.NormalizeAscendFractalStorage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NormalizeAscendFractalStorage</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.NormalizeAscendFractalStorage" title="tilelang.ascend.transform.NormalizeAscendFractalStorage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NormalizeAscendFractalStorage</span></code></a>()</p></td>
 <td><p>Normalize Cube storage and aliases before OOB padding and scheduling.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AscendSimdVFLowerParallel" title="tilelang.ascend.transform.AscendSimdVFLowerParallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendSimdVFLowerParallel</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AscendSimdVFLowerParallel" title="tilelang.ascend.transform.AscendSimdVFLowerParallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendSimdVFLowerParallel</span></code></a>()</p></td>
 <td><p>Lower T.Parallel inside SIMD_VF blocks to MicroAPI register-level vector ops.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AscendThreadSync" title="tilelang.ascend.transform.AscendThreadSync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendThreadSync</span></code></a>(storage_scope)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.VerifyParallelToPTO" title="tilelang.ascend.transform.VerifyParallelToPTO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VerifyParallelToPTO</span></code></a>()</p></td>
+<td><p>Read-only verification of the PTO Parallel input contract.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.LegalizeParallelToPTO" title="tilelang.ascend.transform.LegalizeParallelToPTO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LegalizeParallelToPTO</span></code></a>()</p></td>
+<td><p>Placeholder for the PTO Parallel legalization stage.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.VerifyPTOCodegenLegality" title="tilelang.ascend.transform.VerifyPTOCodegenLegality"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VerifyPTOCodegenLegality</span></code></a>()</p></td>
+<td><p>Verify PTO requirements before code generation without modifying IR.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.VectorizeParallelToPTO" title="tilelang.ascend.transform.VectorizeParallelToPTO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VectorizeParallelToPTO</span></code></a>()</p></td>
+<td><p>Rewrite verified T.Parallel loops inside PTO SIMD_VF blocks into</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AscendThreadSync" title="tilelang.ascend.transform.AscendThreadSync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendThreadSync</span></code></a>(storage_scope)</p></td>
 <td><p>Insert thread-storage synchronization independently within each SIMT_VF.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AscendLayoutInference" title="tilelang.ascend.transform.AscendLayoutInference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendLayoutInference</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AscendLayoutInference" title="tilelang.ascend.transform.AscendLayoutInference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendLayoutInference</span></code></a>()</p></td>
 <td><p>Ascend fork of LayoutInference: VF regions are opaque to the worklist</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AscendLowerTileOp" title="tilelang.ascend.transform.AscendLowerTileOp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendLowerTileOp</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AscendLowerTileOp" title="tilelang.ascend.transform.AscendLowerTileOp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendLowerTileOp</span></code></a>()</p></td>
 <td><p>Ascend fork of LowerTileOp: VF region scopes, buffer-version key remap,</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AscendInsertOOBPadding" title="tilelang.ascend.transform.AscendInsertOOBPadding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendInsertOOBPadding</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.AscendInsertOOBPadding" title="tilelang.ascend.transform.AscendInsertOOBPadding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendInsertOOBPadding</span></code></a>()</p></td>
 <td><p>Clamp DMA copy OOB tails and emit GM-&gt;L1 padding fills before AutoSchedule.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.InferBufferAliases" title="tilelang.ascend.transform.InferBufferAliases"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InferBufferAliases</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.InferBufferAliases" title="tilelang.ascend.transform.InferBufferAliases"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InferBufferAliases</span></code></a>()</p></td>
 <td><p>Infer which on-chip buffers in a manually scheduled kernel may reuse storage.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.MergeUBAllocations" title="tilelang.ascend.transform.MergeUBAllocations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MergeUBAllocations</span></code></a>([align_bytes, disable_reuse])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.MergeUBAllocations" title="tilelang.ascend.transform.MergeUBAllocations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MergeUBAllocations</span></code></a>([align_bytes, disable_reuse])</p></td>
 <td><p>Merge Ascend on-chip allocations from a pairwise reuse contract.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.MarkScalarDcacheBypass" title="tilelang.ascend.transform.MarkScalarDcacheBypass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MarkScalarDcacheBypass</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.MarkScalarDcacheBypass" title="tilelang.ascend.transform.MarkScalarDcacheBypass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MarkScalarDcacheBypass</span></code></a>()</p></td>
 <td><p>Rewrite scalar global buffer accesses to use dcache bypass intrinsics</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.RewriteFp4ToFp4x2" title="tilelang.ascend.transform.RewriteFp4ToFp4x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewriteFp4ToFp4x2</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.RewriteFp4ToFp4x2" title="tilelang.ascend.transform.RewriteFp4ToFp4x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewriteFp4ToFp4x2</span></code></a>()</p></td>
 <td><p>Retype genuine fp4 (float4_e2m1fn, lanes=1) storage into the 1-byte</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.transform.RewriteFlagToBuf" title="tilelang.ascend.transform.RewriteFlagToBuf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewriteFlagToBuf</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.transform.RewriteFlagToBuf" title="tilelang.ascend.transform.RewriteFlagToBuf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewriteFlagToBuf</span></code></a>()</p></td>
 <td><p>Normalize each hard_event's synchronization into its 8-slot flag namespace.</p></td>
 </tr>
 </tbody>
@@ -1014,6 +1036,64 @@ available through the shared IRStructure codec.</p>
 <p>This pre-AutoSchedule pass only materializes <code class="docutils literal notranslate"><span class="pre">T.unroll(...,</span> <span class="pre">explicit=True)</span></code>
 loops. Non-explicit unroll hints, serial loops, and all VF block interiors
 are preserved for their later lowering stages.</p>
+<p>Each cloned VMI allocation gets a fresh data Var, and the corresponding
+<code class="docutils literal notranslate"><span class="pre">tl.vmi.alloc_kind</span></code> AttrStmt carrier emitted by
+<code class="docutils literal notranslate"><span class="pre">NormalizePTOAllocMarkers</span></code> is remapped to that Var through the same
+mapping used for buffer loads and stores.  A carrier whose allocation was
+not rebuilt by the clone keeps its original Var.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ascend.transform.NormalizePTOAllocMarkers">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.transform.</span></span><span class="sig-name descname"><span class="pre">NormalizePTOAllocMarkers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.transform.NormalizePTOAllocMarkers" title="Link to this definition">¶</a></dt>
+<dd><p>Move VMI allocation kinds onto scoped carriers in the owning VF.</p>
+<p>Consumes each SBlock’s <code class="docutils literal notranslate"><span class="pre">tl.vmi.alloc_kind</span></code> map and emits one
+<code class="docutils literal notranslate"><span class="pre">AttrStmt(data_var,</span> <span class="pre">&quot;tl.vmi.alloc_kind&quot;,</span> <span class="pre">StringImm(kind))</span></code> per marked
+allocation in the block that actually owns it, in <code class="docutils literal notranslate"><span class="pre">alloc_buffers</span></code> order.
+Carriers for a <code class="docutils literal notranslate"><span class="pre">SIMD_VF</span></code> block go inside its existing outer
+<code class="docutils literal notranslate"><span class="pre">tl.simdvf_scope</span></code> statement; carriers for a nested block go in that
+block’s body.  Allocations, data Vars, statement order, and unrelated
+annotations stay untouched, and marked allocations owned outside a
+<code class="docutils literal notranslate"><span class="pre">SIMD_VF</span></code> are rejected.</p>
+<p>The pass is idempotent: existing carriers and final allocation annotations
+are not duplicated.  Run it after binding the Ascend PTO target and before
+<code class="docutils literal notranslate"><span class="pre">UnrollLoopSkipVF</span></code>.  Functions without a PTO target pass through
+unchanged.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ascend.transform.ImportPTOAllocMarkers">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.transform.</span></span><span class="sig-name descname"><span class="pre">ImportPTOAllocMarkers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.transform.ImportPTOAllocMarkers" title="Link to this definition">¶</a></dt>
+<dd><p>Attach normalized VMI allocation kinds to final <code class="docutils literal notranslate"><span class="pre">AllocBuffer</span></code> nodes.</p>
+<p>Must run immediately after <code class="docutils literal notranslate"><span class="pre">LowerOpaqueBlock</span></code> on the PTO target.  It
+collects the temporary <code class="docutils literal notranslate"><span class="pre">tl.vmi.alloc_kind</span></code> AttrStmt carriers and the
+actual <code class="docutils literal notranslate"><span class="pre">AllocBuffer</span></code> statements before rewriting, matches them by data
+Var identity, writes the kind to the matched allocation’s annotations, and
+removes the consumed carriers while preserving their bodies and order.
+An orphan carrier or conflicting kinds are rejected.  The final allocation
+need not be lexically inside <code class="docutils literal notranslate"><span class="pre">tl.simdvf_scope</span></code>, because lowering
+materializes it before the scope statement.  Functions without a PTO
+target pass through unchanged.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ascend.transform.LegalizePTOVMIMemoryAccess">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.transform.</span></span><span class="sig-name descname"><span class="pre">LegalizePTOVMIMemoryAccess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.transform.LegalizePTOVMIMemoryAccess" title="Link to this definition">¶</a></dt>
+<dd><p>Build and verify the explicit VMI memory descriptor before scheduling.</p>
+<p>Every ordinary <code class="docutils literal notranslate"><span class="pre">T.vmi.vload</span></code> / <code class="docutils literal notranslate"><span class="pre">T.vmi.vstore</span></code> address (a scalar-origin
+<code class="docutils literal notranslate"><span class="pre">BufferLoad</span></code>) is replaced with <code class="docutils literal notranslate"><span class="pre">tl.access_ptr(BufferLoad,</span> <span class="pre">extent,</span>
+<span class="pre">rw_mask)</span></code> plus a rewritten instruction scalar offset.  The pass proves,
+in one shared acceptance exit, that the descriptor preserves the source
+address, contains the complete physical access envelope and covers the
+declared extent under the existing logical pointer-region analysis.  An
+ordinary caller-written explicit descriptor is preserved and only verified;
+there is no whole-allocation fallback for an ordinary access.  Indexed
+<code class="docutils literal notranslate"><span class="pre">vgather</span></code> / <code class="docutils literal notranslate"><span class="pre">vscatter</span></code> addresses, including one reached
+through a direct handle binding, are instead rebuilt as an owner-origin
+descriptor with capacity <code class="docutils literal notranslate"><span class="pre">prod(owner.shape)</span></code> after the owner identity,
+layout, capacity, stable-coverage and bound-address snapshot proofs.
+Functions without a PTO target pass through unchanged; the pass is a no-op
+on IR without VMI accesses.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1086,6 +1166,46 @@ are preserved for their later lowering stages.</p>
 <dt class="sig sig-object py" id="tilelang.ascend.transform.AscendSimdVFLowerParallel">
 <span class="sig-prename descclassname"><span class="pre">tilelang.ascend.transform.</span></span><span class="sig-name descname"><span class="pre">AscendSimdVFLowerParallel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.transform.AscendSimdVFLowerParallel" title="Link to this definition">¶</a></dt>
 <dd><p>Lower T.Parallel inside SIMD_VF blocks to MicroAPI register-level vector ops.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ascend.transform.VerifyParallelToPTO">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.transform.</span></span><span class="sig-name descname"><span class="pre">VerifyParallelToPTO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.transform.VerifyParallelToPTO" title="Link to this definition">¶</a></dt>
+<dd><p>Read-only verification of the PTO Parallel input contract.</p>
+<p>Runs on the PTO target only: SIMD_VF blocks whose T.Parallel units fall
+outside the supported mapping contract are rejected, while functions
+without a PTO target pass through unchanged.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ascend.transform.LegalizeParallelToPTO">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.transform.</span></span><span class="sig-name descname"><span class="pre">LegalizeParallelToPTO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.transform.LegalizeParallelToPTO" title="Link to this definition">¶</a></dt>
+<dd><p>Placeholder for the PTO Parallel legalization stage.</p>
+<p>Only the registration exists for now, so that the formal PTO pipeline
+order is fixed; the safe scalar If/Select/Min/Max rewrites are left to
+a later change. The placeholder preserves the input IR and rejects
+nothing.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ascend.transform.VerifyPTOCodegenLegality">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.transform.</span></span><span class="sig-name descname"><span class="pre">VerifyPTOCodegenLegality</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.transform.VerifyPTOCodegenLegality" title="Link to this definition">¶</a></dt>
+<dd><p>Verify PTO requirements before code generation without modifying IR.</p>
+<p>Consumes the final device TIR after LowerDeviceKernelLaunch and the final
+layout and UB rewrites. Currently checks destination alignment for
+default/continuous explicit-mask VMI stores of b8/b16/b32 data: 32 bytes
+for ordinary stores, or natural element alignment for recognized 1PT
+writeback. Bool data is excluded. Shapes, layouts, masks and addresses are
+unchanged. Functions without a PTO target pass through unchanged.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.ascend.transform.VectorizeParallelToPTO">
+<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.transform.</span></span><span class="sig-name descname"><span class="pre">VectorizeParallelToPTO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.transform.VectorizeParallelToPTO" title="Link to this definition">¶</a></dt>
+<dd><p>Rewrite verified T.Parallel loops inside PTO SIMD_VF blocks into
+logical VMI code.</p>
+<p>Runs on the PTO target only; functions without a PTO target pass
+through unchanged.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1259,6 +1379,9 @@ standard pipeline places this after MergeUBAllocations.</p>
 <li><a class="reference internal" href="#tilelang.ascend.transform.AscendRemoveNoOp"><code class="docutils literal notranslate"><span class="pre">AscendRemoveNoOp()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.transform.LegalizeSimdMerging"><code class="docutils literal notranslate"><span class="pre">LegalizeSimdMerging()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.transform.UnrollLoopSkipVF"><code class="docutils literal notranslate"><span class="pre">UnrollLoopSkipVF()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ascend.transform.NormalizePTOAllocMarkers"><code class="docutils literal notranslate"><span class="pre">NormalizePTOAllocMarkers()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ascend.transform.ImportPTOAllocMarkers"><code class="docutils literal notranslate"><span class="pre">ImportPTOAllocMarkers()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ascend.transform.LegalizePTOVMIMemoryAccess"><code class="docutils literal notranslate"><span class="pre">LegalizePTOVMIMemoryAccess()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.transform.AutoSchedule"><code class="docutils literal notranslate"><span class="pre">AutoSchedule()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.transform.AssignCore"><code class="docutils literal notranslate"><span class="pre">AssignCore()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.transform.PrepareMultiBuffer"><code class="docutils literal notranslate"><span class="pre">PrepareMultiBuffer()</span></code></a></li>
@@ -1271,6 +1394,10 @@ standard pipeline places this after MergeUBAllocations.</p>
 <li><a class="reference internal" href="#tilelang.ascend.transform.RewriteAscendBufferVersionLayout"><code class="docutils literal notranslate"><span class="pre">RewriteAscendBufferVersionLayout()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.transform.NormalizeAscendFractalStorage"><code class="docutils literal notranslate"><span class="pre">NormalizeAscendFractalStorage()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.transform.AscendSimdVFLowerParallel"><code class="docutils literal notranslate"><span class="pre">AscendSimdVFLowerParallel()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ascend.transform.VerifyParallelToPTO"><code class="docutils literal notranslate"><span class="pre">VerifyParallelToPTO()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ascend.transform.LegalizeParallelToPTO"><code class="docutils literal notranslate"><span class="pre">LegalizeParallelToPTO()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ascend.transform.VerifyPTOCodegenLegality"><code class="docutils literal notranslate"><span class="pre">VerifyPTOCodegenLegality()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.ascend.transform.VectorizeParallelToPTO"><code class="docutils literal notranslate"><span class="pre">VectorizeParallelToPTO()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.transform.AscendThreadSync"><code class="docutils literal notranslate"><span class="pre">AscendThreadSync()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.transform.AscendLayoutInference"><code class="docutils literal notranslate"><span class="pre">AscendLayoutInference()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.ascend.transform.AscendLowerTileOp"><code class="docutils literal notranslate"><span class="pre">AscendLowerTileOp()</span></code></a></li>

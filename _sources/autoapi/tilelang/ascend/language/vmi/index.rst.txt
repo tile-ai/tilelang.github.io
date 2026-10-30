@@ -1,0 +1,298 @@
+tilelang.ascend.language.vmi
+============================
+
+.. py:module:: tilelang.ascend.language.vmi
+
+.. autoapi-nested-parse::
+
+   TileLang VMI namespace for Ascend PTO kernels.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.vmi.vadd
+   tilelang.ascend.language.vmi.vmul
+   tilelang.ascend.language.vmi.vmax
+   tilelang.ascend.language.vmi.vmin
+   tilelang.ascend.language.vmi.vand
+   tilelang.ascend.language.vmi.vor
+   tilelang.ascend.language.vmi.vxor
+   tilelang.ascend.language.vmi.vshl
+   tilelang.ascend.language.vmi.vshr
+   tilelang.ascend.language.vmi.vabs
+   tilelang.ascend.language.vmi.vneg
+   tilelang.ascend.language.vmi.vrelu
+   tilelang.ascend.language.vmi.vexp
+   tilelang.ascend.language.vmi.vln
+   tilelang.ascend.language.vmi.vsqrt
+   tilelang.ascend.language.vmi.vnot
+   tilelang.ascend.language.vmi.vadds
+   tilelang.ascend.language.vmi.vmuls
+   tilelang.ascend.language.vmi.vmaxs
+   tilelang.ascend.language.vmi.vmins
+   tilelang.ascend.language.vmi.vshls
+   tilelang.ascend.language.vmi.vshrs
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.vmi.VmiPair
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.ascend.language.vmi.alloc_local
+   tilelang.ascend.language.vmi.alloc_var
+   tilelang.ascend.language.vmi.inside_vmi
+   tilelang.ascend.language.vmi.require_vmi_scope
+   tilelang.ascend.language.vmi.vreg
+   tilelang.ascend.language.vmi.mask
+   tilelang.ascend.language.vmi.vload
+   tilelang.ascend.language.vmi.vstore
+   tilelang.ascend.language.vmi.vci
+   tilelang.ascend.language.vmi.vdiv
+   tilelang.ascend.language.vmi.vcmp
+   tilelang.ascend.language.vmi.vcmps
+   tilelang.ascend.language.vmi.vsel
+   tilelang.ascend.language.vmi.vselr
+   tilelang.ascend.language.vmi.vbrc
+   tilelang.ascend.language.vmi.vcadd
+   tilelang.ascend.language.vmi.vcmax
+   tilelang.ascend.language.vmi.vcmin
+   tilelang.ascend.language.vmi.vcvt
+   tilelang.ascend.language.vmi.vinterpret_cast
+   tilelang.ascend.language.vmi.vexpdif
+   tilelang.ascend.language.vmi.vaxpy
+   tilelang.ascend.language.vmi.vlrelu
+   tilelang.ascend.language.vmi.vprelu
+   tilelang.ascend.language.vmi.vmull
+   tilelang.ascend.language.vmi.vmula
+   tilelang.ascend.language.vmi.vdhist
+   tilelang.ascend.language.vmi.vchist
+   tilelang.ascend.language.vmi.vgather
+   tilelang.ascend.language.vmi.vscatter
+   tilelang.ascend.language.vmi.create_mask
+   tilelang.ascend.language.vmi.vintlv
+   tilelang.ascend.language.vmi.vdintlv
+   tilelang.ascend.language.vmi.vunzip
+   tilelang.ascend.language.vmi.vzip
+
+
+Module Contents
+---------------
+
+.. py:function:: alloc_local(shape, vreg_type)
+
+   Allocate a statically indexed array of VMI vector registers.
+
+   ``vreg_type`` is a numeric vector dtype produced by :func:`vreg`; bool/mask
+   and handle element types are rejected.  The resulting buffer may only be
+   indexed by compile-time values, such as induction variables from
+   ``T.unroll(..., explicit=True)`` on the PTO backend.
+
+   This API is valid only inside a ``T.SimdVF()`` scope: VMI allocations are
+   SIMD vector registers, and ordinary ``T.alloc_local`` remains available
+   outside that scope.  A block-level allocation marker records that the array
+   is an explicit VMI data allocation, so lowering and code generation do not
+   infer that intent from the vector dtype of an ordinary SIMD allocation.
+
+
+.. py:function:: alloc_var(dtype, *, size)
+
+   Allocate a mutable VMI data register slot.
+
+   The TIR buffer keeps the numeric element dtype (a single lane is the
+   scalar dtype, more lanes are a vector dtype).
+
+   This API is valid only inside a ``T.SimdVF()`` scope: VMI allocations are
+   SIMD vector registers, and the ordinary ``T.alloc_var`` remains available
+   outside that scope.  A block-level allocation marker records that the slot
+   is an explicit VMI data register, so lowering and code generation do not
+   have to infer that intent from the vector dtype or from a later store.
+
+
+.. py:class:: VmiPair(pair)
+
+   Lazy pair wrapper for multi-result VMI calls.
+
+
+   .. py:property:: dtype
+
+
+   .. py:method:: __iter__()
+
+
+   .. py:method:: __len__()
+
+
+   .. py:method:: __getitem__(index)
+
+
+.. py:function:: inside_vmi()
+
+   Return True when executing inside ``with T.SimdVF():``.
+
+
+.. py:function:: require_vmi_scope(context = 'T.vmi')
+
+   Raise if a VMI op is used outside ``with T.SimdVF():``.
+
+
+.. py:function:: vreg(lanes, dtype_like)
+
+   Return a logical VMI vector dtype descriptor.
+
+
+.. py:function:: mask(lanes)
+
+   Return a logical VMI predicate dtype descriptor.
+
+
+.. py:function:: vload(source, offset=None, *, size, stride=None, block_stride=None, group=None, loc=None, ip=None)
+
+   Load a VMI vector from either `a_ub[0]`-style buffer loads or ptr+offset form.
+
+   A VMI load always reads the full ``size`` lanes starting at the load
+   address: the ISA intentionally keeps load instructions unmasked for
+   performance, so masks apply to computation and stores, never to the
+   load itself. Reading a full vector past a logical tail is still safe
+   on device — the top 8K of UB is reserved as stack space, so the extra
+   read-only lanes cannot fault; they carry undefined values that the
+   compute and store masks must keep out of valid outputs.
+
+
+.. py:function:: vstore(values, destination, offset=None, mask=None, *, stride=None, block_stride=None, group=None, loc=None, ip=None)
+
+   Store one VMI vector to either `a_ub[0]`-style buffer loads or ptr+offset form.
+
+
+.. py:function:: vci(base, *, size, order=None, loc=None, ip=None)
+
+.. py:data:: vadd
+
+.. py:data:: vmul
+
+.. py:data:: vmax
+
+.. py:data:: vmin
+
+.. py:data:: vand
+
+.. py:data:: vor
+
+.. py:data:: vxor
+
+.. py:data:: vshl
+
+.. py:data:: vshr
+
+.. py:data:: vabs
+
+.. py:data:: vneg
+
+.. py:data:: vrelu
+
+.. py:data:: vexp
+
+.. py:data:: vln
+
+.. py:data:: vsqrt
+
+.. py:data:: vnot
+
+.. py:data:: vadds
+
+.. py:data:: vmuls
+
+.. py:data:: vmaxs
+
+.. py:data:: vmins
+
+.. py:data:: vshls
+
+.. py:data:: vshrs
+
+.. py:function:: vdiv(lhs, rhs, mask=None, *, precision=None, pmode=None, loc=None, ip=None)
+
+   Vector divide. ``precision='exact'`` expands CANN ``vdiv_0ulp_ftz_true``.
+
+
+.. py:function:: vcmp(lhs, rhs, seed, cmp, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vcmps(source, scalar, seed, cmp, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vsel(mask, true_value, false_value, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vselr(source, index, *, loc=None, ip=None)
+
+.. py:function:: vbrc(value, *, size, group=None, loc=None, ip=None)
+
+.. py:function:: vcadd(source, mask, *, group=None, pmode=None, reassoc=None, loc=None, ip=None)
+
+.. py:function:: vcmax(source, mask, *, group=None, pmode=None, loc=None, ip=None)
+
+.. py:function:: vcmin(source, mask, *, group=None, pmode=None, loc=None, ip=None)
+
+.. py:function:: vcvt(source, to_dtype=None, mask=None, *, rounding=None, saturate=None, pmode=None, loc=None, ip=None)
+
+.. py:function:: vinterpret_cast(source, to_dtype=None, *, loc=None, ip=None)
+
+.. py:function:: vexpdif(x, max_value, mask, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vaxpy(x, acc, alpha, mask, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vlrelu(x, slope, mask, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vprelu(x, alpha, mask, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vmull(a, b, mask, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vmula(acc, lhs, rhs, mask, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vdhist(acc, source, mask, *, loc=None, ip=None)
+
+.. py:function:: vchist(acc, source, mask, *, loc=None, ip=None)
+
+.. py:function:: vgather(source, offsets, mask, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vscatter(value, destination, offsets, mask, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: create_mask(active_lanes, *, size, group=None, loc=None, ip=None)
+
+.. py:function:: vintlv(lhs, rhs, mask, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vdintlv(lhs, rhs, mask, *, pmode=None, loc=None, ip=None)
+
+.. py:function:: vunzip(source, to_dtype=None, *, loc=None, ip=None)
+
+   Unzip every element into its low and high half-width halves.
+
+   Returns (low, high) with the source lane count preserved and the element
+   width halved; lane i of each result is the low/high half of source lane i.
+   to_dtype selects the half element type and defaults to the unsigned
+   half-width integer of the source element (uint16 for a 32-bit source).  It is
+   forwarded to the emitted PTO call, where PTODSL derives the half-width result
+   element type from it and re-checks it against the source width, so it must
+   agree with the result dtype this wrapper declares.
+
+
+.. py:function:: vzip(low, high, to_dtype=None, *, loc=None, ip=None)
+
+   Zip low/high half-width halves back (inverse of vunzip).
+
+   to_dtype selects the wide element type and defaults to the unsigned
+   double-width integer of the half element (uint32 for uint16 halves).  As in
+   vunzip it is forwarded to the emitted PTO call and must agree with the result
+   dtype this wrapper declares.
+
+

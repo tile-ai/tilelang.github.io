@@ -293,6 +293,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../simd/index.html">tilelang.ascend.language.simd</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../sync/index.html">tilelang.ascend.language.sync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../tile_schedule/index.html">tilelang.ascend.language.tile_schedule</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vmi/index.html">tilelang.ascend.language.vmi</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../op/index.html">tilelang.ascend.op</a><input aria-label="Toggle navigation of tilelang.ascend.op" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -879,7 +880,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.ascend.language.frame.inside_simdvf" title="tilelang.ascend.language.frame.inside_simdvf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inside_simdvf</span></code></a>()</p></td>
 <td><p>Return whether the current builder is inside a SimdVF region.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.language.frame.SimdVF" title="tilelang.ascend.language.frame.SimdVF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimdVF</span></code></a>([latency])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.ascend.language.frame.SimdVF" title="tilelang.ascend.language.frame.SimdVF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimdVF</span></code></a>([latency, lanes])</p></td>
 <td><p>Construct a SimdVF region for Ascend NPU MicroAPI operations.</p></td>
 </tr>
 </tbody>
@@ -1013,11 +1014,16 @@ frame generates the <code class="docutils literal notranslate"><span class="pre"
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.ascend.language.frame.SimdVF">
-<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.language.frame.</span></span><span class="sig-name descname"><span class="pre">SimdVF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.language.frame.SimdVF" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.ascend.language.frame.</span></span><span class="sig-name descname"><span class="pre">SimdVF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lanes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.ascend.language.frame.SimdVF" title="Link to this definition">¶</a></dt>
 <dd><p>Construct a SimdVF region for Ascend NPU MicroAPI operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>latency</strong> (<em>int</em>) – Measured latency in cycles. Zero uses the scheduler’s latency model.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latency</strong> (<em>int</em>) – Measured latency in cycles. Zero uses the scheduler’s latency model.</p></li>
+<li><p><strong>lanes</strong> (<em>int</em>) – Logical lane count for the PTO SIMD vector path. Must be one of
+64, 128, or 256; the default is 128. AscendC lowering ignores this
+parameter and keeps its physical register width.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>res</strong> – The SimdVFFrame used to denote a register-level SIMD region.</p>
