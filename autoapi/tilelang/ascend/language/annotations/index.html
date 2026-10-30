@@ -934,11 +934,17 @@ may be one of:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">(num_versions,</span> <span class="pre">mode)</span></code>: use a fixed count and explicit mode;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>: select a mode while leaving the version count to the scheduler.</p></li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">mode</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;iteration&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;counter&quot;</span></code>.
+<p><code class="docutils literal notranslate"><span class="pre">mode</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;iteration&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;counter&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;write_counter&quot;</span></code>.
 <code class="docutils literal notranslate"><span class="pre">&quot;iteration&quot;</span></code> uses the affine flattened-loop index. <code class="docutils literal notranslate"><span class="pre">&quot;counter&quot;</span></code> uses
 a monotonic local counter that advances after a completed active buffer
 epoch. <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> keeps the affine fast path when safe and selects a
 counter for conditionally executed or non-affine epochs.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;write_counter&quot;</span></code> requires an explicit version count and advances on the
+first executed writing Task in each owner-loop iteration; later writes use
+the same version, and iterations without writes retain the preceding value.
+Users guarantee initialized reads and that each update writes the new value
+before reading it; use <code class="docutils literal notranslate"><span class="pre">multi_buffer_eligible</span></code> to override inferred owners
+when needed.</p>
 <p>A fixed count is useful when you want to guarantee double-buffering for a
 critical buffer regardless of the Z3 solver’s choice.</p>
 <p><code class="docutils literal notranslate"><span class="pre">{buf:</span> <span class="pre">1}</span></code> removes the storage (including aliases) from multi-buffer
