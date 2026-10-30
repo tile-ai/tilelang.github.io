@@ -1055,7 +1055,9 @@ scalar FP16/BF16 promoted to FP32. This also applies to the final warp stage
 of larger reductions and unpacked batched reductions. Sub-warp, strided,
 packed, FP64, and unsupported dtype/operator combinations retain the shuffle
 implementation, as do targets without the required instructions. Cross-warp
-shared-memory exchanges and barriers are unchanged.</p></li>
+reductions perform the in-warp stage first and collapse the cross-warp levels
+into a single shared-memory exchange (two barriers per reduction regardless
+of the number of warps).</p></li>
 <li><p>Scans: <code class="docutils literal notranslate"><span class="pre">T.cumsum</span></code>, <code class="docutils literal notranslate"><span class="pre">T.cummax</span></code>, finalize: <code class="docutils literal notranslate"><span class="pre">T.finalize_reducer</span></code>.</p></li>
 <li><p>Warp reducers: <code class="docutils literal notranslate"><span class="pre">T.warp_reduce_sum/max/min/bitand/bitor</span></code>.</p></li>
 <li><p>Elementwise math: TIR ops (<code class="docutils literal notranslate"><span class="pre">T.exp</span></code>, <code class="docutils literal notranslate"><span class="pre">T.log</span></code>, <code class="docutils literal notranslate"><span class="pre">T.max</span></code>, <code class="docutils literal notranslate"><span class="pre">T.min</span></code>, <code class="docutils literal notranslate"><span class="pre">T.rsqrt</span></code>, …).</p></li>
