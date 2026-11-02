@@ -876,10 +876,13 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.device.get_current_device" title="tilelang.utils.device.get_current_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_current_device</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.device.device_synchronize" title="tilelang.utils.device.device_synchronize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_synchronize</span></code></a>([device])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.device.get_max_dynamic_shared_memory" title="tilelang.utils.device.get_max_dynamic_shared_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_max_dynamic_shared_memory</span></code></a>([device])</p></td>
+<td><p>Largest dynamic shared-memory allocation a thread block may request, in bytes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.device.device_synchronize" title="tilelang.utils.device.device_synchronize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_synchronize</span></code></a>([device])</p></td>
 <td><p>Synchronize CUDA/HIP, MPS, or NPU, preferring CUDA when no device is given.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.utils.device.get_available_cpu_count" title="tilelang.utils.device.get_available_cpu_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_available_cpu_count</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.utils.device.get_available_cpu_count" title="tilelang.utils.device.get_available_cpu_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_available_cpu_count</span></code></a>()</p></td>
 <td><p>CPU cores available to this process (cpuset affinity), at least 1.</p></td>
 </tr>
 </tbody>
@@ -922,6 +925,22 @@
 <dt class="sig sig-object py" id="tilelang.utils.device.get_current_device">
 <span class="sig-prename descclassname"><span class="pre">tilelang.utils.device.</span></span><span class="sig-name descname"><span class="pre">get_current_device</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.device.get_current_device" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.utils.device.get_max_dynamic_shared_memory">
+<span class="sig-prename descclassname"><span class="pre">tilelang.utils.device.</span></span><span class="sig-name descname"><span class="pre">get_max_dynamic_shared_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.utils.device.get_max_dynamic_shared_memory" title="Link to this definition">¶</a></dt>
+<dd><p>Largest dynamic shared-memory allocation a thread block may request, in bytes.</p>
+<p>Kernels that request more than this fail at launch with
+<code class="docutils literal notranslate"><span class="pre">Failed</span> <span class="pre">to</span> <span class="pre">set</span> <span class="pre">the</span> <span class="pre">allowed</span> <span class="pre">dynamic</span> <span class="pre">shared</span> <span class="pre">memory</span> <span class="pre">size</span> <span class="pre">to</span> <span class="pre">N</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device</strong> (<em>int</em><em> | </em><em>torch.device</em><em> | </em><em>None</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.utils.device.device_synchronize">
@@ -1018,6 +1037,7 @@
 <li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">IS_MPS</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.device.Event"><code class="docutils literal notranslate"><span class="pre">Event</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.device.get_current_device"><code class="docutils literal notranslate"><span class="pre">get_current_device()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.utils.device.get_max_dynamic_shared_memory"><code class="docutils literal notranslate"><span class="pre">get_max_dynamic_shared_memory()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.device.device_synchronize"><code class="docutils literal notranslate"><span class="pre">device_synchronize()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.utils.device.get_available_cpu_count"><code class="docutils literal notranslate"><span class="pre">get_available_cpu_count()</span></code></a></li>
 </ul>
