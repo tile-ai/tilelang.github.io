@@ -972,6 +972,10 @@ major: <code class="docutils literal notranslate"><span class="pre">(..,</span> 
 <code class="docutils literal notranslate"><span class="pre">[..,</span> <span class="pre">M,</span> <span class="pre">N]</span></code> tiles.</p>
 <p>The physical shape is <code class="docutils literal notranslate"><span class="pre">[..,</span> <span class="pre">N</span> <span class="pre">/</span> <span class="pre">16,</span> <span class="pre">M</span> <span class="pre">/</span> <span class="pre">16,</span> <span class="pre">16,</span> <span class="pre">16]</span></code> and the forward map
 is <code class="docutils literal notranslate"><span class="pre">(..,</span> <span class="pre">m,</span> <span class="pre">n)</span> <span class="pre">-&gt;</span> <span class="pre">[..,</span> <span class="pre">n</span> <span class="pre">/</span> <span class="pre">16,</span> <span class="pre">m</span> <span class="pre">/</span> <span class="pre">16,</span> <span class="pre">m</span> <span class="pre">%</span> <span class="pre">16,</span> <span class="pre">n</span> <span class="pre">%</span> <span class="pre">16]</span></code>.</p>
+<p>This layout can also annotate a UB buffer to preserve NZ in L0C-to-UB
+<code class="docutils literal notranslate"><span class="pre">T.copy</span></code> and <code class="docutils literal notranslate"><span class="pre">T.dual_copy</span></code>. Declare padding in the buffer shape;
+copy regions retain the physical panel pitch of that allocation and
+must cover whole 16-column panels. Buffer indices remain logical.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>buffer</strong> (<em>tilelang._typing.BufferLikeType</em>)</p>

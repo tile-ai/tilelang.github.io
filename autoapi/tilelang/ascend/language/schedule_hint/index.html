@@ -969,10 +969,12 @@ for the remaining supported candidate boundaries. Do not nest
 <code class="docutils literal notranslate"><span class="pre">T.Stage</span></code> annotation, AutoSchedule treats that child list as manual. One
 scope may contain several consecutive statements; every scheduler task
 materialized from those statements receives the same stage. Unannotated
-siblings default to stage 0. Within each hardware pipe, source order is the
-manual issue order; tasks on different pipes remain freely reorderable, so
-no separate order annotation is required. Nested child lists select
-automatic or manual scheduling independently.</p>
+siblings default to stage 0. On each shared core and hardware pipe, source
+order is the manual issue order. The scheduler separates issue phases when
+a stage tie-break would reverse this order. Data and register dependencies
+remain in force; an incompatible manual order fails scheduling. Tasks on
+different pipes remain freely reorderable subject to those dependencies.
+Nested child lists select automatic or manual scheduling independently.</p>
 <p><code class="docutils literal notranslate"><span class="pre">T.Stage</span></code> must wrap complete scheduler tasks. It must not appear inside
 <code class="docutils literal notranslate"><span class="pre">T.Task</span></code>, <code class="docutils literal notranslate"><span class="pre">T.SimtVF</span></code>, <code class="docutils literal notranslate"><span class="pre">T.SimdVF</span></code>, an SBlock, or a parallel loop. In
 Python’s multi-context form, put <code class="docutils literal notranslate"><span class="pre">T.Stage</span></code> first so it is the outer scope:</p>
