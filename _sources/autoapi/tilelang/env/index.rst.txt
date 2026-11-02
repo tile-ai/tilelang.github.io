@@ -52,6 +52,7 @@ Functions
 
    tilelang.env.parse_pass_profile_threshold_ms
    tilelang.env.resolve_pass_profile_threshold_ms
+   tilelang.env.parse_int_level
    tilelang.env.prepend_dll_search_path
    tilelang.env.get_cuda_dll_search_dirs
    tilelang.env.get_runtime_library_dirs
@@ -75,6 +76,15 @@ Module Contents
 .. py:function:: resolve_pass_profile_threshold_ms(pass_configs, key, env_threshold_ms)
 
    Resolve pass profile threshold with an explicit pass config taking precedence.
+
+
+.. py:function:: parse_int_level(value, name, *, minimum = 0)
+
+   Parse an integer level from a pass-config or environment value.
+
+   Booleans map to 0/1 and the usual true/false spellings plus numeric strings
+   are accepted, so pass configs and environment variables share one parser.
+   ``name`` labels error messages; values below ``minimum`` are rejected.
 
 
 .. py:data:: CUTLASS_NOT_FOUND_MESSAGE
@@ -298,6 +308,9 @@ Module Contents
    .. py:attribute:: TILELANG_ENABLE_IR_SPAN
 
 
+   .. py:attribute:: TILELANG_EMIT_LINE_DIRECTIVES
+
+
    .. py:attribute:: TILELANG_AUTO_TUNING_DISABLE_CACHE
 
 
@@ -397,6 +410,13 @@ Module Contents
    .. py:method:: get_default_verbose()
 
       Get default verbose flag from environment.
+
+
+
+   .. py:method:: get_default_emit_line_directives()
+
+      Default level for the tl.emit_line_directives pass config, or None
+      when the environment says nothing.
 
 
 

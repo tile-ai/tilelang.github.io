@@ -1084,7 +1084,25 @@ CUDA compile callback. Default: None</p>
 <dd><p>Emit <code class="docutils literal notranslate"><span class="pre">#line</span></code> directives in generated C-family source from TIR spans,
 mapping generated statements back to their Python source lines. For example,
 with the always-on <code class="docutils literal notranslate"><span class="pre">-lineinfo</span></code> for nvcc, PTX <code class="docutils literal notranslate"><span class="pre">.loc</span></code> entries point at
-the Python source. Default: False</p>
+the Python source. Default: 0</p>
+<p>The value is a level:</p>
+<ul class="simple">
+<li><p>0 (or False): off.</p></li>
+<li><p>1 (or True): one directive per statement that owns a TIR span.</p></li>
+<li><p>2 or more: every emitted source line is re-anchored. Level 1 only anchors
+a statement’s first line, so a synthesized statement without a span keeps
+the previous mapping (already advanced past its line), and a statement
+that prints several source lines (for example a vectorized CUDA binary
+op) still drifts inside the statement. Level 2 precedes every emitted
+line, including closing braces, with a fresh directive: a span-less
+statement inherits the nearest enclosing statement’s span, then the
+function’s span, then the last statement’s span, and a function whose
+PrimFunc has no span is mapped to the <code class="docutils literal notranslate"><span class="pre">&lt;tilelang-generated&gt;</span></code>
+pseudo-source instead of inheriting the previous function’s file.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">TILELANG_EMIT_LINE_DIRECTIVES</span></code> supplies the same default outside an
+explicit pass config (for example in compile-only tools); it accepts the
+same level values.</p>
 </dd></dl>
 
 <dl class="py attribute">

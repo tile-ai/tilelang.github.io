@@ -951,16 +951,19 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.env.resolve_pass_profile_threshold_ms" title="tilelang.env.resolve_pass_profile_threshold_ms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_pass_profile_threshold_ms</span></code></a>(pass_configs, key, ...)</p></td>
 <td><p>Resolve pass profile threshold with an explicit pass config taking precedence.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.env.prepend_dll_search_path" title="tilelang.env.prepend_dll_search_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepend_dll_search_path</span></code></a>(paths)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.env.parse_int_level" title="tilelang.env.parse_int_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_int_level</span></code></a>(value, name, *[, minimum])</p></td>
+<td><p>Parse an integer level from a pass-config or environment value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.env.prepend_dll_search_path" title="tilelang.env.prepend_dll_search_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepend_dll_search_path</span></code></a>(paths)</p></td>
 <td><p>Prepend <code class="docutils literal notranslate"><span class="pre">paths</span></code> to <code class="docutils literal notranslate"><span class="pre">%PATH%</span></code> on Windows, skipping entries already present.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.env.get_cuda_dll_search_dirs" title="tilelang.env.get_cuda_dll_search_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cuda_dll_search_dirs</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.env.get_cuda_dll_search_dirs" title="tilelang.env.get_cuda_dll_search_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cuda_dll_search_dirs</span></code></a>()</p></td>
 <td><p>Return CUDA_HOME-derived DLL search directories (Windows only).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.env.get_runtime_library_dirs" title="tilelang.env.get_runtime_library_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_runtime_library_dirs</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.env.get_runtime_library_dirs" title="tilelang.env.get_runtime_library_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_runtime_library_dirs</span></code></a>()</p></td>
 <td><p>Return library directories shipped with sibling Python packages.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.env.prepend_pythonpath" title="tilelang.env.prepend_pythonpath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepend_pythonpath</span></code></a>(path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.env.prepend_pythonpath" title="tilelang.env.prepend_pythonpath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepend_pythonpath</span></code></a>(path)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -1015,6 +1018,27 @@
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.env.parse_int_level">
+<span class="sig-prename descclassname"><span class="pre">tilelang.env.</span></span><span class="sig-name descname"><span class="pre">parse_int_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.parse_int_level" title="Link to this definition">¶</a></dt>
+<dd><p>Parse an integer level from a pass-config or environment value.</p>
+<p>Booleans map to 0/1 and the usual true/false spellings plus numeric strings
+are accepted, so pass configs and environment variables share one parser.
+<code class="docutils literal notranslate"><span class="pre">name</span></code> labels error messages; values below <code class="docutils literal notranslate"><span class="pre">minimum</span></code> are rejected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>object</em>)</p></li>
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>minimum</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1328,6 +1352,11 @@ auto-tuning configs, and build options.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.env.Environment.TILELANG_EMIT_LINE_DIRECTIVES">
+<span class="sig-name descname"><span class="pre">TILELANG_EMIT_LINE_DIRECTIVES</span></span><a class="headerlink" href="#tilelang.env.Environment.TILELANG_EMIT_LINE_DIRECTIVES" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.env.Environment.TILELANG_AUTO_TUNING_DISABLE_CACHE">
 <span class="sig-name descname"><span class="pre">TILELANG_AUTO_TUNING_DISABLE_CACHE</span></span><a class="headerlink" href="#tilelang.env.Environment.TILELANG_AUTO_TUNING_DISABLE_CACHE" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1564,6 +1593,18 @@ auto-tuning configs, and build options.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.env.Environment.get_default_emit_line_directives">
+<span class="sig-name descname"><span class="pre">get_default_emit_line_directives</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.Environment.get_default_emit_line_directives" title="Link to this definition">¶</a></dt>
+<dd><p>Default level for the tl.emit_line_directives pass config, or None
+when the environment says nothing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.env.Environment.get_default_layout_cost_model">
 <span class="sig-name descname"><span class="pre">get_default_layout_cost_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.Environment.get_default_layout_cost_model" title="Link to this definition">¶</a></dt>
 <dd><p>Default for the <cite>tl.layout_cost_model</cite> pass config, or None when
@@ -1771,6 +1812,7 @@ when TileLang is imported. Each lookup is best-effort; failures are ignored.</p>
 <li><a class="reference internal" href="#tilelang.env.TargetConfig"><code class="docutils literal notranslate"><span class="pre">TargetConfig</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.parse_pass_profile_threshold_ms"><code class="docutils literal notranslate"><span class="pre">parse_pass_profile_threshold_ms()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.resolve_pass_profile_threshold_ms"><code class="docutils literal notranslate"><span class="pre">resolve_pass_profile_threshold_ms()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.parse_int_level"><code class="docutils literal notranslate"><span class="pre">parse_int_level()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.CUTLASS_NOT_FOUND_MESSAGE"><code class="docutils literal notranslate"><span class="pre">CUTLASS_NOT_FOUND_MESSAGE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.TL_TEMPLATE_NOT_FOUND_MESSAGE"><code class="docutils literal notranslate"><span class="pre">TL_TEMPLATE_NOT_FOUND_MESSAGE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.TVM_LIBRARY_NOT_FOUND_MESSAGE"><code class="docutils literal notranslate"><span class="pre">TVM_LIBRARY_NOT_FOUND_MESSAGE</span></code></a></li>
@@ -1819,6 +1861,7 @@ when TileLang is imported. Each lookup is best-effort; failures are ignored.</p>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_PASS_PROFILE_THRESHOLD_MS"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_PASS_PROFILE_THRESHOLD_MS</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_ASCEND_PROFILE"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_ASCEND_PROFILE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_ENABLE_IR_SPAN"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_ENABLE_IR_SPAN</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_EMIT_LINE_DIRECTIVES"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_EMIT_LINE_DIRECTIVES</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_AUTO_TUNING_DISABLE_CACHE"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_AUTO_TUNING_DISABLE_CACHE</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_AUTO_TUNING_CPU_UTILITIES"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_AUTO_TUNING_CPU_UTILITIES</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.TILELANG_AUTO_TUNING_CPU_COUNTS"><code class="docutils literal notranslate"><span class="pre">Environment.TILELANG_AUTO_TUNING_CPU_COUNTS</span></code></a></li>
@@ -1847,6 +1890,7 @@ when TileLang is imported. Each lookup is best-effort; failures are ignored.</p>
 <li><a class="reference internal" href="#tilelang.env.Environment.get_default_target"><code class="docutils literal notranslate"><span class="pre">Environment.get_default_target()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.get_default_execution_backend"><code class="docutils literal notranslate"><span class="pre">Environment.get_default_execution_backend()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.get_default_verbose"><code class="docutils literal notranslate"><span class="pre">Environment.get_default_verbose()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.env.Environment.get_default_emit_line_directives"><code class="docutils literal notranslate"><span class="pre">Environment.get_default_emit_line_directives()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.get_default_layout_cost_model"><code class="docutils literal notranslate"><span class="pre">Environment.get_default_layout_cost_model()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.is_running_autodd"><code class="docutils literal notranslate"><span class="pre">Environment.is_running_autodd()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.env.Environment.is_light_import"><code class="docutils literal notranslate"><span class="pre">Environment.is_light_import()</span></code></a></li>
