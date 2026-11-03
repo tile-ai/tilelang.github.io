@@ -626,7 +626,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../../language/tile_schedule/index.html">tilelang.language.tile_schedule</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../language/tir/index.html">tilelang.language.tir</a><input aria-label="Toggle navigation of tilelang.language.tir" class="toctree-checkbox" id="toctree-checkbox-48" name="toctree-checkbox-48" role="switch" type="checkbox"/><label for="toctree-checkbox-48"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../language/tir/common/index.html">tilelang.language.tir.common</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../../language/tir/entry/index.html">tilelang.language.tir.entry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../language/tir/exports/index.html">tilelang.language.tir.exports</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../language/tir/ir/index.html">tilelang.language.tir.ir</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../language/tir/op/index.html">tilelang.language.tir.op</a></li>
@@ -859,7 +858,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA" title="tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GemmMFMA</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Base class for GEMM tile operators.</p></td>
 </tr>
 </tbody>
 </table>
@@ -876,6 +875,10 @@
 <dt class="sig sig-object py" id="tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.rocm.op.gemm.gemm_mfma.</span></span><span class="sig-name descname"><span class="pre">GemmMFMA</span></span><a class="headerlink" href="#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../../../../tileop/gemm/gemm_base/index.html#tilelang.tileop.gemm.gemm_base.GemmBase" title="tilelang.tileop.gemm.gemm_base.GemmBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.tileop.gemm.gemm_base.GemmBase</span></code></a></p>
+<p>Base class for GEMM tile operators.</p>
+<p>Classifies the GEMM variant by the memory scopes of operands A and B
+(SS, SR, RS, TS, RR) and provides common property accessors for the
+underlying <code class="docutils literal notranslate"><span class="pre">gemm_node</span></code> IR node.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.infer_layout">
 <span class="sig-name descname"><span class="pre">infer_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_nums</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.infer_layout" title="Link to this definition">¶</a></dt>
@@ -908,7 +911,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.is_gemm_ss">
 <span class="sig-name descname"><span class="pre">is_gemm_ss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.is_gemm_ss" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if both A and B are in shared memory (SS variant).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
 </dd>
@@ -918,7 +922,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.is_gemm_sr">
 <span class="sig-name descname"><span class="pre">is_gemm_sr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.is_gemm_sr" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if A is in shared memory and B is in registers (SR variant).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
 </dd>
@@ -928,7 +933,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.is_gemm_rs">
 <span class="sig-name descname"><span class="pre">is_gemm_rs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.is_gemm_rs" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if A is in registers and B is in shared memory (RS variant).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
 </dd>
@@ -938,7 +944,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.is_gemm_rr">
 <span class="sig-name descname"><span class="pre">is_gemm_rr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.rocm.op.gemm.gemm_mfma.GemmMFMA.is_gemm_rr" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return True if both A and B are in registers (RR variant).</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool">bool</a></p>
 </dd>
