@@ -154,8 +154,11 @@ Package Contents
 
    Insert sync between parallel read/write of shared buffers.
 
-   :param storage_scope: The target storage scope.
-   :type storage_scope: str
+   :param storage_scope: The target storage scope, or scopes to process in order. When several
+                         scopes are supplied, partial-sync barrier IDs are assigned after all
+                         scopes have been processed, allowing the same thread group to reuse an
+                         ID across scopes.
+   :type storage_scope: str or sequence of str
 
    :returns: **fpass** -- The result pass
    :rtype: tvm.transform.Pass
