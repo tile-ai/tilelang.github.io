@@ -1107,6 +1107,48 @@ from a single thread for shared/fragment scopes to avoid floods.</p>
 <span class="n">T</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">msg</span><span class="o">=</span><span class="s2">"C[0] = "</span><span class="p">)</span>
 </pre></div>
 </div>
+<section id="configuring-the-z3-proof-budget">
+<h3>Configuring the Z3 proof budget<a class="headerlink" href="#configuring-the-z3-proof-budget" title="Link to this heading">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">pass_configs</span></code> to change the Z3 resource budget for one kernel compilation.
+The default is <code class="docutils literal notranslate"><span class="pre">100_000</span></code>; a larger budget can prove more difficult expressions
+but may increase compilation time. The budget counts Z3 resource units, not
+milliseconds or an exact number of search iterations.</p>
+<p>Both styles of <code class="docutils literal notranslate"><span class="pre">&#64;tilelang.jit</span></code> accept the same option. In the lazy style, the
+decorated factory returns a <code class="docutils literal notranslate"><span class="pre">PrimFunc</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">pass_configs</span><span class="o">=</span><span class="p">{</span><span class="s2">"arith.z3_rlimit"</span><span class="p">:</span> <span class="mi">100_000</span><span class="p">})</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_kernel</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">N</span><span class="p">,),</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">)):</span>
+        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span> <span class="k">as</span> <span class="n">bx</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">bx</span> <span class="o">*</span> <span class="mi">128</span> <span class="o">+</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">:</span>
+                    <span class="n">A</span><span class="p">[</span><span class="n">bx</span> <span class="o">*</span> <span class="mi">128</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">kernel</span>
+</pre></div>
+</div>
+<p>In the eager style, the decorated function contains the kernel body directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tilelang</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">pass_configs</span><span class="o">=</span><span class="p">{</span><span class="s2">"arith.z3_rlimit"</span><span class="p">:</span> <span class="mi">100_000</span><span class="p">})</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">increment</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+            <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Direct compilation also accepts the option:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">compiled</span> <span class="o">=</span> <span class="n">tilelang</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">pass_configs</span><span class="o">=</span><span class="p">{</span><span class="s2">"arith.z3_rlimit"</span><span class="p">:</span> <span class="mi">100_000</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>The equivalent enum key is <code class="docutils literal notranslate"><span class="pre">tilelang.PassConfigKey.ARITH_Z3_RLIMIT</span></code>.
+Values must be integers from <code class="docutils literal notranslate"><span class="pre">0</span></code> through <code class="docutils literal notranslate"><span class="pre">2**32</span> <span class="pre">-</span> <span class="pre">1</span></code>; <code class="docutils literal notranslate"><span class="pre">0</span></code> disables the resource
+limit. For <code class="docutils literal notranslate"><span class="pre">tilelang.lower</span></code> or direct analyzer use, set the option in
+<code class="docutils literal notranslate"><span class="pre">tvm.transform.PassContext(config={&quot;arith.z3_rlimit&quot;:</span> <span class="pre">100_000})</span></code>.</p>
+<p>Each analyzer captures the active setting when it is constructed. Z3 contexts
+and solvers are still created lazily, and clones retain their source analyzer’s
+setting. An explicit <code class="docutils literal notranslate"><span class="pre">analyzer.set_z3_rlimit(...)</span></code> overrides that captured value.
+The setting applies to solver checks, not to a total budget across the kernel.</p>
+</section>
 </section>
 <section id="where-to-go-next">
 <h2>9. Where to Go Next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">¶</a></h2>
@@ -1185,7 +1227,10 @@ from a single thread for shared/fragment scopes to avoid floods.</p>
 <li><a class="reference internal" href="#moving-data-t-copy">5. Moving Data: <code class="docutils literal notranslate"><span class="pre">T.copy</span></code></a></li>
 <li><a class="reference internal" href="#a-minimal-endtoend-example-vector-add">6. A Minimal End‑to‑End Example (Vector Add)</a></li>
 <li><a class="reference internal" href="#tiled-gemm-skeleton">7. Tiled GEMM Skeleton</a></li>
-<li><a class="reference internal" href="#debugging-and-printing">8. Debugging and Printing</a></li>
+<li><a class="reference internal" href="#debugging-and-printing">8. Debugging and Printing</a><ul>
+<li><a class="reference internal" href="#configuring-the-z3-proof-budget">Configuring the Z3 proof budget</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#where-to-go-next">9. Where to Go Next</a></li>
 </ul>
 </li>
