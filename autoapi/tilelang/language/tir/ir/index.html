@@ -526,6 +526,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../dtypes/index.html">tilelang.dtypes</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../engine/index.html">tilelang.engine</a><input aria-label="Toggle navigation of tilelang.engine" class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../engine/callback/index.html">tilelang.engine.callback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../engine/host_mapped/index.html">tilelang.engine.host_mapped</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../engine/lower/index.html">tilelang.engine.lower</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../engine/param/index.html">tilelang.engine.param</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../engine/semantic_check/index.html">tilelang.engine.semantic_check</a></li>
@@ -2030,8 +2031,10 @@ branch must guard side effects or out-of-bounds memory accesses.</p>
 <li><p><strong>dtype</strong> (<em>str</em>) – The target data type.</p></li>
 <li><p><strong>round</strong> (<em>str</em><em>, </em><em>optional</em>) – PTX rounding modifier (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;rn&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rz&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rp&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rm&quot;</span></code>,
 <code class="docutils literal notranslate"><span class="pre">&quot;rs&quot;</span></code>). Empty string means use the backend default. Currently
-only <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;rs&quot;</span></code> are lowered by the CUDA backend; the other
-modifiers are reserved.</p></li>
+the CUDA backend supports <code class="docutils literal notranslate"><span class="pre">&quot;rn&quot;</span></code> for float32 to tfloat32 and
+<code class="docutils literal notranslate"><span class="pre">&quot;rs&quot;</span></code> for supported low-precision conversions. Other explicit
+modes are reserved. TF32 <code class="docutils literal notranslate"><span class="pre">&quot;rn&quot;</span></code> requires SM90+ with <code class="docutils literal notranslate"><span class="pre">sat=False</span></code>
+or SM100+ with <code class="docutils literal notranslate"><span class="pre">sat=True</span></code>.</p></li>
 <li><p><strong>sat</strong> (<a class="reference internal" href="../../dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>, </em><em>optional</em>) – Saturate to finite (<code class="docutils literal notranslate"><span class="pre">True</span></code> = PTX <code class="docutils literal notranslate"><span class="pre">.satfinite</span></code>, default).</p></li>
 <li><p><strong>rbits</strong> (<em>PrimExpr</em><em>, </em><em>optional</em>) – Random bits operand for stochastic rounding (<code class="docutils literal notranslate"><span class="pre">round=&quot;rs&quot;</span></code>).</p></li>
 <li><p><strong>span</strong> (<em>Optional</em><em>[</em><em>Span</em><em>]</em>) – The location of this operator in the source.</p></li>

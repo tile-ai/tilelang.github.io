@@ -526,6 +526,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../autoapi/tilelang/dtypes/index.html">tilelang.dtypes</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/tilelang/engine/index.html">tilelang.engine</a><input aria-label="Toggle navigation of tilelang.engine" class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/callback/index.html">tilelang.engine.callback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/host_mapped/index.html">tilelang.engine.host_mapped</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/lower/index.html">tilelang.engine.lower</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/param/index.html">tilelang.engine.param</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/tilelang/engine/semantic_check/index.html">tilelang.engine.semantic_check</a></li>
@@ -1001,6 +1002,45 @@
 <h2>Device Type Codes (DLPack)<a class="headerlink" href="#device-type-codes-dlpack" title="Link to this heading">¶</a></h2>
 <p>Supported and referenced device codes in error messages: <code class="docutils literal notranslate"><span class="pre">1=CPU,</span> <span class="pre">2=CUDA,</span> <span class="pre">7=Vulkan,</span> <span class="pre">8=Metal,</span> <span class="pre">10=ROCM,</span> <span class="pre">14=OneAPI,</span> <span class="pre">15=WebGPU</span></code>.
 Kernels assert that <code class="docutils literal notranslate"><span class="pre">device_type</span></code> matches the target backend, and require <code class="docutils literal notranslate"><span class="pre">device_id</span></code> consistency across tensors.</p>
+<section id="explicit-mapped-host-parameters-cuda">
+<h3>Explicit mapped host parameters (CUDA)<a class="headerlink" href="#explicit-mapped-host-parameters-cuda" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">T.annotate_host_mapped_buffers(*buffers)</span></code> declares external tensor parameters
+whose storage is mapped host memory accessible to the executing GPU:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">affine</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">N</span><span class="p">,),</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">dst</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="n">N</span><span class="p">,),</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">)):</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">annotate_host_mapped_buffers</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">ceildiv</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span> <span class="k">as</span> <span class="n">block</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">lane</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">block</span> <span class="o">*</span> <span class="mi">128</span> <span class="o">+</span> <span class="n">lane</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">:</span>
+                <span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">src</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Compile with <code class="docutils literal notranslate"><span class="pre">target=&quot;cuda&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">execution_backend=&quot;cython&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;tvm_ffi&quot;</span></code>.
+Pass a preallocated CPU tensor, for example
+<code class="docutils literal notranslate"><span class="pre">torch.empty(N,</span> <span class="pre">dtype=torch.float32,</span> <span class="pre">pin_memory=True)</span></code>, as <code class="docutils literal notranslate"><span class="pre">dst</span></code>. Its PyTorch
+device remains CPU. The launcher validates the CUDA registration and resolves
+the device pointer; it does not assume that host and device addresses match.
+Ordinary pageable CPU tensors and CUDA tensors are rejected for annotated
+parameters. Unannotated parameters retain their existing device requirements,
+and dtype, shape, rank, and stride checks remain enabled.</p>
+<p>The annotation applies to the whole function. Multiple calls are merged into
+the <code class="docutils literal notranslate"><span class="pre">tl.host_mapped_params</span></code> function attribute, which records parameter indices
+and survives IR serialization and kernel cache restoration. It does not change
+the buffer’s <code class="docutils literal notranslate"><span class="pre">global</span></code> scope. Only external buffer parameters may be annotated;
+annotated outputs cannot be allocated via <code class="docutils literal notranslate"><span class="pre">out_idx</span></code> or <code class="docutils literal notranslate"><span class="pre">T.empty</span></code>. Other targets
+and execution backends currently reject the annotation.</p>
+<p>Mapped parameters use the current CUDA execution context; CUDA tensor arguments
+must be on that device. Host tensors do not supply a CUDA device ID. Views use
+their actual data pointer and declared strides, including nonzero storage offsets.</p>
+<p>This feature supports direct global loads and stores without a D2H copy or a
+global <code class="docutils literal notranslate"><span class="pre">skip_tensor_validation</span></code>. It does not register memory or synchronize
+execution. Keep the tensor storage and its mapping alive until GPU work finishes,
+and synchronize the relevant stream or event before the CPU reads or reuses it.
+For CUDA Graphs, preallocate before capture and retain the same storage and
+mapping throughout replay. Replays reuse captured pointers and do not rerun host
+validation. Concurrent steps need separate output storage or explicit ordering.</p>
+</section>
 </section>
 <hr class="docutils" />
 <section id="common-error-examples-what-youll-see">
@@ -1402,7 +1442,10 @@ Kernels assert that <code class="docutils literal notranslate"><span class="pre"
 </li>
 <li><a class="reference internal" href="#shapes-and-symbolic-equations-linear-solving">Shapes and Symbolic Equations: Linear Solving</a></li>
 <li><a class="reference internal" href="#nullability-rules-and-examples">Nullability Rules and Examples</a></li>
-<li><a class="reference internal" href="#device-type-codes-dlpack">Device Type Codes (DLPack)</a></li>
+<li><a class="reference internal" href="#device-type-codes-dlpack">Device Type Codes (DLPack)</a><ul>
+<li><a class="reference internal" href="#explicit-mapped-host-parameters-cuda">Explicit mapped host parameters (CUDA)</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#common-error-examples-what-youll-see">Common Error Examples (What you’ll see)</a></li>
 <li><a class="reference internal" href="#troubleshooting-tips">Troubleshooting Tips</a></li>
 <li><a class="reference internal" href="#faq">FAQ</a></li>
