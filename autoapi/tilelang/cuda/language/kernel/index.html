@@ -847,7 +847,7 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.language.kernel.Kernel" title="tilelang.cuda.language.kernel.Kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Kernel</span></code></a>(*blocks[, threads, prelude, cluster_dims])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.language.kernel.Kernel" title="tilelang.cuda.language.kernel.Kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Kernel</span></code></a>(*blocks[, threads, prelude, cluster_dims, name])</p></td>
 <td><p>Construct a kernel launch frame for CUDA: a grid of thread blocks.</p></td>
 </tr>
 </tbody>
@@ -858,7 +858,7 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.cuda.language.kernel.Kernel">
-<span class="sig-prename descclassname"><span class="pre">tilelang.cuda.language.kernel.</span></span><span class="sig-name descname"><span class="pre">Kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">blocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prelude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.language.kernel.Kernel" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.cuda.language.kernel.</span></span><span class="sig-name descname"><span class="pre">Kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">blocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prelude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.language.kernel.Kernel" title="Link to this definition">¶</a></dt>
 <dd><p>Construct a kernel launch frame for CUDA: a grid of thread blocks.</p>
 <p>Code inside the launch operates at the block level: <code class="docutils literal notranslate"><span class="pre">T.Parallel</span></code>,
 <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> and friends are mapped onto threads by the compiler.
@@ -878,6 +878,9 @@ lines or helper functions.</p></li>
 <li><p><strong>cluster_dims</strong> (<em>int</em><em> | </em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>] </em><em>| </em><em>list</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Thread block cluster shape (SM90+). <code class="docutils literal notranslate"><span class="pre">2</span></code> or <code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">1,</span> <span class="pre">1)</span></code> launches
 2-CTA clusters via <code class="docutils literal notranslate"><span class="pre">cudaLaunchKernelEx</span></code>. <code class="docutils literal notranslate"><span class="pre">T.ClusterKernel</span></code> is the
 same launch with a required <code class="docutils literal notranslate"><span class="pre">cluster_dims</span></code>.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Device kernel name, given as an ASCII identifier. Used as-is without
+adding <code class="docutils literal notranslate"><span class="pre">_kernel</span></code>; collisions receive a numeric suffix. When omitted,
+the name is derived from the enclosing PrimFunc’s global symbol.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

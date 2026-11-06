@@ -275,7 +275,7 @@ Module Contents
 
 .. py:function:: is_kernel_launch_factory(obj)
 
-.. py:function:: launch_kernel(blocks, *, threads = None, prelude = None, cluster_dims = None, **annotations)
+.. py:function:: launch_kernel(blocks, *, threads = None, prelude = None, cluster_dims = None, name = None, **annotations)
 
    Shared implementation behind every dialect's ``T.Kernel``.
 
@@ -309,7 +309,7 @@ Module Contents
            ...
 
 
-.. py:function:: ClusterKernel(*blocks, cluster_dims, threads = None, prelude = None)
+.. py:function:: ClusterKernel(*blocks, cluster_dims, threads = None, prelude = None, name = None)
 
    Construct a kernel launch frame with a CUDA thread block cluster
    (SM90+ only).
@@ -330,6 +330,9 @@ Module Contents
    :param prelude: The import c code of the kernel,
                    will be injected before the generated kernel code.
    :type prelude: str
+   :param name: Device kernel name, with the same naming and collision rules as
+                ``tilelang.cuda.language.Kernel``.
+   :type name: str, optional
 
    .. rubric:: Examples
 

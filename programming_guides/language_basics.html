@@ -943,8 +943,8 @@ target shares: on CUDA a program is a thread block and <code class="docutils lit
 target is known. Each language dialect’s <code class="docutils literal notranslate"><span class="pre">Kernel</span></code> declares the annotations its
 backend understands as explicit keyword parameters, so hovering or
 autocompleting <code class="docutils literal notranslate"><span class="pre">T.Kernel</span></code> shows exactly those and anything else is rejected:
-<code class="docutils literal notranslate"><span class="pre">tilelang.language</span></code> (the CUDA dialect) offers <code class="docutils literal notranslate"><span class="pre">threads</span></code>, <code class="docutils literal notranslate"><span class="pre">prelude</span></code> and
-<code class="docutils literal notranslate"><span class="pre">cluster_dims</span></code>; <code class="docutils literal notranslate"><span class="pre">tilelang.rocm.language</span></code> / <code class="docutils literal notranslate"><span class="pre">tilelang.metal.language</span></code> offer
+<code class="docutils literal notranslate"><span class="pre">tilelang.language</span></code> (the CUDA dialect) offers <code class="docutils literal notranslate"><span class="pre">threads</span></code>, <code class="docutils literal notranslate"><span class="pre">prelude</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cluster_dims</span></code> and <code class="docutils literal notranslate"><span class="pre">name</span></code>; <code class="docutils literal notranslate"><span class="pre">tilelang.rocm.language</span></code> / <code class="docutils literal notranslate"><span class="pre">tilelang.metal.language</span></code> offer
 <code class="docutils literal notranslate"><span class="pre">threads</span></code> and <code class="docutils literal notranslate"><span class="pre">prelude</span></code>; <code class="docutils literal notranslate"><span class="pre">tilelang.cpu.language</span></code> offers only <code class="docutils literal notranslate"><span class="pre">prelude</span></code>.
 <code class="docutils literal notranslate"><span class="pre">threads</span></code> is the SIMT one: how many threads run each tile program on
 GPU-style backends. Those backends pick a default (128) when it is omitted;
@@ -961,6 +961,31 @@ annotation (SM90+). A cluster is a <code class="docutils literal notranslate"><s
 (<code class="docutils literal notranslate"><span class="pre">bx</span> <span class="pre">//</span> <span class="pre">cluster_dims[axis]</span></code>) and works on every target, while
 <code class="docutils literal notranslate"><span class="pre">T.block_rank_in_cluster()</span></code> reads the hardware rank and is CUDA-only. Targets
 without clusters reject <code class="docutils literal notranslate"><span class="pre">cluster_dims</span></code> at compile time.</p>
+<section id="naming-cuda-kernels">
+<h3>Naming CUDA kernels<a class="headerlink" href="#naming-cuda-kernels" title="Link to this heading">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">name=</span></code> to distinguish individual CUDA launches in generated code and
+profilers, including multiple launches inside one <code class="docutils literal notranslate"><span class="pre">PrimFunc</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pipeline</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">256</span><span class="p">,),</span> <span class="s2">"float32"</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">256</span><span class="p">,),</span> <span class="s2">"float32"</span><span class="p">)):</span>
+    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"add_one"</span><span class="p">)</span> <span class="k">as</span> <span class="n">bx</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+            <span class="n">B</span><span class="p">[</span><span class="n">bx</span> <span class="o">*</span> <span class="mi">128</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">bx</span> <span class="o">*</span> <span class="mi">128</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.0</span>
+
+    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"double_values"</span><span class="p">)</span> <span class="k">as</span> <span class="n">bx</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+            <span class="n">B</span><span class="p">[</span><span class="n">bx</span> <span class="o">*</span> <span class="mi">128</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">2.0</span>
+</pre></div>
+</div>
+<p>The device functions are named <code class="docutils literal notranslate"><span class="pre">add_one</span></code> and <code class="docutils literal notranslate"><span class="pre">double_values</span></code>, without an
+extra <code class="docutils literal notranslate"><span class="pre">_kernel</span></code> suffix. Names must be non-empty ASCII identifiers matching
+<code class="docutils literal notranslate"><span class="pre">[A-Za-z_][A-Za-z0-9_]*</span></code>. Avoid C++ keywords and names reserved by CUDA.
+When a symbol is already in use, TileLang appends a numeric suffix such as
+<code class="docutils literal notranslate"><span class="pre">stage_1</span></code>. This also handles collisions with the enclosing host function.</p>
+<p>Omitting <code class="docutils literal notranslate"><span class="pre">name</span></code> (or passing <code class="docutils literal notranslate"><span class="pre">None</span></code>) retains the existing naming scheme based
+on the enclosing function’s <code class="docutils literal notranslate"><span class="pre">global_symbol</span></code>, such as <code class="docutils literal notranslate"><span class="pre">pipeline_kernel</span></code> and
+<code class="docutils literal notranslate"><span class="pre">pipeline_kernel_1</span></code>. Named and unnamed launches can be mixed, and
+<code class="docutils literal notranslate"><span class="pre">T.ClusterKernel</span></code> accepts the same <code class="docutils literal notranslate"><span class="pre">name</span></code> argument.</p>
+</section>
 </section>
 <section id="loops-and-control-flow">
 <h2>3. Loops and Control Flow<a class="headerlink" href="#loops-and-control-flow" title="Link to this heading">¶</a></h2>
@@ -1221,7 +1246,10 @@ The setting applies to solver checks, not to a total budget across the kernel.</
 <li><a class="reference internal" href="#dynamic-symbolic-dimensions-two-ways">Dynamic symbolic dimensions: two ways</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#launching-work-with-t-kernel">2. Launching Work with <code class="docutils literal notranslate"><span class="pre">T.Kernel</span></code></a></li>
+<li><a class="reference internal" href="#launching-work-with-t-kernel">2. Launching Work with <code class="docutils literal notranslate"><span class="pre">T.Kernel</span></code></a><ul>
+<li><a class="reference internal" href="#naming-cuda-kernels">Naming CUDA kernels</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#loops-and-control-flow">3. Loops and Control Flow</a></li>
 <li><a class="reference internal" href="#memory-scopes-and-allocation">4. Memory Scopes and Allocation</a></li>
 <li><a class="reference internal" href="#moving-data-t-copy">5. Moving Data: <code class="docutils literal notranslate"><span class="pre">T.copy</span></code></a></li>

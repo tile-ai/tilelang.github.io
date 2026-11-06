@@ -868,13 +868,13 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.is_kernel_launch_factory" title="tilelang.language.kernel.is_kernel_launch_factory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_kernel_launch_factory</span></code></a>(obj)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.launch_kernel" title="tilelang.language.kernel.launch_kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">launch_kernel</span></code></a>(blocks, *[, threads, prelude, cluster_dims])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.launch_kernel" title="tilelang.language.kernel.launch_kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">launch_kernel</span></code></a>(blocks, *[, threads, prelude, ...])</p></td>
 <td><p>Shared implementation behind every dialect's <code class="docutils literal notranslate"><span class="pre">T.Kernel</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.Kernel" title="tilelang.language.kernel.Kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Kernel</span></code></a>(*blocks)</p></td>
 <td><p>Construct a kernel launch frame: a grid of tile programs.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.ClusterKernel" title="tilelang.language.kernel.ClusterKernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClusterKernel</span></code></a>(*blocks, cluster_dims[, threads, prelude])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.language.kernel.ClusterKernel" title="tilelang.language.kernel.ClusterKernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClusterKernel</span></code></a>(*blocks, cluster_dims[, threads, ...])</p></td>
 <td><p>Construct a kernel launch frame with a CUDA thread block cluster</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.language.kernel.CUDASourceCodeKernel" title="tilelang.language.kernel.CUDASourceCodeKernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CUDASourceCodeKernel</span></code></a>(*blocks[, threads, entry_name, ...])</p></td>
@@ -1283,7 +1283,7 @@ of which dialect or alias the user went through.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.kernel.launch_kernel">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">launch_kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blocks</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prelude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">annotations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.kernel.launch_kernel" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">launch_kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blocks</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prelude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">annotations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.kernel.launch_kernel" title="Link to this definition">¶</a></dt>
 <dd><p>Shared implementation behind every dialect’s <code class="docutils literal notranslate"><span class="pre">T.Kernel</span></code>.</p>
 <p>The well-known launch annotations are normalized here; any other keyword
 a dialect forwards is recorded verbatim on the launch block for that
@@ -1297,6 +1297,7 @@ declares.</p>
 <li><p><strong>threads</strong> (<em>int</em><em> | </em><em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>Ellipsis</em><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>prelude</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>cluster_dims</strong> (<em>int</em><em> | </em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>] </em><em>| </em><em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>name</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>annotations</strong> (<em>Any</em>)</p></li>
 </ul>
 </dd>
@@ -1334,7 +1335,7 @@ CPU, the core index on an NPU).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.language.kernel.ClusterKernel">
-<span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">ClusterKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">blocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_dims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prelude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.kernel.ClusterKernel" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.language.kernel.</span></span><span class="sig-name descname"><span class="pre">ClusterKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">blocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_dims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prelude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.language.kernel.ClusterKernel" title="Link to this definition">¶</a></dt>
 <dd><p>Construct a kernel launch frame with a CUDA thread block cluster
 (SM90+ only).</p>
 <p>This is the CUDA-specific variant of <a class="reference internal" href="#tilelang.language.kernel.Kernel" title="tilelang.language.kernel.Kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">Kernel()</span></code></a>: identical launch
@@ -1351,6 +1352,8 @@ cudaLaunchAttributeClusterDimension.</p>
 Or a list of integers representing blockDim.(x|y|z)</p></li>
 <li><p><strong>prelude</strong> (<em>str</em>) – The import c code of the kernel,
 will be injected before the generated kernel code.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Device kernel name, with the same naming and collision rules as
+<code class="docutils literal notranslate"><span class="pre">tilelang.cuda.language.Kernel</span></code>.</p></li>
 </ul>
 </dd>
 </dl>

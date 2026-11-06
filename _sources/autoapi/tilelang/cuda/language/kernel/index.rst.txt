@@ -20,7 +20,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: Kernel(*blocks, threads = None, prelude = None, cluster_dims = None)
+.. py:function:: Kernel(*blocks, threads = None, prelude = None, cluster_dims = None, name = None)
 
    Construct a kernel launch frame for CUDA: a grid of thread blocks.
 
@@ -44,6 +44,10 @@ Module Contents
                         2-CTA clusters via ``cudaLaunchKernelEx``. ``T.ClusterKernel`` is the
                         same launch with a required ``cluster_dims``.
    :type cluster_dims: int | tuple[int, int, int] | list[int], optional
+   :param name: Device kernel name, given as an ASCII identifier. Used as-is without
+                adding ``_kernel``; collisions receive a numeric suffix. When omitted,
+                the name is derived from the enclosing PrimFunc's global symbol.
+   :type name: str, optional
 
    .. rubric:: Examples
 
