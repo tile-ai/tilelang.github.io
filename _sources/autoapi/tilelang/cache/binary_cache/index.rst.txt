@@ -29,7 +29,7 @@ Module Contents
    and published with a single directory rename, so concurrent writers cannot
    observe partial entries and the first publication wins. Published entries
    are never modified or deleted: on 3FS, unlinking a binary can invalidate
-   another reader's open fd, so corruption is handled as a plain cache miss.
+   another reader's open fd, so corruption is reported as an error.
 
    Subclasses set ``cache_root_dir`` (directory under the version namespace),
    ``cache_format`` (metadata format tag) and ``binary_kind`` (backend name
@@ -49,7 +49,7 @@ Module Contents
       :type:  ClassVar[str]
 
 
-   .. py:method:: get_path(key, compile_format)
+   .. py:method:: get_write_path(key, compile_format)
       :classmethod:
 
 

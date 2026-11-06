@@ -865,7 +865,7 @@ payload size, sha256) and a raw kernel binary. Entries are staged privately
 and published with a single directory rename, so concurrent writers cannot
 observe partial entries and the first publication wins. Published entries
 are never modified or deleted: on 3FS, unlinking a binary can invalidate
-another reader’s open fd, so corruption is handled as a plain cache miss.</p>
+another reader’s open fd, so corruption is reported as an error.</p>
 <p>Subclasses set <code class="docutils literal notranslate"><span class="pre">cache_root_dir</span></code> (directory under the version namespace),
 <code class="docutils literal notranslate"><span class="pre">cache_format</span></code> (metadata format tag) and <code class="docutils literal notranslate"><span class="pre">binary_kind</span></code> (backend name
 used in error messages), and provide their own <code class="docutils literal notranslate"><span class="pre">make_key</span></code> built on
@@ -886,8 +886,8 @@ used in error messages), and provide their own <code class="docutils literal not
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tilelang.cache.binary_cache.BinaryCache.get_path">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_format</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.binary_cache.BinaryCache.get_path" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilelang.cache.binary_cache.BinaryCache.get_write_path">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_write_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_format</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.binary_cache.BinaryCache.get_write_path" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1001,7 +1001,7 @@ used in error messages), and provide their own <code class="docutils literal not
 <li><a class="reference internal" href="#tilelang.cache.binary_cache.BinaryCache.cache_root_dir"><code class="docutils literal notranslate"><span class="pre">BinaryCache.cache_root_dir</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.binary_cache.BinaryCache.cache_format"><code class="docutils literal notranslate"><span class="pre">BinaryCache.cache_format</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.binary_cache.BinaryCache.binary_kind"><code class="docutils literal notranslate"><span class="pre">BinaryCache.binary_kind</span></code></a></li>
-<li><a class="reference internal" href="#tilelang.cache.binary_cache.BinaryCache.get_path"><code class="docutils literal notranslate"><span class="pre">BinaryCache.get_path()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.binary_cache.BinaryCache.get_write_path"><code class="docutils literal notranslate"><span class="pre">BinaryCache.get_write_path()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.binary_cache.BinaryCache.load"><code class="docutils literal notranslate"><span class="pre">BinaryCache.load()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.binary_cache.BinaryCache.save"><code class="docutils literal notranslate"><span class="pre">BinaryCache.save()</span></code></a></li>
 </ul>

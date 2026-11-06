@@ -1101,7 +1101,7 @@ the underlying call returns.</p></li>
 <section id="caching">
 <h2>Caching<a class="headerlink" href="#caching" title="Link to this heading">¶</a></h2>
 <p>The autotuner caches best artifacts both in‑memory (per process) and on disk under
-<code class="docutils literal notranslate"><span class="pre">$TILELANG_CACHE_DIR/autotuner</span></code>. The cache key includes:</p>
+<code class="docutils literal notranslate"><span class="pre">&lt;first-cache-root&gt;/&lt;version&gt;/&lt;host-platform&gt;/autotuner</span></code>. The cache key includes:</p>
 <ul class="simple">
 <li><p>TileLang version, function source, closure free‑vars</p></li>
 <li><p>Config list, compile args, profile args</p></li>
@@ -1114,10 +1114,28 @@ the underlying call returns.</p></li>
 </ul>
 <p>Control via env vars (tilelang.env)</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">TILELANG_CACHE_DIR</span></code> (default <code class="docutils literal notranslate"><span class="pre">~/.tilelang/cache</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TILELANG_CACHE_DIR</span></code> (default <code class="docutils literal notranslate"><span class="pre">~/.tilelang/cache</span></code>)
+accepts an ordered path list, for example
+<code class="docutils literal notranslate"><span class="pre">TILELANG_CACHE_DIR=/local/cache:/shared/cache/A:/shared/cache/B</span></code>.
+Kernel, device-binary, and autotuning caches search all roots from left to right, using
+the first existing entry. Missing entries fall through to the next root;
+incomplete, corrupt, or unloadable entries raise an error and stop lookup.
+Writes and explicit cache clearing use only the first root; published entries
+are never automatically repaired or deleted. Generated Python sources use only the
+first root. Use <code class="docutils literal notranslate"><span class="pre">;</span></code> as the separator
+on Windows. Empty path components are rejected.</p></li>
 <li><p>Disable all kernel caches: <code class="docutils literal notranslate"><span class="pre">TILELANG_DISABLE_CACHE=1</span></code></p></li>
 <li><p>Disable autotune disk cache only: <code class="docutils literal notranslate"><span class="pre">TILELANG_AUTO_TUNING_DISABLE_CACHE=1</span></code></p></li>
 </ul>
+<p>To recover from an invalid cache entry, stop processes using that entry and
+remove its <strong>entire per-key directory</strong>, then retry compilation or autotuning.
+Do not delete or edit individual files inside a published entry: its metadata,
+sources, and compiled artifacts form one unit, and other processes may be reading
+it. The entry is rebuilt on the next cache miss. If the invalid entry is in a
+secondary root, its owner must remove it, or you must exclude that root from
+<code class="docutils literal notranslate"><span class="pre">TILELANG_CACHE_DIR</span></code>. Concurrent publishers for an absent key use separate staging
+directories; the first successful atomic rename wins and later writers leave it
+unchanged.</p>
 <p>CPU worker control</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">TILELANG_AUTO_TUNING_CPU_UTILITIES</span></code> (fraction, default 0.9)</p></li>
