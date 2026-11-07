@@ -1,0 +1,111 @@
+tilelang.contrib.cutedsl.ldst
+=============================
+
+.. py:module:: tilelang.contrib.cutedsl.ldst
+
+.. autoapi-nested-parse::
+
+   Explicit-width and read-only-cache loads and stores for the CuTeDSL backend.
+
+   Mirrors ``tl::load_global_*`` / ``tl::store_global_*`` / ``tl::load_shared_*`` /
+   ``tl::store_shared_*`` in ``src/tl_templates/cuda/copy.h`` and ``copy_sm100.h``,
+   and CUDA's ``__ldg``.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.ldst.ldg32
+   tilelang.contrib.cutedsl.ldst.ldg64
+   tilelang.contrib.cutedsl.ldst.ldg128
+   tilelang.contrib.cutedsl.ldst.ldg256
+   tilelang.contrib.cutedsl.ldst.stg32
+   tilelang.contrib.cutedsl.ldst.stg64
+   tilelang.contrib.cutedsl.ldst.stg128
+   tilelang.contrib.cutedsl.ldst.stg256
+   tilelang.contrib.cutedsl.ldst.lds32
+   tilelang.contrib.cutedsl.ldst.lds64
+   tilelang.contrib.cutedsl.ldst.lds128
+   tilelang.contrib.cutedsl.ldst.sts32
+   tilelang.contrib.cutedsl.ldst.sts64
+   tilelang.contrib.cutedsl.ldst.sts128
+
+
+Module Contents
+---------------
+
+.. py:function:: ldg32(ptr, pred=True)
+
+   ``tl::load_global_32[_conditional]``: ``@p ld.global.u32``; 0 when ``pred`` is false.
+
+
+.. py:function:: ldg64(ptr, pred=True)
+
+   ``tl::load_global_64[_conditional]``: ``@p ld.global.v2.u32``; zeros when ``pred`` is false.
+
+
+.. py:function:: ldg128(ptr, pred=True)
+
+   ``tl::load_global_128[_conditional]``: ``@p ld.global.v4.u32``; zeros when ``pred`` is false.
+
+
+.. py:function:: ldg256(ptr, pred=True)
+
+   ``tl::load_global_256[_conditional]``: ``@p ld.global.v4.u64`` on sm_100+, else two
+   ``@p ld.global.v4.u32``; zeros when ``pred`` is false.
+
+
+.. py:function:: stg32(ptr, value, pred=True, *, loc=None, ip=None)
+
+   ``tl::store_global_32[_conditional]``: ``@p st.global.u32``.
+
+
+.. py:function:: stg64(ptr, value, pred=True, *, loc=None, ip=None)
+
+   ``tl::store_global_64[_conditional]``: ``@p st.global.v2.u32``.
+
+
+.. py:function:: stg128(ptr, value, pred=True, *, loc=None, ip=None)
+
+   ``tl::store_global_128[_conditional]``: ``@p st.global.v4.u32``.
+
+
+.. py:function:: stg256(ptr, value, pred=True, *, loc=None, ip=None)
+
+   ``tl::store_global_256[_conditional]``: ``@p st.global.v4.u64`` on sm_100+, else two
+   ``@p st.global.v4.u32``.
+
+
+.. py:function:: lds32(ptr)
+
+   ``tl::load_shared_32``: a plain 32-bit load.
+
+
+.. py:function:: lds64(ptr)
+
+   ``tl::load_shared_64``: a plain 64-bit (``uint2``) load.
+
+
+.. py:function:: lds128(ptr)
+
+   ``tl::load_shared_128``: a plain 128-bit (``uint4``) load.
+
+
+.. py:function:: sts32(ptr, value)
+
+   ``tl::store_shared_32``: a plain 32-bit store.
+
+
+.. py:function:: sts64(ptr, value)
+
+   ``tl::store_shared_64``: a plain 64-bit (``uint2``) store.
+
+
+.. py:function:: sts128(ptr, value)
+
+   ``tl::store_shared_128``: a plain 128-bit (``uint4``) store.
+
+

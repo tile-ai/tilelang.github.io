@@ -24,8 +24,11 @@ tilelang.contrib.cutedsl.ptx_mma
    - TF32: m16n8k4, m16n8k8 -> f32 accumulator
    - FP64: m8n8k4 -> f64 accumulator
 
-   Sparse (mma.sp) variants mirror the dense ones with halved A registers,
-   an extra metadata register, and a sparse_selector literal.
+   Sparse variants mirror the dense ones with halved A registers, an extra
+   metadata register, and a sparse_selector literal. Like
+   ``tl_templates/cuda/instruction/mma_sp.h`` they cover f16/bf16/tf32, s8/u8 and
+   FP8 (e4m3/e5m2, sm_89+), and emit ``mma.sp::ordered_metadata``, which PTX
+   recommends over plain ``mma.sp`` for performance.
 
 
 
@@ -56,6 +59,7 @@ Functions
 
    tilelang.contrib.cutedsl.ptx_mma.ptx_mma
    tilelang.contrib.cutedsl.ptx_mma.ptx_mma_sp
+   tilelang.contrib.cutedsl.ptx_mma.ptx_mma_block_scale
 
 
 Module Contents
@@ -101,5 +105,15 @@ Module Contents
 
    Dispatches to the appropriate specialized sparse MMA function based on
    shape and data types.
+
+
+.. py:function:: ptx_mma_block_scale(accum_dtype, shape, a_layout, b_layout, kind, scale_vec_size, a_dtype, b_dtype, scale_type, a_ptr, a_offset, b_ptr, b_offset, c_ptr, c_offset, scale_a, scale_b, scale_a_byte_id=0, scale_a_thread_id=0, scale_b_byte_id=0, scale_b_thread_id=0, *, loc=None, ip=None)
+
+   ``tl::sm120_mma_sync_blockscaled``: SM120 NVF4 block-scaled warp MMA.
+
+   Only the configuration supported by the CUDA template is accepted:
+   f32 m16n8k64 row.col kind::mxf4nvf4 scale_vec::4X e2m1.e2m1 with ue4m3
+   scales. Offsets are in elements of the operand buffers; each scale pointer
+   is read as one 32-bit word.
 
 

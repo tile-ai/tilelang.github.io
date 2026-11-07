@@ -15,6 +15,9 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.contrib.cutedsl.warp.activemask
+   tilelang.contrib.cutedsl.warp.ballot_sync
+   tilelang.contrib.cutedsl.warp.ballot
    tilelang.contrib.cutedsl.warp.warp_reduce_sum
    tilelang.contrib.cutedsl.warp.warp_reduce_max
    tilelang.contrib.cutedsl.warp.warp_reduce_min
@@ -25,6 +28,27 @@ Functions
 Module Contents
 ---------------
 
+.. py:function:: activemask()
+
+   ``T.activemask()``: the active-lane mask zero-extended to 64 bits.
+
+   Matches CUDA: (unsigned long long)__activemask()
+
+
+.. py:function:: ballot_sync(mask, pred)
+
+   ``T.ballot_sync``: the ballot mask zero-extended to 64 bits.
+
+   Matches CUDA: (unsigned long long)__ballot_sync(mask, pred)
+
+
+.. py:function:: ballot(pred)
+
+   ``T.ballot``: full-warp ballot zero-extended to 64 bits.
+
+   Matches CUDA: (unsigned long long)__ballot_sync(0xFFFFFFFF, pred)
+
+
 .. py:function:: warp_reduce_sum(value)
 
    Warp-level parallel reduction: sum across all 32 lanes.
@@ -32,12 +56,12 @@ Module Contents
 
 .. py:function:: warp_reduce_max(value)
 
-   Warp-level parallel reduction: max across all 32 lanes.
+   Warp-level parallel reduction: max across all 32 lanes (tl::MaxOp semantics).
 
 
 .. py:function:: warp_reduce_min(value)
 
-   Warp-level parallel reduction: min across all 32 lanes.
+   Warp-level parallel reduction: min across all 32 lanes (tl::MinOp semantics).
 
 
 .. py:function:: warp_reduce_bitand(value)

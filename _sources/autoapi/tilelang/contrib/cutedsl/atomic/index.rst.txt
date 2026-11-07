@@ -19,7 +19,9 @@ Functions
    tilelang.contrib.cutedsl.atomic.AtomicAdd
    tilelang.contrib.cutedsl.atomic.AtomicAddRet
    tilelang.contrib.cutedsl.atomic.AtomicAddx2
+   tilelang.contrib.cutedsl.atomic.AtomicAddx2Ret
    tilelang.contrib.cutedsl.atomic.AtomicAddx4
+   tilelang.contrib.cutedsl.atomic.AtomicAddx4Ret
    tilelang.contrib.cutedsl.atomic.AtomicMax
    tilelang.contrib.cutedsl.atomic.AtomicMaxRet
    tilelang.contrib.cutedsl.atomic.AtomicMin
@@ -50,7 +52,24 @@ Module Contents
 
    Vectorized atomic add for 2 consecutive elements.
 
-   Uses PTX atom.add.v2.f32 for float32 or atom.add.noftz.v2.f16 for float16.
+   Follows ``AtomicAddx2`` in ``src/tl_templates/cuda/atomic.h``: float16 and
+   bfloat16 use one packed ``f16x2`` / ``bf16x2`` atomic (a CAS loop for bf16
+   below sm_90), which also works on shared memory; float32 uses
+   ``atom.global.add.v2.f32`` on sm_90+ and two scalar atomics below.
+
+   :param dst_ptr: Pointer to destination (2 consecutive elements)
+   :param src_values: Source values - can be TensorSSA (loaded tensor) or Pointer
+
+
+.. py:function:: AtomicAddx2Ret(dst_ptr, src_values, *, loc=None, ip=None)
+
+   Vectorized atomic add for 2 consecutive elements, returning the previous values.
+
+   Follows ``AtomicAddx2Ret`` in ``src/tl_templates/cuda/atomic.h``:
+
+   * float16/bfloat16: one packed ``f16x2`` / ``bf16x2`` atomic (a CAS loop for
+     bf16 below sm_90) with generic addressing, so shared memory works too.
+   * float32: one ``atom.global.add.v2.f32`` on sm_90+, two scalar atomics below.
 
    :param dst_ptr: Pointer to destination (2 consecutive elements)
    :param src_values: Source values - can be TensorSSA (loaded tensor) or Pointer
@@ -58,11 +77,29 @@ Module Contents
 
 .. py:function:: AtomicAddx4(dst_ptr, src_values, *, loc=None, ip=None)
 
-   Vectorized atomic add for 4 consecutive float32 elements.
+   Vectorized atomic add for 4 consecutive elements.
 
-   Uses PTX atom.global.add.v4.f32 for true vectorized atomic operation on SM90+.
+   Follows ``AtomicAddx4`` in ``src/tl_templates/cuda/atomic.h``. On sm_90+ it
+   is one ``atom.global`` vector atomic (``v4.f32`` or ``v4.{f16,bf16}``);
+   below that, float32 becomes four scalar atomics and 16-bit types two packed
+   pair atomics.
 
-   :param dst_ptr: Pointer to destination (4 consecutive float32 elements)
+   :param dst_ptr: Pointer to destination (4 consecutive elements)
+   :param src_values: Source values - can be TensorSSA (loaded tensor) or Pointer
+
+
+.. py:function:: AtomicAddx4Ret(dst_ptr, src_values, *, loc=None, ip=None)
+
+   Vectorized atomic add for 4 consecutive elements, returning the previous values.
+
+   Follows ``AtomicAddx4Ret`` in ``src/tl_templates/cuda/atomic.h``:
+
+   * float32: one ``atom.global.add.v4.f32`` on sm_90+, four scalar atomics below.
+   * float16/bfloat16: no x4 atomic exists, so two packed pair atomics
+     (``f16x2`` / ``bf16x2``; a CAS loop for bf16 below sm_90). The 8-byte
+     destination is never written as 16 bytes.
+
+   :param dst_ptr: Pointer to destination (4 consecutive elements)
    :param src_values: Source values - can be TensorSSA (loaded tensor) or Pointer
 
 

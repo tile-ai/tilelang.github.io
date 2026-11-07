@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.contrib.cutedsl.gemm_tcgen05" href="../gemm_tcgen05/index.html"><link rel="prev" title="tilelang.contrib.cutedsl.cluster" href="../cluster/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.contrib.cutedsl.fp8" href="../fp8/index.html"><link rel="prev" title="tilelang.contrib.cutedsl.cluster" href="../cluster/index.html">
         <link rel="prefetch" href="../../../../../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../../../../../_static/img/logo-v2.png" as="image">
 
@@ -398,15 +398,19 @@
 <li class="toctree-l4"><a class="reference internal" href="../atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.contrib.cutedsl.cpasync</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fp8/index.html">tilelang.contrib.cutedsl.fp8</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v2/index.html">tilelang.contrib.cutedsl.gemm_v2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gemm_v2_sp/index.html">tilelang.contrib.cutedsl.gemm_v2_sp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../grid_sync/index.html">tilelang.contrib.cutedsl.grid_sync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ieee_math/index.html">tilelang.contrib.cutedsl.ieee_math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ldsm/index.html">tilelang.contrib.cutedsl.ldsm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ldst/index.html">tilelang.contrib.cutedsl.ldst</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../math/index.html">tilelang.contrib.cutedsl.math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ptx_mma/index.html">tilelang.contrib.cutedsl.ptx_mma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../quantize/index.html">tilelang.contrib.cutedsl.quantize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rand/index.html">tilelang.contrib.cutedsl.rand</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reduce/index.html">tilelang.contrib.cutedsl.reduce</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../threadblock_swizzle/index.html">tilelang.contrib.cutedsl.threadblock_swizzle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../utils/index.html">tilelang.contrib.cutedsl.utils</a></li>
@@ -879,10 +883,22 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_load" title="tilelang.contrib.cutedsl.cpasync.tma_load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_load</span></code></a>(tma_desc, mbar, smem_ptr, crd[, use_2cta, ...])</p></td>
 <td><p>Load data from global memory to shared memory using TMA (Tensor Memory Access).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_store" title="tilelang.contrib.cutedsl.cpasync.tma_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store</span></code></a>(tma_desc, smem_ptr, crd, *[, loc, ip])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_load_multicast" title="tilelang.contrib.cutedsl.cpasync.tma_load_multicast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_load_multicast</span></code></a>(tma_desc, mbar, smem_ptr, ...[, ...])</p></td>
+<td><p>Load one tile from global memory into every CTA of a cluster at once.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_load_gather4" title="tilelang.contrib.cutedsl.cpasync.tma_load_gather4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_load_gather4</span></code></a>(tma_desc, mbar, smem_ptr, col, rows, *)</p></td>
+<td><p>Load four rows of one 2-D tile with <code class="docutils literal notranslate"><span class="pre">.tile::gather4</span></code> (sm_100+).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_store" title="tilelang.contrib.cutedsl.cpasync.tma_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store</span></code></a>(tma_desc, smem_ptr, crd, *[, eviction_kind, ...])</p></td>
 <td><p>Store data from shared memory to global memory using TMA (Tensor Memory Access).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_reduce" title="tilelang.contrib.cutedsl.cpasync.tma_reduce"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_reduce</span></code></a>(tma_desc, smem_ptr, crd, *[, loc, ip])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_store_scatter4" title="tilelang.contrib.cutedsl.cpasync.tma_store_scatter4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store_scatter4</span></code></a>(tma_desc, smem_ptr, col, rows, *[, ...])</p></td>
+<td><p>Store four rows of one 2-D tile with <code class="docutils literal notranslate"><span class="pre">.tile::scatter4</span></code> (sm_100a+).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_store_cluster" title="tilelang.contrib.cutedsl.cpasync.tma_store_cluster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store_cluster</span></code></a>(dst, src, dst_cta, size_bytes, mbar, *)</p></td>
+<td><p>Copy a byte range into a peer CTA's shared memory with <code class="docutils literal notranslate"><span class="pre">cp.async.bulk</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_reduce" title="tilelang.contrib.cutedsl.cpasync.tma_reduce"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_reduce</span></code></a>(tma_desc, smem_ptr, crd, *[, ...])</p></td>
 <td><p>Reduce data from shared memory to global memory using TMA with atomic ADD reduction.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_store_arrive" title="tilelang.contrib.cutedsl.cpasync.tma_store_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tma_store_arrive</span></code></a>(*[, loc, ip])</p></td>
@@ -1043,7 +1059,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.cpasync.tma_load">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.cpasync.</span></span><span class="sig-name descname"><span class="pre">tma_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tma_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im2col_offsets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.cpasync.tma_load" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.cpasync.</span></span><span class="sig-name descname"><span class="pre">tma_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tma_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_2cta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im2col_offsets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EVICT_NORMAL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.cpasync.tma_load" title="Link to this definition">¶</a></dt>
 <dd><p>Load data from global memory to shared memory using TMA (Tensor Memory Access).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1052,6 +1068,8 @@
 <li><p><strong>mbar</strong> (<em>Pointer</em>) – Mbarrier pointer in shared memory</p></li>
 <li><p><strong>smem_ptr</strong> (<em>Pointer</em>) – Destination pointer in shared memory</p></li>
 <li><p><strong>crd</strong> (<em>tuple</em><em>[</em><em>Int</em><em>, </em><em>...</em><em>]</em>) – Coordinates tuple for the tensor access</p></li>
+<li><p><strong>eviction_kind</strong> (<em>str</em>) – L2 eviction policy: EVICT_NORMAL, EVICT_FIRST
+or EVICT_LAST</p></li>
 <li><p><strong>use_2cta</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><a class="reference internal" href="../../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a><em>]</em>)</p></li>
 </ul>
 </dd>
@@ -1062,8 +1080,50 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.cpasync.tma_load_multicast">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.cpasync.</span></span><span class="sig-name descname"><span class="pre">tma_load_multicast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tma_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multicast_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EVICT_NORMAL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.cpasync.tma_load_multicast" title="Link to this definition">¶</a></dt>
+<dd><p>Load one tile from global memory into every CTA of a cluster at once.</p>
+<p>Every receiving CTA waits on its own mbarrier at the same shared-memory
+offset, which the hardware signals with <code class="docutils literal notranslate"><span class="pre">complete_tx</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>multicast_mask</strong> (<em>Int</em>) – bit per CTA rank selecting the receivers</p></li>
+<li><p><strong>mbar</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>smem_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>crd</strong> (<em>cutlass.cute.typing.Int</em><em> | </em><em>tuple</em><em>[</em><em>cutlass.cute.typing.Int</em><em>, </em><em>Ellipsis</em><em>]</em>)</p></li>
+<li><p><strong>eviction_kind</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.cpasync.tma_load_gather4">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.cpasync.</span></span><span class="sig-name descname"><span class="pre">tma_load_gather4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tma_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EVICT_NORMAL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.cpasync.tma_load_gather4" title="Link to this definition">¶</a></dt>
+<dd><p>Load four rows of one 2-D tile with <code class="docutils literal notranslate"><span class="pre">.tile::gather4</span></code> (sm_100+).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mbar</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>smem_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>col</strong> (<em>cutlass.cute.typing.Int</em>)</p></li>
+<li><p><strong>rows</strong> (<em>tuple</em><em>[</em><em>cutlass.cute.typing.Int</em><em>, </em><em>cutlass.cute.typing.Int</em><em>, </em><em>cutlass.cute.typing.Int</em><em>, </em><em>cutlass.cute.typing.Int</em><em>]</em>)</p></li>
+<li><p><strong>eviction_kind</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.cpasync.tma_store">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.cpasync.</span></span><span class="sig-name descname"><span class="pre">tma_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tma_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.cpasync.tma_store" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.cpasync.</span></span><span class="sig-name descname"><span class="pre">tma_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tma_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EVICT_NORMAL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.cpasync.tma_store" title="Link to this definition">¶</a></dt>
 <dd><p>Store data from shared memory to global memory using TMA (Tensor Memory Access).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1071,6 +1131,49 @@
 <li><p><strong>tma_desc</strong> (<em>TMA descriptor</em>) – TMA descriptor for the tensor</p></li>
 <li><p><strong>smem_ptr</strong> (<em>Pointer</em>) – Source pointer in shared memory</p></li>
 <li><p><strong>crd</strong> (<em>tuple</em><em>[</em><em>Int</em><em>, </em><em>...</em><em>]</em>) – Coordinates tuple for the tensor access</p></li>
+<li><p><strong>eviction_kind</strong> (<em>str</em>) – L2 eviction policy: EVICT_NORMAL, EVICT_FIRST
+or EVICT_LAST</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.cpasync.tma_store_scatter4">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.cpasync.</span></span><span class="sig-name descname"><span class="pre">tma_store_scatter4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tma_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EVICT_NORMAL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.cpasync.tma_store_scatter4" title="Link to this definition">¶</a></dt>
+<dd><p>Store four rows of one 2-D tile with <code class="docutils literal notranslate"><span class="pre">.tile::scatter4</span></code> (sm_100a+).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>smem_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>col</strong> (<em>cutlass.cute.typing.Int</em>)</p></li>
+<li><p><strong>rows</strong> (<em>tuple</em><em>[</em><em>cutlass.cute.typing.Int</em><em>, </em><em>cutlass.cute.typing.Int</em><em>, </em><em>cutlass.cute.typing.Int</em><em>, </em><em>cutlass.cute.typing.Int</em><em>]</em>)</p></li>
+<li><p><strong>eviction_kind</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.cpasync.tma_store_cluster">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.cpasync.</span></span><span class="sig-name descname"><span class="pre">tma_store_cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_cta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mbar</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.cpasync.tma_store_cluster" title="Link to this definition">¶</a></dt>
+<dd><p>Copy a byte range into a peer CTA’s shared memory with <code class="docutils literal notranslate"><span class="pre">cp.async.bulk</span></code>.</p>
+<p>The completion barrier announced to the peer is the one at the same
+shared-memory offset as <code class="docutils literal notranslate"><span class="pre">mbar</span></code>. Call from a single thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>src</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
+<li><p><strong>dst_cta</strong> (<em>cutlass.cute.typing.Int</em>)</p></li>
+<li><p><strong>size_bytes</strong> (<em>cutlass.cute.typing.Int32</em>)</p></li>
+<li><p><strong>mbar</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1081,7 +1184,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.cpasync.tma_reduce">
-<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.cpasync.</span></span><span class="sig-name descname"><span class="pre">tma_reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tma_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.cpasync.tma_reduce" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.cpasync.</span></span><span class="sig-name descname"><span class="pre">tma_reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tma_desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smem_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eviction_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EVICT_NORMAL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.cpasync.tma_reduce" title="Link to this definition">¶</a></dt>
 <dd><p>Reduce data from shared memory to global memory using TMA with atomic ADD reduction.</p>
 <p>This performs an atomic add of shared memory data to global memory using
 the TMA unit’s reduce capability.</p>
@@ -1091,6 +1194,7 @@ the TMA unit’s reduce capability.</p>
 <li><p><strong>tma_desc</strong> (<em>TMA descriptor</em>) – TMA descriptor for the tensor</p></li>
 <li><p><strong>smem_ptr</strong> (<em>Pointer</em>) – Source pointer in shared memory</p></li>
 <li><p><strong>crd</strong> (<em>tuple</em><em>[</em><em>Int</em><em>, </em><em>...</em><em>]</em>) – Coordinates tuple for the tensor access</p></li>
+<li><p><strong>eviction_kind</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><em>str</em><em>]</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1212,12 +1316,12 @@ Corresponds to PTX instruction: prefetch.tensormap;</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../gemm_tcgen05/index.html">
+          <a class="next-page" href="../fp8/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">tilelang.contrib.cutedsl.gemm_tcgen05</div>
+                <div class="title">tilelang.contrib.cutedsl.fp8</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -1276,7 +1380,11 @@ Corresponds to PTX instruction: prefetch.tensormap;</p>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.cp_async_gs_conditional"><code class="docutils literal notranslate"><span class="pre">cp_async_gs_conditional()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.extract_tensormap_ptr"><code class="docutils literal notranslate"><span class="pre">extract_tensormap_ptr()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_load"><code class="docutils literal notranslate"><span class="pre">tma_load()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_load_multicast"><code class="docutils literal notranslate"><span class="pre">tma_load_multicast()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_load_gather4"><code class="docutils literal notranslate"><span class="pre">tma_load_gather4()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_store"><code class="docutils literal notranslate"><span class="pre">tma_store()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_store_scatter4"><code class="docutils literal notranslate"><span class="pre">tma_store_scatter4()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_store_cluster"><code class="docutils literal notranslate"><span class="pre">tma_store_cluster()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_reduce"><code class="docutils literal notranslate"><span class="pre">tma_reduce()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_store_arrive"><code class="docutils literal notranslate"><span class="pre">tma_store_arrive()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.cpasync.tma_store_wait"><code class="docutils literal notranslate"><span class="pre">tma_store_wait()</span></code></a></li>

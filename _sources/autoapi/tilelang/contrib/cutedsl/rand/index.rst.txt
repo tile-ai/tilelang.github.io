@@ -1,0 +1,88 @@
+tilelang.contrib.cutedsl.rand
+=============================
+
+.. py:module:: tilelang.contrib.cutedsl.rand
+
+.. autoapi-nested-parse::
+
+   Philox4x32-10 random numbers for the CuTeDSL backend.
+
+   This is a port of the ``curandStatePhilox4_32_10_t`` part of
+   ``curand_kernel.h``. The generator state lives in a 16-word register array
+   because it has to survive across conditional code, which is how curand keeps
+   it in a local struct.
+
+   Integers and uniform floats reproduce curand bit for bit. The normals run the
+   same Box-Muller transform with the same cached sibling and the same fast
+   sin/cos, but that approximation is not bit-identical to curand's ``__sincosf``
+   for every input, and the double pair uses ``sincospi``, which CuTeDSL does not
+   expose; both agree to a few ulps and the generator position always matches.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.rand.rng_state
+   tilelang.contrib.cutedsl.rand.rng_init
+   tilelang.contrib.cutedsl.rand.rng_rand
+   tilelang.contrib.cutedsl.rand.rng_uniform2_double
+   tilelang.contrib.cutedsl.rand.rng_normal2
+   tilelang.contrib.cutedsl.rand.rng_normal4
+   tilelang.contrib.cutedsl.rand.rng_normal2_double
+   tilelang.contrib.cutedsl.rand.rng_rand_float
+
+
+Module Contents
+---------------
+
+.. py:function:: rng_state(*, loc=None, ip=None)
+
+   Allocate the generator state as a register array.
+
+
+.. py:function:: rng_init(state, seed, seq, off, generator='curandStatePhilox4_32_10_t', *, loc=None, ip=None)
+
+   Initialize the generator, like ``curand_init(seed, seq, off, &state)``.
+
+
+.. py:function:: rng_rand(state, *, loc=None, ip=None)
+
+   Return the next 32-bit unsigned value, like ``curand(&state)``.
+
+
+.. py:function:: rng_uniform2_double(state, out, *, loc=None, ip=None)
+
+   Fill two doubles with ``curand_uniform2_double``, which draws one block.
+
+   The 64-bit uniform store is the one place where curand's vector helper is
+   not the elementwise composition of its scalar form: it takes 53-bit samples
+   from a whole Philox block instead of one 32-bit word per result.
+
+
+.. py:function:: rng_normal2(state, out, *, loc=None, ip=None)
+
+   Two float32 normals, like ``curand_normal2``.
+
+   curand's vector helpers generate a fresh pair and keep the scalar
+   Box-Muller cache as it is, so a later scalar draw still returns its
+   sibling.
+
+
+.. py:function:: rng_normal4(state, out, *, loc=None, ip=None)
+
+   Four float32 normals from one block, like ``curand_normal4``.
+
+
+.. py:function:: rng_normal2_double(state, out, *, loc=None, ip=None)
+
+   Two float64 normals from one block, like ``curand_normal2_double``.
+
+
+.. py:function:: rng_rand_float(state, bit=32, dist='uniform', *, loc=None, ip=None)
+
+   Return the next random float, like ``curand_uniform`` / ``curand_normal``.
+
+

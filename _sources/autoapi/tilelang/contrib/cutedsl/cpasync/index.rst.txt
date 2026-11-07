@@ -20,7 +20,11 @@ Functions
    tilelang.contrib.cutedsl.cpasync.cp_async_gs_conditional
    tilelang.contrib.cutedsl.cpasync.extract_tensormap_ptr
    tilelang.contrib.cutedsl.cpasync.tma_load
+   tilelang.contrib.cutedsl.cpasync.tma_load_multicast
+   tilelang.contrib.cutedsl.cpasync.tma_load_gather4
    tilelang.contrib.cutedsl.cpasync.tma_store
+   tilelang.contrib.cutedsl.cpasync.tma_store_scatter4
+   tilelang.contrib.cutedsl.cpasync.tma_store_cluster
    tilelang.contrib.cutedsl.cpasync.tma_reduce
    tilelang.contrib.cutedsl.cpasync.tma_store_arrive
    tilelang.contrib.cutedsl.cpasync.tma_store_wait
@@ -60,7 +64,7 @@ Module Contents
    :type tma_atom:       CopyAtom
 
 
-.. py:function:: tma_load(tma_desc, mbar, smem_ptr, crd, use_2cta = False, im2col_offsets=None, *, loc=None, ip=None)
+.. py:function:: tma_load(tma_desc, mbar, smem_ptr, crd, use_2cta = False, im2col_offsets=None, *, eviction_kind = 'EVICT_NORMAL', loc=None, ip=None)
 
    Load data from global memory to shared memory using TMA (Tensor Memory Access).
 
@@ -72,9 +76,28 @@ Module Contents
    :type smem_ptr:                  Pointer
    :param crd:                      Coordinates tuple for the tensor access
    :type crd:                       tuple[Int, ...]
+   :param eviction_kind:            L2 eviction policy: EVICT_NORMAL, EVICT_FIRST
+                                    or EVICT_LAST
+   :type eviction_kind:             str
 
 
-.. py:function:: tma_store(tma_desc, smem_ptr, crd, *, loc=None, ip=None)
+.. py:function:: tma_load_multicast(tma_desc, mbar, smem_ptr, multicast_mask, crd, *, eviction_kind = 'EVICT_NORMAL', loc=None, ip=None)
+
+   Load one tile from global memory into every CTA of a cluster at once.
+
+   Every receiving CTA waits on its own mbarrier at the same shared-memory
+   offset, which the hardware signals with ``complete_tx``.
+
+   :param multicast_mask: bit per CTA rank selecting the receivers
+   :type multicast_mask: Int
+
+
+.. py:function:: tma_load_gather4(tma_desc, mbar, smem_ptr, col, rows, *, eviction_kind = 'EVICT_NORMAL', loc=None, ip=None)
+
+   Load four rows of one 2-D tile with ``.tile::gather4`` (sm_100+).
+
+
+.. py:function:: tma_store(tma_desc, smem_ptr, crd, *, eviction_kind = 'EVICT_NORMAL', loc=None, ip=None)
 
    Store data from shared memory to global memory using TMA (Tensor Memory Access).
 
@@ -84,9 +107,25 @@ Module Contents
    :type smem_ptr:                  Pointer
    :param crd:                      Coordinates tuple for the tensor access
    :type crd:                       tuple[Int, ...]
+   :param eviction_kind:            L2 eviction policy: EVICT_NORMAL, EVICT_FIRST
+                                    or EVICT_LAST
+   :type eviction_kind:             str
 
 
-.. py:function:: tma_reduce(tma_desc, smem_ptr, crd, *, loc=None, ip=None)
+.. py:function:: tma_store_scatter4(tma_desc, smem_ptr, col, rows, *, eviction_kind = 'EVICT_NORMAL', loc=None, ip=None)
+
+   Store four rows of one 2-D tile with ``.tile::scatter4`` (sm_100a+).
+
+
+.. py:function:: tma_store_cluster(dst, src, dst_cta, size_bytes, mbar, *, loc=None, ip=None)
+
+   Copy a byte range into a peer CTA's shared memory with ``cp.async.bulk``.
+
+   The completion barrier announced to the peer is the one at the same
+   shared-memory offset as ``mbar``. Call from a single thread.
+
+
+.. py:function:: tma_reduce(tma_desc, smem_ptr, crd, *, eviction_kind = 'EVICT_NORMAL', loc=None, ip=None)
 
    Reduce data from shared memory to global memory using TMA with atomic ADD reduction.
 

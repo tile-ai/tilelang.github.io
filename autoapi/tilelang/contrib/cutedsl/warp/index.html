@@ -398,15 +398,19 @@
 <li class="toctree-l4"><a class="reference internal" href="../atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fp8/index.html">tilelang.contrib.cutedsl.fp8</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v2/index.html">tilelang.contrib.cutedsl.gemm_v2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gemm_v2_sp/index.html">tilelang.contrib.cutedsl.gemm_v2_sp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../grid_sync/index.html">tilelang.contrib.cutedsl.grid_sync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ieee_math/index.html">tilelang.contrib.cutedsl.ieee_math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ldsm/index.html">tilelang.contrib.cutedsl.ldsm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ldst/index.html">tilelang.contrib.cutedsl.ldst</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../math/index.html">tilelang.contrib.cutedsl.math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ptx_mma/index.html">tilelang.contrib.cutedsl.ptx_mma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../quantize/index.html">tilelang.contrib.cutedsl.quantize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rand/index.html">tilelang.contrib.cutedsl.rand</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reduce/index.html">tilelang.contrib.cutedsl.reduce</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../threadblock_swizzle/index.html">tilelang.contrib.cutedsl.threadblock_swizzle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../utils/index.html">tilelang.contrib.cutedsl.utils</a></li>
@@ -848,19 +852,28 @@ TileLang-compatible wrappers over CUTLASS primitives.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_sum" title="tilelang.contrib.cutedsl.warp.warp_reduce_sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_sum</span></code></a>(value)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.activemask" title="tilelang.contrib.cutedsl.warp.activemask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">activemask</span></code></a>()</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T.activemask()</span></code>: the active-lane mask zero-extended to 64 bits.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.ballot_sync" title="tilelang.contrib.cutedsl.warp.ballot_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ballot_sync</span></code></a>(mask, pred)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T.ballot_sync</span></code>: the ballot mask zero-extended to 64 bits.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.ballot" title="tilelang.contrib.cutedsl.warp.ballot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ballot</span></code></a>(pred)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T.ballot</span></code>: full-warp ballot zero-extended to 64 bits.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_sum" title="tilelang.contrib.cutedsl.warp.warp_reduce_sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_sum</span></code></a>(value)</p></td>
 <td><p>Warp-level parallel reduction: sum across all 32 lanes.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_max" title="tilelang.contrib.cutedsl.warp.warp_reduce_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_max</span></code></a>(value)</p></td>
-<td><p>Warp-level parallel reduction: max across all 32 lanes.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_max" title="tilelang.contrib.cutedsl.warp.warp_reduce_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_max</span></code></a>(value)</p></td>
+<td><p>Warp-level parallel reduction: max across all 32 lanes (tl::MaxOp semantics).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_min" title="tilelang.contrib.cutedsl.warp.warp_reduce_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_min</span></code></a>(value)</p></td>
-<td><p>Warp-level parallel reduction: min across all 32 lanes.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_min" title="tilelang.contrib.cutedsl.warp.warp_reduce_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_min</span></code></a>(value)</p></td>
+<td><p>Warp-level parallel reduction: min across all 32 lanes (tl::MinOp semantics).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_bitand" title="tilelang.contrib.cutedsl.warp.warp_reduce_bitand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_bitand</span></code></a>(value)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_bitand" title="tilelang.contrib.cutedsl.warp.warp_reduce_bitand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_bitand</span></code></a>(value)</p></td>
 <td><p>Warp-level parallel reduction: bitwise AND across all 32 lanes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_bitor" title="tilelang.contrib.cutedsl.warp.warp_reduce_bitor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_bitor</span></code></a>(value)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_bitor" title="tilelang.contrib.cutedsl.warp.warp_reduce_bitor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warp_reduce_bitor</span></code></a>(value)</p></td>
 <td><p>Warp-level parallel reduction: bitwise OR across all 32 lanes.</p></td>
 </tr>
 </tbody>
@@ -870,6 +883,27 @@ TileLang-compatible wrappers over CUTLASS primitives.</p>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.warp.activemask">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.warp.</span></span><span class="sig-name descname"><span class="pre">activemask</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.warp.activemask" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">T.activemask()</span></code>: the active-lane mask zero-extended to 64 bits.</p>
+<p>Matches CUDA: (unsigned long long)__activemask()</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.warp.ballot_sync">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.warp.</span></span><span class="sig-name descname"><span class="pre">ballot_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.warp.ballot_sync" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">T.ballot_sync</span></code>: the ballot mask zero-extended to 64 bits.</p>
+<p>Matches CUDA: (unsigned long long)__ballot_sync(mask, pred)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.warp.ballot">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.warp.</span></span><span class="sig-name descname"><span class="pre">ballot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.warp.ballot" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">T.ballot</span></code>: full-warp ballot zero-extended to 64 bits.</p>
+<p>Matches CUDA: (unsigned long long)__ballot_sync(0xFFFFFFFF, pred)</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.warp.warp_reduce_sum">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.warp.</span></span><span class="sig-name descname"><span class="pre">warp_reduce_sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.warp.warp_reduce_sum" title="Link to this definition">¶</a></dt>
 <dd><p>Warp-level parallel reduction: sum across all 32 lanes.</p>
@@ -878,13 +912,13 @@ TileLang-compatible wrappers over CUTLASS primitives.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.warp.warp_reduce_max">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.warp.</span></span><span class="sig-name descname"><span class="pre">warp_reduce_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.warp.warp_reduce_max" title="Link to this definition">¶</a></dt>
-<dd><p>Warp-level parallel reduction: max across all 32 lanes.</p>
+<dd><p>Warp-level parallel reduction: max across all 32 lanes (tl::MaxOp semantics).</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.warp.warp_reduce_min">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.warp.</span></span><span class="sig-name descname"><span class="pre">warp_reduce_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.warp.warp_reduce_min" title="Link to this definition">¶</a></dt>
-<dd><p>Warp-level parallel reduction: min across all 32 lanes.</p>
+<dd><p>Warp-level parallel reduction: min across all 32 lanes (tl::MinOp semantics).</p>
 </dd></dl>
 
 <dl class="py function">
@@ -960,6 +994,9 @@ TileLang-compatible wrappers over CUTLASS primitives.</p>
 <li><a class="reference internal" href="#">tilelang.contrib.cutedsl.warp</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.activemask"><code class="docutils literal notranslate"><span class="pre">activemask()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.ballot_sync"><code class="docutils literal notranslate"><span class="pre">ballot_sync()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.ballot"><code class="docutils literal notranslate"><span class="pre">ballot()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_sum"><code class="docutils literal notranslate"><span class="pre">warp_reduce_sum()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_max"><code class="docutils literal notranslate"><span class="pre">warp_reduce_max()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.warp.warp_reduce_min"><code class="docutils literal notranslate"><span class="pre">warp_reduce_min()</span></code></a></li>

@@ -398,15 +398,19 @@
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.contrib.cutedsl.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fp8/index.html">tilelang.contrib.cutedsl.fp8</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v2/index.html">tilelang.contrib.cutedsl.gemm_v2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gemm_v2_sp/index.html">tilelang.contrib.cutedsl.gemm_v2_sp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../grid_sync/index.html">tilelang.contrib.cutedsl.grid_sync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ieee_math/index.html">tilelang.contrib.cutedsl.ieee_math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ldsm/index.html">tilelang.contrib.cutedsl.ldsm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ldst/index.html">tilelang.contrib.cutedsl.ldst</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../math/index.html">tilelang.contrib.cutedsl.math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ptx_mma/index.html">tilelang.contrib.cutedsl.ptx_mma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../quantize/index.html">tilelang.contrib.cutedsl.quantize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rand/index.html">tilelang.contrib.cutedsl.rand</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reduce/index.html">tilelang.contrib.cutedsl.reduce</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../threadblock_swizzle/index.html">tilelang.contrib.cutedsl.threadblock_swizzle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../utils/index.html">tilelang.contrib.cutedsl.utils</a></li>
@@ -857,8 +861,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx2" title="tilelang.contrib.cutedsl.atomic.AtomicAddx2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AtomicAddx2</span></code></a>(dst_ptr, src_values, *[, loc, ip])</p></td>
 <td><p>Vectorized atomic add for 2 consecutive elements.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx4" title="tilelang.contrib.cutedsl.atomic.AtomicAddx4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AtomicAddx4</span></code></a>(dst_ptr, src_values, *[, loc, ip])</p></td>
-<td><p>Vectorized atomic add for 4 consecutive float32 elements.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx2Ret" title="tilelang.contrib.cutedsl.atomic.AtomicAddx2Ret"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AtomicAddx2Ret</span></code></a>(dst_ptr, src_values, *[, loc, ip])</p></td>
+<td><p>Vectorized atomic add for 2 consecutive elements, returning the previous values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx4" title="tilelang.contrib.cutedsl.atomic.AtomicAddx4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AtomicAddx4</span></code></a>(dst_ptr, src_values, *[, loc, ip])</p></td>
+<td><p>Vectorized atomic add for 4 consecutive elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx4Ret" title="tilelang.contrib.cutedsl.atomic.AtomicAddx4Ret"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AtomicAddx4Ret</span></code></a>(dst_ptr, src_values, *[, loc, ip])</p></td>
+<td><p>Vectorized atomic add for 4 consecutive elements, returning the previous values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicMax" title="tilelang.contrib.cutedsl.atomic.AtomicMax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AtomicMax</span></code></a>(ptr, value, *[, loc, ip])</p></td>
 <td><p>Perform atomic maximum operation.</p></td>
@@ -919,7 +929,30 @@ Returns the old value before addition (atomicrmw semantics).</p>
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.atomic.AtomicAddx2">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.atomic.</span></span><span class="sig-name descname"><span class="pre">AtomicAddx2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_values</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx2" title="Link to this definition">¶</a></dt>
 <dd><p>Vectorized atomic add for 2 consecutive elements.</p>
-<p>Uses PTX atom.add.v2.f32 for float32 or atom.add.noftz.v2.f16 for float16.</p>
+<p>Follows <code class="docutils literal notranslate"><span class="pre">AtomicAddx2</span></code> in <code class="docutils literal notranslate"><span class="pre">src/tl_templates/cuda/atomic.h</span></code>: float16 and
+bfloat16 use one packed <code class="docutils literal notranslate"><span class="pre">f16x2</span></code> / <code class="docutils literal notranslate"><span class="pre">bf16x2</span></code> atomic (a CAS loop for bf16
+below sm_90), which also works on shared memory; float32 uses
+<code class="docutils literal notranslate"><span class="pre">atom.global.add.v2.f32</span></code> on sm_90+ and two scalar atomics below.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst_ptr</strong> (<em>cutlass.cute.Pointer</em>) – Pointer to destination (2 consecutive elements)</p></li>
+<li><p><strong>src_values</strong> – Source values - can be TensorSSA (loaded tensor) or Pointer</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.atomic.AtomicAddx2Ret">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.atomic.</span></span><span class="sig-name descname"><span class="pre">AtomicAddx2Ret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_values</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx2Ret" title="Link to this definition">¶</a></dt>
+<dd><p>Vectorized atomic add for 2 consecutive elements, returning the previous values.</p>
+<p>Follows <code class="docutils literal notranslate"><span class="pre">AtomicAddx2Ret</span></code> in <code class="docutils literal notranslate"><span class="pre">src/tl_templates/cuda/atomic.h</span></code>:</p>
+<ul class="simple">
+<li><p>float16/bfloat16: one packed <code class="docutils literal notranslate"><span class="pre">f16x2</span></code> / <code class="docutils literal notranslate"><span class="pre">bf16x2</span></code> atomic (a CAS loop for
+bf16 below sm_90) with generic addressing, so shared memory works too.</p></li>
+<li><p>float32: one <code class="docutils literal notranslate"><span class="pre">atom.global.add.v2.f32</span></code> on sm_90+, two scalar atomics below.</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -933,12 +966,36 @@ Returns the old value before addition (atomicrmw semantics).</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.atomic.AtomicAddx4">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.atomic.</span></span><span class="sig-name descname"><span class="pre">AtomicAddx4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_values</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx4" title="Link to this definition">¶</a></dt>
-<dd><p>Vectorized atomic add for 4 consecutive float32 elements.</p>
-<p>Uses PTX atom.global.add.v4.f32 for true vectorized atomic operation on SM90+.</p>
+<dd><p>Vectorized atomic add for 4 consecutive elements.</p>
+<p>Follows <code class="docutils literal notranslate"><span class="pre">AtomicAddx4</span></code> in <code class="docutils literal notranslate"><span class="pre">src/tl_templates/cuda/atomic.h</span></code>. On sm_90+ it
+is one <code class="docutils literal notranslate"><span class="pre">atom.global</span></code> vector atomic (<code class="docutils literal notranslate"><span class="pre">v4.f32</span></code> or <code class="docutils literal notranslate"><span class="pre">v4.{f16,bf16}</span></code>);
+below that, float32 becomes four scalar atomics and 16-bit types two packed
+pair atomics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dst_ptr</strong> (<em>cutlass.cute.Pointer</em>) – Pointer to destination (4 consecutive float32 elements)</p></li>
+<li><p><strong>dst_ptr</strong> (<em>cutlass.cute.Pointer</em>) – Pointer to destination (4 consecutive elements)</p></li>
+<li><p><strong>src_values</strong> – Source values - can be TensorSSA (loaded tensor) or Pointer</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.atomic.AtomicAddx4Ret">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.atomic.</span></span><span class="sig-name descname"><span class="pre">AtomicAddx4Ret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_values</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx4Ret" title="Link to this definition">¶</a></dt>
+<dd><p>Vectorized atomic add for 4 consecutive elements, returning the previous values.</p>
+<p>Follows <code class="docutils literal notranslate"><span class="pre">AtomicAddx4Ret</span></code> in <code class="docutils literal notranslate"><span class="pre">src/tl_templates/cuda/atomic.h</span></code>:</p>
+<ul class="simple">
+<li><p>float32: one <code class="docutils literal notranslate"><span class="pre">atom.global.add.v4.f32</span></code> on sm_90+, four scalar atomics below.</p></li>
+<li><p>float16/bfloat16: no x4 atomic exists, so two packed pair atomics
+(<code class="docutils literal notranslate"><span class="pre">f16x2</span></code> / <code class="docutils literal notranslate"><span class="pre">bf16x2</span></code>; a CAS loop for bf16 below sm_90). The 8-byte
+destination is never written as 16 bytes.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dst_ptr</strong> (<em>cutlass.cute.Pointer</em>) – Pointer to destination (4 consecutive elements)</p></li>
 <li><p><strong>src_values</strong> – Source values - can be TensorSSA (loaded tensor) or Pointer</p></li>
 </ul>
 </dd>
@@ -1113,7 +1170,9 @@ seq_cst: fence.sc.gpu + relaxed.gpu</p>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAdd"><code class="docutils literal notranslate"><span class="pre">AtomicAdd()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAddRet"><code class="docutils literal notranslate"><span class="pre">AtomicAddRet()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx2"><code class="docutils literal notranslate"><span class="pre">AtomicAddx2()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx2Ret"><code class="docutils literal notranslate"><span class="pre">AtomicAddx2Ret()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx4"><code class="docutils literal notranslate"><span class="pre">AtomicAddx4()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicAddx4Ret"><code class="docutils literal notranslate"><span class="pre">AtomicAddx4Ret()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicMax"><code class="docutils literal notranslate"><span class="pre">AtomicMax()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicMaxRet"><code class="docutils literal notranslate"><span class="pre">AtomicMaxRet()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.atomic.AtomicMin"><code class="docutils literal notranslate"><span class="pre">AtomicMin()</span></code></a></li>

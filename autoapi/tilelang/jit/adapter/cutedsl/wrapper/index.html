@@ -398,15 +398,19 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/fp8/index.html">tilelang.contrib.cutedsl.fp8</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/gemm_v2/index.html">tilelang.contrib.cutedsl.gemm_v2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/gemm_v2_sp/index.html">tilelang.contrib.cutedsl.gemm_v2_sp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/grid_sync/index.html">tilelang.contrib.cutedsl.grid_sync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/ieee_math/index.html">tilelang.contrib.cutedsl.ieee_math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/ldsm/index.html">tilelang.contrib.cutedsl.ldsm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/ldst/index.html">tilelang.contrib.cutedsl.ldst</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/math/index.html">tilelang.contrib.cutedsl.math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/ptx_mma/index.html">tilelang.contrib.cutedsl.ptx_mma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/quantize/index.html">tilelang.contrib.cutedsl.quantize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/rand/index.html">tilelang.contrib.cutedsl.rand</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/reduce/index.html">tilelang.contrib.cutedsl.reduce</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/threadblock_swizzle/index.html">tilelang.contrib.cutedsl.threadblock_swizzle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../contrib/cutedsl/utils/index.html">tilelang.contrib.cutedsl.utils</a></li>
@@ -1621,7 +1625,7 @@
 
 <span class="sd"># Minimal imports for runtime (no cutlass/cute - only needed for cubin generation)</span>
 <span class="sd">import tvm.runtime as runtime</span>
-
+<span class="sd">{workspace_imports}</span>
 <span class="sd">_cpp_launcher = None</span>
 <span class="sd">_cpp_launcher_lib = None</span>
 <span class="sd">_cubin_generated = False</span>
@@ -1632,6 +1636,8 @@
 <span class="sd">_has_tma_descs = {has_tma_descs}</span>
 <span class="sd">_cutlass_host_launcher_supported = {cutlass_host_launcher_supported}</span>
 <span class="sd">_cutlass_host_launcher_disabled_reason = {cutlass_host_launcher_disabled_reason!r}</span>
+<span class="sd">_dynamic_smem_bytes = {dynamic_smem_bytes!r}</span>
+<span class="sd">_dynamic_smem_checked_devices = set()</span>
 
 <span class="sd"># Pre-compute paths - cubin is stored alongside the launcher .so</span>
 <span class="sd"># Use module basename to avoid conflicts when multiple kernels run concurrently</span>
@@ -1795,6 +1801,26 @@
 <span class="s2">  _cpp_launcher = _cpp_launcher_lib["launch_kernel"]</span>
 <span class="s2">  return _cpp_launcher</span>
 
+<span class="s2">def _check_dynamic_smem(device_id):</span>
+<span class="s2">  """</span><span class="n">Fail</span> <span class="n">like</span> <span class="n">the</span> <span class="n">CUDA</span> <span class="n">backend</span> <span class="n">when</span> <span class="n">a</span> <span class="n">kernel</span> <span class="n">needs</span> <span class="n">more</span> <span class="n">dynamic</span> <span class="n">shared</span> <span class="n">memory</span>
+  <span class="n">than</span> <span class="n">the</span> <span class="n">device</span> <span class="n">allows</span> <span class="n">per</span> <span class="n">block</span><span class="p">,</span> <span class="n">instead</span> <span class="n">of</span> <span class="n">an</span> <span class="n">opaque</span> <span class="n">launch</span> <span class="n">error</span><span class="o">.</span><span class="s2">"""</span>
+<span class="s2">  if device_id in _dynamic_smem_checked_devices:</span>
+<span class="s2">    return</span>
+<span class="s2">  if any(size &gt; 48 * 1024 for size in _dynamic_smem_bytes.values()):</span>
+<span class="s2">    from cuda.bindings import driver</span>
+<span class="s2">    err, device = driver.cuDeviceGet(device_id)</span>
+<span class="s2">    if err == driver.CUresult.CUDA_SUCCESS:</span>
+<span class="s2">      err, limit = driver.cuDeviceGetAttribute(</span>
+<span class="s2">          driver.CUdevice_attribute.CU_DEVICE_ATTRIBUTE_MAX_SHARED_MEMORY_PER_BLOCK_OPTIN, device)</span>
+<span class="s2">    if err == driver.CUresult.CUDA_SUCCESS:</span>
+<span class="s2">      for name, size in _dynamic_smem_bytes.items():</span>
+<span class="s2">        if size &gt; limit:</span>
+<span class="s2">          raise RuntimeError(</span>
+<span class="s2">              f"Failed to set the allowed dynamic shared memory size to {{size}} for kernel {{name}}: "</span>
+<span class="s2">              f"device {{device_id}} allows at most {{limit}} bytes per block"</span>
+<span class="s2">          )</span>
+<span class="s2">  _dynamic_smem_checked_devices.add(device_id)</span>
+
 <span class="s2">def call(</span><span class="si">{call_func_params}</span><span class="s2">, stream, device_id=0):</span>
 <span class="s2">  """</span><span class="n">Kernel</span> <span class="n">dispatch</span> <span class="n">function</span><span class="o">.</span>
 
@@ -1804,6 +1830,8 @@
 <span class="w">  </span><span class="sd">"""</span>
 <span class="sd">  global _cubin_path_bytes, _cubin_needs_generation</span>
 
+<span class="sd">  _check_dynamic_smem(device_id)</span>
+<span class="sd">{workspace_alloc_code}</span>
 <span class="sd">  if _cubin_needs_generation:</span>
 <span class="sd">    _generate_cubin_if_needed({cubin_gen_call_args})</span>
 <span class="sd">    _cubin_needs_generation = False</span>

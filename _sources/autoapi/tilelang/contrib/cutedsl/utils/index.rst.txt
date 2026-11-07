@@ -35,8 +35,10 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.contrib.cutedsl.utils.as_pointer
    tilelang.contrib.cutedsl.utils.recast_ptr
    tilelang.contrib.cutedsl.utils.bitcast
+   tilelang.contrib.cutedsl.utils.f4e2m1_to_uint8
    tilelang.contrib.cutedsl.utils.cast_tensor
    tilelang.contrib.cutedsl.utils.as_tensor_ssa
    tilelang.contrib.cutedsl.utils.as_rmem_tensor
@@ -45,9 +47,11 @@ Functions
    tilelang.contrib.cutedsl.utils.handle_add_byte_offset
    tilelang.contrib.cutedsl.utils.shuffle_elect
    tilelang.contrib.cutedsl.utils.sync_thread_partial
+   tilelang.contrib.cutedsl.utils.named_barrier_arrive
    tilelang.contrib.cutedsl.utils.warpgroup_reg_alloc
    tilelang.contrib.cutedsl.utils.warpgroup_reg_dealloc
    tilelang.contrib.cutedsl.utils.pack_half2
+   tilelang.contrib.cutedsl.utils.pack_b8x4
 
 
 Module Contents
@@ -55,6 +59,14 @@ Module Contents
 
 .. py:data:: BYTES_PER_TENSORMAP
    :value: 128
+
+
+.. py:function:: as_pointer(value)
+
+   Return the pointer behind *value*.
+
+   Generated CuTeDSL code passes buffer views (``cute.Tensor``) where the
+   pointer itself is meant, so unwrap ``.iterator`` when the value has one.
 
 
 .. py:data:: BYTES_PER_POINTER
@@ -81,6 +93,15 @@ Module Contents
    :returns: Value reinterpreted as target type
 
 
+.. py:function:: f4e2m1_to_uint8(value, *, loc=None, ip=None)
+
+   Reinterpret a scalar Float4E2M1FN value as its zero-extended 4-bit code.
+
+   LLVM bitcast cannot change the element width, so go through the integer
+   representation of the FP4 value (the same unrealized cast the tensor
+   helpers use) and zero-extend it into a byte.
+
+
 .. py:function:: cast_tensor(value, dtype)
 
 .. py:function:: as_tensor_ssa(value)
@@ -97,6 +118,19 @@ Module Contents
 
 .. py:function:: sync_thread_partial(barrier_id=None, thread_count=None)
 
+   Synchronize at a CTA barrier, as tl::__sync_thread_partial (bar.sync id, count).
+
+   The CUDA template defaults the count to 0, which ``bar.sync`` treats as all
+   CTA threads; a missing or static zero count emits the count-less form.
+
+
+.. py:function:: named_barrier_arrive(barrier_id, thread_count, *, loc=None, ip=None)
+
+   Arrive at a named barrier without waiting.
+
+   Matches tl::__named_barrier_arrive: bar.arrive (barrier.cta.arrive.aligned).
+
+
 .. py:function:: warpgroup_reg_alloc(reg_count)
 
 .. py:function:: warpgroup_reg_dealloc(reg_count)
@@ -108,5 +142,13 @@ Module Contents
 
    This packs two fp16 values into a single int32 by treating the fp16 bits
    as raw data and concatenating them.
+
+
+.. py:function:: pack_b8x4(x0, x1, x2, x3, *, loc=None, ip=None)
+
+   Pack the raw bytes of four 8-bit values into one 32-bit word.
+
+   Matches tl::pack_b8x4: ``(x3 << 24) | (x2 << 16) | (x1 << 8) | x0`` over the
+   bit patterns, so int8/uint8 and FP8 values pack the same way.
 
 

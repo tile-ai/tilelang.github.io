@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.contrib.cutedsl.threadblock_swizzle" href="../threadblock_swizzle/index.html"><link rel="prev" title="tilelang.contrib.cutedsl.quantize" href="../quantize/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.contrib.cutedsl.threadblock_swizzle" href="../threadblock_swizzle/index.html"><link rel="prev" title="tilelang.contrib.cutedsl.rand" href="../rand/index.html">
         <link rel="prefetch" href="../../../../../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../../../../../_static/img/logo-v2.png" as="image">
 
@@ -398,15 +398,19 @@
 <li class="toctree-l4"><a class="reference internal" href="../atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fp8/index.html">tilelang.contrib.cutedsl.fp8</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v2/index.html">tilelang.contrib.cutedsl.gemm_v2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gemm_v2_sp/index.html">tilelang.contrib.cutedsl.gemm_v2_sp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../grid_sync/index.html">tilelang.contrib.cutedsl.grid_sync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ieee_math/index.html">tilelang.contrib.cutedsl.ieee_math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ldsm/index.html">tilelang.contrib.cutedsl.ldsm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ldst/index.html">tilelang.contrib.cutedsl.ldst</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../math/index.html">tilelang.contrib.cutedsl.math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ptx_mma/index.html">tilelang.contrib.cutedsl.ptx_mma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../quantize/index.html">tilelang.contrib.cutedsl.quantize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rand/index.html">tilelang.contrib.cutedsl.rand</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.contrib.cutedsl.reduce</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../threadblock_swizzle/index.html">tilelang.contrib.cutedsl.threadblock_swizzle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../utils/index.html">tilelang.contrib.cutedsl.utils</a></li>
@@ -852,10 +856,16 @@ Based on tl_templates/cuda/reduce.h</p>
 <td><p>Sum reduction operator</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MaxOp" title="tilelang.contrib.cutedsl.reduce.MaxOp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaxOp</span></code></a></p></td>
-<td><p>Max reduction operator</p></td>
+<td><p>Max reduction operator, as tl::MaxOp (tl::fast_max)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MinOp" title="tilelang.contrib.cutedsl.reduce.MinOp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MinOp</span></code></a></p></td>
-<td><p>Min reduction operator</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MaxOpNan" title="tilelang.contrib.cutedsl.reduce.MaxOpNan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaxOpNan</span></code></a></p></td>
+<td><p>NaN-propagating max reduction operator (tl::MaxOpNan: __hmax_nan for 16-bit floats)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MinOp" title="tilelang.contrib.cutedsl.reduce.MinOp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MinOp</span></code></a></p></td>
+<td><p>Min reduction operator, as tl::MinOp (tl::fast_min)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MinOpNan" title="tilelang.contrib.cutedsl.reduce.MinOpNan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MinOpNan</span></code></a></p></td>
+<td><p>NaN-propagating min reduction operator (tl::MinOpNan: __hmin_nan for 16-bit floats)</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.BitAndOp" title="tilelang.contrib.cutedsl.reduce.BitAndOp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BitAndOp</span></code></a></p></td>
 <td><p>Bitwise AND reduction operator</p></td>
@@ -891,10 +901,10 @@ Based on tl_templates/cuda/reduce.h</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.min" title="tilelang.contrib.cutedsl.reduce.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>(a, b[, c])</p></td>
-<td><p>Type-preserving min for scalar CuTeDSL values.</p></td>
+<td><p>Type-preserving min for scalar CuTeDSL values, with CUDA float semantics.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.max" title="tilelang.contrib.cutedsl.reduce.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>(a, b[, c])</p></td>
-<td><p>Type-preserving max for scalar CuTeDSL values.</p></td>
+<td><p>Type-preserving max for scalar CuTeDSL values, with CUDA float semantics.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.bar_sync" title="tilelang.contrib.cutedsl.reduce.bar_sync"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bar_sync</span></code></a>(barrier_id, number_of_threads)</p></td>
 <td><p></p></td>
@@ -914,13 +924,13 @@ Based on tl_templates/cuda/reduce.h</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.min">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.min" title="Link to this definition">¶</a></dt>
-<dd><p>Type-preserving min for scalar CuTeDSL values.</p>
+<dd><p>Type-preserving min for scalar CuTeDSL values, with CUDA float semantics.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.max">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.max" title="Link to this definition">¶</a></dt>
-<dd><p>Type-preserving max for scalar CuTeDSL values.</p>
+<dd><p>Type-preserving max for scalar CuTeDSL values, with CUDA float semantics.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -937,7 +947,7 @@ Based on tl_templates/cuda/reduce.h</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.MaxOp">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">MaxOp</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.MaxOp" title="Link to this definition">¶</a></dt>
-<dd><p>Max reduction operator</p>
+<dd><p>Max reduction operator, as tl::MaxOp (tl::fast_max)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.MaxOp.__call__">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.MaxOp.__call__" title="Link to this definition">¶</a></dt>
@@ -946,12 +956,34 @@ Based on tl_templates/cuda/reduce.h</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.MaxOpNan">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">MaxOpNan</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.MaxOpNan" title="Link to this definition">¶</a></dt>
+<dd><p>NaN-propagating max reduction operator (tl::MaxOpNan: __hmax_nan for 16-bit floats)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.MaxOpNan.__call__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.MaxOpNan.__call__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.MinOp">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">MinOp</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.MinOp" title="Link to this definition">¶</a></dt>
-<dd><p>Min reduction operator</p>
+<dd><p>Min reduction operator, as tl::MinOp (tl::fast_min)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.MinOp.__call__">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.MinOp.__call__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.MinOpNan">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.reduce.</span></span><span class="sig-name descname"><span class="pre">MinOpNan</span></span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.MinOpNan" title="Link to this definition">¶</a></dt>
+<dd><p>NaN-propagating min reduction operator (tl::MinOpNan: __hmin_nan for 16-bit floats)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.MinOpNan.__call__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.MinOpNan.__call__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1110,7 +1142,7 @@ thread_offset: First participating thread in the block</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumSum2D.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumSum2D.run" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_stride</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumSum2D.run" title="Link to this definition">¶</a></dt>
 <dd><p>Perform 2D cumulative sum.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1119,6 +1151,8 @@ thread_offset: First participating thread in the block</p>
 <li><p><strong>dst</strong> (<em>cutlass.cute.Pointer</em>) – Destination pointer</p></li>
 <li><p><strong>H</strong> – Number of rows</p></li>
 <li><p><strong>W</strong> – Number of columns (should be &lt;= 32 for single-segment case)</p></li>
+<li><p><strong>src_stride</strong> – Row stride of src in elements</p></li>
+<li><p><strong>dst_stride</strong> – Row stride of dst in elements</p></li>
 </ul>
 </dd>
 </dl>
@@ -1217,7 +1251,7 @@ Based on tl::CumMax2D from scan.h</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.reduce.CumMax2D.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.run" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_stride</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.reduce.CumMax2D.run" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1282,14 +1316,14 @@ Based on tl::AllReduce from reduce.h</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../quantize/index.html">
+          <a class="prev-page" href="../rand/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">tilelang.contrib.cutedsl.quantize</div>
+                <div class="title">tilelang.contrib.cutedsl.rand</div>
                 
               </div>
             </a>
@@ -1337,8 +1371,16 @@ Based on tl::AllReduce from reduce.h</p>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MaxOp.__call__"><code class="docutils literal notranslate"><span class="pre">MaxOp.__call__()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MaxOpNan"><code class="docutils literal notranslate"><span class="pre">MaxOpNan</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MaxOpNan.__call__"><code class="docutils literal notranslate"><span class="pre">MaxOpNan.__call__()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MinOp"><code class="docutils literal notranslate"><span class="pre">MinOp</span></code></a><ul>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MinOp.__call__"><code class="docutils literal notranslate"><span class="pre">MinOp.__call__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MinOpNan"><code class="docutils literal notranslate"><span class="pre">MinOpNan</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.MinOpNan.__call__"><code class="docutils literal notranslate"><span class="pre">MinOpNan.__call__()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.reduce.BitAndOp"><code class="docutils literal notranslate"><span class="pre">BitAndOp</span></code></a><ul>

@@ -55,6 +55,14 @@ Module Contents
 
 .. py:function:: wgmma_ss(A_dtype, B_dtype, C_dtype, M, N, K, tnspA, tnspB, scaleA, scaleB, desc_a, desc_b, C_ptr, scale_out)
 
+   WGMMA shared-shared variant using PTX inline asm.
+
+   Both operands come from shared memory descriptors. The scale-d operand is a
+   runtime predicate, exactly like CUTLASS's `ScaleOut` on the CUDA side, so a
+   dynamic accumulate flag works. (The NVVM dialect form needs it as a static
+   attribute and fails to parse a value that is not a Python constant.)
+
+
 .. py:function:: wgmma_rs(A_dtype, B_dtype, C_dtype, M, N, K, tnspB, scaleA, scaleB, A_ptr, desc_b, C_ptr, scale_out)
 
    WGMMA register-shared variant using PTX inline asm.

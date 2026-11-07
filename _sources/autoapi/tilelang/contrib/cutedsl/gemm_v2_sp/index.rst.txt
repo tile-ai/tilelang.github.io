@@ -1,0 +1,42 @@
+tilelang.contrib.cutedsl.gemm_v2_sp
+===================================
+
+.. py:module:: tilelang.contrib.cutedsl.gemm_v2_sp
+
+.. autoapi-nested-parse::
+
+   Sparse (2:4 structured) WGMMA helpers for the CuTeDSL backend.
+
+   CuTeDSL has no sparse WGMMA primitive, so the ``wgmma.mma_async.sp`` family is
+   emitted as inline PTX here. The operand layout mirrors the
+   ``cute::SM90::GMMA::SPARSE::GMMA_*_SS``/``_RS`` functors in
+   ``cute/arch/mma_sm90_gmma_sparse.hpp``: the accumulator registers are the tied
+   D/C operands, ``e`` is the per-instruction 32-bit metadata register taken from
+   the E fragment, and the sparse selector is an immediate.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.gemm_v2_sp.wgmma_sp_ss
+   tilelang.contrib.cutedsl.gemm_v2_sp.wgmma_sp_rs
+
+
+Module Contents
+---------------
+
+.. py:function:: wgmma_sp_ss(A_dtype, B_dtype, C_dtype, M, N, K, tnspA, tnspB, scaleA, scaleB, spsel, desc_a, desc_b, C_ptr, scale_out, E_ptr, e_offset)
+
+   Sparse WGMMA shared-shared: A and B come from shared memory descriptors.
+
+
+.. py:function:: wgmma_sp_rs(A_dtype, B_dtype, C_dtype, M, N, K, tnspB, scaleA, scaleB, spsel, A_ptr, desc_b, C_ptr, scale_out, E_ptr, e_offset)
+
+   Sparse WGMMA register-shared: A from registers, B from a descriptor.
+
+   Sparse register A is always K-major, so it takes no trans-a operand.
+
+

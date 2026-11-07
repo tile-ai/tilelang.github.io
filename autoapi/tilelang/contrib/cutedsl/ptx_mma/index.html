@@ -398,15 +398,19 @@
 <li class="toctree-l4"><a class="reference internal" href="../atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fp8/index.html">tilelang.contrib.cutedsl.fp8</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v2/index.html">tilelang.contrib.cutedsl.gemm_v2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gemm_v2_sp/index.html">tilelang.contrib.cutedsl.gemm_v2_sp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../grid_sync/index.html">tilelang.contrib.cutedsl.grid_sync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ieee_math/index.html">tilelang.contrib.cutedsl.ieee_math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ldsm/index.html">tilelang.contrib.cutedsl.ldsm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ldst/index.html">tilelang.contrib.cutedsl.ldst</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../math/index.html">tilelang.contrib.cutedsl.math</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.contrib.cutedsl.ptx_mma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../quantize/index.html">tilelang.contrib.cutedsl.quantize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rand/index.html">tilelang.contrib.cutedsl.rand</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reduce/index.html">tilelang.contrib.cutedsl.reduce</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../threadblock_swizzle/index.html">tilelang.contrib.cutedsl.threadblock_swizzle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../utils/index.html">tilelang.contrib.cutedsl.utils</a></li>
@@ -856,8 +860,11 @@ for performing matrix multiply-accumulate operations using Tensor Cores.</p>
 - FP8 (e4m3/e5m2): m16n8k32 -&gt; f16/f32 accumulator
 - TF32: m16n8k4, m16n8k8 -&gt; f32 accumulator
 - FP64: m8n8k4 -&gt; f64 accumulator</p>
-<p>Sparse (mma.sp) variants mirror the dense ones with halved A registers,
-an extra metadata register, and a sparse_selector literal.</p>
+<p>Sparse variants mirror the dense ones with halved A registers, an extra
+metadata register, and a sparse_selector literal. Like
+<code class="docutils literal notranslate"><span class="pre">tl_templates/cuda/instruction/mma_sp.h</span></code> they cover f16/bf16/tf32, s8/u8 and
+FP8 (e4m3/e5m2, sm_89+), and emit <code class="docutils literal notranslate"><span class="pre">mma.sp::ordered_metadata</span></code>, which PTX
+recommends over plain <code class="docutils literal notranslate"><span class="pre">mma.sp</span></code> for performance.</p>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -916,6 +923,9 @@ an extra metadata register, and a sparse_selector literal.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ptx_mma.ptx_mma_sp" title="tilelang.contrib.cutedsl.ptx_mma.ptx_mma_sp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_mma_sp</span></code></a>(shape, a_layout, b_layout, a_dtype, ...[, ...])</p></td>
 <td><p>Generic PTX sparse MMA dispatcher.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.ptx_mma.ptx_mma_block_scale" title="tilelang.contrib.cutedsl.ptx_mma.ptx_mma_block_scale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptx_mma_block_scale</span></code></a>(accum_dtype, shape, a_layout, ...)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tl::sm120_mma_sync_blockscaled</span></code>: SM120 NVF4 block-scaled warp MMA.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1031,6 +1041,39 @@ shape and data types.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.ptx_mma.ptx_mma_block_scale">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.ptx_mma.</span></span><span class="sig-name descname"><span class="pre">ptx_mma_block_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accum_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_vec_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_a_byte_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_a_thread_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_b_byte_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_b_thread_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.ptx_mma.ptx_mma_block_scale" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">tl::sm120_mma_sync_blockscaled</span></code>: SM120 NVF4 block-scaled warp MMA.</p>
+<p>Only the configuration supported by the CUDA template is accepted:
+f32 m16n8k64 row.col kind::mxf4nvf4 scale_vec::4X e2m1.e2m1 with ue4m3
+scales. Offsets are in elements of the operand buffers; each scale pointer
+is read as one 32-bit word.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>accum_dtype</strong> (<em>str</em>)</p></li>
+<li><p><strong>shape</strong> (<em>str</em>)</p></li>
+<li><p><strong>a_layout</strong> (<em>str</em>)</p></li>
+<li><p><strong>b_layout</strong> (<em>str</em>)</p></li>
+<li><p><strong>kind</strong> (<em>str</em>)</p></li>
+<li><p><strong>scale_vec_size</strong> (<em>int</em>)</p></li>
+<li><p><strong>a_dtype</strong> (<em>str</em>)</p></li>
+<li><p><strong>b_dtype</strong> (<em>str</em>)</p></li>
+<li><p><strong>scale_type</strong> (<em>str</em>)</p></li>
+<li><p><strong>a_ptr</strong> (<em>cutlass.cute.typing.Pointer</em>)</p></li>
+<li><p><strong>b_ptr</strong> (<em>cutlass.cute.typing.Pointer</em>)</p></li>
+<li><p><strong>c_ptr</strong> (<em>cutlass.cute.typing.Pointer</em>)</p></li>
+<li><p><strong>scale_a</strong> (<em>cutlass.cute.typing.Pointer</em>)</p></li>
+<li><p><strong>scale_b</strong> (<em>cutlass.cute.typing.Pointer</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -1108,6 +1151,7 @@ shape and data types.</p>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.ptx_mma.ptx_mma_m16n8k32_e5m2_e5m2_f32"><code class="docutils literal notranslate"><span class="pre">ptx_mma_m16n8k32_e5m2_e5m2_f32</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.ptx_mma.ptx_mma"><code class="docutils literal notranslate"><span class="pre">ptx_mma()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.ptx_mma.ptx_mma_sp"><code class="docutils literal notranslate"><span class="pre">ptx_mma_sp()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.ptx_mma.ptx_mma_block_scale"><code class="docutils literal notranslate"><span class="pre">ptx_mma_block_scale()</span></code></a></li>
 </ul>
 </li>
 </ul>

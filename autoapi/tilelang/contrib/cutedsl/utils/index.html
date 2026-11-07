@@ -398,15 +398,19 @@
 <li class="toctree-l4"><a class="reference internal" href="../atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fp8/index.html">tilelang.contrib.cutedsl.fp8</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v2/index.html">tilelang.contrib.cutedsl.gemm_v2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gemm_v2_sp/index.html">tilelang.contrib.cutedsl.gemm_v2_sp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../grid_sync/index.html">tilelang.contrib.cutedsl.grid_sync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ieee_math/index.html">tilelang.contrib.cutedsl.ieee_math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ldsm/index.html">tilelang.contrib.cutedsl.ldsm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ldst/index.html">tilelang.contrib.cutedsl.ldst</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../math/index.html">tilelang.contrib.cutedsl.math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ptx_mma/index.html">tilelang.contrib.cutedsl.ptx_mma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../quantize/index.html">tilelang.contrib.cutedsl.quantize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rand/index.html">tilelang.contrib.cutedsl.rand</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reduce/index.html">tilelang.contrib.cutedsl.reduce</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../threadblock_swizzle/index.html">tilelang.contrib.cutedsl.threadblock_swizzle</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.contrib.cutedsl.utils</a></li>
@@ -879,11 +883,17 @@ bitcast, tensor construction, warp election, barrier sync, and FP16 packing.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.recast_ptr" title="tilelang.contrib.cutedsl.utils.recast_ptr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recast_ptr</span></code></a>(ptr[, swizzle_, dtype])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.as_pointer" title="tilelang.contrib.cutedsl.utils.as_pointer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_pointer</span></code></a>(value)</p></td>
+<td><p>Return the pointer behind <em>value</em>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.recast_ptr" title="tilelang.contrib.cutedsl.utils.recast_ptr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recast_ptr</span></code></a>(ptr[, swizzle_, dtype])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.bitcast" title="tilelang.contrib.cutedsl.utils.bitcast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bitcast</span></code></a>(value, target_dtype)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.bitcast" title="tilelang.contrib.cutedsl.utils.bitcast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bitcast</span></code></a>(value, target_dtype)</p></td>
 <td><p>Reinterpret the bits of a value as a different type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.f4e2m1_to_uint8" title="tilelang.contrib.cutedsl.utils.f4e2m1_to_uint8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">f4e2m1_to_uint8</span></code></a>(value, *[, loc, ip])</p></td>
+<td><p>Reinterpret a scalar Float4E2M1FN value as its zero-extended 4-bit code.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.cast_tensor" title="tilelang.contrib.cutedsl.utils.cast_tensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cast_tensor</span></code></a>(value, dtype)</p></td>
 <td><p></p></td>
@@ -907,16 +917,22 @@ bitcast, tensor construction, warp election, barrier sync, and FP16 packing.</p>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.sync_thread_partial" title="tilelang.contrib.cutedsl.utils.sync_thread_partial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_thread_partial</span></code></a>([barrier_id, thread_count])</p></td>
+<td><p>Synchronize at a CTA barrier, as tl::__sync_thread_partial (bar.sync id, count).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.named_barrier_arrive" title="tilelang.contrib.cutedsl.utils.named_barrier_arrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">named_barrier_arrive</span></code></a>(barrier_id, thread_count, *[, ...])</p></td>
+<td><p>Arrive at a named barrier without waiting.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.warpgroup_reg_alloc" title="tilelang.contrib.cutedsl.utils.warpgroup_reg_alloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warpgroup_reg_alloc</span></code></a>(reg_count)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.warpgroup_reg_alloc" title="tilelang.contrib.cutedsl.utils.warpgroup_reg_alloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warpgroup_reg_alloc</span></code></a>(reg_count)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.warpgroup_reg_dealloc" title="tilelang.contrib.cutedsl.utils.warpgroup_reg_dealloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warpgroup_reg_dealloc</span></code></a>(reg_count)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.warpgroup_reg_dealloc" title="tilelang.contrib.cutedsl.utils.warpgroup_reg_dealloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warpgroup_reg_dealloc</span></code></a>(reg_count)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.pack_half2" title="tilelang.contrib.cutedsl.utils.pack_half2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pack_half2</span></code></a>(x, y)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.pack_half2" title="tilelang.contrib.cutedsl.utils.pack_half2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pack_half2</span></code></a>(x, y)</p></td>
 <td><p>Pack two half-precision (fp16) values into a single 32-bit value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.pack_b8x4" title="tilelang.contrib.cutedsl.utils.pack_b8x4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pack_b8x4</span></code></a>(x0, x1, x2, x3, *[, loc, ip])</p></td>
+<td><p>Pack the raw bytes of four 8-bit values into one 32-bit word.</p></td>
 </tr>
 </tbody>
 </table>
@@ -928,6 +944,14 @@ bitcast, tensor construction, warp election, barrier sync, and FP16 packing.</p>
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.BYTES_PER_TENSORMAP">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">BYTES_PER_TENSORMAP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.BYTES_PER_TENSORMAP" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.as_pointer">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">as_pointer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.as_pointer" title="Link to this definition">¶</a></dt>
+<dd><p>Return the pointer behind <em>value</em>.</p>
+<p>Generated CuTeDSL code passes buffer views (<code class="docutils literal notranslate"><span class="pre">cute.Tensor</span></code>) where the
+pointer itself is meant, so unwrap <code class="docutils literal notranslate"><span class="pre">.iterator</span></code> when the value has one.</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.BYTES_PER_POINTER">
@@ -966,6 +990,15 @@ Equivalent to C’s (<a href="#id1"><span class="problematic" id="id2">*</span><
 <dd class="field-even"><p>Value reinterpreted as target type</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.f4e2m1_to_uint8">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">f4e2m1_to_uint8</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.f4e2m1_to_uint8" title="Link to this definition">¶</a></dt>
+<dd><p>Reinterpret a scalar Float4E2M1FN value as its zero-extended 4-bit code.</p>
+<p>LLVM bitcast cannot change the element width, so go through the integer
+representation of the FP4 value (the same unrealized cast the tensor
+helpers use) and zero-extend it into a byte.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1011,7 +1044,17 @@ Equivalent to C’s (<a href="#id1"><span class="problematic" id="id2">*</span><
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.sync_thread_partial">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">sync_thread_partial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barrier_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.sync_thread_partial" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Synchronize at a CTA barrier, as tl::__sync_thread_partial (bar.sync id, count).</p>
+<p>The CUDA template defaults the count to 0, which <code class="docutils literal notranslate"><span class="pre">bar.sync</span></code> treats as all
+CTA threads; a missing or static zero count emits the count-less form.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.named_barrier_arrive">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">named_barrier_arrive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">barrier_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_count</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.named_barrier_arrive" title="Link to this definition">¶</a></dt>
+<dd><p>Arrive at a named barrier without waiting.</p>
+<p>Matches tl::__named_barrier_arrive: bar.arrive (barrier.cta.arrive.aligned).</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.warpgroup_reg_alloc">
@@ -1030,6 +1073,19 @@ Equivalent to C’s (<a href="#id1"><span class="problematic" id="id2">*</span><
 Corresponds to CUDA’s __pack_half2 intrinsic.</p>
 <p>This packs two fp16 values into a single int32 by treating the fp16 bits
 as raw data and concatenating them.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.cutedsl.utils.pack_b8x4">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.utils.</span></span><span class="sig-name descname"><span class="pre">pack_b8x4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.utils.pack_b8x4" title="Link to this definition">¶</a></dt>
+<dd><p>Pack the raw bytes of four 8-bit values into one 32-bit word.</p>
+<p>Matches tl::pack_b8x4: <code class="docutils literal notranslate"><span class="pre">(x3</span> <span class="pre">&lt;&lt;</span> <span class="pre">24)</span> <span class="pre">|</span> <span class="pre">(x2</span> <span class="pre">&lt;&lt;</span> <span class="pre">16)</span> <span class="pre">|</span> <span class="pre">(x1</span> <span class="pre">&lt;&lt;</span> <span class="pre">8)</span> <span class="pre">|</span> <span class="pre">x0</span></code> over the
+bit patterns, so int8/uint8 and FP8 values pack the same way.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>cutlass.base_dsl.typing.Int32</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -1096,11 +1152,13 @@ as raw data and concatenating them.</p>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.BYTES_PER_TENSORMAP"><code class="docutils literal notranslate"><span class="pre">BYTES_PER_TENSORMAP</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.as_pointer"><code class="docutils literal notranslate"><span class="pre">as_pointer()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.BYTES_PER_POINTER"><code class="docutils literal notranslate"><span class="pre">BYTES_PER_POINTER</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.Float4E2M1FN_unpack"><code class="docutils literal notranslate"><span class="pre">Float4E2M1FN_unpack</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.type_map"><code class="docutils literal notranslate"><span class="pre">type_map</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.recast_ptr"><code class="docutils literal notranslate"><span class="pre">recast_ptr()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.bitcast"><code class="docutils literal notranslate"><span class="pre">bitcast()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.f4e2m1_to_uint8"><code class="docutils literal notranslate"><span class="pre">f4e2m1_to_uint8()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.cast_tensor"><code class="docutils literal notranslate"><span class="pre">cast_tensor()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.as_tensor_ssa"><code class="docutils literal notranslate"><span class="pre">as_tensor_ssa()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.as_rmem_tensor"><code class="docutils literal notranslate"><span class="pre">as_rmem_tensor()</span></code></a></li>
@@ -1109,9 +1167,11 @@ as raw data and concatenating them.</p>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.handle_add_byte_offset"><code class="docutils literal notranslate"><span class="pre">handle_add_byte_offset()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.shuffle_elect"><code class="docutils literal notranslate"><span class="pre">shuffle_elect()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.sync_thread_partial"><code class="docutils literal notranslate"><span class="pre">sync_thread_partial()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.named_barrier_arrive"><code class="docutils literal notranslate"><span class="pre">named_barrier_arrive()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.warpgroup_reg_alloc"><code class="docutils literal notranslate"><span class="pre">warpgroup_reg_alloc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.warpgroup_reg_dealloc"><code class="docutils literal notranslate"><span class="pre">warpgroup_reg_dealloc()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.pack_half2"><code class="docutils literal notranslate"><span class="pre">pack_half2()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.cutedsl.utils.pack_b8x4"><code class="docutils literal notranslate"><span class="pre">pack_b8x4()</span></code></a></li>
 </ul>
 </li>
 </ul>

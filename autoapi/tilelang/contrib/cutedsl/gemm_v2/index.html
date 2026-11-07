@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.contrib.cutedsl.grid_sync" href="../grid_sync/index.html"><link rel="prev" title="tilelang.contrib.cutedsl.gemm_v1" href="../gemm_v1/index.html">
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="tilelang.contrib.cutedsl.gemm_v2_sp" href="../gemm_v2_sp/index.html"><link rel="prev" title="tilelang.contrib.cutedsl.gemm_v1" href="../gemm_v1/index.html">
         <link rel="prefetch" href="../../../../../_static/img/logo-v2.png" as="image">
         <link rel="prefetch" href="../../../../../_static/img/logo-v2.png" as="image">
 
@@ -398,15 +398,19 @@
 <li class="toctree-l4"><a class="reference internal" href="../atomic/index.html">tilelang.contrib.cutedsl.atomic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cluster/index.html">tilelang.contrib.cutedsl.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cpasync/index.html">tilelang.contrib.cutedsl.cpasync</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../fp8/index.html">tilelang.contrib.cutedsl.fp8</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_tcgen05/index.html">tilelang.contrib.cutedsl.gemm_tcgen05</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gemm_v1/index.html">tilelang.contrib.cutedsl.gemm_v1</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.contrib.cutedsl.gemm_v2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gemm_v2_sp/index.html">tilelang.contrib.cutedsl.gemm_v2_sp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../grid_sync/index.html">tilelang.contrib.cutedsl.grid_sync</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ieee_math/index.html">tilelang.contrib.cutedsl.ieee_math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ldsm/index.html">tilelang.contrib.cutedsl.ldsm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ldst/index.html">tilelang.contrib.cutedsl.ldst</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../math/index.html">tilelang.contrib.cutedsl.math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ptx_mma/index.html">tilelang.contrib.cutedsl.ptx_mma</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../quantize/index.html">tilelang.contrib.cutedsl.quantize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rand/index.html">tilelang.contrib.cutedsl.rand</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reduce/index.html">tilelang.contrib.cutedsl.reduce</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../threadblock_swizzle/index.html">tilelang.contrib.cutedsl.threadblock_swizzle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../utils/index.html">tilelang.contrib.cutedsl.utils</a></li>
@@ -877,7 +881,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_v2.wgmma_ss" title="tilelang.contrib.cutedsl.gemm_v2.wgmma_ss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wgmma_ss</span></code></a>(A_dtype, B_dtype, C_dtype, M, N, K, tnspA, ...)</p></td>
-<td><p></p></td>
+<td><p>WGMMA shared-shared variant using PTX inline asm.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_v2.wgmma_rs" title="tilelang.contrib.cutedsl.gemm_v2.wgmma_rs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wgmma_rs</span></code></a>(A_dtype, B_dtype, C_dtype, M, N, K, tnspB, ...)</p></td>
 <td><p>WGMMA register-shared variant using PTX inline asm.</p></td>
@@ -959,7 +963,12 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.gemm_v2.wgmma_ss">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.gemm_v2.</span></span><span class="sig-name descname"><span class="pre">wgmma_ss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tnspA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tnspB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaleA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaleB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_ptr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_out</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.gemm_v2.wgmma_ss" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>WGMMA shared-shared variant using PTX inline asm.</p>
+<p>Both operands come from shared memory descriptors. The scale-d operand is a
+runtime predicate, exactly like CUTLASS’s <cite>ScaleOut</cite> on the CUDA side, so a
+dynamic accumulate flag works. (The NVVM dialect form needs it as a static
+attribute and fails to parse a value that is not a Python constant.)</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>A_dtype</strong> (<em>str</em>)</p></li>
@@ -975,7 +984,7 @@
 <li><p><strong>desc_a</strong> (<a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_v2.GmmaDescriptor" title="tilelang.contrib.cutedsl.gemm_v2.GmmaDescriptor"><em>GmmaDescriptor</em></a>)</p></li>
 <li><p><strong>desc_b</strong> (<a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_v2.GmmaDescriptor" title="tilelang.contrib.cutedsl.gemm_v2.GmmaDescriptor"><em>GmmaDescriptor</em></a>)</p></li>
 <li><p><strong>C_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
-<li><p><strong>scale_out</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>scale_out</strong> (<em>int</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1002,7 +1011,7 @@ M is always 64. A is always K-major (not transposed).</p>
 <li><p><strong>A_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
 <li><p><strong>desc_b</strong> (<a class="reference internal" href="#tilelang.contrib.cutedsl.gemm_v2.GmmaDescriptor" title="tilelang.contrib.cutedsl.gemm_v2.GmmaDescriptor"><em>GmmaDescriptor</em></a>)</p></li>
 <li><p><strong>C_ptr</strong> (<em>cutlass.cute.Pointer</em>)</p></li>
-<li><p><strong>scale_out</strong> (<em>cutlass.cutlass_dsl.Constexpr</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>scale_out</strong> (<em>int</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1016,12 +1025,12 @@ M is always 64. A is always K-major (not transposed).</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../grid_sync/index.html">
+          <a class="next-page" href="../gemm_v2_sp/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">tilelang.contrib.cutedsl.grid_sync</div>
+                <div class="title">tilelang.contrib.cutedsl.gemm_v2_sp</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

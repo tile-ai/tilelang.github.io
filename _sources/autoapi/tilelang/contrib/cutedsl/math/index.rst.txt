@@ -23,12 +23,22 @@ Functions
    tilelang.contrib.cutedsl.math.exp10
    tilelang.contrib.cutedsl.math.fabsf
    tilelang.contrib.cutedsl.math.abs2
+   tilelang.contrib.cutedsl.math.cuda_max
+   tilelang.contrib.cutedsl.math.cuda_min
+   tilelang.contrib.cutedsl.math.fast_max
+   tilelang.contrib.cutedsl.math.fast_min
+   tilelang.contrib.cutedsl.math.max_nan
+   tilelang.contrib.cutedsl.math.min_nan
    tilelang.contrib.cutedsl.math.max2
    tilelang.contrib.cutedsl.math.min2
+   tilelang.contrib.cutedsl.math.max2_nan
+   tilelang.contrib.cutedsl.math.min2_nan
    tilelang.contrib.cutedsl.math.copysignf
    tilelang.contrib.cutedsl.math.isfinite
    tilelang.contrib.cutedsl.math.divf
    tilelang.contrib.cutedsl.math.tanh
+   tilelang.contrib.cutedsl.math.ceil
+   tilelang.contrib.cutedsl.math.floor
 
 
 Module Contents
@@ -65,9 +75,58 @@ Module Contents
 
 .. py:function:: abs2(x)
 
+.. py:function:: cuda_max(x, y)
+
+   ``T.max`` with CUDA semantics: hardware max for floats, ``cutlass.max`` otherwise.
+
+
+.. py:function:: cuda_min(x, y)
+
+   ``T.min`` with CUDA semantics: hardware min for floats, ``cutlass.min`` otherwise.
+
+
+.. py:function:: fast_max(x, y)
+
+   ``tl::fast_max``: ``__hmax`` for 16-bit floats, ``fmaxf`` for float32, ``a < b ? b : a`` otherwise.
+
+
+.. py:function:: fast_min(x, y)
+
+   ``tl::fast_min``: ``__hmin`` for 16-bit floats, ``fminf`` for float32, ``b < a ? b : a`` otherwise.
+
+
+.. py:function:: max_nan(x, y)
+
+   ``tl.max_nan``: ``__hmax_nan`` (``max.NaN``) for 16-bit floats, ``tl::fast_max`` otherwise.
+
+   A NaN operand yields the canonical NaN; +0 is ordered above -0. Vectors
+   are handled lane by lane.
+
+
+.. py:function:: min_nan(x, y)
+
+   ``tl.min_nan``: ``__hmin_nan`` (``min.NaN``) for 16-bit floats, ``tl::fast_min`` otherwise.
+
+
 .. py:function:: max2(x, y)
 
+   ``tl::max2``: ``__hmax2`` for half2/bfloat162, lane-wise ``fmaxf`` for float2.
+
+
 .. py:function:: min2(x, y)
+
+   ``tl::min2``: ``__hmin2`` for half2/bfloat162, lane-wise ``fminf`` for float2.
+
+
+.. py:function:: max2_nan(x, y)
+
+   ``tl::max2_nan``: ``__hmax2_nan`` (``max.NaN.{f16x2,bf16x2}``); CUDA defines it for half2/bfloat162 only.
+
+
+.. py:function:: min2_nan(x, y)
+
+   ``tl::min2_nan``: ``__hmin2_nan`` (``min.NaN.{f16x2,bf16x2}``); CUDA defines it for half2/bfloat162 only.
+
 
 .. py:function:: copysignf(x, y, fastmath = False)
 
@@ -76,4 +135,8 @@ Module Contents
 .. py:function:: divf(x, y, fastmath = False)
 
 .. py:function:: tanh(x, fastmath = False)
+
+.. py:function:: ceil(x, fastmath = False, **kwargs)
+
+.. py:function:: floor(x, fastmath = False, **kwargs)
 

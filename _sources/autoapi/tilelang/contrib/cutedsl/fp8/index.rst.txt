@@ -1,0 +1,46 @@
+tilelang.contrib.cutedsl.fp8
+============================
+
+.. py:module:: tilelang.contrib.cutedsl.fp8
+
+.. autoapi-nested-parse::
+
+   FP8 (e4m3 / e5m2) elementwise arithmetic for the CuTeDSL backend.
+
+   No PTX instruction computes on e4m3/e5m2 registers on sm_89/sm_90/sm_120, and
+   CuTeDSL cannot lower ``arith`` ops on FP8 MLIR types. Each operation is therefore
+   one inline PTX block on packed registers: widen with ``cvt.rn.f16x2.{e4m3x2,e5m2x2}``,
+   compute in ``f16x2``, and narrow with ``cvt.rn.satfinite``. Every FP8 value is exact
+   in f16, and f16 carries more than ``2p + 2`` significand bits for both formats, so
+   rounding the f16 result once more to FP8 gives the correctly rounded FP8 result.
+   Division has no f16 instruction and multiplies by ``rcp.approx.ftz.f32`` (relative
+   error about 2^-22; FP8 magnitudes never reach f32 subnormals): a quotient of two
+   FP8 values that is not exactly an FP8 rounding midpoint lies at least about 2^-9
+   (relative) away from one, so the approximation still rounds to the correctly
+   rounded FP8 quotient.
+
+   ``max``/``min`` use the ``.NaN`` forms (NaN propagates, ``+0 > -0``), matching the
+   ``arith.maximumf``/``minimumf`` semantics CuTeDSL uses for other float types.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.cutedsl.fp8.fp8_binary
+
+
+Module Contents
+---------------
+
+.. py:function:: fp8_binary(op, a, b, lanes=None)
+
+   ``a <op> b`` for FP8 operands: ``add``/``sub``/``mul``/``div``/``max``/``min``
+   return FP8; comparison operators (``<``, ``==``, ...) return Boolean.
+
+   ``lanes`` is the logical vector width; it is needed when an operand is an
+   rmem tensor padded past that width.
+
+
