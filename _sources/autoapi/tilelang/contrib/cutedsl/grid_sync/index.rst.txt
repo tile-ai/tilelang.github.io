@@ -7,15 +7,20 @@ tilelang.contrib.cutedsl.grid_sync
 
    Grid-level synchronization for CuTeDSL backend.
 
-   Implements a software grid barrier using atomic operations on a device-global
-   counter declared via llvm.mlir.global. Requires cooperative kernel launch
-   (cuLaunchCooperativeKernel) to guarantee all thread blocks are resident.
+   Implements the grid barrier of CUDA cooperative groups (``this_grid().sync()``)
+   on the per-launch grid workspace that the driver provides to cooperative
+   launches (cuLaunchCooperativeKernel). Its address is read from the
+   ``%envreg1`` (high half) and ``%envreg2`` (low half) special registers, as in
+   ``cooperative_groups::details::get_grid_workspace``, so concurrent launches of the same
+   kernel never share barrier state.
 
    The barrier:
    1. __syncthreads() within each block
-   2. All threads execute a device-scope fence for prior global writes
-   3. Thread 0 atomically increments global counter and spin-waits until release
-   4. All threads wait for thread 0 and execute a device-scope fence before return
+   2. Thread 0 of each block adds its arrival to the workspace barrier word with
+      release semantics; block 0 adds the value that flips bit 31 once all
+      blocks have arrived
+   3. Thread 0 spins with acquire loads until bit 31 differs from its arrival
+   4. __syncthreads() releases the rest of the block
 
 
 
@@ -34,8 +39,9 @@ Module Contents
 
    Synchronize all thread blocks in a grid.
 
-   NOTE: This requires the kernel to be launched with cuLaunchCooperativeKernel
-   to guarantee all blocks are resident simultaneously. The CuTeDSL wrapper
-   handles this automatically when the kernel uses sync_grid().
+   NOTE: This requires the kernel to be launched with cuLaunchCooperativeKernel,
+   which guarantees all thread blocks are resident simultaneously and provides
+   the grid workspace. The CuTeDSL wrapper handles this automatically when the
+   kernel uses sync_grid().
 
 

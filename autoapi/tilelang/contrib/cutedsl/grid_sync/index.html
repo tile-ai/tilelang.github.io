@@ -846,14 +846,23 @@
           <section id="module-tilelang.contrib.cutedsl.grid_sync">
 <span id="tilelang-contrib-cutedsl-grid-sync"></span><h1>tilelang.contrib.cutedsl.grid_sync<a class="headerlink" href="#module-tilelang.contrib.cutedsl.grid_sync" title="Link to this heading">¶</a></h1>
 <p>Grid-level synchronization for CuTeDSL backend.</p>
-<p>Implements a software grid barrier using atomic operations on a device-global
-counter declared via llvm.mlir.global. Requires cooperative kernel launch
-(cuLaunchCooperativeKernel) to guarantee all thread blocks are resident.</p>
+<p>Implements the grid barrier of CUDA cooperative groups (<code class="docutils literal notranslate"><span class="pre">this_grid().sync()</span></code>)
+on the per-launch grid workspace that the driver provides to cooperative
+launches (cuLaunchCooperativeKernel). Its address is read from the
+<code class="docutils literal notranslate"><span class="pre">%envreg1</span></code> (high half) and <code class="docutils literal notranslate"><span class="pre">%envreg2</span></code> (low half) special registers, as in
+<code class="docutils literal notranslate"><span class="pre">cooperative_groups::details::get_grid_workspace</span></code>, so concurrent launches of the same
+kernel never share barrier state.</p>
 <p>The barrier:
 1. __syncthreads() within each block
-2. All threads execute a device-scope fence for prior global writes
-3. Thread 0 atomically increments global counter and spin-waits until release
-4. All threads wait for thread 0 and execute a device-scope fence before return</p>
+2. Thread 0 of each block adds its arrival to the workspace barrier word with</p>
+<blockquote>
+<div><p>release semantics; block 0 adds the value that flips bit 31 once all
+blocks have arrived</p>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>Thread 0 spins with acquire loads until bit 31 differs from its arrival</p></li>
+<li><p>__syncthreads() releases the rest of the block</p></li>
+</ol>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -872,9 +881,10 @@ counter declared via llvm.mlir.global. Requires cooperative kernel launch
 <dt class="sig sig-object py" id="tilelang.contrib.cutedsl.grid_sync.sync_grid">
 <span class="sig-prename descclassname"><span class="pre">tilelang.contrib.cutedsl.grid_sync.</span></span><span class="sig-name descname"><span class="pre">sync_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.cutedsl.grid_sync.sync_grid" title="Link to this definition">¶</a></dt>
 <dd><p>Synchronize all thread blocks in a grid.</p>
-<p>NOTE: This requires the kernel to be launched with cuLaunchCooperativeKernel
-to guarantee all blocks are resident simultaneously. The CuTeDSL wrapper
-handles this automatically when the kernel uses sync_grid().</p>
+<p>NOTE: This requires the kernel to be launched with cuLaunchCooperativeKernel,
+which guarantees all thread blocks are resident simultaneously and provides
+the grid workspace. The CuTeDSL wrapper handles this automatically when the
+kernel uses sync_grid().</p>
 </dd></dl>
 
 </section>
