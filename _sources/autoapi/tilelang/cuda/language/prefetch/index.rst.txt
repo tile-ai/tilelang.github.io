@@ -1,0 +1,41 @@
+tilelang.cuda.language.prefetch
+===============================
+
+.. py:module:: tilelang.cuda.language.prefetch
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.cuda.language.prefetch.prefetch_l1
+   tilelang.cuda.language.prefetch.prefetchu_l1
+   tilelang.cuda.language.prefetch.prefetch_l2
+
+
+Module Contents
+---------------
+
+.. py:function:: prefetch_l1(addr)
+
+   Prefetch the global or local memory cache line containing ``addr`` into L1.
+
+
+.. py:function:: prefetchu_l1(addr)
+
+   Prefetch the memory cache line containing ``addr`` into uniform L1.
+
+
+.. py:function:: prefetch_l2(addr, eviction_policy = None)
+
+   Prefetch the global or local memory cache line containing ``addr`` into L2.
+
+   :param addr: A global or local buffer element, such as ``x[i]``. Only its address is used.
+   :param eviction_policy: Compile-time cache eviction priority. None leaves the priority unspecified.
+                           "evict_normal" and "evict_last" require global memory and sm_80 or later.
+
+   :returns: A call to the L2 prefetch intrinsic. Prefetch is a performance hint and
+             does not guarantee cache residency or synchronize memory accesses.
+
+

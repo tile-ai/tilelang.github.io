@@ -16,6 +16,7 @@ Functions
 
    tilelang.cuda.language.math.fmul
    tilelang.cuda.language.math.fma
+   tilelang.cuda.language.math.clamp_symmetric
 
 
 Module Contents
@@ -36,5 +37,25 @@ Module Contents
 
    The result uses round-to-nearest semantics. Vectorized loops may lower the
    operation to packed FMA instructions when the target supports them.
+
+
+.. py:function:: clamp_symmetric(x, limit)
+
+   Symmetric clipping using CUDA ``min.NaN.xorsign.abs`` (SM86+).
+
+   For non-NaN operands, requires ``limit > 0`` and returns
+   ``copysign(min(abs(x), limit), x)``, preserving the sign of zero.
+   Supports float16, bfloat16, and float32 with matching operand dtypes.
+   Python numeric limits are converted to the input's element dtype;
+   a scalar limit is broadcast to vector inputs.
+   The caller supplies a positive limit for clipping semantics. No runtime
+   check is emitted: scalar inputs lower to one PTX instruction. Even-width
+   float16/bfloat16 vectors use packed x2 instructions, one per pair.
+   Float32 vectors use one instruction per lane.
+
+   If either operand is NaN, the result is a canonical NaN; its original
+   sign and payload are not preserved. Nonpositive numeric limits are
+   outside this API's contract.
+   Subnormals are preserved. Each operand is evaluated once.
 
 

@@ -496,6 +496,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../loop/index.html">tilelang.cuda.language.loop</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">tilelang.cuda.language.math</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../pdl/index.html">tilelang.cuda.language.pdl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prefetch/index.html">tilelang.cuda.language.prefetch</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../print/index.html">tilelang.cuda.language.print</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../random/index.html">tilelang.cuda.language.random</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reduce_op/index.html">tilelang.cuda.language.reduce_op</a></li>
@@ -857,6 +858,9 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cuda.language.math.fma" title="tilelang.cuda.language.math.fma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fma</span></code></a>(x, y, z)</p></td>
 <td><p>Compute <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">y</span> <span class="pre">+</span> <span class="pre">z</span></code> as one CUDA fused multiply-add operation.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cuda.language.math.clamp_symmetric" title="tilelang.cuda.language.math.clamp_symmetric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clamp_symmetric</span></code></a>(x, limit)</p></td>
+<td><p>Symmetric clipping using CUDA <code class="docutils literal notranslate"><span class="pre">min.NaN.xorsign.abs</span></code> (SM86+).</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -895,6 +899,36 @@ operation to packed FMA instructions when the target supports them.</p>
 <li><p><strong>x</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
 <li><p><strong>y</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
 <li><p><strong>z</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tvm.tirx.PrimExpr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.cuda.language.math.clamp_symmetric">
+<span class="sig-prename descclassname"><span class="pre">tilelang.cuda.language.math.</span></span><span class="sig-name descname"><span class="pre">clamp_symmetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cuda.language.math.clamp_symmetric" title="Link to this definition">¶</a></dt>
+<dd><p>Symmetric clipping using CUDA <code class="docutils literal notranslate"><span class="pre">min.NaN.xorsign.abs</span></code> (SM86+).</p>
+<p>For non-NaN operands, requires <code class="docutils literal notranslate"><span class="pre">limit</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> and returns
+<code class="docutils literal notranslate"><span class="pre">copysign(min(abs(x),</span> <span class="pre">limit),</span> <span class="pre">x)</span></code>, preserving the sign of zero.
+Supports float16, bfloat16, and float32 with matching operand dtypes.
+Python numeric limits are converted to the input’s element dtype;
+a scalar limit is broadcast to vector inputs.
+The caller supplies a positive limit for clipping semantics. No runtime
+check is emitted: scalar inputs lower to one PTX instruction. Even-width
+float16/bfloat16 vectors use packed x2 instructions, one per pair.
+Float32 vectors use one instruction per lane.</p>
+<p>If either operand is NaN, the result is a canonical NaN; its original
+sign and payload are not preserved. Nonpositive numeric limits are
+outside this API’s contract.
+Subnormals are preserved. Each operand is evaluated once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
+<li><p><strong>limit</strong> (<em>tvm.tirx.PrimExpr</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -966,6 +1000,7 @@ operation to packed FMA instructions when the target supports them.</p>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.cuda.language.math.fmul"><code class="docutils literal notranslate"><span class="pre">fmul()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cuda.language.math.fma"><code class="docutils literal notranslate"><span class="pre">fma()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cuda.language.math.clamp_symmetric"><code class="docutils literal notranslate"><span class="pre">clamp_symmetric()</span></code></a></li>
 </ul>
 </li>
 </ul>
