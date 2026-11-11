@@ -1,0 +1,103 @@
+tilelang.contrib.pto_toolchain
+==============================
+
+.. py:module:: tilelang.contrib.pto_toolchain
+
+.. autoapi-nested-parse::
+
+   Utilities to invoke the PTO toolchain (ptodsl -> ptoas -> bisheng) for Ascend NPU targets.
+
+   ``compile_ptodsl_to_aibin`` lowers one TileLang-generated PTODSL module into
+   an executable CCE ELF (aibin): the PTODSL frontend script (ptodsl_compile.py,
+   run as a subprocess) lowers the source to MLIR, ptoas assembles a fat object,
+   bisheng links it, and the .aicore_binary section of the linked image is
+   extracted as the device binary consumed by the Ascend runtime module.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   tilelang.contrib.pto_toolchain.logger
+   tilelang.contrib.pto_toolchain.BISHENG_FATOBJ_LINK_FLAGS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tilelang.contrib.pto_toolchain.resolve_pto_options
+   tilelang.contrib.pto_toolchain.parse_pto_kernel_names
+   tilelang.contrib.pto_toolchain.compile_ptodsl_to_pto
+   tilelang.contrib.pto_toolchain.run_ptoas
+   tilelang.contrib.pto_toolchain.bisheng_fatobj_link
+   tilelang.contrib.pto_toolchain.extract_aicore_binary
+   tilelang.contrib.pto_toolchain.toolchain_stamp
+   tilelang.contrib.pto_toolchain.compile_ptodsl_to_aibin
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: BISHENG_FATOBJ_LINK_FLAGS
+   :value: ('-fPIC', '-shared', '--cce-fatobj-link')
+
+
+.. py:function:: resolve_pto_options()
+
+   Resolve the ptoas arch and extra flags from the environment.
+
+
+.. py:function:: parse_pto_kernel_names(ptodsl_source)
+
+   Return the top-level ``@pto.jit`` kernel names in definition order.
+
+
+.. py:function:: compile_ptodsl_to_pto(ptodsl_source, kernel_names, src_path, out_path, verbose = False)
+
+   Lower one PTODSL module to MLIR text.
+
+   ptodsl_compile.py runs in a subprocess so the DSL's tracing globals
+   (pto.init_core and friends) never enter this interpreter.
+
+
+.. py:function:: run_ptoas(pto_path, fatobj_path, pto_arch, pto_flags, verbose = False)
+
+   Assemble the MLIR text into a device fat object.
+
+
+.. py:function:: bisheng_fatobj_link(fatobj_path, out_so, verbose = False)
+
+   Link the fat object alone into a shared image carrying the device ELF.
+
+
+.. py:function:: extract_aicore_binary(so_path)
+
+   Extract the ``.aicore_binary`` section bytes from a linked image.
+
+   Parses the ELF64 section table directly instead of shelling out to
+   ``readelf``: tokenizing its text output can silently truncate the
+   extract, and a bad extract is only rejected later by
+   ``aclrtBinaryLoadFromData``.
+
+
+.. py:function:: toolchain_stamp()
+
+   Identity of the tools that produce a PTO aibin, for cache keys.
+
+   ptoas compiles the device object with the toolchain it resolves from
+   ASCEND_HOME_PATH, so the CANN identity (which includes the bisheng and
+   the CCE linker inside that install, and the version ptoas gates its ABI
+   on) is recorded.
+
+
+.. py:function:: compile_ptodsl_to_aibin(ptodsl_source, pto_arch, pto_flags, verbose = False)
+
+   Compile one PTODSL module into an executable CCE ELF (aibin).
+
+

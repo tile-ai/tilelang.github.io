@@ -5,7 +5,7 @@ tilelang.cache.ascend_binary_cache
 
 .. autoapi-nested-parse::
 
-   Cross-host cache for compiled Ascend device binaries.
+   Cross-host caches for compiled Ascend and PTO device binaries.
 
 
 
@@ -15,6 +15,7 @@ Classes
 .. autoapisummary::
 
    tilelang.cache.ascend_binary_cache.AscendBinaryCache
+   tilelang.cache.ascend_binary_cache.PTOBinaryCache
 
 
 Module Contents
@@ -49,6 +50,39 @@ Module Contents
 
 
    .. py:method:: make_key(*, code, target_kind, target_arch, compile_format, options = None, linker_options = None, compiler = 'bisheng')
+      :classmethod:
+
+
+
+.. py:class:: PTOBinaryCache
+
+   Bases: :py:obj:`tilelang.cache.binary_cache.BinaryCache`
+
+
+   Cache executable PTODSL-compiled CCE ELF bytes for the PTO target.
+
+
+   .. py:attribute:: cache_root_dir
+      :value: 'pto-binaries'
+
+
+
+   .. py:attribute:: cache_format
+      :value: 'tilelang.pto-binary-cache.v1'
+
+
+
+   .. py:attribute:: binary_kind
+      :value: 'PTO'
+
+
+
+   .. py:attribute:: binary_format
+      :value: 'aibin'
+
+
+
+   .. py:method:: make_key(*, code, target_kind, target_arch, compile_format, options = None, linker_options = None, toolchain = None)
       :classmethod:
 
 

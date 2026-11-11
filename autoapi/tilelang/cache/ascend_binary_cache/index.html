@@ -422,6 +422,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../contrib/msvc/index.html">tilelang.contrib.msvc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../contrib/nvcc/index.html">tilelang.contrib.nvcc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../contrib/nvrtc/index.html">tilelang.contrib.nvrtc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contrib/pto_toolchain/index.html">tilelang.contrib.pto_toolchain</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../contrib/ptodsl/index.html">tilelang.contrib.ptodsl</a><input aria-label="Toggle navigation of tilelang.contrib.ptodsl" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../contrib/ptodsl/allreduce/index.html">tilelang.contrib.ptodsl.allreduce</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../contrib/ptodsl/common/index.html">tilelang.contrib.ptodsl.common</a></li>
@@ -434,6 +435,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../contrib/ptodsl/sync/index.html">tilelang.contrib.ptodsl.sync</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../contrib/ptodsl_compile/index.html">tilelang.contrib.ptodsl_compile</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../contrib/rocm/index.html">tilelang.contrib.rocm</a></li>
 </ul>
 </li>
@@ -846,7 +848,7 @@
         <article role="main" id="furo-main-content">
           <section id="module-tilelang.cache.ascend_binary_cache">
 <span id="tilelang-cache-ascend-binary-cache"></span><h1>tilelang.cache.ascend_binary_cache<a class="headerlink" href="#module-tilelang.cache.ascend_binary_cache" title="Link to this heading">¶</a></h1>
-<p>Cross-host cache for compiled Ascend device binaries.</p>
+<p>Cross-host caches for compiled Ascend and PTO device binaries.</p>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -854,6 +856,9 @@
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.AscendBinaryCache" title="tilelang.cache.ascend_binary_cache.AscendBinaryCache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AscendBinaryCache</span></code></a></p></td>
 <td><p>Cache executable CCE ELF bytes independently from host artifacts.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache" title="tilelang.cache.ascend_binary_cache.PTOBinaryCache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PTOBinaryCache</span></code></a></p></td>
+<td><p>Cache executable PTODSL-compiled CCE ELF bytes for the PTO target.</p></td>
 </tr>
 </tbody>
 </table>
@@ -899,6 +904,54 @@
 <li><p><strong>options</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>linker_options</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>compiler</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.cache.ascend_binary_cache.PTOBinaryCache">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.cache.ascend_binary_cache.</span></span><span class="sig-name descname"><span class="pre">PTOBinaryCache</span></span><a class="headerlink" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../binary_cache/index.html#tilelang.cache.binary_cache.BinaryCache" title="tilelang.cache.binary_cache.BinaryCache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilelang.cache.binary_cache.BinaryCache</span></code></a></p>
+<p>Cache executable PTODSL-compiled CCE ELF bytes for the PTO target.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cache.ascend_binary_cache.PTOBinaryCache.cache_root_dir">
+<span class="sig-name descname"><span class="pre">cache_root_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pto-binaries'</span></em><a class="headerlink" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache.cache_root_dir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cache.ascend_binary_cache.PTOBinaryCache.cache_format">
+<span class="sig-name descname"><span class="pre">cache_format</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tilelang.pto-binary-cache.v1'</span></em><a class="headerlink" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache.cache_format" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cache.ascend_binary_cache.PTOBinaryCache.binary_kind">
+<span class="sig-name descname"><span class="pre">binary_kind</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PTO'</span></em><a class="headerlink" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache.binary_kind" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cache.ascend_binary_cache.PTOBinaryCache.binary_format">
+<span class="sig-name descname"><span class="pre">binary_format</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'aibin'</span></em><a class="headerlink" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache.binary_format" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cache.ascend_binary_cache.PTOBinaryCache.make_key">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_arch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_format</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linker_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toolchain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache.make_key" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>code</strong> (<em>str</em>)</p></li>
+<li><p><strong>target_kind</strong> (<em>str</em>)</p></li>
+<li><p><strong>target_arch</strong> (<em>str</em>)</p></li>
+<li><p><strong>compile_format</strong> (<em>str</em>)</p></li>
+<li><p><strong>options</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>linker_options</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>toolchain</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -976,6 +1029,14 @@
 <li><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.AscendBinaryCache.binary_kind"><code class="docutils literal notranslate"><span class="pre">AscendBinaryCache.binary_kind</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.AscendBinaryCache.binary_format"><code class="docutils literal notranslate"><span class="pre">AscendBinaryCache.binary_format</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.AscendBinaryCache.make_key"><code class="docutils literal notranslate"><span class="pre">AscendBinaryCache.make_key()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache"><code class="docutils literal notranslate"><span class="pre">PTOBinaryCache</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache.cache_root_dir"><code class="docutils literal notranslate"><span class="pre">PTOBinaryCache.cache_root_dir</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache.cache_format"><code class="docutils literal notranslate"><span class="pre">PTOBinaryCache.cache_format</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache.binary_kind"><code class="docutils literal notranslate"><span class="pre">PTOBinaryCache.binary_kind</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache.binary_format"><code class="docutils literal notranslate"><span class="pre">PTOBinaryCache.binary_format</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.ascend_binary_cache.PTOBinaryCache.make_key"><code class="docutils literal notranslate"><span class="pre">PTOBinaryCache.make_key()</span></code></a></li>
 </ul>
 </li>
 </ul>
