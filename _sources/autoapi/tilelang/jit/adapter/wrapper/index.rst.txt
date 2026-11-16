@@ -10,7 +10,10 @@ Attributes
 .. autoapisummary::
 
    tilelang.jit.adapter.wrapper.PREDEF_ATTRIBUTE_SET_DYNAMIC_MEMORY
+   tilelang.jit.adapter.wrapper.PREDEF_CALL_SET_DYNAMIC_MEMORY
    tilelang.jit.adapter.wrapper.PREDEF_ATTRIBUTE_SET_DYNAMIC_MEMORY_HIP
+   tilelang.jit.adapter.wrapper.PREDEF_ERROR_BUF
+   tilelang.jit.adapter.wrapper.PREDEF_INIT_BODY
    tilelang.jit.adapter.wrapper.PREDEF_INIT_FUNC
    tilelang.jit.adapter.wrapper.PREDEF_HOST_FUNC
    tilelang.jit.adapter.wrapper.L2_PERSISTENT_MAP_CREATE_HANDLE
@@ -51,9 +54,46 @@ Module Contents
    .. code-block:: python
 
       """
-          cudaError_t result_{0} = cudaFuncSetAttribute({0}, cudaFuncAttributeMaxDynamicSharedMemorySize, {1});
-          if (result_{0} != cudaSuccess) {{
-              snprintf(error_buf, ERROR_BUF_SIZE, "Failed to set the allowed dynamic shared memory size to %d with error: %s", {1}, cudaGetErrorString(result_{0}));
+      static std::atomic<unsigned long long> {0}_smem_devices{{0}};
+      
+      static int {0}_set_dynamic_smem() {{
+          int device = 0;
+          cudaError_t query = cudaGetDevice(&device);
+          if (query != cudaSuccess) {{
+              snprintf(error_buf, ERROR_BUF_SIZE, "Failed to get the current device: %s", cudaGetErrorString(query));
+              return -1;
+          }}
+          unsigned long long bit = device < 64 ? 1ull << device : 0;
+          if (bit && ({0}_smem_devices.load(std::memory_order_relaxed) & bit)) {{
+              return 0;
+          }}
+          cudaError_t result = cudaFuncSetAttribute({0}, cudaFuncAttributeMaxDynamicSharedMemorySize, {1});
+          if (result != cudaSuccess) {{
+              snprintf(error_buf, ERROR_BUF_SIZE, "Failed to set the allowed dynamic shared memory size to %d with error: %s", {1}, cudaGetErrorString(result));
+              return -1;
+          }}
+          {0}_smem_devices.fetch_or(bit, std::memory_order_relaxed);
+          return 0;
+      }}
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: PREDEF_CALL_SET_DYNAMIC_MEMORY
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+          if ({0}_set_dynamic_smem() != 0) {{
               return -1;
           }}
       """
@@ -97,6 +137,59 @@ Module Contents
               return -1;
           }}
           return 0;
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: PREDEF_ERROR_BUF
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      #ifdef _WIN32
+      #define TL_EXPORT __declspec(dllexport)
+      #else
+      #define TL_EXPORT
+      #endif
+      
+      #define ERROR_BUF_SIZE 1024
+      static char error_buf[ERROR_BUF_SIZE];
+      
+      extern "C" TL_EXPORT const char* get_last_error() {{
+          return error_buf;
+      }}
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: PREDEF_INIT_BODY
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      extern "C" TL_EXPORT int init() {{
+          error_buf[0] = '\0';
+          {0}
+          return 0;
+      }}
       """
 
    .. raw:: html
@@ -514,6 +607,12 @@ Module Contents
    .. py:method:: get_init_func()
 
 
+   .. py:method:: get_dynamic_smem_call(function_name)
+
+      Code raising `function_name`'s dynamic shared memory limit on the current device.
+
+
+
    .. py:method:: update_lib_code(code)
 
 
@@ -544,6 +643,12 @@ Module Contents
 
 
    .. py:method:: get_init_func()
+
+
+   .. py:method:: get_dynamic_smem_call(function_name)
+
+      Code raising `function_name`'s dynamic shared memory limit on the current device.
+
 
 
    .. py:method:: get_stream_type()
