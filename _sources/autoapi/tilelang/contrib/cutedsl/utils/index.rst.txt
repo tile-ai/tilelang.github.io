@@ -43,6 +43,8 @@ Functions
    tilelang.contrib.cutedsl.utils.as_tensor_ssa
    tilelang.contrib.cutedsl.utils.as_rmem_tensor
    tilelang.contrib.cutedsl.utils.make_filled_tensor
+   tilelang.contrib.cutedsl.utils.typed_tensor
+   tilelang.contrib.cutedsl.utils.make_tensor
    tilelang.contrib.cutedsl.utils.make_tensor_at_offset
    tilelang.contrib.cutedsl.utils.handle_add_byte_offset
    tilelang.contrib.cutedsl.utils.shuffle_elect
@@ -104,13 +106,33 @@ Module Contents
 
 .. py:function:: cast_tensor(value, dtype)
 
-.. py:function:: as_tensor_ssa(value)
+.. py:function:: as_tensor_ssa(value, lanes=None)
+
+   *value* as a TensorSSA, zero padded to *lanes* elements if given.
+
+   A narrow vector that is not 32-bit wide is loaded into a padded tensor, but
+   one computed elementwise keeps its own width; padding makes both forms fit
+   the padded vector that narrow casts need.
+
 
 .. py:function:: as_rmem_tensor(value, shape, dtype)
 
 .. py:function:: make_filled_tensor(shape, value, dtype=None)
 
-.. py:function:: make_tensor_at_offset(ptr, offset, shape, div_by=1)
+.. py:function:: typed_tensor(tensor, dtype=None)
+
+   Give *tensor* the element type *dtype*.
+
+   MLIR integers are signless, so a pointer to unsigned elements comes back
+   typed as signed (a ``Uint8`` buffer's iterator is an ``Int8`` pointer) and a
+   tensor built on it loads signed values: widening, comparison, division and
+   right shift then treat ``200`` as ``-56``. The element type survives only on
+   the tensor wrapper, so reattach it there.
+
+
+.. py:function:: make_tensor(iterator, layout, dtype=None)
+
+.. py:function:: make_tensor_at_offset(ptr, offset, shape, div_by=1, dtype=None)
 
 .. py:function:: handle_add_byte_offset(handle, byte_offset)
 
