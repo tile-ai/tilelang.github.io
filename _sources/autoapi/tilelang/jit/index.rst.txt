@@ -94,7 +94,7 @@ Package Contents
    :type TILELANG_VERBOSE: str
 
 
-.. py:function:: par_compile(funcs, out_idx = None, execution_backend = None, target = None, target_host = None, verbose = None, pass_configs = None, compile_flags = None, num_workers = None, ignore_error = False)
+.. py:function:: par_compile(funcs, out_idx = None, execution_backend = None, target = None, target_host = None, verbose = None, pass_configs = None, compile_flags = None, num_workers = None, ignore_error = False, executor = 'thread')
 
    Parallel compile multiple TileLang PrimFunc with TVM and build JITKernels.
 
@@ -117,6 +117,13 @@ Package Contents
    :param pass_configs: Additional keyword arguments to pass to the Compiler PassContext.
                         Refer to `tilelang.transform.PassConfigKey` for supported options.
    :type pass_configs: dict, optional
+   :param executor: Defaults to threads. Processes use ``spawn`` and require disk caching:
+                    cache hits are resolved in the calling process, misses are compiled into
+                    the disk cache by worker processes, and the parent loads each published
+                    cache entry directly. Script callers must use
+                    ``if __name__ == "__main__":``. Parent-only FFI registrations are not
+                    inherited by spawned workers.
+   :type executor: Literal["thread", "process"], optional
    :param Environment Variables:
    :param ---------------------:
    :param TILELANG_DEFAULT_TARGET: Default compilation target (e.g., "cuda", "llvm", or a JSON target config string).
@@ -309,7 +316,7 @@ Package Contents
    .. py:method:: initialize_jit_mode(*args, **kwargs)
 
 
-   .. py:method:: par_compile(configs, num_workers = None, ignore_error = False)
+   .. py:method:: par_compile(configs, num_workers = None, ignore_error = False, executor = 'thread')
 
       Parallel compile multiple TileLang PrimFunc with TVM and build JITKernels.
       :param configs: The configurations to elaborate and compile. Each config can be either
@@ -323,6 +330,9 @@ Package Contents
                            as warnings and the corresponding result will be None. If False,
                            any compilation error will raise an exception. Defaults to False.
       :type ignore_error: bool, optional
+      :param executor: Compilation workers; see :func:`tilelang.par_compile`. IR construction
+                       remains serial in the calling process.
+      :type executor: Literal["thread", "process"], optional
 
       :returns: A list of compiled JITKernel objects corresponding to the provided configs.
       :rtype: List[JITKernel]

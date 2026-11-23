@@ -1230,8 +1230,12 @@ cfg.TILELANG_PRINT_ON_COMPILATION = “1”   # Forces value to “1” until ch
 <dt class="sig sig-object py" id="tilelang.env.EnvVar.__set__">
 <span class="sig-name descname"><span class="pre">__set__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.env.EnvVar.__set__" title="Link to this definition">¶</a></dt>
 <dd><p>Called when the attribute is assigned to.
-Stores the value as a runtime override (forced value).
-Optionally, you can also sync this into os.environ for global effect.</p>
+Stores the value as an in-memory runtime override (<cite>_forced_value</cite>).</p>
+<p>Note: <cite>env.VAR = value</cite> only updates the current Python process’s memory
+and does NOT modify <cite>os.environ</cite>. It is therefore invisible to child
+processes (such as <cite>spawn</cite> workers in <cite>par_compile</cite> or compiler
+subprocesses) and C++ <cite>std::getenv</cite>. Set <cite>os.environ[key]</cite> directly when
+child-process visibility is required.</p>
 </dd></dl>
 
 </section>

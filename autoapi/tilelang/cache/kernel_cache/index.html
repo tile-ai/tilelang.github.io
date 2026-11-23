@@ -875,6 +875,11 @@ kernel_lib.so: The compiled kernel library
 params.json: The compiled kernel parameters</p>
 </div></blockquote>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.supports_disk_cache">
+<span class="sig-name descname"><span class="pre">supports_disk_cache</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.supports_disk_cache" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.execution_backend">
 <span class="sig-name descname"><span class="pre">execution_backend</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'tvm_ffi'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cython'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'nvrtc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'torch'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cutedsl'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pto'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tvm_ffi'</span></em><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.execution_backend" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -966,6 +971,73 @@ not set explicitly in <cite>pass_configs</cite>. Unset keeps the built-in defaul
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.lookup">
+<span class="sig-name descname"><span class="pre">lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.lookup" title="Link to this definition">¶</a></dt>
+<dd><p>Look up a kernel in memory and disk caches without compiling on miss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>tvm.tirx.PrimFunc</em>)</p></li>
+<li><p><strong>out_idx</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>args</strong> (<em>tuple</em>)</p></li>
+<li><p><strong>backend_context</strong> (<a class="reference internal" href="../../backend/module/index.html#tilelang.backend.module.BackendContext" title="tilelang.backend.module.BackendContext"><em>tilelang.backend.module.BackendContext</em></a>)</p></li>
+<li><p><strong>pass_configs</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>compile_flags</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[str, tilelang.jit.JITKernel | None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.compile_to_disk">
+<span class="sig-name descname"><span class="pre">compile_to_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.compile_to_disk" title="Link to this definition">¶</a></dt>
+<dd><p>Compile a kernel for a precomputed key and publish it to the disk cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>tvm.tirx.PrimFunc</em>)</p></li>
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>out_idx</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>backend_context</strong> (<a class="reference internal" href="../../backend/module/index.html#tilelang.backend.module.BackendContext" title="tilelang.backend.module.BackendContext"><em>tilelang.backend.module.BackendContext</em></a>)</p></li>
+<li><p><strong>pass_configs</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>compile_flags</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.load_published_entry">
+<span class="sig-name descname"><span class="pre">load_published_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pass_configs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.load_published_entry" title="Link to this definition">¶</a></dt>
+<dd><p>Load a published disk cache entry directly without falling back to compilation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>)</p></li>
+<li><p><strong>cache_path</strong> (<em>str</em>)</p></li>
+<li><p><strong>func</strong> (<em>tvm.tirx.PrimFunc</em>)</p></li>
+<li><p><strong>out_idx</strong> (<em>list</em><em>[</em><em>int</em><em>] </em><em>| </em><em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>backend_context</strong> (<a class="reference internal" href="../../backend/module/index.html#tilelang.backend.module.BackendContext" title="tilelang.backend.module.BackendContext"><em>tilelang.backend.module.BackendContext</em></a>)</p></li>
+<li><p><strong>pass_configs</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>compile_flags</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference internal" href="../../language/dtypes/index.html#tilelang.language.dtypes.bool" title="tilelang.language.dtypes.bool"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tilelang.jit.JITKernel</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="tilelang.cache.kernel_cache.KernelCache.clear_cache">
 <span class="sig-name descname"><span class="pre">clear_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.cache.kernel_cache.KernelCache.clear_cache" title="Link to this definition">¶</a></dt>
 <dd><p>Clears the entire kernel cache, including both in-memory and disk cache.</p>
@@ -1035,6 +1107,7 @@ not set explicitly in <cite>pass_configs</cite>. Unset keeps the built-in defaul
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache"><code class="docutils literal notranslate"><span class="pre">KernelCache</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.supports_disk_cache"><code class="docutils literal notranslate"><span class="pre">KernelCache.supports_disk_cache</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.execution_backend"><code class="docutils literal notranslate"><span class="pre">KernelCache.execution_backend</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.device_kernel_path"><code class="docutils literal notranslate"><span class="pre">KernelCache.device_kernel_path</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.host_kernel_path"><code class="docutils literal notranslate"><span class="pre">KernelCache.host_kernel_path</span></code></a></li>
@@ -1045,6 +1118,9 @@ not set explicitly in <cite>pass_configs</cite>. Unset keeps the built-in defaul
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.cache_root_dir"><code class="docutils literal notranslate"><span class="pre">KernelCache.cache_root_dir</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.staging_root_dir"><code class="docutils literal notranslate"><span class="pre">KernelCache.staging_root_dir</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.cached"><code class="docutils literal notranslate"><span class="pre">KernelCache.cached()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.lookup"><code class="docutils literal notranslate"><span class="pre">KernelCache.lookup()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.compile_to_disk"><code class="docutils literal notranslate"><span class="pre">KernelCache.compile_to_disk()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.load_published_entry"><code class="docutils literal notranslate"><span class="pre">KernelCache.load_published_entry()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.cache.kernel_cache.KernelCache.clear_cache"><code class="docutils literal notranslate"><span class="pre">KernelCache.clear_cache()</span></code></a></li>
 </ul>
 </li>

@@ -30,6 +30,12 @@ Module Contents
        params.json: The compiled kernel parameters
 
 
+   .. py:attribute:: supports_disk_cache
+      :type:  bool
+      :value: True
+
+
+
    .. py:attribute:: execution_backend
       :type:  Literal['tvm_ffi', 'cython', 'nvrtc', 'torch', 'cutedsl', 'pto']
       :value: 'tvm_ffi'
@@ -108,6 +114,24 @@ Module Contents
       TILELANG_LAYOUT_COST_MODEL : str
           Default value for the `tl.layout_cost_model` pass config when it is
           not set explicitly in `pass_configs`. Unset keeps the built-in default.
+
+
+
+   .. py:method:: lookup(*, func, out_idx, args = (), backend_context, pass_configs, compile_flags, verbose = False)
+
+      Look up a kernel in memory and disk caches without compiling on miss.
+
+
+
+   .. py:method:: compile_to_disk(func, *, key, out_idx, backend_context, pass_configs, compile_flags, verbose = False)
+
+      Compile a kernel for a precomputed key and publish it to the disk cache.
+
+
+
+   .. py:method:: load_published_entry(key, cache_path, *, func, out_idx, backend_context, pass_configs, compile_flags, verbose = False)
+
+      Load a published disk cache entry directly without falling back to compilation.
 
 
 
