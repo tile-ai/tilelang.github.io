@@ -1035,7 +1035,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 </div>
 <ul class="simple">
 <li><p>A single call that performs a tile-level matrix multiplication using the specified buffers.</p></li>
-<li><p>Under the hood, for NVIDIA targets, it can use CUTLASS/Cute or WMMA instructions. On AMD GPUs, TileLang emits HIP code built on MFMA compiler intrinsics.</p></li>
+<li><p>Under the hood, for NVIDIA targets, it can use CUTLASS/Cute or WMMA instructions. On AMD GPUs, TileLang emits HIP code using MFMA or WMMA compiler intrinsics, depending on the target architecture.</p></li>
 </ul>
 <ol class="arabic simple" start="6">
 <li><p><strong>Copying Back Results</strong>:</p></li>
@@ -1046,6 +1046,36 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <ul class="simple">
 <li><p>After computation, data in the local register fragment is written back to global memory.</p></li>
 </ul>
+</section>
+<section id="linear-shared-layouts-on-gfx1200">
+<h3>Linear Shared Layouts on gfx1200<a class="headerlink" href="#linear-shared-layouts-on-gfx1200" title="Link to this heading">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">make_linear_layout</span></code> from <code class="docutils literal notranslate"><span class="pre">tilelang.layout</span></code> to keep GEMM operands in row-major shared storage. This support is limited to AMD’s <code class="docutils literal notranslate"><span class="pre">gfx1200</span></code> ISA target. Inside a <code class="docutils literal notranslate"><span class="pre">T.prim_func</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
+    <span class="n">A_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="s2">"bfloat16"</span><span class="p">)</span>
+    <span class="n">B_shared</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_shared</span><span class="p">((</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="s2">"bfloat16"</span><span class="p">)</span>
+    <span class="n">C_local</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_fragment</span><span class="p">((</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="s2">"float32"</span><span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">annotate_layout</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="n">A_shared</span><span class="p">:</span> <span class="n">make_linear_layout</span><span class="p">(</span><span class="n">A_shared</span><span class="p">),</span>
+            <span class="n">B_shared</span><span class="p">:</span> <span class="n">make_linear_layout</span><span class="p">(</span><span class="n">B_shared</span><span class="p">),</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">C_local</span><span class="p">)</span>
+    <span class="c1"># Copy the input tiles into A_shared and B_shared, then compute:</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">gemm</span><span class="p">(</span><span class="n">A_shared</span><span class="p">,</span> <span class="n">B_shared</span><span class="p">,</span> <span class="n">C_local</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Requirements:</p>
+<ul class="simple">
+<li><p>Use FP16 or BF16 shared-memory operands with the same dtype for A and B, FP32 accumulation, no transposes, and <code class="docutils literal notranslate"><span class="pre">k_pack=1</span></code> (the default). Tile M, N and K must be constant multiples of 16; global matrix dimensions may have tails when copies handle their bounds.</p></li>
+<li><p>Each operand must cover its entire contiguous 2D buffer, with zero region and element offsets, no explicit strides, and alignment of at least 16 bytes and divisible by 16. Ordinary <code class="docutils literal notranslate"><span class="pre">T.alloc_shared</span></code> allocations provide this alignment.</p></li>
+<li><p>Use the exact input shape and mapping returned by <code class="docutils literal notranslate"><span class="pre">make_linear_layout</span></code>; custom mappings are not supported.</p></li>
+</ul>
+<p>Either or both input buffers may be annotated; an unannotated operand keeps its default inferred layout. Linear layouts do not guarantee better performance.</p>
+<p>The annotation controls the physical storage of A/B; producers such as <code class="docutils literal notranslate"><span class="pre">T.copy</span></code> and <code class="docutils literal notranslate"><span class="pre">T.Parallel</span></code> still use logical indices. A shared operand may be reused by multiple supported NN GEMMs, including calls that accumulate into the same initialized FP32 fragment. Each call must satisfy the storage and dtype requirements above.</p>
+<p>C retains its inferred WMMA fragment layout. Subsequent elementwise operations and reductions also use logical indices; no manual lane or register remapping is required. Regression coverage composes parallel shared-memory producers, operand reuse, accumulation, a bias/ReLU epilogue and row reduction for all four A/B layout combinations in both precisions. This does not imply support for arbitrary explicit C layouts or shared-memory accumulators.</p>
+<p>This support reuses the existing WMMA loads and scheduling. Selecting linear storage does not enable a new fragment mapping or automatic tuning; compare performance for the complete kernel, including its producers and consumers.</p>
+<p>Execution has been validated with <code class="docutils literal notranslate"><span class="pre">num_stages=0</span></code>. A compile-only regression also checks that requesting <code class="docutils literal notranslate"><span class="pre">num_stages=2</span></code> preserves the single-stage shared-memory footprint and valid WMMA operand loads: the current gfx1200 planner disables software pipelining. This does not validate staged shared storage or pipelined execution.</p>
 </section>
 </section>
 <section id="comparison-with-other-dsls">
@@ -1157,6 +1187,7 @@ Suggestions and improvements are highly encouraged—please submit a PR!</p>
 <li><a class="reference internal" href="#matrix-multiplication-example">Matrix Multiplication Example</a><ul>
 <li><a class="reference internal" href="#basic-structure">Basic Structure</a></li>
 <li><a class="reference internal" href="#key-concepts">Key Concepts</a></li>
+<li><a class="reference internal" href="#linear-shared-layouts-on-gfx1200">Linear Shared Layouts on gfx1200</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#comparison-with-other-dsls">Comparison with Other DSLs</a></li>
