@@ -30,6 +30,7 @@ Classes
 .. autoapisummary::
 
    tilelang.contrib.hip_resource_info.KernelResourceUsage
+   tilelang.contrib.hip_resource_info.OccupancyReport
 
 
 Functions
@@ -41,6 +42,7 @@ Functions
    tilelang.contrib.hip_resource_info.reset_recorder
    tilelang.contrib.hip_resource_info.pop_recorded
    tilelang.contrib.hip_resource_info.filter_and_record
+   tilelang.contrib.hip_resource_info.occupancy_report
    tilelang.contrib.hip_resource_info.dump_to_file
    tilelang.contrib.hip_resource_info.load_from_file
 
@@ -106,6 +108,50 @@ Module Contents
    Strip kernel-resource-usage remarks from ``output``, parse them,
    and append the parsed entries to the active recorder (if any).
    Returns the filtered output with the remark lines removed.
+
+
+.. py:class:: OccupancyReport
+
+   How many blocks of a kernel fit on one compute unit, and what limits it.
+
+
+   .. py:attribute:: occupancy
+      :type:  int
+
+
+   .. py:attribute:: waves_per_block
+      :type:  int
+
+
+   .. py:attribute:: blocks_by_occupancy
+      :type:  int
+
+
+   .. py:attribute:: blocks_by_lds
+      :type:  int | None
+
+
+   .. py:attribute:: blocks_per_cu
+      :type:  int
+
+
+   .. py:attribute:: warnings
+      :type:  list[str]
+      :value: []
+
+
+
+.. py:function:: occupancy_report(usage, threads, lds_bytes = 0, wave_size = 64, simds_per_cu = 4, lds_bytes_per_cu = 65536, lds_granularity = 512)
+
+   Blocks per compute unit from the compiler's occupancy and the LDS size.
+
+   A block needs ``ceil(threads / wave_size)`` wavefronts, a compute unit holds
+   ``occupancy * simds_per_cu`` of them, and the blocks on it share the LDS,
+   which is allocated in units of ``lds_granularity`` bytes. The compiler's
+   occupancy already accounts for LDS it can see, but not for dynamic shared
+   memory, so pass the full size per block as ``lds_bytes``.
+   The defaults describe CDNA, including MI200's 64 KB of LDS per compute unit
+   in units of 128 dwords.
 
 
 .. py:function:: dump_to_file(usage, path)

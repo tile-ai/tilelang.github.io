@@ -872,6 +872,9 @@ hundreds of remark blocks while real diagnostics still surface.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.hip_resource_info.KernelResourceUsage" title="tilelang.contrib.hip_resource_info.KernelResourceUsage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KernelResourceUsage</span></code></a></p></td>
 <td><p>Resource counts as reported by clang's kernel-resource-usage pass.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.hip_resource_info.OccupancyReport" title="tilelang.contrib.hip_resource_info.OccupancyReport"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OccupancyReport</span></code></a></p></td>
+<td><p>How many blocks of a kernel fit on one compute unit, and what limits it.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -893,10 +896,13 @@ hundreds of remark blocks while real diagnostics still surface.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.hip_resource_info.filter_and_record" title="tilelang.contrib.hip_resource_info.filter_and_record"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_and_record</span></code></a>(output)</p></td>
 <td><p>Strip kernel-resource-usage remarks from <code class="docutils literal notranslate"><span class="pre">output</span></code>, parse them,</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.hip_resource_info.dump_to_file" title="tilelang.contrib.hip_resource_info.dump_to_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump_to_file</span></code></a>(usage, path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.hip_resource_info.occupancy_report" title="tilelang.contrib.hip_resource_info.occupancy_report"><code class="xref py py-obj docutils literal notranslate"><span class="pre">occupancy_report</span></code></a>(usage, threads[, lds_bytes, ...])</p></td>
+<td><p>Blocks per compute unit from the compiler's occupancy and the LDS size.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.hip_resource_info.dump_to_file" title="tilelang.contrib.hip_resource_info.dump_to_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump_to_file</span></code></a>(usage, path)</p></td>
 <td><p>Persist parsed resource usage so it survives kernel-cache hits.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tilelang.contrib.hip_resource_info.load_from_file" title="tilelang.contrib.hip_resource_info.load_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_from_file</span></code></a>(path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tilelang.contrib.hip_resource_info.load_from_file" title="tilelang.contrib.hip_resource_info.load_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_from_file</span></code></a>(path)</p></td>
 <td><p>Inverse of <code class="docutils literal notranslate"><span class="pre">dump_to_file</span></code>. Tolerant of missing / unknown fields</p></td>
 </tr>
 </tbody>
@@ -985,6 +991,71 @@ Returns the filtered output with the remark lines removed.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tilelang.contrib.hip_resource_info.OccupancyReport">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilelang.contrib.hip_resource_info.</span></span><span class="sig-name descname"><span class="pre">OccupancyReport</span></span><a class="headerlink" href="#tilelang.contrib.hip_resource_info.OccupancyReport" title="Link to this definition">¶</a></dt>
+<dd><p>How many blocks of a kernel fit on one compute unit, and what limits it.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.hip_resource_info.OccupancyReport.occupancy">
+<span class="sig-name descname"><span class="pre">occupancy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.contrib.hip_resource_info.OccupancyReport.occupancy" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.hip_resource_info.OccupancyReport.waves_per_block">
+<span class="sig-name descname"><span class="pre">waves_per_block</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.contrib.hip_resource_info.OccupancyReport.waves_per_block" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.hip_resource_info.OccupancyReport.blocks_by_occupancy">
+<span class="sig-name descname"><span class="pre">blocks_by_occupancy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.contrib.hip_resource_info.OccupancyReport.blocks_by_occupancy" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.hip_resource_info.OccupancyReport.blocks_by_lds">
+<span class="sig-name descname"><span class="pre">blocks_by_lds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tilelang.contrib.hip_resource_info.OccupancyReport.blocks_by_lds" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.hip_resource_info.OccupancyReport.blocks_per_cu">
+<span class="sig-name descname"><span class="pre">blocks_per_cu</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tilelang.contrib.hip_resource_info.OccupancyReport.blocks_per_cu" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tilelang.contrib.hip_resource_info.OccupancyReport.warnings">
+<span class="sig-name descname"><span class="pre">warnings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#tilelang.contrib.hip_resource_info.OccupancyReport.warnings" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tilelang.contrib.hip_resource_info.occupancy_report">
+<span class="sig-prename descclassname"><span class="pre">tilelang.contrib.hip_resource_info.</span></span><span class="sig-name descname"><span class="pre">occupancy_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">usage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lds_bytes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simds_per_cu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lds_bytes_per_cu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">65536</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lds_granularity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilelang.contrib.hip_resource_info.occupancy_report" title="Link to this definition">¶</a></dt>
+<dd><p>Blocks per compute unit from the compiler’s occupancy and the LDS size.</p>
+<p>A block needs <code class="docutils literal notranslate"><span class="pre">ceil(threads</span> <span class="pre">/</span> <span class="pre">wave_size)</span></code> wavefronts, a compute unit holds
+<code class="docutils literal notranslate"><span class="pre">occupancy</span> <span class="pre">*</span> <span class="pre">simds_per_cu</span></code> of them, and the blocks on it share the LDS,
+which is allocated in units of <code class="docutils literal notranslate"><span class="pre">lds_granularity</span></code> bytes. The compiler’s
+occupancy already accounts for LDS it can see, but not for dynamic shared
+memory, so pass the full size per block as <code class="docutils literal notranslate"><span class="pre">lds_bytes</span></code>.
+The defaults describe CDNA, including MI200’s 64 KB of LDS per compute unit
+in units of 128 dwords.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>usage</strong> (<a class="reference internal" href="#tilelang.contrib.hip_resource_info.KernelResourceUsage" title="tilelang.contrib.hip_resource_info.KernelResourceUsage"><em>KernelResourceUsage</em></a>)</p></li>
+<li><p><strong>threads</strong> (<em>int</em>)</p></li>
+<li><p><strong>lds_bytes</strong> (<em>int</em>)</p></li>
+<li><p><strong>wave_size</strong> (<em>int</em>)</p></li>
+<li><p><strong>simds_per_cu</strong> (<em>int</em>)</p></li>
+<li><p><strong>lds_bytes_per_cu</strong> (<em>int</em>)</p></li>
+<li><p><strong>lds_granularity</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#tilelang.contrib.hip_resource_info.OccupancyReport" title="tilelang.contrib.hip_resource_info.OccupancyReport">OccupancyReport</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1095,6 +1166,16 @@ so older cache entries keep working when the dataclass evolves.</p>
 <li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.reset_recorder"><code class="docutils literal notranslate"><span class="pre">reset_recorder()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.pop_recorded"><code class="docutils literal notranslate"><span class="pre">pop_recorded()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.filter_and_record"><code class="docutils literal notranslate"><span class="pre">filter_and_record()</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.OccupancyReport"><code class="docutils literal notranslate"><span class="pre">OccupancyReport</span></code></a><ul>
+<li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.OccupancyReport.occupancy"><code class="docutils literal notranslate"><span class="pre">OccupancyReport.occupancy</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.OccupancyReport.waves_per_block"><code class="docutils literal notranslate"><span class="pre">OccupancyReport.waves_per_block</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.OccupancyReport.blocks_by_occupancy"><code class="docutils literal notranslate"><span class="pre">OccupancyReport.blocks_by_occupancy</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.OccupancyReport.blocks_by_lds"><code class="docutils literal notranslate"><span class="pre">OccupancyReport.blocks_by_lds</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.OccupancyReport.blocks_per_cu"><code class="docutils literal notranslate"><span class="pre">OccupancyReport.blocks_per_cu</span></code></a></li>
+<li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.OccupancyReport.warnings"><code class="docutils literal notranslate"><span class="pre">OccupancyReport.warnings</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.occupancy_report"><code class="docutils literal notranslate"><span class="pre">occupancy_report()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.dump_to_file"><code class="docutils literal notranslate"><span class="pre">dump_to_file()</span></code></a></li>
 <li><a class="reference internal" href="#tilelang.contrib.hip_resource_info.load_from_file"><code class="docutils literal notranslate"><span class="pre">load_from_file()</span></code></a></li>
 </ul>
