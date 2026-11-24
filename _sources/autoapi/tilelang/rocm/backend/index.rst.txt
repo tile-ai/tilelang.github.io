@@ -17,13 +17,22 @@ Functions
 
 .. autoapisummary::
 
+   tilelang.rocm.backend.hip_compile_flags
    tilelang.rocm.backend.tilelang_callback_hip_compile
 
 
 Module Contents
 ---------------
 
-.. py:function:: tilelang_callback_hip_compile(code, target)
+.. py:function:: hip_compile_flags(flags)
+
+   Turn compile_flags / tl.device_compile_flags into hipcc arguments.
+
+   Each entry is split like a shell, so one string can hold "-mllvm <option>".
+   Flags that only nvcc understands are dropped with a warning.
+
+
+.. py:function:: tilelang_callback_hip_compile(code, target, pass_config=None)
 
    Compile generated HIP source into an HSACO binary.
 
